@@ -19,6 +19,6 @@
     </beans:bean>
 
     <!-- 프로젝트 패키지이름 확인 -->
-    <context:component-scan base-package="com.spring/project01" />
+    <context:component-scan base-package="com.spring/ion" />
 
 </beans:beans>
