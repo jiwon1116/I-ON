@@ -29,6 +29,7 @@ public class Info_contentController {
     // 글 작성 페이지 이동
     @GetMapping("/save")
     public String writeForm(){
+
         return "psw/write";
     }
 
@@ -42,6 +43,7 @@ public class Info_contentController {
 
         
       return "psw/info";
+
 
     }
 
