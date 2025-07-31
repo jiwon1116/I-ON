@@ -12,5 +12,17 @@
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeCommentDTO" alias="freeComment"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissDTO" alias="miss"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissCommentDTO" alias="missComment"></typeAlias>
+
+        <typeAlias type="com.spring.ion.psw.dto.Info_contentDTO" alias="infoContent"></typeAlias>
+        <typeAlias type="com.spring.ion.psw.dto.Info_commentDTO" alias="infoComment"></typeAlias>
+        <typeAlias type="com.spring.ion.psw.dto.Info_FileDTO" alias="infoFile"></typeAlias>
+
+
+
     </typeAliases>
+
+    <mappers>
+        <mapper resource="mapper/jjh/freeMapper.xml"/>
+        <!-- 다른 매퍼도 필요하면 여기에 추가 -->
+    </mappers>
 </configuration>

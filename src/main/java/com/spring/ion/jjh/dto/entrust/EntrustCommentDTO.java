@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class EntrustCommentDTO {
     private long id;
     private long post_id;
-    private long member_id;
+    private String nickname;
     private String content;
     private LocalDateTime created_at;
 }
