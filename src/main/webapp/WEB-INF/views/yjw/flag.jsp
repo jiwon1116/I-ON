@@ -89,7 +89,7 @@
             </blockquote>
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <img src="${post.profileImage}" alt="프로필" class="me-2">
+                    <img src="${}" alt="프로필" class="me-2">
                     <div>
                         <div>${post.title}</div>
                         <small class="text-muted">${post.description}</small>
