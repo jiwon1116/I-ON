@@ -17,4 +17,11 @@
         SELECT * FROM info_content WHERE id = #{id}
     </select>
 
+    <update id="update" parameterType="infoContent">
+        UPDATE info_content
+        SET title = #{title}, content = #{content}
+        WHERE id = #{id}
+    </update>
+
+
 </mapper>

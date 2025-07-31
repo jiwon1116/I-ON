@@ -27,4 +27,8 @@ public class Info_contentRepository {
         return sql.selectOne("Info.find",id);
     }
 
+    //게시물 수정
+    public int update(Info_contentDTO infoContentDTO) {
+        return sql.update("Info.update",infoContentDTO);
+    }
 }

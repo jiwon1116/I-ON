@@ -112,12 +112,12 @@
 
                 <div class="form-group">
                     <label for="title">제목</label>
-                    <input type="text" id="title" name="title" required />
+                    <input type="text" id="title" name="title" value="${findDto.title}" required />
                 </div>
 
                 <div class="form-group">
                     <label for="content">내용</label>
-                    <textarea id="content" name="content" required></textarea>
+                    <textarea id="content" name="content" required>${findDto.content}</textarea>
                 </div>
 
                 <div class="form-group">
@@ -126,7 +126,7 @@
                 </div>
                 <input type="hidden" name="id" value="${findDto.id}" readonly/>
                 <div class="form-actions">
-                    <button type="submit" >수정완료</button>
+                    <button  onclick="updatefinish()" >수정</button>
                 </div>
             </form>
         </div>
@@ -135,8 +135,10 @@
 </body>
 
 <script>
-const update = () => {
-
+const updatefinish = () => {
+if(confirm("정말 수정하시겠습니까?")){
+            document.updateForm.submit();
+             }
 }
 </script>
 

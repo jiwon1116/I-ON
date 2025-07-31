@@ -28,4 +28,14 @@ public class Info_contentService {
     public Info_contentDTO findContext(long id) {
      return infoContentRepository.findContext(id);
     }
+
+    //게시물 수정
+    public boolean update(Info_contentDTO infoContentDTO) {
+        int num = infoContentRepository.update(infoContentDTO);
+        if (num>0){
+            return true;
+        }else {
+            return false;
+        }
+    }
 }

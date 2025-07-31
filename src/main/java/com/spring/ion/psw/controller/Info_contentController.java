@@ -18,6 +18,14 @@ import java.util.List;
 public class Info_contentController {
     private final Info_contentService infoContentService;
 
+    //게시판 홈으로 이동
+   @GetMapping("/infoboard")
+   public String infobaord(Model model){
+       List<Info_contentDTO> contentList = infoContentService.AllfindList();
+       model.addAttribute("contentList", contentList);
+       return "psw/info";
+   }
+
     // 글 작성 페이지 이동
     @GetMapping("/save")
     public String writeForm(){
@@ -41,16 +49,37 @@ public class Info_contentController {
     // 글 상세보기 페이지 지동
     @GetMapping("/detail/{id}")
     public String detailForm (@PathVariable("id") long id, Model model){
-        System.out.println("detail id:"+id);
         Info_contentDTO findDto = infoContentService.findContext(id); // 게시글
         model.addAttribute("findDto", findDto);
         return "psw/detail";
     }
 
     // 수정페이지로 이동
-    @PostMapping("/update")
-    public String updateForm (){
-
+    @PostMapping("/detail")
+    public String updateForm (@ModelAttribute Info_contentDTO infoContentDTO, Model model){
+        Info_contentDTO findDto = infoContentService.findContext(infoContentDTO.getId());
+        model.addAttribute("findDto", findDto);
         return "psw/update";
     }
+
+    //수정 처리 후 게시판 페이지 이동
+    @PostMapping("/update")
+    public String update (@ModelAttribute Info_contentDTO infoContentDTO, Model model){
+        boolean result = infoContentService.update(infoContentDTO);
+
+        if (result) {
+            List<Info_contentDTO> contentList = infoContentService.AllfindList();
+            model.addAttribute("contentList", contentList);
+            return "psw/info";
+        } else {
+            return "update";
+        }
+    }
+    @GetMapping("/delete")
+    public String delete(@RequestParam("id") long id, Model model) {
+        List<Info_contentDTO> contentList = infoContentService.AllfindList();
+        model.addAttribute("contentList", contentList);
+        return "psw/info";
+    }
+
 }

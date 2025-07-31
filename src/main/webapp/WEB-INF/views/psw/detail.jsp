@@ -108,6 +108,7 @@
     <main class="content">
         <div class="form-container">
             <h2>정보 공유 글쓰기</h2>
+             <form action="/info/detail" method="post" name="updateForm">
                 <div class="form-group">
                     <input type="text" id="title" name="title" readonly value="${findDto.title}" />
                 </div>
@@ -122,9 +123,10 @@
                 <input type="hidden" name="id" value="${findDto.id}" readonly/>
                 <div class="form-actions">
                     <button type="button" onclick="updatefn()">수정</button>
-                     <button type="button" onclick="updatefn()">목록</button>
+                     <button type="button" onclick="deletefn()">삭제</button>
+                     <button type="button" onclick="infoForm()">목록</button>
                 </div>
-
+             </form>
         </div>
     </main>
 </div>
@@ -133,8 +135,21 @@
 <script>
 const updatefn = () => {
     alert ("관리자만 수정이 가능합니다😣");
-
+     document.updateForm.submit();
 }
-</script>
+const infoForm = () => {
+    location.href = "/info/infoboard";
+}
 
+const deletefn = () => {
+  const id = ${findDto.id};
+  const confirmed = confirm("정말 삭제하시겠습니까?")
+              if(confirmed){
+               location.href = "/info/delete?id=" + id;
+               }else{
+               return false;
+                }
+    }
+
+</script>
 </html>
