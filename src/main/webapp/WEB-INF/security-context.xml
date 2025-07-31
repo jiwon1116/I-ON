@@ -9,6 +9,18 @@
 
     <security:http>
         <security:form-login/>
+        <security:csrf disabled="true"/>
+        <security:intercept-url pattern="/**" access="permitAll"/>
+
     </security:http>
-    <security:authentication-manager alias="admin"/>
+
+    <security:authentication-manager>
+           <security:authentication-provider>
+               <security:user-service>
+                   <security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
+               </security:user-service>
+
+           </security:authentication-provider>
+
+    </security:authentication-manager>
 </beans>
