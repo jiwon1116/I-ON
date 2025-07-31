@@ -4,9 +4,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>index</title>
+    <title>실종 게시판</title>
 </head>
 <body>
-    <h2>entrust</h2>
+    <h2>miss</h2>
 </body>
 </html>

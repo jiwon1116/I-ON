@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>index</title>
+    <title>🎈자유 게시판</title>
 </head>
 <body>
     <h2>free</h2>
