@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 // 관리자만 작성 가능
 @Data
-public class Info_contenttDTO {
+public class Info_contentDTO {
     private long id; //게시물 아이디
     private String title; // 게시물 제목
     private String content; // 게시물 내용
