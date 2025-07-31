@@ -69,33 +69,27 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4>커뮤니티</h4>
         <div class="d-flex gap-2">
-            <select class="form-select w-auto">
-                <option selected>Title</option>
-                <option>작성자</option>
-                <option>날짜순</option>
-            </select>
-            <a href="${pageContext.request.contextPath}/flag/write" class="btn btn-primary">
+            <a href="${pageContext.request.contextPath}/flag/save" class="btn btn-primary">
                 ✏ 글쓰기
             </a>
         </div>
     </div>
 
-
     <!-- 게시글 카드 반복 -->
     <c:forEach var="post" items="${postList}">
         <div class="card p-3">
             <blockquote class="blockquote mb-2">
-                <p>"${post.quote}"</p>
+                <p>"${post.content}"</p> <!-- ✅ 내용 출력 -->
             </blockquote>
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <img src="${}" alt="프로필" class="me-2">
+                    <img src="${pageContext.request.contextPath}/resources/img/default-profile.png" alt="기본프로필" class="me-2">
                     <div>
-                        <div>${post.title}</div>
-                        <small class="text-muted">${post.description}</small>
+                        <div>${post.title}</div> <!-- ✅ 제목 출력 -->
+                        <small class="text-muted">조회수: ${post.viewCount}, 좋아요: ${post.likeCount}</small>
                     </div>
                 </div>
-                <a href="${pageContext.request.contextPath}/post/${post.id}" class="btn btn-dark btn-sm">Register</a>
+                <a href="${pageContext.request.contextPath}/flag/${post.id}" class="btn btn-dark btn-sm">상세보기</a>
             </div>
         </div>
     </c:forEach>

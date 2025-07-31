@@ -19,10 +19,6 @@ public class HomeController {
         return "entrust";
     }
 
-    @GetMapping("/flag")
-    public String flag(){
-        return "flag";
-    }
 
     @GetMapping("/free")
     public String free(){

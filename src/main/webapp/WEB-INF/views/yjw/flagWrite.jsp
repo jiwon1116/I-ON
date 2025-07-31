@@ -5,113 +5,54 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>커뮤니티</title>
-
-    <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <title>글쓰기 - 커뮤니티</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background-color: #343a40;
-            position: fixed;
-            padding-top: 40px;
-            color: #fff;
+        body {
+            background-color: #f8f9fa;
+            padding: 50px 20px;
+            font-family: 'Segoe UI', sans-serif;
         }
-
-        .sidebar a {
-            color: #ddd;
-            display: block;
-            padding: 15px 20px;
-            text-decoration: none;
-        }
-
-        .sidebar a:hover {
-            background-color: #495057;
-        }
-
-        .main-content {
-            margin-left: 220px;
-            padding: 40px;
-        }
-
-        .card {
+        .write-card {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
             border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .card img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .pagination {
-            justify-content: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            padding: 40px;
         }
     </style>
 </head>
 <body>
 
-<!-- 왼쪽 사이드바 -->
-<div class="sidebar">
-    <a href="#"> 마이페이지</a>
-    <a href="#"> 범죄 예방 지도</a>
-    <a href="#"> 커뮤니티</a>
-    <a href="#"> 제보 및 신고</a>
-    <a href="#"> 정보 공유</a>
-</div>
+<div class="write-card">
+    <h4 class="mb-4 fw-bold text-primary">제보 및 신고 글 작성</h4>
 
-<!-- 메인 콘텐츠 -->
-<div class="main-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4>커뮤니티</h4>
-        <div class="d-flex gap-2">
-            <select class="form-select w-auto">
-                <option selected>Title</option>
-                <option>작성자</option>
-                <option>날짜순</option>
-            </select>
-            <a href="${pageContext.request.contextPath}/flag/write" class="btn btn-primary">
-                ✏ 글쓰기
-            </a>
+    <form action="${pageContext.request.contextPath}/flag/save" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" class="form-control" id="title" name="title" required>
         </div>
-    </div>
 
-
-    <!-- 게시글 카드 반복 -->
-    <c:forEach var="post" items="${postList}">
-        <div class="card p-3">
-            <blockquote class="blockquote mb-2">
-                <p>"${post.quote}"</p>
-            </blockquote>
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center">
-                    <img src="${post.profileImage}" alt="프로필" class="me-2">
-                    <div>
-                        <div>${post.title}</div>
-                        <small class="text-muted">${post.description}</small>
-                    </div>
-                </div>
-                <a href="${pageContext.request.contextPath}/post/${post.id}" class="btn btn-dark btn-sm">Register</a>
-            </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" id="content" name="content" rows="6" required></textarea>
         </div>
-    </c:forEach>
 
-    <!-- 페이지네이션 -->
-    <nav aria-label="Page navigation">
-        <ul class="pagination mt-4">
-            <li class="page-item disabled"><a class="page-link">← Previous</a></li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
-            <li class="page-item"><a class="page-link" href="#">68</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next →</a></li>
-        </ul>
-    </nav>
+        <!-- 파일 업로드 -->
+        <div class="mb-3">
+            <label for="boardFile" class="form-label">파일 첨부 (선택)</label>
+            <input type="file" class="form-control" id="boardFile" name="boardFile">
+        </div>
+
+        <!-- 닉네임 (임시) -->
+        <input type="hidden" name="nickname" value="익명">
+
+        <div class="d-flex justify-content-between">
+            <a href="${pageContext.request.contextPath}/flag" class="btn btn-outline-secondary">← 목록</a>
+            <button type="submit" class="btn btn-primary">접수하기</button>
+        </div>
+    </form>
 </div>
 
 </body>
