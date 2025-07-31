@@ -14,7 +14,7 @@ public class Info_contentController {
 
     @GetMapping("/write")
     public String writeForm(){
-        return "write"
+        return "write";
     }
 
 
