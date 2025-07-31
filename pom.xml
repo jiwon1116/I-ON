@@ -6,7 +6,7 @@
     <!--  Maven 프로젝트 생성 시 기본 정보  -->
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.example</groupId>  <!-- 회사나 프로젝트 도메인을 반대로 작성 -->
-    <artifactId>springframework_setting11</artifactId>  <!-- 프로젝트 이름 -->
+    <artifactId>ion</artifactId>  <!-- 프로젝트 이름 -->
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>   <!-- 현재 우리 프로젝트가 1.0버전 -->
     <name>springframework_setting11 Maven Webapp</name>
@@ -173,7 +173,36 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>5.3.2.RELEASE</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>5.3.2.RELEASE</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>5.3.2.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>5.3.2.RELEASE</version>
+        </dependency>
     </dependencies>
+
+
 
     <!-- 빌드 관련 설정  -->
     <build>

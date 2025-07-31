@@ -10,4 +10,31 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 
+    <!-- 데이터베이스 이름 및 계정 설정 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!-- mySQL 드라이버 클래스명 -->
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <!-- 접속할 DB url (포트, DB명, 지역과 시간대)-->
+        <property name="url" value="jdbc:mysql://localhost:3306/ion_db?useSSL=false&amp;serverTimezone=Asia/Seoul"/>
+        <!-- DB 접속 계정 정보 -->
+        <property name="username" value="root"/>
+        <property name="password" value="0000"/>
+    </bean>
+
+    <!-- MyBatis 설정 : sqlSessionFactory -->
+    <!-- 파일이 모두 생성되었는지 확인 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 위에서 작성한 dataSourcer 객체를 sqlSessionFactory에 주입-->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- mybatis 설정 파일 위치 -->
+        <property name="configLocation" value ="classpath:/mybatis-config.xml" />
+        <!-- Mapper xml 파일 경로 지정 -->
+        <property name="mapperLocations" value="classpath:/mapper/*.xml" />
+    </bean>
+
+    <!-- sqlSessionFactory에서 연결 객체 생성 -->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+    </bean>
+
 </beans>

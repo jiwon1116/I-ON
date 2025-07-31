@@ -6,7 +6,6 @@
 <configuration>
     <typeAliases>
         <!-- 별명 짓는 설정자 -->
-        <typeAlias type="com.spring.board.dto.BoardDTO" alias="board"></typeAlias>
-        <typeAlias type="com.spring.board.dto.CommentDTO" alias="comment"></typeAlias>
+
     </typeAliases>
 </configuration>
