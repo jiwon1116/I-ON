@@ -7,6 +7,6 @@
     <title>index</title>
 </head>
 <body>
-    <h2>Hello Spring Framework</h2>
+    <h2>entrust</h2>
 </body>
 </html>

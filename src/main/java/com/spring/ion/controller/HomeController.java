@@ -9,4 +9,44 @@ public class HomeController {
     public String index(){
         return "index";
     }
+    @GetMapping("/chat")
+    public String chat(){
+        return "chat";
+    }
+
+    @GetMapping("/entrust")
+    public String entrust(){
+        return "entrust";
+    }
+
+    @GetMapping("/flag")
+    public String flag(){
+        return "flag";
+    }
+
+    @GetMapping("/free")
+    public String free(){
+        return "free";
+    }
+
+    @GetMapping("/info")
+    public String info(){
+        return "info";
+    }
+
+    @GetMapping("/map")
+    public String map(){
+        return "map";
+    }
+
+    @GetMapping("/miss")
+    public String miss(){
+        return "miss";
+    }
+
+    @GetMapping("/mypage")
+    public String mypage(){
+        return "mypage";
+    }
+
 }
