@@ -13,4 +13,9 @@
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissDTO" alias="miss"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissCommentDTO" alias="missComment"></typeAlias>
     </typeAliases>
+
+    <mappers>
+        <mapper resource="mapper/jjh/freeMapper.xml"/>
+        <!-- 다른 매퍼도 필요하면 여기에 추가 -->
+    </mappers>
 </configuration>

@@ -24,10 +24,7 @@ public class HomeController {
         return "flag";
     }
 
-    @GetMapping("/free")
-    public String free(){
-        return "free";
-    }
+
 
     @GetMapping("/info")
     public String info(){
