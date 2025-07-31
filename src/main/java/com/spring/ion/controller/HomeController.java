@@ -20,10 +20,7 @@ public class HomeController {
     }
 
 
-    @GetMapping("/free")
-    public String free(){
-        return "free";
-    }
+
 
     @GetMapping("/info")
     public String info(){

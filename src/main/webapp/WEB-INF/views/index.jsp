@@ -8,5 +8,6 @@
 </head>
 <body>
     <h2>Hello Spring Framework</h2>
+    <a href="/free">자유</a>
 </body>
 </html>
