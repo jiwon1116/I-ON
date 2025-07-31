@@ -8,5 +8,13 @@
         SELECT * FROM info_content ORDER BY id DESC
     </select>
 
+    <insert id="save"  parameterType="infoContent">
+        INSERT INTO info_content (title, content)
+        VALUES (#{title}, #{content})
+    </insert>
+
+    <select id="find" parameterType="infoContent" resultType="infoContent">
+        SELECT * FROM info_content WHERE id = #{id}
+    </select>
 
 </mapper>
