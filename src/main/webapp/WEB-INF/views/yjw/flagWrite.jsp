@@ -28,6 +28,13 @@
     <h4 class="mb-4 fw-bold text-primary">제보 및 신고 글 작성</h4>
 
     <form action="${pageContext.request.contextPath}/flag/write" method="post" enctype="multipart/form-data">
+
+        <!-- 닉네임은 세션에서 가져와서 hidden으로 전송 -->
+        <div class="mb-3">
+            <label for="nickname" class="form-label">닉네임</label>
+            <input type="text" class="form-control" id="nickname" name="nickname" required>
+        </div>
+
         <div class="mb-3">
             <label for="title" class="form-label">제목</label>
             <input type="text" class="form-control" id="title" name="title" required>
@@ -38,14 +45,10 @@
             <textarea class="form-control" id="content" name="content" rows="6" required></textarea>
         </div>
 
-        <!-- 파일 업로드 -->
         <div class="mb-3">
             <label for="boardFile" class="form-label">파일 첨부 (선택)</label>
             <input type="file" class="form-control" id="boardFile" name="boardFile">
         </div>
-
-        <!-- 닉네임 (임시) -->
-        <input type="hidden" name="nickname" value="익명">
 
         <div class="d-flex justify-content-between">
             <a href="${pageContext.request.contextPath}/flag" class="btn btn-outline-secondary">← 목록</a>

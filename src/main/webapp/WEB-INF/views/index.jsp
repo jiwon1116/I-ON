@@ -9,5 +9,6 @@
 <body>
     <h2>Hello Spring Framework</h2>
     <a href="/free">자유</a>
+    <a href="/flag">flag</a>
 </body>
 </html>
