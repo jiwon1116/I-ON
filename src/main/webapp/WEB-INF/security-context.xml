@@ -8,12 +8,12 @@
         https://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <security:http>
-        <!--        <security:intercept-url pattern="/free" access="hasAnyRole('ROLE_MEMBER', 'ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>-->
-        <!--        <security:intercept-url pattern="/map" access="hasAnyRole('ROLE_MEMBER', 'ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>-->
-        <!--        <security:intercept-url pattern="/info" access="hasAnyRole('ROLE_MEMBER', 'ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>-->
-        <!--        <security:intercept-url pattern="/flag" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>-->
-        <!--        <security:intercept-url pattern="/entrust" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>-->
-        <!--        <security:intercept-url pattern="/miss" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>-->
+                <security:intercept-url pattern="/free" access="hasAnyRole('ROLE_MEMBER', 'ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
+                <security:intercept-url pattern="/map" access="hasAnyRole('ROLE_MEMBER', 'ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
+                <security:intercept-url pattern="/info" access="hasAnyRole('ROLE_MEMBER', 'ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
+                <security:intercept-url pattern="/flag" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
+                <security:intercept-url pattern="/entrust" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
+                <security:intercept-url pattern="/miss" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
         <security:form-login/>
         <security:csrf disabled="true"/>
 
