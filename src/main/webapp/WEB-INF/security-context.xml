@@ -37,12 +37,15 @@
     </security:http>
 
     <security:authentication-manager>
+
         <security:authentication-provider>
+
             <security:password-encoder ref="passwordEncoder"/>
             <security:jdbc-user-service data-source-ref="dataSource"
                                         users-by-username-query="select userId as username, password, enabled from member where userId = ?"
                                         authorities-by-username-query="select userId as username, authority from member_authority where userId = ?"
             />
         </security:authentication-provider>
+
     </security:authentication-manager>
 </beans>
