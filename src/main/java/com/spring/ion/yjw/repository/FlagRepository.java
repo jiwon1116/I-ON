@@ -1,6 +1,6 @@
 package com.spring.ion.yjw.repository;
 
-import com.spring.ion.yjw.dto.FlagDTO;
+import com.spring.ion.yjw.dto.FlagPostDTO;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -13,12 +13,8 @@ public class FlagRepository {
     private final SqlSessionTemplate sql;
 
 
-    public List<FlagDTO> findAll() {
-        return sql.selectList("Flag.findAll");
-    }
 
-
-    public int save(FlagDTO flagDTO) {
-        return sql.insert("Flag.save", flagDTO);
+    public int write(FlagPostDTO flag_postDTO) {
+        return sql.insert("Flag.write", flag_postDTO);
     }
 }

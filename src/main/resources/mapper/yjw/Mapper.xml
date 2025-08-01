@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="Flag">
-    <insert id="save" parameterType="com.spring.ion.yjw.dto.FlagDTO">
-        INSERT INTO flag_post (member_id, nickname, title, content, like_count, view_count, created_at)
-        VALUES (#{memberId}, #{nickname}, #{title}, #{content}, 0, 0, NOW())
+
+
+    <insert id="write" parameterType="FlagPost">
+        INSERT INTO flag_post (title, content)
+        VALUES (#{title}, #{content})
     </insert>
 
-    <select id="findAll" resultType="com.spring.ion.yjw.dto.FlagDTO">
-        SELECT * FROM flag_post ORDER BY created_at DESC
-    </select>
 </mapper>

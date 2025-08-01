@@ -28,7 +28,7 @@
 <div class="write-card">
     <h4 class="mb-4 fw-bold text-primary">제보 및 신고 글 작성</h4>
 
-    <form action="${pageContext.request.contextPath}/flag/save" method="post" enctype="multipart/form-data">
+    <form action="${pageContext.request.contextPath}/flag/write" method="post" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="title" class="form-label">제목</label>
             <input type="text" class="form-control" id="title" name="title" required>

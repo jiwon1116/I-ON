@@ -1,6 +1,6 @@
 package com.spring.ion.yjw.service;
 
-import com.spring.ion.yjw.dto.FlagDTO;
+import com.spring.ion.yjw.dto.FlagPostDTO;
 import com.spring.ion.yjw.repository.FlagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,11 +13,9 @@ public class FlagService {
     private final FlagRepository flagRepository;
 
 
-    public List<FlagDTO> findAll() {
-        return flagRepository.findAll();
-    }
 
-    public int save(FlagDTO flagDTO) {
-        return flagRepository.save(flagDTO);
+    public int write(FlagPostDTO flag_postDTO) {
+        return flagRepository.write(flag_postDTO);
     }
 }
+

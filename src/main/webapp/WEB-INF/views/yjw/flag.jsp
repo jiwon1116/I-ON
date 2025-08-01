@@ -69,8 +69,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4>커뮤니티</h4>
         <div class="d-flex gap-2">
-            <a href="${pageContext.request.contextPath}/flag/save" class="btn btn-primary">
-                ✏ 글쓰기
+            <a href="${pageContext.request.contextPath}/flag/write" class="btn btn-primary">✏ 글쓰기</a>
             </a>
         </div>
     </div>
