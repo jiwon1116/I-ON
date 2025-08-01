@@ -1,3 +1,4 @@
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -13,7 +14,6 @@
             font-family: 'Segoe UI', sans-serif;
             background-color: #f8f9fa;
         }
-
         .sidebar {
             width: 220px;
             height: 100vh;
@@ -22,7 +22,6 @@
             padding-top: 40px;
             color: #fff;
         }
-
         .sidebar a {
             color: #fff;
             display: block;
@@ -30,21 +29,17 @@
             text-decoration: none;
             font-weight: bold;
         }
-
         .sidebar a:hover {
             background-color: rgba(255,255,255,0.2);
         }
-
         .main-content {
             margin-left: 220px;
             padding: 40px;
         }
-
         .card-link {
             text-decoration: none;
             color: inherit;
         }
-
         .card {
             border-radius: 10px;
             padding: 20px;
@@ -53,72 +48,68 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             transition: box-shadow 0.2s ease, background-color 0.2s ease;
         }
-
         .card:hover {
             background-color: #f1f1f1;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             cursor: pointer;
         }
-
         .card img {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             margin-right: 10px;
         }
-
         .search-bar {
             max-width: 300px;
         }
-
         .quote {
             font-style: italic;
         }
 
-       /* 모던 페이지네이션 스타일 */
-                .pagination {
-                        display: flex;
-                        justify-content: center;
-                        list-style: none;
-                        padding: 0;
-                        gap: 4px;
-                    }
+        /* 모던 페이지네이션 스타일 */
+         .pagination {
+                 display: flex;
+                 justify-content: center;
+                 list-style: none;
+                 padding: 0;
+                 gap: 4px;
+             }
 
-                    .pagination .page-item {
-                        display: inline-block;
-                    }
+             .pagination .page-item {
+                 display: inline-block;
+             }
 
-                    .pagination .page-link {
-                        display: block;
-                        padding: 6px 12px;
-                        border-radius: 6px;
-                        background-color: transparent;
-                        color: #333;
-                        text-decoration: none;
-                        border: none;
-                        font-weight: 500;
-                        transition: background-color 0.2s ease;
-                    }
+             .pagination .page-link {
+                 display: block;
+                 padding: 6px 12px;
+                 border-radius: 6px;
+                 background-color: transparent;
+                 color: #333;
+                 text-decoration: none;
+                 border: none;
+                 font-weight: 500;
+                 transition: background-color 0.2s ease;
+             }
 
-                    .pagination .page-link:hover {
-                        background-color: #e0e0e0;
-                    }
+             .pagination .page-link:hover {
+                 background-color: #e0e0e0;
+             }
 
-                    .pagination .page-item.active .page-link {
-                        background-color: #212121;
-                        color: #fff;
-                        pointer-events: none;
-                    }
+             .pagination .page-item.active .page-link {
+                 background-color: #212121;
+                 color: #fff;
+                 pointer-events: none;
+             }
 
-                    .pagination .page-item.disabled .page-link {
-                        color: #aaa;
-                        pointer-events: none;
-                    }
+             .pagination .page-item.disabled .page-link {
+                 color: #aaa;
+                 pointer-events: none;
+             }
 
-                    .pagination .ellipsis {
-                        padding: 6px 12px;
-                        color: #999;
-                    }
+             .pagination .ellipsis {
+                 padding: 6px 12px;
+                 color: #999;
+             }
     </style>
 </head>
 <body>
@@ -158,6 +149,7 @@
                         <div class="ms-2">
                             <div class="fw-semibold">${post.title}</div>
                             <div class="text-muted" style="font-size: 0.9rem;">
+                                작성일: ${post.formattedCreatedAt} |
                                 조회수: ${post.view_count}, 좋아요: ${post.like_count}
                             </div>
                         </div>
@@ -168,48 +160,37 @@
         </a>
     </c:forEach>
 
-    <!-- 동적 페이지네이션 -->
+    <!-- 페이지네이션 -->
     <nav aria-label="Page navigation">
-        <ul class="pagination mt-4 justify-content-center">
-
-            <!-- 이전 버튼 -->
+        <ul class="pagination mt-4">
             <c:choose>
                 <c:when test="${paging.page <= 1}">
                     <li class="page-item disabled"><a class="page-link">← Previous</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}/flag/paging?page=${paging.page - 1}">← Previous</a>
-                    </li>
+                    <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/flag/paging?page=${paging.page - 1}">← Previous</a></li>
                 </c:otherwise>
             </c:choose>
 
-            <!-- 페이지 숫자 반복 -->
-            <c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="i">
+            <c:forEach var="i" begin="${paging.startPage}" end="${paging.endPage}">
                 <c:choose>
                     <c:when test="${i eq paging.page}">
                         <li class="page-item active"><a class="page-link" href="#">${i}</a></li>
                     </c:when>
                     <c:otherwise>
-                        <li class="page-item">
-                            <a class="page-link" href="${pageContext.request.contextPath}/flag/paging?page=${i}">${i}</a>
-                        </li>
+                        <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/flag/paging?page=${i}">${i}</a></li>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
 
-            <!-- 다음 버튼 -->
             <c:choose>
                 <c:when test="${paging.page >= paging.maxPage}">
                     <li class="page-item disabled"><a class="page-link">Next →</a></li>
                 </c:when>
                 <c:otherwise>
-                    <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}/flag/paging?page=${paging.page + 1}">Next →</a>
-                    </li>
+                    <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/flag/paging?page=${paging.page + 1}">Next →</a></li>
                 </c:otherwise>
             </c:choose>
-
         </ul>
     </nav>
 </div>

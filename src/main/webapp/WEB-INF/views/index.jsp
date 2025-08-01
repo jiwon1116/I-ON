@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,5 +9,21 @@
 <body>
     <h2>Hello Spring Framework</h2>
     <a href="/free">자유</a>
+
+
+    <security:authorize access="isAnonymous()">
+        <a href="/login">로그인</a>
+    </security:authorize>
+
+    <security:authorize access="isAuthenticated()">
+        <form action="/logout" method="post" style="display:inline;">
+            <input type="submit" value="로그아웃"/>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </security:authorize>
+
+
+    <a href="/flag">flag</a>
+
 </body>
 </html>

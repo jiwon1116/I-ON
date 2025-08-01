@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Register">
+
+    <insert id="insertMember" parameterType="com.spring.ion.lcw.dto.MemberDTO">
+        INSERT INTO member (
+        userId, password, nickname, gender, region, enabled, created_at
+        ) VALUES (
+        #{userId}, #{password}, #{nickname}, #{gender}, #{region}, #{enabled}, NOW()
+        )
+    </insert>
+
+    <insert id="insertMemberAuthority" parameterType="com.spring.ion.lcw.dto.MemberDTO">
+        INSERT INTO member_authority (
+        userId, authority
+        ) VALUES (
+        #{userId}, 'ROLE_MEMBER'
+        )
+    </insert>
+
+</mapper>
