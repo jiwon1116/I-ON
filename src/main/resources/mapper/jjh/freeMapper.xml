@@ -3,11 +3,42 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="Free">
-<!--    <select id="allFreeList" resultType="free">-->
-<!--        SELECT * FROM free ORDER BY id DESC-->
-<!--    </select>-->
+    <select id="allFreeList" resultType="free">
+        SELECT * FROM free_post ORDER BY id DESC
+    </select>
+
     <insert id="write" parameterType="free">
         INSERT INTO free_post (title, nickname, content)
         VALUES (#{title}, #{nickname}, #{content});
     </insert>
+
+    <select id="findById" parameterType="long" resultType="free">
+        SELECT * FROM free_post WHERE id = #{id}
+    </select>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM free_post WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="free">
+        UPDATE free_post SET title = #{title}, content = #{content} WHERE id = #{id}
+    </update>
+
+    <select id="pagingList" parameterType="java.util.HashMap" resultType="free">
+        SELECT * FROM free_post ORDER BY id DESC LIMIT #{start}, #{limit}
+    </select>
+
+    <select id="boardCount" resultType="int">
+        SELECT COUNT(id) FROM free_post
+    </select>
+
+    <update id="updateViewCount" keyProperty="int">
+        UPDATE free_post SET view_count = view_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateLikeCount" keyProperty="int">
+        UPDATE free_post SET like_count = like_count + 1
+        WHERE id = #{id}
+    </update>
 </mapper>

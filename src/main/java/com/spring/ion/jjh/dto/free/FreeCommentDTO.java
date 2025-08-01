@@ -2,7 +2,7 @@ package com.spring.ion.jjh.dto.free;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 public class FreeCommentDTO {
@@ -10,5 +10,5 @@ public class FreeCommentDTO {
     private long post_id;
     private String nickname;
     private String content;
-    private LocalDateTime created_at;
+    private Date created_at;
 }

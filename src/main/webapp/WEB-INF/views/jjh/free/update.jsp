@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>🎈자유 게시판</title>
+
 </head>
 <body>
     <div class="sidebar">
@@ -18,12 +19,13 @@
         </ul>
     </div>
 
-    <h2>글 작성하기</h2>
-    <form action="/free/write" method="post">
-      <input type="text" name="title" placeholder="제목" required/><br>
-      <input type="text" name="nickname" placeholder="작성자" required/><br>
-      <textarea name="content" cols="30" rows="10" placeholder="내용 입력" required></textarea><br>
-      <input type="submit" value="작성 완료" />
+    <form action="/free/update" method="post">
+      <input type="hidden" name="id" value="${free.id}" />
+      제목 : <input type="text" name="title" value="${free.title}" /><br>
+      작성자 : <input type="text" name="nickname" value="${free.nickname}" readonly /><br>
+      내용 : <textarea name="content" cols="30" rows="10">${free.content}</textarea><br>
+            <input type="submit" value="수정 완료" />
     </form>
 </body>
+
 </html>
