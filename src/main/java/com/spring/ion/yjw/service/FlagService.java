@@ -17,5 +17,9 @@ public class FlagService {
     public int write(FlagPostDTO flag_postDTO) {
         return flagRepository.write(flag_postDTO);
     }
+
+    public List<FlagPostDTO> findAll() {
+        return flagRepository.findAll();
+    }
 }
 

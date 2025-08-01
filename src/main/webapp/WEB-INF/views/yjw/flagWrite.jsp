@@ -11,7 +11,6 @@
         body {
             background-color: #f8f9fa;
             padding: 50px 20px;
-            font-family: 'Segoe UI', sans-serif;
         }
         .write-card {
             max-width: 800px;

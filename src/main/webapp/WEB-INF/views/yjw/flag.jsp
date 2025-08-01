@@ -6,30 +6,34 @@
 <head>
     <meta charset="UTF-8">
     <title>커뮤니티</title>
-
-    <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+        }
+
         .sidebar {
             width: 220px;
             height: 100vh;
-            background-color: #343a40;
+            background-color: #f6a623;
             position: fixed;
             padding-top: 40px;
             color: #fff;
         }
 
         .sidebar a {
-            color: #ddd;
+            color: #fff;
             display: block;
-            padding: 15px 20px;
+            padding: 15px 30px;
             text-decoration: none;
+            font-weight: bold;
         }
 
         .sidebar a:hover {
-            background-color: #495057;
+            background-color: rgba(255,255,255,0.2);
         }
 
         .main-content {
@@ -37,15 +41,39 @@
             padding: 40px;
         }
 
+        .card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
         .card {
             border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
             margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            transition: box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .card:hover {
+            background-color: #f1f1f1;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
 
         .card img {
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .search-bar {
+            max-width: 300px;
+        }
+
+        .quote {
+            font-style: italic;
         }
 
         .pagination {
@@ -55,42 +83,49 @@
 </head>
 <body>
 
-<!-- 왼쪽 사이드바 -->
+<!-- 사이드바 -->
 <div class="sidebar">
-    <a href="#"> 마이페이지</a>
-    <a href="#"> 범죄 예방 지도</a>
-    <a href="#"> 커뮤니티</a>
-    <a href="#"> 제보 및 신고</a>
-    <a href="#"> 정보 공유</a>
+    <div class="text-center mb-4">
+        <h4>logo</h4>
+    </div>
+    <a href="#">마이페이지</a>
+    <a href="#">범죄 예방 지도</a>
+    <a href="#">커뮤니티</a>
+    <a href="#">제보 및 신고</a>
+    <a href="#">정보 공유</a>
 </div>
 
 <!-- 메인 콘텐츠 -->
 <div class="main-content">
+
+    <!-- 상단 검색 & 글쓰기 -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4>커뮤니티</h4>
-        <div class="d-flex gap-2">
-            <a href="${pageContext.request.contextPath}/flag/write" class="btn btn-primary">✏ 글쓰기</a>
-            </a>
-        </div>
+        <form class="d-flex search-bar" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-dark" type="submit">🔍</button>
+        </form>
+        <a href="${pageContext.request.contextPath}/flag/write" class="btn btn-dark">✏ 글쓰기</a>
     </div>
 
     <!-- 게시글 카드 반복 -->
     <c:forEach var="post" items="${postList}">
-        <div class="card p-3">
-            <blockquote class="blockquote mb-2">
-                <p>"${post.content}"</p> <!-- ✅ 내용 출력 -->
-            </blockquote>
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center">
-                    <img src="${pageContext.request.contextPath}/resources/img/default-profile.png" alt="기본프로필" class="me-2">
-                    <div>
-                        <div>${post.title}</div> <!-- ✅ 제목 출력 -->
-                        <small class="text-muted">조회수: ${post.viewCount}, 좋아요: ${post.likeCount}</small>
+        <a href="${pageContext.request.contextPath}/flag/${post.id}" class="card-link">
+            <div class="card">
+                <p class="quote">“${post.content}”</p>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <div class="d-flex align-items-center">
+                        <img src="${pageContext.request.contextPath}/resources/img/default-profile.png" alt="기본프로필">
+                        <div class="ms-2">
+                            <div class="fw-semibold">${post.title}</div>
+                            <div class="text-muted" style="font-size: 0.9rem;">
+                                조회수: ${post.view_count}, 좋아요: ${post.like_count}
+                            </div>
+                        </div>
                     </div>
+                    <span class="text-muted">▶</span>
                 </div>
-                <a href="${pageContext.request.contextPath}/flag/${post.id}" class="btn btn-dark btn-sm">상세보기</a>
             </div>
-        </div>
+        </a>
     </c:forEach>
 
     <!-- 페이지네이션 -->

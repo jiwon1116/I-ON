@@ -29,6 +29,7 @@
     <mappers>
         <mapper resource="mapper/jjh/freeMapper.xml"/>
         <mapper resource="mapper/psw/InfoMapper.xml"/>
+        <mapper resource="mapper/yjw/flagMapper.xml"/>
         <!-- 다른 매퍼도 필요하면 여기에 추가 -->
     </mappers>
 </configuration>

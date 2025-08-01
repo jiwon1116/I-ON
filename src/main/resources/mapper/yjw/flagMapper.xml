@@ -11,4 +11,8 @@
         VALUES (#{title}, #{content})
     </insert>
 
+    <select id="findAll" resultType="FlagPost">
+        SELECT * FROM flag_post ORDER BY id DESC
+    </select>
+
 </mapper>
