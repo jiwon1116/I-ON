@@ -11,9 +11,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Info_contentRepository {
 
-    private final SqlSessionTemplate sql;
-    // 모든 게시물 반환
-  /*  public static List<Info_contentDTO> AllfindList() {
+    public final SqlSessionTemplate sql;
 
-    }*/
+    public List<Info_contentDTO> AllfindList() {
+       return sql.selectList("Info.allInfoList");
+    }
+
+    //게시물 추가
+    public int save(Info_contentDTO infoContentDTO) {
+        return sql.insert("Info.save",infoContentDTO);
+    }
+
+
+    public Info_contentDTO findContext(long id) {
+        return sql.selectOne("Info.find",id);
+    }
+
+    //게시물 수정
+    public int update(Info_contentDTO infoContentDTO) {
+        return sql.update("Info.update",infoContentDTO);
+    }
 }

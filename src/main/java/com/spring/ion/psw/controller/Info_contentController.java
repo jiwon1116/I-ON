@@ -18,41 +18,68 @@ import java.util.List;
 public class Info_contentController {
     private final Info_contentService infoContentService;
 
-    // 게시물 뿌리는 리스트
-   /* private void loadInfoList(Model model) {
-        List<Info_contentDTO> contentList = infoContentService.AllfindList();
-        model.addAttribute("ContentList", contentList);
-    }*/
-
-
+    //게시판 홈으로 이동
+   @GetMapping("/infoboard")
+   public String infobaord(Model model){
+       List<Info_contentDTO> contentList = infoContentService.AllfindList();
+       model.addAttribute("contentList", contentList);
+       return "psw/info";
+   }
 
     // 글 작성 페이지 이동
     @GetMapping("/save")
     public String writeForm(){
-
         return "psw/write";
     }
 
 
-
     // 실제 글 DB 저장 후 게시물 페이지 이동
     @PostMapping("/save")
-    public String infoForm(Info_contentDTO infoContentDTO){
-        System.out.println("작성글:"+ infoContentDTO);
-   //     infoContentService.save(infoContentDTO);
-
-        
-      return "psw/info";
-
-
+    public String infoForm(Info_contentDTO infoContentDTO, Model model){
+        int saveResult = infoContentService.save(infoContentDTO);
+        if (saveResult > 0) {
+            List<Info_contentDTO> contentList = infoContentService.AllfindList();
+            model.addAttribute("contentList", contentList);
+            return "psw/info";
+        } else {
+            return "psw/write";
+        }
     }
-
 
     // 글 상세보기 페이지 지동
-    @GetMapping("/detail")
-    public String detailForm (){
-        return "detail";
+    @GetMapping("/detail/{id}")
+    public String detailForm (@PathVariable("id") long id, Model model){
+        Info_contentDTO findDto = infoContentService.findContext(id); // 게시글
+        model.addAttribute("findDto", findDto);
+        return "psw/detail";
     }
 
+    // 수정페이지로 이동
+    @PostMapping("/detail")
+    public String updateForm (@ModelAttribute Info_contentDTO infoContentDTO, Model model){
+        Info_contentDTO findDto = infoContentService.findContext(infoContentDTO.getId());
+        model.addAttribute("findDto", findDto);
+        return "psw/update";
+    }
+
+    //수정 처리 후 게시판 페이지 이동
+    @PostMapping("/update")
+    public String update (@ModelAttribute Info_contentDTO infoContentDTO, Model model){
+        boolean result = infoContentService.update(infoContentDTO);
+
+        if (result) {
+            List<Info_contentDTO> contentList = infoContentService.AllfindList();
+            model.addAttribute("contentList", contentList);
+            return "psw/info";
+        } else {
+            return "update";
+        }
+    }
+    @GetMapping("/delete")
+    public String delete(@RequestParam("id") long id, Model model) {
+        List<Info_contentDTO> contentList = infoContentService.AllfindList();
+        model.addAttribute("contentList", contentList);
+        return "psw/info";
+    }
 
 }

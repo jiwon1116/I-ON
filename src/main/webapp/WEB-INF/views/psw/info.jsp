@@ -124,11 +124,12 @@ body {
         </div>
         <!-- 게시글 이미지 반복 -->
         <div class="card-grid">
-            <c:forEach var="item" items="${preventList}">
+            <c:forEach var="content" items="${contentList}">
                 <div class="card">
-                    <img src="${item.imgUrl}" alt="${item.title}" />이미지
-                    <p>${item.title}</p>
-                    <strong>$0</strong>
+                   <div>이미지</div>
+                    <p>${content.title}</p>
+                    <a href="/info/detail/${content.id}">${content.content}</a>
+                    <strong></strong>
                 </div>
             </c:forEach>
         </div>
