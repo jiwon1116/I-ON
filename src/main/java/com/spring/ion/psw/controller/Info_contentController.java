@@ -1,8 +1,8 @@
 package com.spring.ion.psw.controller;
 
-import com.spring.ion.psw.dto.Info_FileDTO;
 import com.spring.ion.psw.dto.Info_commentDTO;
 import com.spring.ion.psw.dto.Info_contentDTO;
+import com.spring.ion.psw.service.Info_commentService;
 import com.spring.ion.psw.service.Info_contentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,44 +15,81 @@ import java.util.List;
 @Controller
 @RequestMapping("/info")
 @RequiredArgsConstructor
-public class Info_contentController {
+public class Info_contentController{
     private final Info_contentService infoContentService;
+    private final Info_commentService infoCommentService;
 
-    // 게시물 뿌리는 리스트
-   /* private void loadInfoList(Model model) {
+    //게시물 불러오는 리스트
+    private void addContentListl(Model model) {
         List<Info_contentDTO> contentList = infoContentService.AllfindList();
-        model.addAttribute("ContentList", contentList);
-    }*/
+        model.addAttribute("contentList", contentList);
+    }
+    @GetMapping
+    public String info(Model model){
+        addContentListl(model);
+        return "psw/info";
+    }
 
-
-
-    // 글 작성 페이지 이동
     @GetMapping("/save")
-    public String writeForm(){
-
+    public String writeForm() {
         return "psw/write";
     }
 
-
-
-    // 실제 글 DB 저장 후 게시물 페이지 이동
     @PostMapping("/save")
-    public String infoForm(Info_contentDTO infoContentDTO){
-        System.out.println("작성글:"+ infoContentDTO);
-   //     infoContentService.save(infoContentDTO);
+    public String infoForm(@ModelAttribute Info_contentDTO infoContentDTO,Model model) {
+        System.out.println("글작성내용:"+infoContentDTO);
+        int saveResult = infoContentService.save(infoContentDTO);
+        if (saveResult > 0) {
+            addContentListl(model);
+            return "psw/info";
+        } else {
+            return "psw/write";
+        }
+    }
 
-        
-      return "psw/info";
+    @GetMapping("/detail/{id}")
+    public String detailForm(@PathVariable("id") long id, Model model) {
+        infoContentService.updateHits(id);
+        Info_contentDTO findDto = infoContentService.findContext(id);
+        model.addAttribute("findDto", findDto);
+        List<Info_commentDTO> infoCommentList= infoCommentService.findAll(id);
+        model.addAttribute("commentList", infoCommentList);
+        return "psw/detail";
+    }
 
-
+    @PostMapping("/detail")
+    public String updateForm(@ModelAttribute Info_contentDTO infoContentDTO, Model model) {
+        Info_contentDTO findDto = infoContentService.findContext(infoContentDTO.getId());
+        model.addAttribute("findDto", findDto);
+        return "psw/update";
+    }
+    
+    // 좋아요수 증가
+    @GetMapping("/like")
+    public String likeUpdate(@RequestParam("id") long id, Model model) {
+        infoContentService.updateLike(id);
+        Info_contentDTO findDto = infoContentService.findContext(id);
+        model.addAttribute("findDto", findDto);
+        return "psw/detail";
     }
 
 
-    // 글 상세보기 페이지 지동
-    @GetMapping("/detail")
-    public String detailForm (){
-        return "detail";
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute Info_contentDTO infoContentDTO, Model model) {
+        boolean result = infoContentService.update(infoContentDTO);
+        if (result) {
+            addContentListl(model);
+            return "psw/info";
+        } else {
+            return "update";
+        }
     }
 
-
+    @GetMapping("/delete")
+    public String delete(@RequestParam("id") long id, Model model) {
+        infoContentService.delete(id);
+        addContentListl(model);
+        return "psw/info";
+    }
 }

@@ -6,141 +6,160 @@
 <head>
     <meta charset="UTF-8">
     <title>아동 범죄 예방 콘텐츠</title>
-   <style>
-body {
-    margin: 0;
-    font-family: sans-serif;
-}
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f5f5f5;
+        }
 
-.container {
-    display: flex;
-    height: 100vh;
-}
+        .container {
+            display: flex;
+            height: 100vh;
+        }
 
-.sidebar {
-    width: 220px;
-    background-color: #333;
-    color: white;
-    padding: 20px;
-}
+        /* 사이드바 */
+        .sidebar {
+            width: 240px;
+            background-color: #ffcc47; /* 이미지와 유사한 노랑 */
+            padding: 30px 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
 
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-}
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
 
-.sidebar li {
-    margin: 20px 0;
-    cursor: pointer;
-}
+        .sidebar li {
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-.content {
-    flex: 1;
-    padding: 30px;
-    background-color: #f8f8f8;
-}
+        .sidebar li:hover {
+            color: #000;
+            background-color: #ffeaa7;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
 
-.top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
+        /* 메인 콘텐츠 */
+        .content {
+            flex: 1;
+            padding: 40px 60px;
+            overflow-y: auto;
+        }
 
-.search-input {
-    width: 200px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
 
-.filter-buttons button {
-    margin-left: 10px;
-    padding: 7px 12px;
-    border: 1px solid #ccc;
-    background-color: white;
-    cursor: pointer;
-    border-radius: 4px;
-}
+        .search-input {
+            width: 280px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
 
-.filter-buttons .active {
-    background-color: #222;
-    color: white;
-}
+        .filter-buttons button {
+            padding: 12px 20px;
+            border: none;
+            background-color: #2d3436;
+            color: white;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-}
+        /* 카드 스타일 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 35px;
+        }
 
-.card {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-}
+        .card {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 20px;
+            transition: transform 0.2s ease;
+        }
 
-.card img {
-    width: 100%;
-    height: 180px;
-    background-color: #eee;
-    object-fit: cover;
-    border-radius: 6px;
-    margin-bottom: 10px;
-}
+        .card:hover {
+            transform: translateY(-6px);
+        }
 
-.card p {
-    margin: 0;
-    font-weight: 500;
-}
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
 
-   </style>
+        .card p {
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+        }
+
+        .card a {
+            font-size: 14px;
+            color: #666;
+            text-decoration: none;
+            display: block;
+        }
+
+        .card a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <!-- 사이드바 -->
     <aside class="sidebar">
         <ul>
-            <li><strong>마이페이지</strong></li>
-            <li>범죄 예방 지도</li>
-            <li>커뮤니티</li>
-            <li>제보 및 신고</li>
-            <li>정보 공유</li>
+            <li>📌 마이페이지</li>
+            <li>🗺️ 범죄 예방 지도</li>
+            <li>💬 커뮤니티</li>
+            <li>🚨 제보 및 신고</li>
+            <li>📚 정보 공유</li>
         </ul>
     </aside>
 
-    <!-- 메인 콘텐츠 -->
     <main class="content">
         <div class="top-bar">
-            <input type="text" placeholder="Search" class="search-input" />
+            <input type="text" class="search-input" placeholder="검색어를 입력하세요..."/>
             <div class="filter-buttons">
-                <button class="active" onclick="writeFn()" >글 작성하기</button>
-                <button>버튼1</button>
-                <button>버튼2</button>
-                <button>Rating</button>
+                <button onclick="writeFn()">글 작성하기</button>
             </div>
         </div>
-        <!-- 게시글 이미지 반복 -->
+
         <div class="card-grid">
-            <c:forEach var="item" items="${preventList}">
+            <c:forEach var="content" items="${contentList}">
                 <div class="card">
-                    <img src="${item.imgUrl}" alt="${item.title}" />이미지
-                    <p>${item.title}</p>
-                    <strong>$0</strong>
+                    <이미지>
+                    <p>${content.title}</p>
+                    <a href="/info/detail/${content.id}">${content.content}</a>
                 </div>
             </c:forEach>
         </div>
     </main>
 </div>
-  <!-- 아래 관리자, 회원 확인 후 처리 -->
-</body>
 
 <script>
-    const writeFn = () => {
+    function writeFn() {
         location.href = "/info/save";
     }
 </script>
-
+</body>
 </html>

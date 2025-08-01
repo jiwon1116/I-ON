@@ -3,10 +3,36 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="Info">
-
     <select id="allInfoList" resultType="infoContent">
         SELECT * FROM info_content ORDER BY id DESC
     </select>
 
+    <insert id="save"  parameterType="infoContent">
+        INSERT INTO info_content (title, content)
+        VALUES (#{title}, #{content})
+    </insert>
+
+    <select id="find" parameterType="infoContent" resultType="infoContent">
+        SELECT * FROM info_content WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="infoContent">
+        UPDATE info_content
+        SET title = #{title}, content = #{content}
+        WHERE id = #{id}
+    </update>
+    <delete id="delete" parameterType="long">
+        DELETE FROM info_content WHERE id = #{id}
+    </delete>
+
+    <update id="updateHits" keyProperty="long">
+        UPDATE info_content SET view_count = view_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateLike" keyProperty="long">
+        UPDATE info_content SET like_count = like_count + 1
+        WHERE id = #{id}
+    </update>
 
 </mapper>

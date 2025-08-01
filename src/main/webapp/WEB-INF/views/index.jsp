@@ -10,6 +10,7 @@
     <h2>Hello Spring Framework</h2>
     <a href="/free">자유</a>
 
+
     <security:authorize access="isAnonymous()">
         <a href="/login">로그인</a>
     </security:authorize>
@@ -20,6 +21,9 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>
     </security:authorize>
+
+
+    <a href="/flag">flag</a>
 
 </body>
 </html>

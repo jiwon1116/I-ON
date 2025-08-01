@@ -1,0 +1,36 @@
+ /* reset.css */
+
+*{
+margin:0;
+padding:0;
+box-sizing: border-box;
+}
+
+ol,ul,li{
+list-style: none;
+}
+
+a{
+text-decoration: none;
+color: inherit;
+}
+
+:root {
+  /* === 컬러 === */
+  --color-point: #F2AC28;
+
+  /* 텍스트 컬러 */
+  --text-main: #212121;     /* 기본 텍스트 */
+  --text-sub: #666666;      /* 서브 텍스트 */
+  --text-light: #999999;    /* 약한 텍스트 */
+  --text-white: #ffffff;    /* 흰색 텍스트 */
+  --text-point: var(--color-point); /* 강조 텍스트 */
+
+  /* === 폰트 사이즈 === */
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-md: 16px;
+  --font-lg: 18px;
+  --font-xl: 20px;
+  --font-title: 24px;
+}

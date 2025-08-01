@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Comment">
+
+    <insert id="write" parameterType="com.spring.ion.yjw.dto.FlagCommentDTO">
+        INSERT INTO flag_comment(post_id, nickname, content, created_at)
+        VALUES(#{post_id}, #{nickname}, #{content}, NOW())
+    </insert>
+
+
+
+    <select id="findAll" resultType="com.spring.ion.yjw.dto.FlagCommentDTO">
+        SELECT * FROM flag_comment ORDER BY id DESC
+    </select>
+
+</mapper>
