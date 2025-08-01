@@ -23,14 +23,17 @@
         <typeAlias type="com.spring.ion.yjw.dto.FlagFileDTO" alias="FlagFile"></typeAlias>
 
 
-
     </typeAliases>
 
     <mappers>
         <mapper resource="mapper/jjh/freeMapper.xml"/>
         <mapper resource="mapper/psw/InfoMapper.xml"/>
+
+        <mapper resource="mapper/psw/CommentMapper.xml"/>
+
         <mapper resource="mapper/yjw/flagMapper.xml"/>
         <mapper resource="mapper/yjw/flagCommentMapper.xml"/>
+
         <!-- 다른 매퍼도 필요하면 여기에 추가 -->
     </mappers>
 </configuration>

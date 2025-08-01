@@ -31,4 +31,19 @@ public class Info_contentRepository {
     public int update(Info_contentDTO infoContentDTO) {
         return sql.update("Info.update",infoContentDTO);
     }
+
+    // 게시물 삭제
+    public void delete(long id) {
+        sql.delete("Info.delete", id);
+    }
+
+    // 조회수 증가
+    public void updateHits(long id) {
+        sql.update("Info.updateHits", id);
+    }
+
+    // 좋아요수 증가
+    public void updateLike(long id) {
+        sql.update("Info.updateLike", id);
+    }
 }
