@@ -2,12 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="Comment">
+<mapper namespace="qwer">
     <insert id="save" parameterType="infoComment">
         INSERT INTO info_comment (post_id, nickname, content)
         VALUES (#{post_id}, #{nickname}, #{content})
     </insert>
-
 
     <select id="findAll" parameterType="long" resultType="infoComment">
         SELECT * FROM info_comment WHERE post_id = #{post_id} ORDER BY id DESC
