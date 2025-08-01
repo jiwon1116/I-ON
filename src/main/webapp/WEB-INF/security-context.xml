@@ -6,31 +6,41 @@
              http://www.springframework.org/schema/security/spring-security.xsd
                 http://www.springframework.org/schema/beans
         https://www.springframework.org/schema/beans/spring-beans.xsd">
+<!--    <mybatis:scan base-package="com.spring.ion.lcw.mapper"/>-->
+<!--    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>-->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder"/>
+    <security:http auto-config="true" use-expressions="true">
 
-    <security:http>
-                <security:intercept-url pattern="/free" access="hasAnyRole('ROLE_MEMBER', 'ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
-                <security:intercept-url pattern="/map" access="hasAnyRole('ROLE_MEMBER', 'ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
-                <security:intercept-url pattern="/info" access="hasAnyRole('ROLE_MEMBER', 'ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
+                <security:intercept-url pattern="/free" access="isAuthenticated()"/>
+                <security:intercept-url pattern="/map" access="isAuthenticated()"/>
+                <security:intercept-url pattern="/info" access="isAuthenticated()"/>
                 <security:intercept-url pattern="/flag" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
                 <security:intercept-url pattern="/entrust" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
                 <security:intercept-url pattern="/miss" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
-        <security:form-login/>
-        <security:csrf disabled="true"/>
+                <security:intercept-url pattern="/register" access="isAnonymous()"/>
+                <security:intercept-url pattern="/login" access="isAnonymous()"/>
+        <security:form-login login-page="/login"/>
+        <security:logout
+                logout-url="/logout"
+                logout-success-url="/"
+                invalidate-session="true"
+                delete-cookies="true" />
+        <security:access-denied-handler error-page="/"/>
+
+        <security:session-management invalid-session-url="/login">
+            <security:concurrency-control max-sessions="1" expired-url="/login"/>
+        </security:session-management>
 
 
     </security:http>
 
     <security:authentication-manager>
-
-           <security:authentication-provider>
-               <security:user-service>
-                   <security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
-                   <security:user name="authmember" password="{noop}authmember" authorities="ROLE_AUTH_MEMBER"/>
-                   <security:user name="admin" password="{noop}admin" authorities="ROLE_ADMIN"/>
-               </security:user-service>
-
-           </security:authentication-provider>
-
-
+        <security:authentication-provider>
+            <security:password-encoder ref="passwordEncoder"/>
+            <security:jdbc-user-service data-source-ref="dataSource"
+                                        users-by-username-query="select userId as username, password, enabled from member where userId = ?"
+                                        authorities-by-username-query="select userId as username, authority from member_authority where userId = ?"
+            />
+        </security:authentication-provider>
     </security:authentication-manager>
 </beans>

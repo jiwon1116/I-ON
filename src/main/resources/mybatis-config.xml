@@ -18,11 +18,14 @@
         <typeAlias type="com.spring.ion.psw.dto.Info_FileDTO" alias="infoFile"></typeAlias>
 
 
+        <typeAlias type="com.spring.ion.lcw.dto.MemberDTO" alias="member"></typeAlias>
 
     </typeAliases>
 
     <mappers>
         <mapper resource="mapper/jjh/freeMapper.xml"/>
+
         <!-- 다른 매퍼도 필요하면 여기에 추가 -->
+        <mapper resource="mapper/lcw/MemberMapper.xml"/>
     </mappers>
 </configuration>
