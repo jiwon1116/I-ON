@@ -20,13 +20,6 @@ public class HomeController {
     }
 
 
-
-
-    @GetMapping("/info")
-    public String info(){
-        return "psw/info";
-    }
-
     @GetMapping("/map")
     public String map(){
         return "map";

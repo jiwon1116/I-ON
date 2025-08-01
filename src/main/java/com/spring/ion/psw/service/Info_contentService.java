@@ -38,4 +38,18 @@ public class Info_contentService {
             return false;
         }
     }
+    // 게시물 삭제
+    public void delete(long id) {
+        infoContentRepository.delete(id);
+    }
+
+    // 조회수 증가
+    public void updateHits(long id) {
+        infoContentRepository.updateHits(id);
+    }
+
+    // 좋아요 수 증가
+    public void updateLike(long id) {
+        infoContentRepository.updateLike(id);
+    }
 }

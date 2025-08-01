@@ -1,8 +1,8 @@
 package com.spring.ion.psw.controller;
 
-import com.spring.ion.psw.dto.Info_FileDTO;
 import com.spring.ion.psw.dto.Info_commentDTO;
 import com.spring.ion.psw.dto.Info_contentDTO;
+import com.spring.ion.psw.service.Info_commentService;
 import com.spring.ion.psw.service.Info_contentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,71 +15,81 @@ import java.util.List;
 @Controller
 @RequestMapping("/info")
 @RequiredArgsConstructor
-public class Info_contentController {
+public class Info_contentController{
     private final Info_contentService infoContentService;
+    private final Info_commentService infoCommentService;
 
-    //게시판 홈으로 이동
-   @GetMapping("/infoboard")
-   public String infobaord(Model model){
-       List<Info_contentDTO> contentList = infoContentService.AllfindList();
-       model.addAttribute("contentList", contentList);
-       return "psw/info";
-   }
+    //게시물 불러오는 리스트
+    private void addContentListl(Model model) {
+        List<Info_contentDTO> contentList = infoContentService.AllfindList();
+        model.addAttribute("contentList", contentList);
+    }
+    @GetMapping
+    public String info(Model model){
+        addContentListl(model);
+        return "psw/info";
+    }
 
-    // 글 작성 페이지 이동
     @GetMapping("/save")
-    public String writeForm(){
+    public String writeForm() {
         return "psw/write";
     }
 
-
-    // 실제 글 DB 저장 후 게시물 페이지 이동
     @PostMapping("/save")
-    public String infoForm(Info_contentDTO infoContentDTO, Model model){
+    public String infoForm(@ModelAttribute Info_contentDTO infoContentDTO,Model model) {
+        System.out.println("글작성내용:"+infoContentDTO);
         int saveResult = infoContentService.save(infoContentDTO);
         if (saveResult > 0) {
-            List<Info_contentDTO> contentList = infoContentService.AllfindList();
-            model.addAttribute("contentList", contentList);
+            addContentListl(model);
             return "psw/info";
         } else {
             return "psw/write";
         }
     }
 
-    // 글 상세보기 페이지 지동
     @GetMapping("/detail/{id}")
-    public String detailForm (@PathVariable("id") long id, Model model){
-        Info_contentDTO findDto = infoContentService.findContext(id); // 게시글
+    public String detailForm(@PathVariable("id") long id, Model model) {
+        infoContentService.updateHits(id);
+        Info_contentDTO findDto = infoContentService.findContext(id);
         model.addAttribute("findDto", findDto);
+        List<Info_commentDTO> infoCommentList= infoCommentService.findAll(id);
+        model.addAttribute("commentList", infoCommentList);
         return "psw/detail";
     }
 
-    // 수정페이지로 이동
     @PostMapping("/detail")
-    public String updateForm (@ModelAttribute Info_contentDTO infoContentDTO, Model model){
+    public String updateForm(@ModelAttribute Info_contentDTO infoContentDTO, Model model) {
         Info_contentDTO findDto = infoContentService.findContext(infoContentDTO.getId());
         model.addAttribute("findDto", findDto);
         return "psw/update";
     }
+    
+    // 좋아요수 증가
+    @GetMapping("/like")
+    public String likeUpdate(@RequestParam("id") long id, Model model) {
+        infoContentService.updateLike(id);
+        Info_contentDTO findDto = infoContentService.findContext(id);
+        model.addAttribute("findDto", findDto);
+        return "psw/detail";
+    }
 
-    //수정 처리 후 게시판 페이지 이동
+
+
     @PostMapping("/update")
-    public String update (@ModelAttribute Info_contentDTO infoContentDTO, Model model){
+    public String update(@ModelAttribute Info_contentDTO infoContentDTO, Model model) {
         boolean result = infoContentService.update(infoContentDTO);
-
         if (result) {
-            List<Info_contentDTO> contentList = infoContentService.AllfindList();
-            model.addAttribute("contentList", contentList);
+            addContentListl(model);
             return "psw/info";
         } else {
             return "update";
         }
     }
+
     @GetMapping("/delete")
     public String delete(@RequestParam("id") long id, Model model) {
-        List<Info_contentDTO> contentList = infoContentService.AllfindList();
-        model.addAttribute("contentList", contentList);
+        infoContentService.delete(id);
+        addContentListl(model);
         return "psw/info";
     }
-
 }
