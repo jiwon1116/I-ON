@@ -58,10 +58,36 @@ public class FlagService {
         return flagRepository.findById(id);
     }
 
-    public boolean update(FlagPostDTO flagPostDTO) {
-        int num = flagRepository.update(flagPostDTO);
-        return num > 0;
+    public boolean update(FlagPostDTO flagPostDTO, List<Long> deleteFileIds, MultipartFile newFile) throws IOException {
+        int updated = flagRepository.update(flagPostDTO);
+
+        // 파일 삭제 처리
+        if (deleteFileIds != null) {
+            for (Long fileId : deleteFileIds) {
+                flagRepository.deleteFileById(fileId);
+            }
+        }
+
+        // 새 파일 추가
+        if (newFile != null && !newFile.isEmpty()) {
+            String originalFileName = newFile.getOriginalFilename();
+            String uuid = UUID.randomUUID().toString();
+            String storedFileName = uuid + "_" + originalFileName;
+            String savePath = "C:/upload/" + storedFileName;
+
+            newFile.transferTo(new File(savePath));
+
+            FlagFileDTO flagFileDTO = new FlagFileDTO();
+            flagFileDTO.setBoard_id(flagPostDTO.getId());
+            flagFileDTO.setOriginalFileName(originalFileName);
+            flagFileDTO.setStoredFileName(storedFileName);
+
+            flagRepository.saveFile(flagFileDTO);
+        }
+
+        return updated > 0;
     }
+
 
     public void delete(int id) {
         flagRepository.delete(id);

@@ -23,7 +23,7 @@
             <p class="card-text">${flag.content}</p>
                 <c:if test="${not empty fileList}">
                     <h6 class="mt-4">첨부 파일</h6>
-                    <ul>
+                    <ul style="list-style: none; padding-left: 0;">
                         <c:forEach var="file" items="${fileList}">
                             <li>
                                 <c:choose>

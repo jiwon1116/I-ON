@@ -95,26 +95,31 @@ public class FlagBoardController {
         return "yjw/flagDetail";
     }
 
-    // 수정 페이지로 이동
+
+
+    // 수정 폼 이동 시 기존 파일 리스트도 함께 넘김
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable("id") int id, Model model) {
         FlagPostDTO flagPostDTO = flagService.findById(id);
+        List<FlagFileDTO> fileList = flagService.findFilesByBoardId(id);
+
         model.addAttribute("flag", flagPostDTO);
+        model.addAttribute("fileList", fileList); // 기존 첨부파일
         return "yjw/flagUpdate";
     }
 
+
     // 실제 회원 정보 수정
     @PostMapping("/update")
-    // @ModelAttribute : 폼 데이터에서 DTO 바인딩용
-    public String update(@ModelAttribute FlagPostDTO flagPostDTO) {
-        boolean result = flagService.update(flagPostDTO);
+    public String update(@ModelAttribute FlagPostDTO flagPostDTO,
+                         @RequestParam(value = "deleteFile", required = false) List<Long> deleteFileIds,
+                         @RequestParam(value = "boardFile", required = false) MultipartFile boardFile) throws IOException {
 
-        if (result) {
-            return "redirect:/flag";
-        } else {
-            return "yjw/flagUpdate";
-        }
+        boolean result = flagService.update(flagPostDTO, deleteFileIds, boardFile);
+
+        return result ? "redirect:/flag/" + flagPostDTO.getId() : "yjw/flagUpdate";
     }
+
 
     // 게시글 삭제
     @GetMapping("/delete/{id}")

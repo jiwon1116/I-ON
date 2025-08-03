@@ -82,4 +82,8 @@ public class FlagRepository {
     public List<FlagFileDTO> findFilesByBoardId(int id) {
         return sql.selectList("Flag.findFilesByBoardId", id);
     }
+
+    public void deleteFileById(Long fileId) {
+        sql.delete("Flag.deleteFileById", fileId);
+    }
 }

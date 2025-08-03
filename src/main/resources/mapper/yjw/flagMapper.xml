@@ -77,6 +77,10 @@
         SELECT * FROM flag_file WHERE board_id = #{board_id}
     </select>
 
+    <delete id="deleteFileById" parameterType="long">
+        DELETE FROM flag_file WHERE id = #{fileId}
+    </delete>
+
 
 
 
