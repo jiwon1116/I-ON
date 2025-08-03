@@ -10,6 +10,7 @@
         <typeAlias type="com.spring.ion.jjh.dto.entrust.EntrustCommentDTO" alias="entrustComment"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeDTO" alias="free"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeCommentDTO" alias="freeComment"></typeAlias>
+        <typeAlias type="com.spring.ion.jjh.dto.free.FreeFileDTO" alias="freeFile"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissDTO" alias="miss"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissCommentDTO" alias="missComment"></typeAlias>
 
@@ -28,20 +29,14 @@
 
     <mappers>
         <mapper resource="mapper/jjh/freeMapper.xml"/>
-
         <mapper resource="mapper/jjh/freeCommentMapper.xml"/>
 
-
-
         <mapper resource="mapper/psw/InfoMapper.xml"/>
-
         <mapper resource="mapper/psw/CommentMapper.xml"/>
 
         <mapper resource="mapper/yjw/flagMapper.xml"/>
         <mapper resource="mapper/yjw/flagCommentMapper.xml"/>
 
-
-        <!-- 다른 매퍼도 필요하면 여기에 추가 -->
         <mapper resource="mapper/lcw/MemberMapper.xml"/>
     </mappers>
 </configuration>

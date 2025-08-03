@@ -24,6 +24,13 @@
       제목 : <input type="text" name="title" value="${free.title}" readonly/><br>
       작성자 : <input type="text" name="nickname" value="${free.nickname}" readonly /><br>
       내용 : <textarea name="content" cols="30" rows="10" readonly>${free.content}</textarea><br>
+      <c:forEach items="${fileList}" var="file">
+        <div>
+          <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
+            <img src="/free/preview?fileName=${file.storedFileName}" style="max-width:200px;" />
+          </c:if>
+        </div>
+      </c:forEach>
       <button onclick="updateLikeCount()" type="button">좋아요 ${free.like_count}</button>
       <button onclick="updateFn()" type="button">수정하기</button>
       <button onclick="deleteFn()" type="button">삭제하기</button>
