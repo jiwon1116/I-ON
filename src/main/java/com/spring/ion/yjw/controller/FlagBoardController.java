@@ -85,10 +85,6 @@ public class FlagBoardController {
         List<FlagFileDTO> fileList = flagService.findFilesByBoardId(id);
         model.addAttribute("fileList", fileList);
 
-        // LocalDateTime → 포맷된 문자열로 변환
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-        String formattedCreatedAt = flagPostDTO.getCreated_at().format(formatter);
-
         model.addAttribute("flag", flagPostDTO);
         model.addAttribute("flagCommentDTOList", flagCommentDTOList);
 

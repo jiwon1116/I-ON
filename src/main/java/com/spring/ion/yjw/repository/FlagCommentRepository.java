@@ -28,4 +28,6 @@ public class FlagCommentRepository {
     public int delete(Long id) {
         return sql.delete("FlagComment.delete", id);
     }
+
+
 }

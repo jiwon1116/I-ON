@@ -5,10 +5,11 @@
 
 <mapper namespace="FlagComment">
 
-    <insert id="write" parameterType="FlagPost">
+    <insert id="write" parameterType="FlagCommentDTO" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO flag_comment(post_id, nickname, content, created_at)
         VALUES(#{post_id}, #{nickname}, #{content}, NOW())
     </insert>
+
 
 
     <select id="findAll" resultType="FlagComment">

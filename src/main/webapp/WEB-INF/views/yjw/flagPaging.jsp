@@ -1,6 +1,6 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -65,51 +65,44 @@
         .quote {
             font-style: italic;
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+            gap: 4px;
+        }
+        .pagination .page-item {
+            display: inline-block;
+        }
+        .pagination .page-link {
+            display: block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: transparent;
+            color: #333;
+            text-decoration: none;
+            border: none;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+        .pagination .page-link:hover {
+            background-color: #e0e0e0;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #212121;
+            color: #fff;
+            pointer-events: none;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #aaa;
+            pointer-events: none;
+        }
+        .pagination .ellipsis {
+            padding: 6px 12px;
+            color: #999;
+        }
 
-        /* 모던 페이지네이션 스타일 */
-         .pagination {
-                 display: flex;
-                 justify-content: center;
-                 list-style: none;
-                 padding: 0;
-                 gap: 4px;
-             }
-
-             .pagination .page-item {
-                 display: inline-block;
-             }
-
-             .pagination .page-link {
-                 display: block;
-                 padding: 6px 12px;
-                 border-radius: 6px;
-                 background-color: transparent;
-                 color: #333;
-                 text-decoration: none;
-                 border: none;
-                 font-weight: 500;
-                 transition: background-color 0.2s ease;
-             }
-
-             .pagination .page-link:hover {
-                 background-color: #e0e0e0;
-             }
-
-             .pagination .page-item.active .page-link {
-                 background-color: #212121;
-                 color: #fff;
-                 pointer-events: none;
-             }
-
-             .pagination .page-item.disabled .page-link {
-                 color: #aaa;
-                 pointer-events: none;
-             }
-
-             .pagination .ellipsis {
-                 padding: 6px 12px;
-                 color: #999;
-             }
     </style>
 </head>
 <body>
@@ -128,7 +121,6 @@
 
 <!-- 메인 콘텐츠 -->
 <div class="main-content">
-
     <!-- 상단 검색 & 글쓰기 -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <form class="d-flex search-bar" role="search">
@@ -149,7 +141,7 @@
                         <div class="ms-2">
                             <div class="fw-semibold">${post.title}</div>
                             <div class="text-muted" style="font-size: 0.9rem;">
-   <!-- 날짜 나오게 해야됨 !!!!!!!!!!!! -->
+                                <fmt:formatDate value="${post.created_at}" pattern="yyyy-MM-dd HH:mm"/>
                                 조회수: ${post.view_count}, 좋아요: ${post.like_count}
                             </div>
                         </div>
