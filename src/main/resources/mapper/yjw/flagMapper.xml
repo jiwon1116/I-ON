@@ -6,10 +6,12 @@
 <mapper namespace="Flag">
 
 
-    <insert id="write" parameterType="FlagPost">
+    <insert id="write" parameterType="FlagPost"
+            useGeneratedKeys="true" keyProperty="id">
         INSERT INTO flag_post (title, nickname, content)
         VALUES (#{title}, #{nickname}, #{content})
     </insert>
+
 
     <select id="findAll" resultType="FlagPost">
         SELECT * FROM flag_post ORDER BY id DESC
@@ -67,8 +69,8 @@
     </update>
 
     <insert id="saveFile" parameterType="com.spring.ion.yjw.dto.FlagFileDTO">
-        INSERT INTO flag_file (board_id, originalFileName, fileName)
-        VALUES (#{board_id}, #{originalFileName}, #{fileName})
+        INSERT INTO flag_file (board_id, originalFileName, storedFileName)
+        VALUES (#{board_id}, #{originalFileName}, #{storedFileName})
     </insert>
 
     <select id="findFilesByBoardId" resultType="com.spring.ion.yjw.dto.FlagFileDTO">

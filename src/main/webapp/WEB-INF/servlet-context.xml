@@ -18,6 +18,13 @@
     <!-- @Component, @Service, @Repository, @Controller 스캔 -->
     <context:component-scan base-package="com.spring.ion" />
 
+    <beans:bean id="multipartResolver"
+                class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- maxUploadSize 등 설정 가능 -->
+        <beans:property name="maxUploadSize" value="52428800" /> <!-- 50MB -->
+    </beans:bean>
+
+
     <!-- 뷰 리졸버 설정: /WEB-INF/views/ 폴더에서 .jsp 파일을 찾아 렌더링 -->
     <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <beans:property name="prefix" value="/WEB-INF/views/" />

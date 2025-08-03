@@ -9,13 +9,17 @@ import com.spring.ion.yjw.service.FlagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
@@ -137,27 +141,23 @@ public class FlagBoardController {
         return "yjw/flagPaging";
     }
 
-//    // 이미지 미리보기
-//    @GetMapping("/preview")
-//    public void preview(@RequestParam("fileName") String fileName,
-//                        HttpServletResponse response) throws IOException {
-//        // 실제 파일 경로 저장
-//        String filePath = "C:/upload/" + fileName;
-//        File file = new File(filePath); // 미리보기할 파일 객체 생성
-//
-//        if (file.exists()) {
-//            // 파일에 타입을 자동으로 추론하게 만들어줌
-//            String mimeType = Files.probeContentType(file.toPath());
-//            // 브라우저가 추론한 타입에 맞춰 화면에 출력하도록 설정
-//            response.setContentType(mimeType);
-//
-//            // 파일 읽어서 사용자 브라우저에 전송
-//            FileInputStream fis = new FileInputStream(file); // 로컬과 프로젝트 사이에 연결
-//            FileCopyUtils.copy(fis, response.getOutputStream()); // 응답 스트링 전달
-//            fis.close();
-//        }
-//
-//    }
+    @GetMapping("/preview")
+    public void preview(@RequestParam("fileName") String fileName, HttpServletResponse response) throws IOException {
+        String filePath = "C:/upload/" + fileName;
+        File file = new File(filePath);
+
+        if (file.exists()) {
+            String mimeType = Files.probeContentType(file.toPath());
+            response.setContentType(mimeType);
+
+            FileInputStream fis = new FileInputStream(file);
+            FileCopyUtils.copy(fis, response.getOutputStream());
+            fis.close();
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
 
     // 검색기능
     @GetMapping("/search")

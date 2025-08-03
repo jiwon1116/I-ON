@@ -21,6 +21,25 @@
                 ${flag.nickname}
             </div>
             <p class="card-text">${flag.content}</p>
+                <c:if test="${not empty fileList}">
+                    <h6 class="mt-4">첨부 파일</h6>
+                    <ul>
+                        <c:forEach var="file" items="${fileList}">
+                            <li>
+                                <c:choose>
+                                    <c:when test="${file.storedFileName.endsWith('.jpg') || file.storedFileName.endsWith('.png') || file.storedFileName.endsWith('.jpeg') || file.storedFileName.endsWith('.gif')}">
+                                        <img src="${pageContext.request.contextPath}/flag/preview?fileName=${file.storedFileName}" alt="${file.originalFileName}" style="max-width: 300px; margin: 10px 0;">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="${pageContext.request.contextPath}/flag/preview?fileName=${file.storedFileName}" target="_blank">
+                                            ${file.originalFileName}
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </c:if>
             <div class="text-end">
                 <a href="${pageContext.request.contextPath}/flag/update/${flag.id}" class="btn btn-outline-secondary btn-sm">수정</a>
                 <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}" class="btn btn-outline-dark btn-sm"
@@ -65,6 +84,9 @@
             </form>
         </div>
     </div>
+
+
+
 
     <!-- 댓글 출력 영역 -->
     <div id="commentList">

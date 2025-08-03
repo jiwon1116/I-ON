@@ -149,7 +149,7 @@
                         <div class="ms-2">
                             <div class="fw-semibold">${post.title}</div>
                             <div class="text-muted" style="font-size: 0.9rem;">
-                                작성일: ${post.formattedCreatedAt} |
+   <!-- 날짜 나오게 해야됨 !!!!!!!!!!!! -->
                                 조회수: ${post.view_count}, 좋아요: ${post.like_count}
                             </div>
                         </div>

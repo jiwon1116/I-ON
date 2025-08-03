@@ -21,7 +21,9 @@ public class FlagService {
     private final FlagRepository flagRepository;
 
     public int write(FlagPostDTO flagPostDTO, List<MultipartFile> fileList) throws IOException {
-        int postId = flagRepository.write(flagPostDTO); // INSERT 후 PK 받아오기
+        flagRepository.write(flagPostDTO); // 이 시점에 flagPostDTO.getId()에 게시글 id가 들어옴!
+
+        long postId = flagPostDTO.getId(); // 바로 사용 가능
 
         if (!fileList.isEmpty()) {
             for (MultipartFile file : fileList) {
@@ -34,17 +36,18 @@ public class FlagService {
                     file.transferTo(new File(savePath));
 
                     FlagFileDTO flagFileDTO = new FlagFileDTO();
-                    flagFileDTO.setBoard_id(postId);
+                    flagFileDTO.setBoard_id(postId); // 정확한 게시글 ID로 설정
                     flagFileDTO.setOriginalFileName(originalFileName);
-                    flagFileDTO.setFileName(storedFileName);
+                    flagFileDTO.setStoredFileName(storedFileName);
 
                     flagRepository.saveFile(flagFileDTO);
                 }
             }
         }
 
-        return postId;
+        return (int) postId;
     }
+
 
 
     public List<FlagPostDTO> findAll() {
