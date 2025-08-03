@@ -18,4 +18,12 @@ public class FreeCommentRepository {
     public List<FreeCommentDTO> findAll(long postId) {
         return sql.selectList("FreeComment.findAll", postId);
     }
+
+    public FreeCommentDTO findById(long id) {
+        return sql.selectOne("FreeComment.findById", id);
+    }
+
+    public void delete(long id) {
+        sql.delete("FreeComment.delete", id);
+    }
 }

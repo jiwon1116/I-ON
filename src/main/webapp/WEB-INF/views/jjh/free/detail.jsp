@@ -52,7 +52,7 @@
                         <td>${comment.content}</td>
                         <td>${comment.nickname}</td>
                         <td><fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd"/></td>
-
+                        <td><button onclick="commentDelete(${comment.id})" type="button">삭제</button></td>
                     </tr>
                 </c:forEach>
             </table>
@@ -75,6 +75,14 @@
         location.href = "/free"
     }
 
+    const commentDelete = (commentId) => {
+      const confirmed = confirm("댓글을 삭제하시겠습니까?");
+      if (confirmed) {
+        location.href = "/comment/delete?id=" + commentId;
+      }
+    }
+
+
     const commentWrite = () => {
             const nickname = document.getElementById("nickname").value;
             const content = document.getElementById("content").value;
@@ -90,22 +98,25 @@
                 dataType : "json",
                 success : function(commentList) {
                     console.log("성공 : " + commentList);
-                    let out = "<table border='1'width='50%' style='border-collapse: collapse; text-align: center'><tr>";
-                    out += "<td>내용</td>";
-                    out += "<td>작성자</td>";
-                    out += "<td>작성 시간</td>";
+                    let out = "<table border='1' width='50%' style='border-collapse: collapse; text-align: center'><tr>";
+                    out += "<th>내용</th>";
+                    out += "<th>작성자</th>";
+                    out += "<th>작성 시간</th>";
+                    out += "<th>삭제</th>";
                     out += "</tr>"
                     for (let i in commentList) {
                         out += "<tr>"
                         out += "<td>"+ commentList[i].content +"</td>";
                         out += "<td>"+ commentList[i].nickname +"</td>";
                         out += "<td>"+ commentList[i].created_at  +"</td>";
+                        out += "<td><button onclick='commentDelete(" + commentList[i].id + ")'>삭제</button></td>";
                         out += "</tr>"
                     }
                     out += "</table>";
                     document.getElementById("comment-list").innerHTML = out;
                     document.getElementById("nickname").value = "";
                     document.getElementById("content").value = "";
+
                 },
                 error : function() {
                     console.log("실패");

@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="FreeComment">
-    <insert id="save" parameterType="free">
+    <insert id="save" parameterType="freeComment">
         INSERT INTO free_comment (nickname, content, post_id)
         VALUES (#{nickname}, #{content}, #{post_id});
     </insert>
@@ -11,4 +11,12 @@
     <select id="findAll" resultType="freeComment">
         SELECT * FROM free_comment WHERE post_id = #{post_id} ORDER BY id DESC
     </select>
+
+    <select id="findById" parameterType="long" resultType="freeComment">
+        SELECT * FROM free_comment WHERE id = #{id}
+    </select>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM free_comment WHERE id = #{id}
+    </delete>
 </mapper>

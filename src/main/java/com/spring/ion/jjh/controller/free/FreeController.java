@@ -60,16 +60,16 @@ public class FreeController {
         return "jjh/free/detail";
     }
 
-    @GetMapping("/updateLikeCount")
-    public String updateLikeCount(FreeDTO freeDTO, Model model) {
-        long clickId = freeDTO.getId();
-        freeService.updateLikeCount(clickId);
-        FreeDTO free = freeService.findById(clickId);
-        model.addAttribute("free", free);
-        List<FreeCommentDTO> commentDTO = commentService.findAll(clickId);
-        model.addAttribute("commentList", commentDTO);
-        return "jjh/free/detail";
-    }
+//    @GetMapping("/updateLikeCount")
+//    public String updateLikeCount(FreeDTO freeDTO, Model model) {
+//        long clickId = freeDTO.getId();
+//        freeService.updateLikeCount(clickId);
+//        FreeDTO free = freeService.findById(clickId);
+//        model.addAttribute("free", free);
+//        List<FreeCommentDTO> commentDTO = commentService.findAll(clickId);
+//        model.addAttribute("commentList", commentDTO);
+//        return "jjh/free/detail";
+//    }
 
     @GetMapping("/update")
     public String updateForm(FreeDTO freeDTO, Model model) {
