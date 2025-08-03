@@ -16,9 +16,5 @@ public class FlagPostDTO {
     private int view_count; // 조회수
     private LocalDateTime created_at; // 작성일
 
-    // 포맷된 문자열 반환용 메서드
-    public String getFormattedCreatedAt() {
-        return created_at != null ? created_at.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")) : "";
-    }
 
 }

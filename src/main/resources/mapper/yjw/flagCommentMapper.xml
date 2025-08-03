@@ -3,17 +3,24 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="Comment">
+<mapper namespace="FlagComment">
 
-    <insert id="write" parameterType="com.spring.ion.yjw.dto.FlagCommentDTO">
+    <insert id="write" parameterType="FlagPost">
         INSERT INTO flag_comment(post_id, nickname, content, created_at)
         VALUES(#{post_id}, #{nickname}, #{content}, NOW())
     </insert>
 
 
-
-    <select id="findAll" resultType="com.spring.ion.yjw.dto.FlagCommentDTO">
-        SELECT * FROM flag_comment ORDER BY id DESC
+    <select id="findAll" resultType="FlagComment">
+        SELECT * FROM flag_comment
+        WHERE post_id = #{post_id}
+        ORDER BY id DESC
     </select>
+
+    <!-- 댓글 삭제 -->
+    <delete id="delete" parameterType="long">
+        DELETE FROM flag_comment WHERE id = #{id}
+    </delete>
+
 
 </mapper>

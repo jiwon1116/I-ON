@@ -7,8 +7,8 @@
 
 
     <insert id="write" parameterType="FlagPost">
-        INSERT INTO flag_post (nickname, title, content)
-        VALUES (#{nickname}, #{title}, #{content})
+        INSERT INTO flag_post (title, nickname, content)
+        VALUES (#{title}, #{nickname}, #{content})
     </insert>
 
     <select id="findAll" resultType="FlagPost">
@@ -35,6 +35,52 @@
     <select id="flagCount" resultType="int">
         SELECT COUNT(id) FROM flag_post
     </select>
+
+    <select id="search" parameterType="string" resultType="com.spring.ion.yjw.dto.FlagPostDTO">
+        SELECT * FROM flag_post
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id DESC
+    </select>
+
+    <update id="increaseViewCount" parameterType="int">
+        UPDATE flag_post
+        SET view_count = view_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <select id="hasLiked" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM flag_like
+        WHERE post_id = #{postId} AND member_id = #{memberId}
+    </select>
+
+    <insert id="insertLike">
+        INSERT INTO flag_like (post_id, member_id)
+        VALUES (#{postId}, #{memberId})
+    </insert>
+
+    <update id="increaseLikeCount">
+        UPDATE flag_post
+        SET like_count = like_count + 1
+        WHERE id = #{postId}
+    </update>
+
+    <insert id="saveFile" parameterType="com.spring.ion.yjw.dto.FlagFileDTO">
+        INSERT INTO flag_file (board_id, originalFileName, fileName)
+        VALUES (#{board_id}, #{originalFileName}, #{fileName})
+    </insert>
+
+    <select id="findFilesByBoardId" resultType="com.spring.ion.yjw.dto.FlagFileDTO">
+        SELECT * FROM flag_file WHERE board_id = #{board_id}
+    </select>
+
+
+
+
+
+
+
 
 
 </mapper>

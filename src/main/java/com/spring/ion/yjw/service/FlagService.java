@@ -1,23 +1,51 @@
 package com.spring.ion.yjw.service;
 
+import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPageDTO;
 import com.spring.ion.yjw.dto.FlagPostDTO;
 import com.spring.ion.yjw.repository.FlagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class FlagService {
     private final FlagRepository flagRepository;
 
-    public int write(FlagPostDTO flag_postDTO) {
-        return flagRepository.write(flag_postDTO);
+    public int write(FlagPostDTO flagPostDTO, List<MultipartFile> fileList) throws IOException {
+        int postId = flagRepository.write(flagPostDTO); // INSERT 후 PK 받아오기
+
+        if (!fileList.isEmpty()) {
+            for (MultipartFile file : fileList) {
+                if (!file.isEmpty()) {
+                    String originalFileName = file.getOriginalFilename();
+                    String uuid = UUID.randomUUID().toString();
+                    String storedFileName = uuid + "_" + originalFileName;
+                    String savePath = "C:/upload/" + storedFileName;
+
+                    file.transferTo(new File(savePath));
+
+                    FlagFileDTO flagFileDTO = new FlagFileDTO();
+                    flagFileDTO.setBoard_id(postId);
+                    flagFileDTO.setOriginalFileName(originalFileName);
+                    flagFileDTO.setFileName(storedFileName);
+
+                    flagRepository.saveFile(flagFileDTO);
+                }
+            }
+        }
+
+        return postId;
     }
+
 
     public List<FlagPostDTO> findAll() {
         return flagRepository.findAll();
@@ -73,5 +101,28 @@ public class FlagService {
         return flagPageDTO;
     }
 
+
+    public List<FlagPostDTO> search(String keyword) {
+        return flagRepository.search(keyword);
+    }
+
+    public void increaseViewCount(int id) {
+        flagRepository.increaseViewCount(id);
+    }
+
+
+    public boolean like(Long postId, Long memberId) {
+        if (flagRepository.hasLiked(postId, memberId)) {
+            return false; // 이미 좋아요 눌렀음
+        }
+
+        flagRepository.insertLike(postId, memberId);
+        flagRepository.increaseLikeCount(postId.intValue());
+        return true;
+    }
+
+    public List<FlagFileDTO> findFilesByBoardId(int id) {
+        return flagRepository.findFilesByBoardId(id);
+    }
 }
 

@@ -1,6 +1,7 @@
 package com.spring.ion.yjw.controller;
 
 import com.spring.ion.yjw.dto.FlagCommentDTO;
+import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPageDTO;
 import com.spring.ion.yjw.dto.FlagPostDTO;
 import com.spring.ion.yjw.service.FlagCommentService;
@@ -8,17 +9,16 @@ import com.spring.ion.yjw.service.FlagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,14 +41,13 @@ public class FlagBoardController {
 
     // 글 저장 처리
     @PostMapping("/write")
-    public String write(FlagPostDTO flagPostDTO) {
-        int writeResult = flagService.write(flagPostDTO);
-        if (writeResult > 0) {
-            return "redirect:/flag";
-        } else {
-            return "yjw/flagWrite";
-        }
+    public String write(@ModelAttribute FlagPostDTO flagPostDTO,
+                        @RequestParam("boardFile") List<MultipartFile> fileList) throws IOException {
+
+        flagService.write(flagPostDTO, fileList);
+        return "redirect:/flag/paging";
     }
+
 
     // 게시글 목록 조회
     @GetMapping
@@ -58,6 +57,7 @@ public class FlagBoardController {
         FlagPageDTO pageDTO = flagService.pagingParam(page);
 
         model.addAttribute("postList", pagingList);
+        model.addAttribute("postList",flagService.findAll());
         model.addAttribute("paging", pageDTO);
         return "yjw/flag";
     }
@@ -65,9 +65,21 @@ public class FlagBoardController {
     // 상세보기
     @GetMapping("/{id}")
     // @PathVariable : URL 경로 일부를 메서드의 파라미터로 전달
-    public String detail(@PathVariable("id") int id, Model model) {
+    public String detail(@PathVariable("id") int id, Model model,  HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String viewKey = "viewed_post_" + id;
+
+        if (session.getAttribute(viewKey) == null) {
+            flagService.increaseViewCount(id);
+            session.setAttribute(viewKey, true); // 조회수 중복 방지
+        }
+
         FlagPostDTO flagPostDTO = flagService.findById(id);
         List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(id);
+
+        // 파일 목록 조회 코드 추가
+        List<FlagFileDTO> fileList = flagService.findFilesByBoardId(id);
+        model.addAttribute("fileList", fileList);
 
         // LocalDateTime → 포맷된 문자열로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
@@ -125,26 +137,68 @@ public class FlagBoardController {
         return "yjw/flagPaging";
     }
 
-    // 이미지 미리보기
-    @GetMapping("/preview")
-    public void preview(@RequestParam("fileName") String fileName,
-                        HttpServletResponse response) throws IOException {
-        // 실제 파일 경로 저장
-        String filePath = "C:/upload/" + fileName;
-        File file = new File(filePath); // 미리보기할 파일 객체 생성
+//    // 이미지 미리보기
+//    @GetMapping("/preview")
+//    public void preview(@RequestParam("fileName") String fileName,
+//                        HttpServletResponse response) throws IOException {
+//        // 실제 파일 경로 저장
+//        String filePath = "C:/upload/" + fileName;
+//        File file = new File(filePath); // 미리보기할 파일 객체 생성
+//
+//        if (file.exists()) {
+//            // 파일에 타입을 자동으로 추론하게 만들어줌
+//            String mimeType = Files.probeContentType(file.toPath());
+//            // 브라우저가 추론한 타입에 맞춰 화면에 출력하도록 설정
+//            response.setContentType(mimeType);
+//
+//            // 파일 읽어서 사용자 브라우저에 전송
+//            FileInputStream fis = new FileInputStream(file); // 로컬과 프로젝트 사이에 연결
+//            FileCopyUtils.copy(fis, response.getOutputStream()); // 응답 스트링 전달
+//            fis.close();
+//        }
+//
+//    }
 
-        if (file.exists()) {
-            // 파일에 타입을 자동으로 추론하게 만들어줌
-            String mimeType = Files.probeContentType(file.toPath());
-            // 브라우저가 추론한 타입에 맞춰 화면에 출력하도록 설정
-            response.setContentType(mimeType);
+    // 검색기능
+    @GetMapping("/search")
+    public String flag(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
+        List<FlagPostDTO> postList;
 
-            // 파일 읽어서 사용자 브라우저에 전송
-            FileInputStream fis = new FileInputStream(file); // 로컬과 프로젝트 사이에 연결
-            FileCopyUtils.copy(fis, response.getOutputStream()); // 응답 스트링 전달
-            fis.close();
+        if (keyword != null && !keyword.isEmpty()) {
+            postList = flagService.search(keyword); // 검색
+        } else {
+            postList = flagService.findAll(); // 전체 목록
         }
+
+        model.addAttribute("postList", postList);
+        return "yjw/flag"; // 위의 JSP가 위치한 경로
     }
+
+
+
+    @PostMapping("/like/{postId}")
+    public String like(@PathVariable("postId") Long postId, HttpSession session) {
+        Long memberId = (Long) session.getAttribute("loginId");
+        boolean result = flagService.like(postId, memberId);
+        return "redirect:/flag/" + postId;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

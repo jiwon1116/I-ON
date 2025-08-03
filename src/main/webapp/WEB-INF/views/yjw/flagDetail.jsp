@@ -18,9 +18,7 @@
         <div class="card-body">
             <h4 class="card-title">${flag.title}</h4>
             <div class="mb-3 text-muted small">
-                <img src="${pageContext.request.contextPath}/images/default-profile.png" style="width:24px; height:24px; border-radius:50%;" />
-                ${flag.nickname} ·
-
+                ${flag.nickname}
             </div>
             <p class="card-text">${flag.content}</p>
             <div class="text-end">
@@ -28,8 +26,24 @@
                 <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}" class="btn btn-outline-dark btn-sm"
                    onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
             </div>
+            <div class="text-end mt-3">
+                <a href="${pageContext.request.contextPath}/flag" class="btn btn-secondary">📄 목록으로 가기</a>
+            </div>
+
+     <form action="/flag/like/${flag.id}" method="post">
+         <button type="submit" class="btn btn-outline-danger">❤️ 좋아요 (${flag.like_count})</button>
+     </form>
+
+
+
+            <div class="text-muted">
+                작성일: ${flag.created_at} <br />
+                조회수: ${flag.view_count} | 좋아요: ${flag.like_count}
+            </div>
         </div>
     </div>
+
+
 
     <!-- 댓글 작성 -->
     <div class="card shadow-sm mb-4">
@@ -46,7 +60,7 @@
                     <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요" required></textarea>
                 </div>
                 <div class="text-end">
-                    <button type="submit" class="btn btn-primary">댓글 등록</button>
+                    <button type="button" class="btn btn-primary" id="submitCommentBtn">댓글 등록</button>
                 </div>
             </form>
         </div>
@@ -59,40 +73,62 @@
                 <div class="card-body">
                     <p class="card-text">${comment.content}</p>
                     <footer class="blockquote-footer">
-                        ${comment.nickname} |
-
+                        ${comment.nickname} | ${comment.formattedCreatedAt}
                         <button class="btn btn-sm btn-outline-danger float-end"
                                 onclick="deleteComment(${comment.id}, ${comment.post_id})">삭제</button>
                     </footer>
                 </div>
             </div>
         </c:forEach>
+
     </div>
 
 </div>
 
 <script>
-$(document).ready(function () {
-    // 댓글 등록
-    $('#commentForm').submit(function (e) {
-        e.preventDefault();
-        const nickname = $('#nickname').val();
-        const content = $('#content').val();
-        const post_id = $('#post_id').val();
+    $(document).ready(function () {
+        $('#submitCommentBtn').on('click', function () {
+            const nickname = $('#nickname').val();
+            const content = $('#content').val();
+            const post_id = $('#post_id').val();
+
+           $.ajax({
+               type: 'POST',
+               url: '/FlagComment/write',
+               data: {
+                   nickname: nickname,
+                   content: content,
+                   post_id: post_id
+               },
+               dataType: 'json',
+               success: function (data) {
+                   // 성공 처리
+               },
+               error: function (xhr, status, error) {
+                   console.log("댓글 등록 실패:", error);
+               }
+           });
+
+        });
+    });
+
+    function deleteComment(id, post_id) {
+        if (!confirm("정말 삭제하시겠습니까?")) return;
 
         $.ajax({
             type: 'POST',
-            url: '${pageContext.request.contextPath}/comment/write',
-            data: {nickname, content, post_id},
+            url: window.location.origin + '/comment/delete',
+            data: {id, post_id},
             success: function (data) {
                 $('#commentList').empty();
                 data.forEach(function (comment) {
+                    const date = new Date(comment.created_at).toLocaleString();
                     const html = `
                         <div class="card mb-2">
                             <div class="card-body">
                                 <p class="card-text">${comment.content}</p>
                                 <footer class="blockquote-footer">
-                                    ${comment.nickname} | ${comment.created_at}
+                                    ${comment.nickname} | ${date}
                                     <button class="btn btn-sm btn-outline-danger float-end"
                                             onclick="deleteComment(${comment.id}, ${comment.post_id})">삭제</button>
                                 </footer>
@@ -100,42 +136,9 @@ $(document).ready(function () {
                         </div>`;
                     $('#commentList').append(html);
                 });
-                $('#content').val('');
-            },
-            error: function (xhr, status, error) {
-                console.log("댓글 등록 실패:", error);
             }
         });
-    });
-});
-
-// 댓글 삭제
-function deleteComment(id, post_id) {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
-
-    $.ajax({
-        type: 'POST',
-        url: '${pageContext.request.contextPath}/comment/delete',
-        data: {id, post_id},
-        success: function (data) {
-            $('#commentList').empty();
-            data.forEach(function (comment) {
-                const html = `
-                    <div class="card mb-2">
-                        <div class="card-body">
-                            <p class="card-text">${comment.content}</p>
-                            <footer class="blockquote-footer">
-                                ${comment.nickname} | ${comment.created_at}
-                                <button class="btn btn-sm btn-outline-danger float-end"
-                                        onclick="deleteComment(${comment.id}, ${comment.post_id})">삭제</button>
-                            </footer>
-                        </div>
-                    </div>`;
-                $('#commentList').append(html);
-            });
-        }
-    });
-}
+    }
 </script>
 </body>
 </html>
