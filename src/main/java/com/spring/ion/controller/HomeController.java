@@ -14,20 +14,9 @@ public class HomeController {
         return "chat";
     }
 
-    @GetMapping("/entrust")
-    public String entrust(){
-        return "entrust";
-    }
-
-
     @GetMapping("/map")
     public String map(){
         return "map";
-    }
-
-    @GetMapping("/miss")
-    public String miss(){
-        return "miss";
     }
 
     @GetMapping("/mypage")
