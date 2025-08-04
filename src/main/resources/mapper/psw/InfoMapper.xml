@@ -59,4 +59,12 @@
         WHERE board_id = #{board_id}
     </update>
 
+
+    <select id="infoSearch" parameterType="string" resultType="infoContent">
+        SELECT * FROM info_content
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id DESC
+    </select>
+
 </mapper>

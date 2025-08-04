@@ -17,6 +17,7 @@
         <typeAlias type="com.spring.ion.psw.dto.Info_contentDTO" alias="infoContent"></typeAlias>
         <typeAlias type="com.spring.ion.psw.dto.Info_commentDTO" alias="infoComment"></typeAlias>
         <typeAlias type="com.spring.ion.psw.dto.Info_FileDTO" alias="infoFile"></typeAlias>
+        <typeAlias type="com.spring.ion.psw.dto.Info_LikeDTO" alias="infoLike"></typeAlias>
 
         <typeAlias type="com.spring.ion.yjw.dto.FlagPostDTO" alias="FlagPost"></typeAlias>
         <typeAlias type="com.spring.ion.yjw.dto.FlagPageDTO" alias="FlagPage"></typeAlias>
@@ -34,6 +35,7 @@
 
         <mapper resource="mapper/psw/InfoMapper.xml"/>
         <mapper resource="mapper/psw/CommentMapper.xml"/>
+        <mapper resource="mapper/psw/info_LikeMapper.xml"/>
 
         <mapper resource="mapper/yjw/flagMapper.xml"/>
         <mapper resource="mapper/yjw/flagCommentMapper.xml"/>
