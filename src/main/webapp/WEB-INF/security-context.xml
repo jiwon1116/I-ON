@@ -32,6 +32,9 @@
         <security:session-management invalid-session-url="/login">
             <security:concurrency-control max-sessions="1" expired-url="/login"/>
         </security:session-management>
+
+
+        <!-- 개발을 위해서 잠시 설정-->
         <security:csrf disabled="true" />
 
     </security:http>

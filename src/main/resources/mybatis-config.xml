@@ -22,6 +22,7 @@
         <typeAlias type="com.spring.ion.yjw.dto.FlagPageDTO" alias="FlagPage"></typeAlias>
         <typeAlias type="com.spring.ion.yjw.dto.FlagCommentDTO" alias="FlagComment"></typeAlias>
         <typeAlias type="com.spring.ion.yjw.dto.FlagFileDTO" alias="FlagFile"></typeAlias>
+        <typeAlias type="com.spring.ion.yjw.dto.FlagLikeDTO" alias="FlagLike"></typeAlias>
 
         <typeAlias type="com.spring.ion.lcw.dto.MemberDTO" alias="member"></typeAlias>
 

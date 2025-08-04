@@ -109,9 +109,9 @@
 <div class="main-content">
     <div class="update-box">
         <h3>글 수정</h3>
-        <form action="${pageContext.request.contextPath}/flag/update" method="post">
-            <label for="id" class="form-label">글 번호</label>
-            <input type="text" id="id" name="id" class="form-control" value="${flag.id}" readonly />
+        <form action="${pageContext.request.contextPath}/flag/update" method="post" enctype="multipart/form-data">
+            <!-- id는 hidden으로 전달 -->
+            <input type="hidden" name="id" value="${flag.id}" />
 
             <label for="title" class="form-label">제목</label>
             <input type="text" id="title" name="title" class="form-control" value="${flag.title}" required />
@@ -119,8 +119,40 @@
             <label for="content" class="form-label">내용</label>
             <textarea id="content" name="content" rows="6" class="form-control" required>${flag.content}</textarea>
 
+            <!-- 기존 첨부파일 보여주기 -->
+            <c:if test="${not empty fileList}">
+                <h6 class="mt-4">기존 첨부 파일</h6>
+                <ul>
+                    <c:forEach var="file" items="${fileList}">
+                        <li>
+                            <c:choose>
+                                <c:when test="${file.storedFileName.endsWith('.jpg') || file.storedFileName.endsWith('.png') || file.storedFileName.endsWith('.jpeg') || file.storedFileName.endsWith('.gif')}">
+                                    <img src="${pageContext.request.contextPath}/flag/preview?fileName=${file.storedFileName}"
+                                         alt="${file.originalFileName}" style="max-width: 200px;">
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${pageContext.request.contextPath}/flag/preview?fileName=${file.storedFileName}" target="_blank">
+                                        ${file.originalFileName}
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
+                            <label>
+                                <input type="checkbox" name="deleteFile" value="${file.id}"> 삭제
+                            </label>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </c:if>
+
+            <!-- 새 파일 첨부 -->
+            <div class="mb-3">
+                <label for="boardFile" class="form-label">새 파일 첨부</label>
+                <input type="file" class="form-control" id="boardFile" name="boardFile">
+            </div>
+
             <button type="submit" class="btn btn-submit" onclick="return confirm('수정하시겠습니까?')">수정하기</button>
         </form>
+
     </div>
 </div>
 

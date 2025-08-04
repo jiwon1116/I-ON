@@ -10,16 +10,16 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("comment")
+@RequestMapping("FlagComment")
 public class FlagCommentController {
 
     private final FlagCommentService flagCommentService;
 
+    // 댓글 작성
     @PostMapping("/write")
-    @ResponseBody
     public List<FlagCommentDTO> write(@RequestParam("nickname") String nickname,
                                       @RequestParam("content") String content,
-                                      @RequestParam("post_id") int post_id) {
+                                      @RequestParam("post_id") long post_id) {
         FlagCommentDTO dto = new FlagCommentDTO();
         dto.setNickname(nickname);
         dto.setContent(content);
@@ -35,10 +35,20 @@ public class FlagCommentController {
 
 
         return flagCommentService.findAll(post_id);
-
     }
 
 
+    // 댓글 삭제
+    @DeleteMapping("/delete/{id}")
+    public @ResponseBody List<FlagCommentDTO> delete(@PathVariable Long id, @RequestParam("post_id") long postId) {
+        flagCommentService.delete(id);
+        List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(postId);
 
+        // 삭제 후 결과 로그
+        for (FlagCommentDTO dto : flagCommentDTOList) {
+            System.out.println("삭제 후 댓글 목록: " + dto);
+        }
 
+        return flagCommentDTOList;
+    }
 }

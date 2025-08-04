@@ -27,7 +27,7 @@
 <div class="write-card">
     <h4 class="mb-4 fw-bold text-primary">제보 및 신고 글 작성</h4>
 
-    <form action="${pageContext.request.contextPath}/flag/write" method="post" enctype="multipart/form-data">
+    <form action="/flag/write" method="post" enctype="multipart/form-data">
 
         <!-- 닉네임은 세션에서 가져와서 hidden으로 전송 -->
         <div class="mb-3">
