@@ -37,6 +37,7 @@
 
         <mapper resource="mapper/yjw/flagMapper.xml"/>
         <mapper resource="mapper/yjw/flagCommentMapper.xml"/>
+        <mapper resource="mapper/yjw/flagLikeMapper.xml"/>
 
         <mapper resource="mapper/lcw/MemberMapper.xml"/>
     </mappers>

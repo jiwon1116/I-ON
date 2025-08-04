@@ -8,6 +8,23 @@
     <title>게시글 상세보기</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .like-btn .heart {
+            font-size: 1.4em;
+            vertical-align: middle;
+            transition: color 0.15s;
+        }
+        .like-btn.liked .heart {
+            color: #f44336;
+        }
+        .like-btn .heart {
+            color: #fff;
+            text-shadow: 0 0 2px #d1d1d1;
+        }
+        .like-btn {
+            border: 1.5px solid #f44336 !important;
+        }
+    </style>
 </head>
 <body style="background-color: #f9f9f9;">
 <div class="container mt-5">
@@ -41,29 +58,32 @@
                 </ul>
             </c:if>
 
-            <div class="text-end">
-                <%-- 수정/삭제 버튼은 임시로 주석 --%>
-                <%-- <a href="${pageContext.request.contextPath}/flag/update/${flag.id}" class="btn btn-outline-secondary btn-sm">수정</a>
-                <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}" class="btn btn-outline-dark btn-sm" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a> --%>
-            </div>
-            <div class="text-end mt-3">
-                <a href="${pageContext.request.contextPath}/flag" class="btn btn-secondary">📄 목록으로 가기</a>
+            <div class="text-end mb-2">
+                <!-- 수정 버튼 추가 -->
+                <a href="${pageContext.request.contextPath}/flag/update/${flag.id}" class="btn btn-outline-secondary btn-sm me-2">수정</a>
+                <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}" class="btn btn-outline-dark btn-sm" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
             </div>
 
-            <%-- 좋아요 기능도 임시 주석
-            <form action="/flag/like/${flag.id}" method="post">
-                <button type="submit" class="btn btn-outline-danger">❤️ 좋아요 (${flag.like_count})</button>
-            </form>
-            --%>
+            <!-- 좋아요 버튼 (하트 토글) -->
+            <div class="mb-2">
+                <button type="button" class="btn like-btn ${flag != null && flag.liked ? 'liked' : ''}" id="likeBtn">
+                    <span class="heart">${flag != null && flag.liked ? '❤️' : '🤍'}</span>
+                    <span id="likeCount">${flag != null ? flag.like_count : 0}</span>
+                </button>
+            </div>
 
-            <div class="text-muted">
-                <%-- 날짜/조회수 출력도 null 체크 --%>
+            <div class="text-muted mt-2">
                 작성일:
                 <c:if test="${flag != null && flag.created_at != null}">
                     <fmt:formatDate value="${flag.created_at}" pattern="yyyy-MM-dd HH:mm"/>
                 </c:if>
                 <br />
-                조회수: ${flag != null ? flag.view_count : 0} | 좋아요: ${flag != null ? flag.like_count : 0}
+                조회수: <span id="viewCount">${flag != null ? flag.view_count : 0}</span>
+                | 좋아요: <span id="likeCountDisplay">${flag != null ? flag.like_count : 0}</span>
+            </div>
+
+            <div class="text-end mt-3">
+                <a href="${pageContext.request.contextPath}/flag" class="btn btn-secondary">📄 목록으로 가기</a>
             </div>
         </div>
     </div>
@@ -83,7 +103,7 @@
                     <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요" required></textarea>
                 </div>
                 <div class="text-end">
-                    <button type="button" class="btn btn-primary" id="submitCommentBtn">댓글 등록</button>
+                    <button type="submit" class="btn btn-primary" id="submitCommentBtn">댓글 등록</button>
                 </div>
             </form>
         </div>
@@ -118,7 +138,6 @@
             const content = $('#content').val();
             const post_id = $('#post_id').val();
 
-            // 값이 없을 때 에러 방지
             if (!nickname || !content || !post_id) {
                 alert("닉네임, 내용, 게시글 ID를 입력하세요");
                 return;
@@ -126,8 +145,8 @@
 
             $.ajax({
                 type: 'POST',
-                 url: '${pageContext.request.contextPath}/comment/write',
-                            data: {nickname, content, post_id},
+                url: '${pageContext.request.contextPath}/FlagComment/write',
+                data: {nickname, content, post_id},
                 dataType: 'json',
                 success: function (data) {
                     renderCommentList(data);
@@ -138,8 +157,38 @@
                 }
             });
         });
+
+        // 좋아요 버튼
+        $('#likeBtn').click(function(){
+            const flagId = '${flag.id}';
+            $.ajax({
+                type: 'POST',
+                url: '${pageContext.request.contextPath}/flagLike/like/' + flagId,
+                success: function(data){
+                    if(data.error){
+                        alert(data.error);
+                        return;
+                    }
+                    $('#likeCount').text(data.likeCount);
+                    $('#likeCountDisplay').text(data.likeCount);
+                    // 하트 토글
+                    if(data.liked){
+                        $('#likeBtn').addClass('liked');
+                        $('#likeBtn .heart').text('❤️');
+                    } else {
+                        $('#likeBtn').removeClass('liked');
+                        $('#likeBtn .heart').text('🤍');
+                    }
+                },
+                error: function(){
+                    alert('좋아요 처리 실패!');
+                }
+            });
+        });
+
     });
 
+    // ↓↓↓ 아래 함수들은 document ready 블록 밖에서 선언!
     function deleteComment(id, post_id) {
         if (!confirm("정말 삭제하시겠습니까?")) return;
         if (!id || !post_id) {

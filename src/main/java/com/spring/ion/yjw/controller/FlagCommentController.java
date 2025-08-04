@@ -17,7 +17,7 @@ public class FlagCommentController {
 
     // 댓글 작성
     @PostMapping("/write")
-    public List<FlagCommentDTO> write(@RequestParam("nickname") String nickname,
+    public @ResponseBody List<FlagCommentDTO> write(@RequestParam("nickname") String nickname,
                                       @RequestParam("content") String content,
                                       @RequestParam("post_id") long post_id) {
         FlagCommentDTO dto = new FlagCommentDTO();
@@ -31,8 +31,6 @@ public class FlagCommentController {
         System.out.println("닉네임: " + nickname);
         System.out.println("내용: " + content);
         System.out.println("게시글 ID: " + post_id);
-
-
 
         return flagCommentService.findAll(post_id);
     }

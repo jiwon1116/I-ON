@@ -35,9 +35,6 @@
         </security:session-management>
 
 
-        <!-- 개발을 위해서 잠시 설정-->
-        <security:csrf disabled="true" />
-
     </security:http>
 
     <security:authentication-manager>
