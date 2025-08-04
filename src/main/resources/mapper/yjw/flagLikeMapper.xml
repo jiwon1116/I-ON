@@ -24,5 +24,12 @@
     <select id="count" resultType="int">
         SELECT COUNT(*) FROM flag_like WHERE post_id = #{postId}
     </select>
+
+    <update id="updateLikeCount" parameterType="long">
+        UPDATE flag_post
+        SET like_count = (SELECT COUNT(*) FROM flag_like WHERE post_id = #{postId})
+        WHERE id = #{postId}
+    </update>
+
 </mapper>
 

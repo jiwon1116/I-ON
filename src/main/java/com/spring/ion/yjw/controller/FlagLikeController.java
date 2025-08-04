@@ -22,6 +22,7 @@ public class FlagLikeController {
     @ResponseBody
     public Map<String, Object> likeAjax(@PathVariable("postId") Long postId) {
         Map<String, Object> result = new HashMap<>();
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
@@ -29,6 +30,7 @@ public class FlagLikeController {
         System.out.println("principal 값: " + principal);
 
         String memberId = null;
+
         if (principal instanceof CustomUserDetails) {
             memberId = ((CustomUserDetails) principal).getUsername();
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
@@ -53,6 +55,7 @@ public class FlagLikeController {
 
         result.put("likeCount", likeCount);
         result.put("liked", liked);
+
         return result;
     }
 

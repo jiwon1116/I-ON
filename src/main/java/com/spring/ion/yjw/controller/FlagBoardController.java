@@ -5,6 +5,7 @@ import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPageDTO;
 import com.spring.ion.yjw.dto.FlagPostDTO;
 import com.spring.ion.yjw.service.FlagCommentService;
+import com.spring.ion.yjw.service.FlagLikeService;
 import com.spring.ion.yjw.service.FlagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,7 @@ public class FlagBoardController {
 
     private final FlagService flagService;
     private final FlagCommentService flagCommentService;
+    private final FlagLikeService flagLikeService;
 
 //    @GetMapping
 //    public String flag() {
@@ -68,10 +70,10 @@ public class FlagBoardController {
         return "yjw/flag";
     }
 
+
     // 상세보기
     @GetMapping("/{id}")
-    // @PathVariable : URL 경로 일부를 메서드의 파라미터로 전달
-    public String detail(@PathVariable("id") int id, Model model,  HttpServletRequest request) {
+    public String detail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String viewKey = "viewed_post_" + id;
 
@@ -82,16 +84,40 @@ public class FlagBoardController {
 
         FlagPostDTO flagPostDTO = flagService.findById(id);
         List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(id);
-
-        // 파일 목록 조회 코드 추가
         List<FlagFileDTO> fileList = flagService.findFilesByBoardId(id);
-        model.addAttribute("fileList", fileList);
+
+        // 1. 로그인 유저 정보 구하기
+        String memberId = null;
+        org.springframework.security.core.Authentication authentication =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof com.spring.ion.lcw.dto.CustomUserDetails) {
+            memberId = ((com.spring.ion.lcw.dto.CustomUserDetails) principal).getUsername();
+        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
+            memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof String) {
+            if (!"anonymousUser".equals(principal)) {
+                memberId = (String) principal;
+            }
+        }
+
+        // 2. 좋아요 눌렀는지 체크
+        boolean liked = false;
+        if (memberId != null) {
+            liked = flagLikeService.isLiked((long) id, memberId);
+        }
+        flagPostDTO.setLiked(liked); // DTO에 liked 필드가 있어야 함
+
+        // 3. 좋아요 카운트
+        flagPostDTO.setLike_count(flagLikeService.getLikeCount((long) id));
 
         model.addAttribute("flag", flagPostDTO);
         model.addAttribute("flagCommentDTOList", flagCommentDTOList);
+        model.addAttribute("fileList", fileList);
 
         return "yjw/flagDetail";
     }
+
 
 
     // 수정 폼 이동 시 기존 파일 리스트도 함께 넘김
