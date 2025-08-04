@@ -86,4 +86,9 @@ public class FlagRepository {
     public void deleteFileById(Long fileId) {
         sql.delete("Flag.deleteFileById", fileId);
     }
+
+    public void updateLikeCount(Long postId) {
+        sql.update("Flag.updateLikeCount", postId); // 네임스페이스를 'Flag'로!
+    }
+
 }

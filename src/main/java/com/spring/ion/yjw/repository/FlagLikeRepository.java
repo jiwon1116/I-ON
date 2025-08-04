@@ -34,8 +34,13 @@ public class FlagLikeRepository {
         sql.delete("FlagLikeMapper.delete", param);
     }
 
-
     public int count(Long postId) {
         return sql.selectOne("FlagLikeMapper.count", postId);
     }
+
+    public void updateLikeCount(Long postId) {
+        sql.update("FlagLikeMapper.updateLikeCount", postId);
+    }
+
+
 }

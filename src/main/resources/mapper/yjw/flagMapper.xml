@@ -81,11 +81,11 @@
         DELETE FROM flag_file WHERE id = #{fileId}
     </delete>
 
-
-
-
-
-
+    <update id="updateLikeCount" parameterType="long">
+        UPDATE flag_post
+        SET like_count = (SELECT COUNT(*) FROM flag_like WHERE post_id = #{postId})
+        WHERE id = #{postId}
+    </update>
 
 
 

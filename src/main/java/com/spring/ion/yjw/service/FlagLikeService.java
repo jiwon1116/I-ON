@@ -1,25 +1,30 @@
 package com.spring.ion.yjw.service;
 
 import com.spring.ion.yjw.repository.FlagLikeRepository;
+import com.spring.ion.yjw.repository.FlagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 
 @Service
 @RequiredArgsConstructor
 public class FlagLikeService {
     private final FlagLikeRepository flagLikeRepository;
+    private final FlagRepository flagRepository; // 추가
+
 
     // 좋아요 토글
     public boolean toggleLike(Long post_id, String memberId) {
         boolean exists = flagLikeRepository.exists(post_id, memberId);
         if (exists) {
-            flagLikeRepository.delete(post_id, memberId); // 이미 눌렀으면 취소
-            return false; // 이제 안 누른 상태
+            flagLikeRepository.delete(post_id, memberId);
         } else {
-            flagLikeRepository.insert(post_id, memberId); // 안 눌렀으면 등록
-            return true; // 이제 누른 상태
+            flagLikeRepository.insert(post_id, memberId);
         }
+        flagLikeRepository.updateLikeCount(post_id); // ← 여기로!
+        return !exists;
     }
+
 
 
     public int getLikeCount(Long post_id) {
@@ -29,4 +34,7 @@ public class FlagLikeService {
     public boolean isLiked(Long post_id, String memberId) {
         return flagLikeRepository.exists(post_id, memberId);
     }
+
+
+
 }

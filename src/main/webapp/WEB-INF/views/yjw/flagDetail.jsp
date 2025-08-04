@@ -65,10 +65,11 @@
 
             <!-- 좋아요 버튼 (하트 토글) -->
             <div class="mb-2">
-                <button type="button" class="btn like-btn ${flag != null && flag.liked ? 'liked' : ''}" id="likeBtn">
-                    <span class="heart">${flag != null && flag.liked ? '❤️' : '🤍'}</span>
-                    <span id="likeCount">${flag != null ? flag.like_count : 0}</span>
+                <button type="button" class="btn like-btn ${flag.liked ? 'liked' : ''}" id="likeBtn">
+                    <span class="heart">${flag.liked ? '❤️' : '🤍'}</span>
+                    <span id="likeCount">${flag.like_count}</span>
                 </button>
+
             </div>
 
             <div class="text-muted mt-2">
