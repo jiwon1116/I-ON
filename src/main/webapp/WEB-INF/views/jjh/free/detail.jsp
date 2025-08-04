@@ -392,7 +392,7 @@
 
 <script>
   const updateFn = () => {
-    location.href = "/free/update?id=${free.id}";
+    location.href = "/free/update/${free.id}";
   }
   const deleteFn = () => {
     const confirmed = confirm("정말 삭제하시겠습니까?");

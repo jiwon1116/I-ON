@@ -159,7 +159,7 @@
     </div>
 
     <c:forEach items="${freeboardList}" var="free">
-        <div class="card" onclick="location.href='/free/detail?id=${free.id}'">
+        <div class="card" onclick="location.href='/free/${free.id}'">
             <div class="card-left">
                 <img src="/images/default-profile.png" alt="profile" />
                 <div class="card-content">
