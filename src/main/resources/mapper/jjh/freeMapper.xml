@@ -7,9 +7,9 @@
         SELECT * FROM free_post ORDER BY id DESC
     </select>
 
-    <insert id="write" parameterType="free">
+    <insert id="write" parameterType="free" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO free_post (title, nickname, content)
-        VALUES (#{title}, #{nickname}, #{content});
+        VALUES (#{title}, #{nickname}, #{content})
     </insert>
 
     <select id="findById" parameterType="long" resultType="free">
@@ -41,4 +41,18 @@
         UPDATE free_post SET like_count = like_count + 1
         WHERE id = #{id}
     </update>
+
+    <insert id="saveFile" parameterType="freeFile">
+        INSERT INTO free_file (board_id, originalFileName, storedFileName)
+        VALUES (#{board_id}, #{originalFileName}, #{storedFileName})
+    </insert>
+
+    <select id="findFileById" parameterType="long" resultType="freeFile">
+        SELECT * FROM free_file WHERE board_id = #{id}
+    </select>
+
+    <delete id="deleteFileById" parameterType="long">
+        DELETE FROM free_file WHERE board_id = #{id}
+    </delete>
+
 </mapper>
