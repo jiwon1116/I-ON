@@ -46,10 +46,6 @@ public class FreeRepository {
         sql.update("Free.updateViewCount", clickId);
     }
 
-    public void updateLikeCount(long clickId) {
-        sql.update("Free.updateLikeCount", clickId);
-    }
-
     public void saveFile(FreeFileDTO fileDTO) {
         sql.insert("Free.saveFile", fileDTO);
     }
@@ -60,5 +56,9 @@ public class FreeRepository {
 
     public void deleteFileById(long id) {
         sql.delete("Free.deleteFileById", id);
+    }
+
+    public List<FreeDTO> search(String searchContent) {
+        return sql.selectList("Free.search", searchContent);
     }
 }

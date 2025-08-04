@@ -156,12 +156,12 @@
 <c:forEach var="post" items="${postList}">
     <a href="${pageContext.request.contextPath}/flag/${post.id}" class="card-link">
         <div class="card">
-            <p class="quote">“${post.content}”</p>
+            <p class="quote">“${post.title}”</p>${post.content}
             <div class="d-flex justify-content-between align-items-center mt-2">
                 <div class="d-flex align-items-center">
                     <img src="https://www.w3schools.com/howto/img_avatar.png" alt="기본프로필">
                     <div class="ms-2">
-                        <div class="fw-semibold">${post.title}</div>
+                        <div class="fw-semibold">${post.nickname}</div>
                         <div class="text-muted" style="font-size: 0.9rem;">
                             조회수: ${post.view_count}, 좋아요: ${post.like_count}
                         </div>

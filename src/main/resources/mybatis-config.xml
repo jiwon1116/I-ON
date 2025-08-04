@@ -11,6 +11,7 @@
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeDTO" alias="free"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeCommentDTO" alias="freeComment"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeFileDTO" alias="freeFile"></typeAlias>
+        <typeAlias type="com.spring.ion.jjh.dto.free.FreeLikeDTO" alias="freeLike"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissDTO" alias="miss"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissCommentDTO" alias="missComment"></typeAlias>
 
@@ -31,6 +32,7 @@
     <mappers>
         <mapper resource="mapper/jjh/freeMapper.xml"/>
         <mapper resource="mapper/jjh/freeCommentMapper.xml"/>
+        <mapper resource="mapper/jjh/freeLikeMapper.xml"/>
 
         <mapper resource="mapper/psw/InfoMapper.xml"/>
         <mapper resource="mapper/psw/CommentMapper.xml"/>

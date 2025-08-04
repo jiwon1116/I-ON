@@ -51,7 +51,7 @@ public class FlagBoardController {
                         @RequestParam("boardFile") List<MultipartFile> fileList) throws IOException {
 
         flagService.write(flagPostDTO, fileList);
-        return "redirect:/flag/paging";
+        return "redirect:/flag";
     }
 
 
@@ -139,7 +139,7 @@ public class FlagBoardController {
         model.addAttribute("postList", pagingList);
         model.addAttribute("paging", pageDTO);
 
-        return "yjw/flagPaging";
+        return "yjw/flag";
     }
 
     @GetMapping("/preview")

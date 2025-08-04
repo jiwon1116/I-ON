@@ -157,11 +157,12 @@ public class FreeService {
         freeRepository.updateViewCount(clickId);
     }
 
-    public void updateLikeCount(long clickId) {
-        freeRepository.updateLikeCount(clickId);
-    }
 
     public List<FreeFileDTO> findFileById(long clickId) {
         return freeRepository.findFileById(clickId);
+    }
+
+    public List<FreeDTO> search(String searchContent) {
+        return freeRepository.search(searchContent);
     }
 }

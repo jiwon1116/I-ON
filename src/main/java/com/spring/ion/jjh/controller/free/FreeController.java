@@ -89,12 +89,18 @@ public class FreeController {
         return "jjh/free/detail";
     }
 
-    @PostMapping("/updateLikeCount")
-    @ResponseBody
-    public int updateLikeCount(@RequestParam("id") long id) {
-        freeService.updateLikeCount(id);
-        FreeDTO updated = freeService.findById(id);
-        return updated.getLike_count(); // 좋아요 수만 반환
+    @GetMapping("/search")
+    public String searchResult(@RequestParam(value = "searchContent", required = false) String searchContent, Model model ) {
+        List<FreeDTO> freeboardList;
+
+        if (searchContent != null && !searchContent.isEmpty()) {
+            freeboardList = freeService.search(searchContent);
+        } else {
+            freeboardList = freeService.allFreeList();
+        }
+
+        model.addAttribute("freeboardList", freeboardList);
+        return "jjh/free/free";
     }
 
     @GetMapping("/update")

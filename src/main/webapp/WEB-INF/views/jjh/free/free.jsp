@@ -55,7 +55,7 @@
         }
 
         .search-bar input {
-            width: 100%;
+            width: 70%;
             max-width: 600px;
             padding: 10px 15px;
             font-size: 16px;
@@ -151,9 +151,10 @@
 
 <div class="main">
     <div class="search-bar-container">
-        <div class="search-bar">
-            <input type="text" placeholder="Search" />
-        </div>
+        <form class="search-bar" method="get" action="/free/search">
+            <input type="text" name="searchContent" placeholder="제목, 내용으로 검색" />
+            <button type="submit">검색</button>
+        </form>
         <a class="write-btn" href="free/write">글 작성</a>
     </div>
 

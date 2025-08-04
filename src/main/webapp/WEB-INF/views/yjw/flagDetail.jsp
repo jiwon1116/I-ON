@@ -17,7 +17,6 @@
         .like-btn.liked .heart {
             color: #f44336;
         }
-        .like-btn .heart {
             color: #fff;
             text-shadow: 0 0 2px #d1d1d1;
         }
@@ -158,6 +157,7 @@
                 success: function (data) {
                     renderCommentList(data);
                     $('#content').val('');
+                    location.reload();
                 },
                 error: function () {
                     alert("댓글 등록 실패");
@@ -209,6 +209,7 @@
             dataType: 'json',
             success: function (data) {
                 renderCommentList(data);
+
             },
             error: function () {
                 alert("댓글 삭제 실패");
