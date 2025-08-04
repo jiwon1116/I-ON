@@ -4,8 +4,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>위탁 게시판</title>
-      <style>
+    <title>실종 게시판</title>
+    <style>
         body {
           margin: 0;
           font-family: "Noto Sans KR", sans-serif;
@@ -112,7 +112,6 @@
           font-size: 20px;
           padding-bottom: 10px;
         }
-
         .write-container {
           display: flex;
           justify-content: center;
@@ -137,8 +136,8 @@
         }
 
         .write-form input[type="text"],
-        .write-form textarea,
-        .write-form input[type="file"] {
+        .write-form input[type="file"],
+        .write-form textarea {
           width: 100%;
           margin-top: 8px;
           padding: 10px 12px;
@@ -171,7 +170,8 @@
         .write-form button:hover {
           background-color: #ffb400;
         }
-      </style>
+
+    </style>
 </head>
 <body>
     <!-- ✅ 상단바 시작 -->
@@ -209,27 +209,30 @@
       </nav>
     </header>
 
-    <h2 style="text-align:center;">글쓰기</h2>
+    <h2 style="text-align: center;">글쓰기</h2>
 
     <div class="write-container">
-      <form action="/entrust/write" method="post" enctype="multipart/form-data" class="write-form">
+      <form action="/miss/update/${miss.id}" method="post" enctype="multipart/form-data" class="write-form">
+        <input type="hidden" name="id" value="${miss.id}" />
+
         <label for="title">제목</label>
-        <input type="text" name="title" id="title" placeholder="제목을 입력해주세요" required />
-        <label for="title">작성자</label>
-        <input type="text" name="nickname" id="nickname" placeholder="작성자를 입력해주세요" required />
+        <input type="text" name="title" id="title" value="${miss.title}" required />
+
+        <label for="nickname">작성자</label>
+        <input type="text" name="nickname" id="nickname" value="${miss.nickname}" readonly />
 
         <label for="uploadFiles">파일 업로드</label>
-        <input type="file" name="uploadFiles" id="uploadFiles" multiple />
+        <input type="file" name="file" id="uploadFiles" multiple />
 
         <label for="content">내용</label>
-        <textarea name="content" id="content" rows="8" placeholder="내용을 입력해주세요" required></textarea>
+        <textarea name="content" id="content" rows="8" required>${miss.content}</textarea>
 
         <div class="submit-btn-wrapper">
-          <button type="submit">등록하기</button>
+          <button type="submit">수정하기</button>
         </div>
       </form>
     </div>
 
-    </form>
 </body>
+
 </html>

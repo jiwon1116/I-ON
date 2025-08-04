@@ -4,18 +4,23 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
+    <!-- 별명 짓는 설정자 -->
     <typeAliases>
-        <!-- 별명 짓는 설정자 -->
+        <!-- 위탁 게시판 -->
         <typeAlias type="com.spring.ion.jjh.dto.entrust.EntrustDTO" alias="entrust"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.entrust.EntrustCommentDTO" alias="entrustComment"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.entrust.EntrustFileDTO" alias="entrustFile"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.entrust.EntrustLikeDTO" alias="entrustLike"></typeAlias>
+        <!-- 자유 게시판 -->
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeDTO" alias="free"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeCommentDTO" alias="freeComment"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeFileDTO" alias="freeFile"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeLikeDTO" alias="freeLike"></typeAlias>
+        <!-- 실종 게시판 -->
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissDTO" alias="miss"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissCommentDTO" alias="missComment"></typeAlias>
+        <typeAlias type="com.spring.ion.jjh.dto.miss.MissFileDTO" alias="missFile"></typeAlias>
+        <typeAlias type="com.spring.ion.jjh.dto.miss.MissLikeDTO" alias="missLike"></typeAlias>
 
         <typeAlias type="com.spring.ion.psw.dto.Info_contentDTO" alias="infoContent"></typeAlias>
         <typeAlias type="com.spring.ion.psw.dto.Info_commentDTO" alias="infoComment"></typeAlias>
@@ -38,6 +43,9 @@
         <mapper resource="mapper/jjh/entrustMapper.xml"/>
         <mapper resource="mapper/jjh/entrustCommentMapper.xml"/>
         <mapper resource="mapper/jjh/entrustLikeMapper.xml"/>
+        <mapper resource="mapper/jjh/missMapper.xml"/>
+        <mapper resource="mapper/jjh/missCommentMapper.xml"/>
+        <mapper resource="mapper/jjh/missLikeMapper.xml"/>
 
         <mapper resource="mapper/psw/InfoMapper.xml"/>
         <mapper resource="mapper/psw/CommentMapper.xml"/>

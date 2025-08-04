@@ -6,7 +6,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>위탁 게시판</title>
+  <title>실종 게시판</title>
   <script src="https://code.jquery.com/jquery-latest.min.js"></script>
   <style>
     body {
@@ -341,20 +341,20 @@
 <!-- ✅ 상단바 끝 -->
 
 <div class="post-container">
-    <div class="post-title">${entrust.title}</div>
-    <div class="post-meta">${entrust.nickname}</div>
-    <div class="post-content">${entrust.content}</div>
+    <div class="post-title">${miss.title}</div>
+    <div class="post-meta">${miss.nickname}</div>
+    <div class="post-content">${miss.content}</div>
 
     <c:forEach items="${fileList}" var="file">
     <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
-      <img class="preview-img" src="/entrust/preview?fileName=${file.storedFileName}" />
+      <img class="preview-img" src="/miss/preview?fileName=${file.storedFileName}" />
     </c:if>
     </c:forEach>
 
     <div class="mb-2">
-        <button type="button" class="btn like-btn ${entrust != null && entrust.liked ? 'liked' : ''}" id="likeBtn">
-            <span class="heart">${entrust != null && entrust.liked ? '❤️' : '🤍'}</span>
-            <span id="likeCount">${entrust != null ? entrust.like_count : 0}</span>
+        <button type="button" class="btn like-btn ${miss != null && miss.liked ? 'liked' : ''}" id="likeBtn">
+            <span class="heart">${miss != null && miss.liked ? '❤️' : '🤍'}</span>
+            <span id="likeCount">${miss != null ? miss.like_count : 0}</span>
         </button>
     </div>
 
@@ -392,12 +392,12 @@
 
 <script>
   const updateFn = () => {
-    location.href = "/entrust/update/${entrust.id}";
+    location.href = "/miss/update/${miss.id}";
   }
   const deleteFn = () => {
     const confirmed = confirm("정말 삭제하시겠습니까?");
     if (confirmed) {
-      location.href = "/entrust/delete?id=${entrust.id}";
+      location.href = "/miss/delete?id=${miss.id}";
     }
   }
 
@@ -405,16 +405,16 @@
   const commentDelete = (commentId) => {
     const confirmed = confirm("댓글을 삭제하시겠습니까?");
     if (confirmed) {
-      location.href = "/entrustComment/delete?id=" + commentId;
+      location.href = "/missComment/delete?id=" + commentId;
     }
   }
   const commentWrite = () => {
     const nickname = document.getElementById("nickname").value;
     const content = document.getElementById("content").value;
-    const postId = "${entrust.id}";
+    const postId = "${miss.id}";
     $.ajax({
       type: "post",
-      url: "/entrustComment/save",
+      url: "/missComment/save",
       data: {
         nickname: nickname,
         content: content,
@@ -434,10 +434,10 @@
     $(document).ready(function () {
     // 좋아요 버튼
         $('#likeBtn').click(function(){
-            const entrustId = '${entrust.id}';
+            const missId = '${miss.id}';
             $.ajax({
                 type: 'POST',
-                url: '${pageContext.request.contextPath}/entrustLike/like/' + entrustId,
+                url: '${pageContext.request.contextPath}/missLike/like/' + missId,
                 success: function(data){
                     if(data.error){
                         alert(data.error);

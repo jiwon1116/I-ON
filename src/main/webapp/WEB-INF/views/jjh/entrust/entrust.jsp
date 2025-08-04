@@ -6,7 +6,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>자유 게시판</title>
+    <title>위탁 게시판</title>
     <style>
         body {
             margin: 0;

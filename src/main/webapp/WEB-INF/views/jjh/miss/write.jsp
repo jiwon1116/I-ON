@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>위탁 게시판</title>
+    <title>실종 게시판</title>
       <style>
         body {
           margin: 0;
@@ -212,7 +212,7 @@
     <h2 style="text-align:center;">글쓰기</h2>
 
     <div class="write-container">
-      <form action="/entrust/write" method="post" enctype="multipart/form-data" class="write-form">
+      <form action="/miss/write" method="post" enctype="multipart/form-data" class="write-form">
         <label for="title">제목</label>
         <input type="text" name="title" id="title" placeholder="제목을 입력해주세요" required />
         <label for="title">작성자</label>

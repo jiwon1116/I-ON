@@ -10,6 +10,7 @@
     <h2>Hello Spring Framework</h2>
     <a href="/free">자유</a>
     <a href="/entrust">위탁</a>
+    <a href="/miss">실종</a>
 
 
     <security:authorize access="isAnonymous()">

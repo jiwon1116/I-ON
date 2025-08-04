@@ -2,7 +2,7 @@ package com.spring.ion.jjh.dto.miss;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 public class MissDTO {
@@ -12,5 +12,7 @@ public class MissDTO {
     private String content; // 내용
     private int like_count; // 좋아요 수
     private int view_count; // 조회수
-    private LocalDateTime created_at; // 등록 날짜
+    private Date created_at; // 등록 날짜
+
+    private Boolean liked;
 }
