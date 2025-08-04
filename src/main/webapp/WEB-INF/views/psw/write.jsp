@@ -137,15 +137,15 @@
     <main class="content">
         <div class="form-container">
             <h2>글쓰기</h2>
-            <form action="/info/save" method="post" >
+            <form action="${pageContext.request.contextPath}/info/save" method="post">
                 <div class="form-group">
                     <label for="title">제목</label>
                     <input type="text" id="title" name="title" placeholder="제목을 입력해주세요" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="file">파일 업로드</label>
-                    <input type="file" id="file" name="file" />
+              <label for="file" class="form-label">파일 첨부 (선택)</label>
+               <input type="file" class="form-control" id="file" name="file">
                 </div>
 
                 <div class="form-group">

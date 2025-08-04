@@ -138,35 +138,43 @@
 <!-- 메인 콘텐츠 -->
 <div class="main-content">
 
+
+
+
     <!-- 상단 검색 & 글쓰기 -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <form class="d-flex search-bar" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <form class="d-flex search-bar" role="search" method="get" action="${pageContext.request.contextPath}/flag/search">
+            <input class="form-control me-2" type="search" name="keyword" placeholder="제목 또는 내용을 검색하세요" value="${param.keyword}">
             <button class="btn btn-outline-dark" type="submit">🔍</button>
         </form>
         <a href="${pageContext.request.contextPath}/flag/write" class="btn btn-dark">✏ 글쓰기</a>
     </div>
 
     <!-- 게시글 카드 반복 -->
-    <c:forEach var="post" items="${postList}">
-        <a href="${pageContext.request.contextPath}/flag/${post.id}" class="card-link">
-            <div class="card">
-                <p class="quote">“${post.content}”</p>
-                <div class="d-flex justify-content-between align-items-center mt-2">
-                    <div class="d-flex align-items-center">
-                        <img src="${pageContext.request.contextPath}/resources/img/default-profile.png" alt="기본프로필">
-                        <div class="ms-2">
-                            <div class="fw-semibold">${post.title}</div>
-                            <div class="text-muted" style="font-size: 0.9rem;">
-                                조회수: ${post.view_count}, 좋아요: ${post.like_count}
-                            </div>
+    <c:if test="${empty postList}">
+        <div class="text-center mt-5 text-muted">검색 결과가 없습니다.</div>
+    </c:if>
+
+<c:forEach var="post" items="${postList}">
+    <a href="${pageContext.request.contextPath}/flag/${post.id}" class="card-link">
+        <div class="card">
+            <p class="quote">“${post.content}”</p>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+                <div class="d-flex align-items-center">
+                    <img src="https://www.w3schools.com/howto/img_avatar.png" alt="기본프로필">
+                    <div class="ms-2">
+                        <div class="fw-semibold">${post.title}</div>
+                        <div class="text-muted" style="font-size: 0.9rem;">
+                            조회수: ${post.view_count}, 좋아요: ${post.like_count}
                         </div>
                     </div>
-                    <span class="text-muted">▶</span>
                 </div>
+                <span class="text-muted">▶</span>
             </div>
-        </a>
-    </c:forEach>
+        </div>
+    </a>
+</c:forEach>
+
 
     <!-- 동적 페이지네이션 -->
     <nav aria-label="Page navigation">

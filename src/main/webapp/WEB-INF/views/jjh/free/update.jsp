@@ -19,11 +19,12 @@
         </ul>
     </div>
 
-    <form action="/free/update" method="post">
+    <form action="/free/update" method="post" enctype="multipart/form-data">
       <input type="hidden" name="id" value="${free.id}" />
       제목 : <input type="text" name="title" value="${free.title}" /><br>
       작성자 : <input type="text" name="nickname" value="${free.nickname}" readonly /><br>
       내용 : <textarea name="content" cols="30" rows="10">${free.content}</textarea><br>
+      <input type="file" name="file" multiple />
             <input type="submit" value="수정 완료" />
     </form>
 </body>

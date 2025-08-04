@@ -19,10 +19,11 @@
     </div>
 
     <h2>글 작성하기</h2>
-    <form action="/free/write" method="post">
+    <form action="/free/write" method="post" enctype="multipart/form-data">
       <input type="text" name="title" placeholder="제목" required/><br>
       <input type="text" name="nickname" placeholder="작성자" required/><br>
       <textarea name="content" cols="30" rows="10" placeholder="내용 입력" required></textarea><br>
+      <input type="file" name="uploadFiles" multiple />
       <input type="submit" value="작성 완료" />
     </form>
 </body>

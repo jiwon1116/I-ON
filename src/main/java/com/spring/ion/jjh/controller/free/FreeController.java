@@ -3,13 +3,21 @@ package com.spring.ion.jjh.controller.free;
 import com.spring.ion.jjh.dto.PageDTO;
 import com.spring.ion.jjh.dto.free.FreeCommentDTO;
 import com.spring.ion.jjh.dto.free.FreeDTO;
+import com.spring.ion.jjh.dto.free.FreeFileDTO;
 import com.spring.ion.jjh.service.free.FreeCommentService;
 import com.spring.ion.jjh.service.free.FreeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 @Controller
@@ -39,8 +47,11 @@ public class FreeController {
     }
 
     @PostMapping("/write")
-    public String write(FreeDTO freeDTO) {
-        int result = freeService.write(freeDTO);
+    public String write(
+            @ModelAttribute FreeDTO freeDTO,
+            @RequestParam(value = "uploadFiles", required = false) List<MultipartFile> uploadFiles
+    ) {
+        int result = freeService.write(freeDTO, uploadFiles);
 
         if (result > 0) {
             return "redirect:/free";
@@ -55,8 +66,12 @@ public class FreeController {
         freeService.updateViewCount(clickId);
         FreeDTO free = freeService.findById(clickId);
         model.addAttribute("free", free);
+
         List<FreeCommentDTO> commentDTO = commentService.findAll(clickId);
         model.addAttribute("commentList", commentDTO);
+
+        List<FreeFileDTO> fileList = freeService.findFileById(clickId);
+        model.addAttribute("fileList", fileList);
         return "jjh/free/detail";
     }
 
@@ -80,8 +95,9 @@ public class FreeController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute FreeDTO freeDTO) {
-        boolean result = freeService.update(freeDTO);
+    public String update(@ModelAttribute FreeDTO freeDTO,
+                         @RequestParam("file") MultipartFile file) {
+        boolean result = freeService.update(freeDTO, file);
 
         if (result) {
             return "redirect:/free";
@@ -89,6 +105,7 @@ public class FreeController {
             return "jjh/free/update";
         }
     }
+
 
     @GetMapping("/delete")
     public String delete(FreeDTO freeDTO) {
@@ -100,4 +117,19 @@ public class FreeController {
         }
         return "redirect:/free";
     }
+
+    @GetMapping("/preview")
+    public void preview(@RequestParam("fileName") String fileName, HttpServletResponse response) throws IOException, IOException {
+        String filePath = "C:/upload/free/" + fileName;
+        File file = new File(filePath);
+
+        if (file.exists()) {
+            String mimeType = Files.probeContentType(file.toPath());
+            response.setContentType(mimeType);
+            FileInputStream fis = new FileInputStream(file);
+            FileCopyUtils.copy(fis, response.getOutputStream());
+            fis.close();
+        }
+    }
+
 }
