@@ -17,5 +17,7 @@ public class FlagPostDTO {
     private int view_count; // 조회수
     private Date created_at; // 작성일
 
+    private Boolean liked;
+
 
 }

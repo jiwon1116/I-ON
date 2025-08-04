@@ -153,5 +153,6 @@ public class FlagService {
     public List<FlagFileDTO> findFilesByBoardId(int id) {
         return flagRepository.findFilesByBoardId(id);
     }
+
 }
 

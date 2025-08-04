@@ -22,7 +22,6 @@ public class FlagCommentService {
         flagCommentRepository.write(flagCommentDTO);
     }
 
-
     // 댓글 삭제
     public int delete(Long id) {
         return flagCommentRepository.delete(id);
