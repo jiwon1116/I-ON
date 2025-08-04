@@ -38,4 +38,8 @@ public class Info_LikeRepository {
     public int count(Long findId) {
         return sql.selectOne("InfoLikeMapper.count", findId);
     }
+
+    public void updateLikeCount(Long findId) {
+        sql.update("InfoLikeMapper.infoUpdateLikeCount", findId);
+    }
 }

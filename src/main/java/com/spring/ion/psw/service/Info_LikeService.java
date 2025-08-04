@@ -18,10 +18,10 @@ private final Info_LikeRepository infoLikeRepository;
             return false; // 이제 안 누른 상태
         } else {
             infoLikeRepository.insert(findId, memberId); // 안 눌렀으면 등록
-            return true; // 이제 누른 상태
         }
+        infoLikeRepository.updateLikeCount(findId);
+        return !exists;
     }
-
 
     public int getLikeCount(Long findId) {
         return infoLikeRepository.count(findId);

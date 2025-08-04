@@ -220,8 +220,8 @@
             <!-- 좋아요 버튼 (하트 토글) -->
             <div class="mb-2">
                 <button type="button" class="btn like-btn ${findDto != null && findDto.liked ? 'liked' : ''}" id="likeBtn">
-                    <span class="heart">${findDto != null && findDto.liked ? '❤️' : '🤍'}</span>
-                    <span id="likeCount">${findDto != null ? findDto.like_count : 0}</span>
+                            <span class="heart">${findDto.liked ? '❤️' : '🤍'}</span>
+                           <span id="likeCount">${findDto.like_count}</span>
                 </button>
             </div>
 
@@ -263,8 +263,12 @@
 
 <script>
     const updatefn = () => {
+    const memberId = '${memberId}';
+    if(memberId !== "admin"){
         alert("관리자만 수정이 가능한 게시글입니다😣");
-        document.infoupdateForm.submit();
+        return;
+    }else {
+        document.infoupdateForm.submit();}
     }
 
     const infoForm = () => {
@@ -298,20 +302,27 @@
                 }
             });
         });
-
+       // 삭제 버튼
     const deletefn = () => {
         const id = "${findDto.id}";
-        alert("관리자만 삭제 가능한 게시글입니다😣");
-        const confirmed = confirm("정말 삭제하시겠습니까?");
-        if (confirmed) {
-            location.href = "/info/delete?id=" + id;
-        }
+        const memberId = '${memberId}';
+            if(memberId !== "admin"){
+                   alert("관리자만 삭제 가능한 게시글입니다😣");
+                return;
+            }else {
+                const confirmed = confirm("정말 삭제하시겠습니까?");
+                  if (confirmed) {
+                     location.href = "/info/delete?id=" + id;
+                  }
+            }
       }
 
       const commentWrite = () => {
+      //댓글을 작성한 사람의 닉네임과 댓글의 닉네임 비교 후
               const nickname = document.getElementById("commentWriter").value.trim();
               const content = document.getElementById("commentContents").value.trim();
               const post_id = "${findDto.id}";
+              const memberId = '${memberId}';
 
               if (!nickname || !content) {
                       alert("내용을 입력해주세요.");

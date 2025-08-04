@@ -104,6 +104,7 @@ public class Info_contentService {
         infoContentRepository.saveFile(infoFileDTO);
     }
 
+
     // 이미지 파일 가져오기
     public Info_FileDTO findFile(Long boardId) {
     return infoContentRepository.findFile(boardId);
@@ -114,11 +115,12 @@ public class Info_contentService {
     public void updateFile(Info_FileDTO infoFileDTO) {
         infoContentRepository.update(infoFileDTO);
 
-
     }
 
     //글 찾기
     public List<Info_contentDTO> search(String keyword) {
        return infoContentRepository.search(keyword);
     }
+
+
 }
