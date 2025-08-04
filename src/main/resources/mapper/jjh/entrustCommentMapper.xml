@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="EntrustComment">
+    <insert id="save" parameterType="entrustComment">
+        INSERT INTO entrust_comment (nickname, content, post_id)
+        VALUES (#{nickname}, #{content}, #{post_id});
+    </insert>
+
+    <select id="findAll" resultType="entrustComment">
+        SELECT * FROM entrust_comment WHERE post_id = #{post_id} ORDER BY id DESC
+    </select>
+
+    <select id="findById" parameterType="long" resultType="entrustComment">
+        SELECT * FROM entrust_comment WHERE id = #{id}
+    </select>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM entrust_comment WHERE id = #{id}
+    </delete>
+</mapper>

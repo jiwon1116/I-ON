@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Miss">
+    <select id="allMissList" resultType="miss">
+        SELECT * FROM miss_post ORDER BY id DESC
+    </select>
+
+    <insert id="write" parameterType="miss" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO miss_post (title, nickname, content)
+        VALUES (#{title}, #{nickname}, #{content})
+    </insert>
+
+    <select id="findById" parameterType="long" resultType="miss">
+        SELECT * FROM miss_post WHERE id = #{id}
+    </select>
+
+    <select id="search" parameterType="string" resultType="miss">
+        SELECT * FROM miss_post
+        WHERE title LIKE CONCAT('%', #{searchContent}, '%')
+        OR content LIKE CONCAT('%', #{searchContent}, '%')
+        ORDER BY id DESC
+    </select>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM miss_post WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="miss">
+        UPDATE miss_post SET title = #{title}, content = #{content} WHERE id = #{id}
+    </update>
+
+    <select id="pagingList" parameterType="java.util.HashMap" resultType="miss">
+        SELECT * FROM miss_post ORDER BY id DESC LIMIT #{start}, #{limit}
+    </select>
+
+    <select id="boardCount" resultType="int">
+        SELECT COUNT(id) FROM miss_post
+    </select>
+
+    <update id="updateViewCount" keyProperty="int">
+        UPDATE miss_post SET view_count = view_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <insert id="saveFile" parameterType="missFile">
+        INSERT INTO miss_file (board_id, originalFileName, storedFileName)
+        VALUES (#{board_id}, #{originalFileName}, #{storedFileName})
+    </insert>
+
+    <select id="findFileById" parameterType="long" resultType="missFile">
+        SELECT * FROM miss_file WHERE board_id = #{id}
+    </select>
+
+    <delete id="deleteFileById" parameterType="long">
+        DELETE FROM miss_file WHERE board_id = #{id}
+    </delete>
+
+    <!-- 좋아요 수 증가 -->
+    <update id="increaseLikeCount" parameterType="long">
+        UPDATE miss_post SET like_count = like_count + 1 WHERE id = #{postId}
+    </update>
+
+    <!-- 좋아요 수 감소 -->
+    <update id="decreaseLikeCount" parameterType="long">
+        UPDATE miss_post SET like_count = like_count - 1 WHERE id = #{postId} AND like_count > 0
+    </update>
+
+
+</mapper>

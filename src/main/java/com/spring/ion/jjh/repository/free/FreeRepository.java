@@ -61,4 +61,12 @@ public class FreeRepository {
     public List<FreeDTO> search(String searchContent) {
         return sql.selectList("Free.search", searchContent);
     }
+
+    public void increaseLikeCount(Long postId) {
+        sql.update("Free.increaseLikeCount", postId);
+    };
+
+    public void decreaseLikeCount(Long postId) {
+        sql.update("Free.decreaseLikeCount", postId);
+    };
 }
