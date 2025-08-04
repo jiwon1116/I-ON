@@ -10,48 +10,13 @@
         body {
             margin: 0;
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f5f5f5;
+            background-color: #fdfdfd;
         }
 
         .container {
-            display: flex;
-            height: 100vh;
-        }
-
-        /* 사이드바 */
-        .sidebar {
-            width: 240px;
-            background-color: #ffcc47; /* 이미지와 유사한 노랑 */
-            padding: 30px 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar li {
-            margin: 20px 0;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .sidebar li:hover {
-            color: #000;
-            background-color: #ffeaa7;
-            padding: 8px 12px;
-            border-radius: 8px;
-        }
-
-        /* 메인 콘텐츠 */
-        .content {
-            flex: 1;
-            padding: 40px 60px;
-            overflow-y: auto;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 24px;
         }
 
         .top-bar {
@@ -62,98 +27,177 @@
         }
 
         .search-input {
-            width: 280px;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
+            width: 300px;
+            padding: 10px 16px;
+            border: 1px solid #ccc;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #ffb800;
+            box-shadow: 0 0 6px #ffb800aa;
         }
 
         .filter-buttons button {
-            padding: 12px 20px;
-            border: none;
-            background-color: #2d3436;
+            background-color: #ffb800;
             color: white;
-            border-radius: 10px;
             font-weight: bold;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
-        /* 카드 스타일 */
+        .filter-buttons button:hover {
+            background-color: #ffaa00;
+        }
+
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 35px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
         }
 
         .card {
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            padding: 20px;
-            transition: transform 0.2s ease;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .card:hover {
-            transform: translateY(-6px);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
         }
 
         .card img {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .card p {
-            font-size: 17px;
-            font-weight: 600;
-            margin: 0 0 10px 0;
-        }
-
-        .card a {
-            font-size: 14px;
-            color: #666;
-            text-decoration: none;
             display: block;
         }
 
-        .card a:hover {
-            text-decoration: underline;
+        .card .card-body {
+            padding: 16px;
+        }
+
+        .card .title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #222;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card .author {
+            font-size: 13px;
+            color: #777;
+        }
+
+        /* Pagination */
+        nav[aria-label="Page navigation"] {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        ul.pagination {
+            list-style: none;
+            padding: 0;
+            display: inline-flex;
+            gap: 8px;
+        }
+
+        .page-item a.page-link {
+            display: block;
+            padding: 10px 14px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            color: #333;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .page-item.active a.page-link,
+        .page-item a.page-link:hover {
+            background-color: #ffb800;
+            color: white;
+            border-color: #ffb800;
+        }
+
+        .page-item.disabled a.page-link {
+            color: #bbb;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <!-- 사이드바 -->
-    <aside class="sidebar">
-        <ul>
-            <li>📌 마이페이지</li>
-            <li>🗺️ 범죄 예방 지도</li>
-            <li>💬 커뮤니티</li>
-            <li>🚨 제보 및 신고</li>
-            <li>📚 정보 공유</li>
-        </ul>
-    </aside>
-
-    <main class="content">
-        <div class="top-bar">
-            <input type="text" class="search-input" placeholder="검색어를 입력하세요..."/>
-            <div class="filter-buttons">
-                <button onclick="writeFn()">글 작성하기</button>
-            </div>
+    <div class="top-bar">
+        <input type="text" class="search-input" placeholder="검색어를 입력하세요..."/>
+        <div class="filter-buttons">
+            <button onclick="writeFn()">글 작성하기</button>
         </div>
+    </div>
 
-        <div class="card-grid">
-            <c:forEach var="content" items="${contentList}">
-                <div class="card">
-                    <이미지>
-                    <p>${content.title}</p>
-                    <a href="/info/detail/${content.id}">${content.content}</a>
+    <div class="card-grid">
+        <c:forEach var="content" items="${postList}">
+            <div class="card" onclick="location.href='/info/detail?id=${content.id}'">
+                <img src="${content.imageUrl != null ? content.imageUrl : '/resources/images/default.jpg'}" alt="카드 이미지">
+                <div class="card-body">
+                    <div class="title">${content.title}</div>
+                    <div class="author">${content.writer != null ? content.writer : 'admin'}</div>
                 </div>
+            </div>
+        </c:forEach>
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <c:choose>
+                <c:when test="${paging.page <= 1}">
+                    <li class="page-item disabled"><a class="page-link">← Previous</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li class="page-item">
+                        <a class="page-link" href="${pageContext.request.contextPath}/info/paging?page=${paging.page - 1}">← Previous</a>
+                    </li>
+                </c:otherwise>
+            </c:choose>
+
+            <c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="i">
+                <c:choose>
+                    <c:when test="${i eq paging.page}">
+                        <li class="page-item active"><a class="page-link">${i}</a></li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="page-item">
+                            <a class="page-link" href="${pageContext.request.contextPath}/info/paging?page=${i}">${i}</a>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
             </c:forEach>
-        </div>
-    </main>
+
+            <c:choose>
+                <c:when test="${paging.page >= paging.maxPage}">
+                    <li class="page-item disabled"><a class="page-link">Next →</a></li>
+                </c:when>
+                <c:otherwise>
+                    <li class="page-item">
+                        <a class="page-link" href="${pageContext.request.contextPath}/info/paging?page=${paging.page + 1}">Next →</a>
+                    </li>
+                </c:otherwise>
+            </c:choose>
+        </ul>
+    </nav>
 </div>
 
 <script>
