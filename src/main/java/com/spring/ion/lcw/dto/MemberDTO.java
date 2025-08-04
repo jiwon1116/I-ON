@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @ToString
@@ -19,4 +20,5 @@ public class MemberDTO {
     private Integer trust_score;
     private Timestamp created_at;
     private Boolean enabled;
+    private List<String> authorities;
 }

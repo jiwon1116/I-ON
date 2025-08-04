@@ -6,12 +6,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>로그인</title>
 </head>
 <body>
 
-	<h1>로그인 페이지</h1>
-	<h1>Login Page</h1>
+	<h1>로그인</h1>
 	<h2>${error}</h2>
 	<h2>${logout}</h2>
 	<form action="/login" method="post">

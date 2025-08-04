@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="Register">
+<mapper namespace="Member">
+
+    <resultMap id="memberWithAuthoritiesResultMap" type="com.spring.ion.lcw.dto.MemberDTO">
+        <id property="userId" column="userId"/>
+        <result property="password" column="password"/>
+        <result property="nickname" column="nickname"/>
+        <result property="gender" column="gender"/>
+        <result property="region" column="region"/>
+        <result property="enabled" column="enabled"/>
+        <result property="createdAt" column="created_at"/>
+
+        <collection property="authorities" ofType="string">
+            <result column="authority"/>
+        </collection>
+    </resultMap>
 
     <insert id="insertMember" parameterType="com.spring.ion.lcw.dto.MemberDTO">
         INSERT INTO member (
@@ -19,4 +33,31 @@
         )
     </insert>
 
+
+
+    <delete id="deleteMember" parameterType="String">
+        DELETE
+        FROM member
+        WHERE userId = #{userId}
+    </delete>
+
+    <delete id="deleteMemberAuthorities" parameterType="String">
+        DELETE
+        FROM member_authority
+        WHERE userId = #{userId}
+    </delete>
+
+    <select id="findByUserId" parameterType="String" resultType="com.spring.ion.lcw.dto.MemberDTO">
+        SELECT *
+        FROM member
+        WHERE userId = #{userId}
+    </select>
+
+    <select id="findByUserIdWithAuthorities" parameterType="String" resultMap="memberWithAuthoritiesResultMap">
+        SELECT
+        m.userId, m.password, m.nickname, m.gender, m.region, m.enabled, m.created_at, ma.authority
+        FROM member m LEFT JOIN member_authority ma ON m.userId = ma.userId
+        WHERE
+        m.userId = #{userId}
+    </select>
 </mapper>
