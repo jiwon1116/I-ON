@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -55,10 +54,10 @@
             cursor: pointer;
         }
         .card img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            margin-right: 15px;
         }
         .search-bar {
             max-width: 300px;
@@ -67,50 +66,43 @@
             font-style: italic;
         }
 
-        /* 모던 페이지네이션 스타일 */
-         .pagination {
-                 display: flex;
-                 justify-content: center;
-                 list-style: none;
-                 padding: 0;
-                 gap: 4px;
-             }
-
-             .pagination .page-item {
-                 display: inline-block;
-             }
-
-             .pagination .page-link {
-                 display: block;
-                 padding: 6px 12px;
-                 border-radius: 6px;
-                 background-color: transparent;
-                 color: #333;
-                 text-decoration: none;
-                 border: none;
-                 font-weight: 500;
-                 transition: background-color 0.2s ease;
-             }
-
-             .pagination .page-link:hover {
-                 background-color: #e0e0e0;
-             }
-
-             .pagination .page-item.active .page-link {
-                 background-color: #212121;
-                 color: #fff;
-                 pointer-events: none;
-             }
-
-             .pagination .page-item.disabled .page-link {
-                 color: #aaa;
-                 pointer-events: none;
-             }
-
-             .pagination .ellipsis {
-                 padding: 6px 12px;
-                 color: #999;
-             }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+            gap: 4px;
+        }
+        .pagination .page-item {
+            display: inline-block;
+        }
+        .pagination .page-link {
+            display: block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background-color: transparent;
+            color: #333;
+            text-decoration: none;
+            border: none;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+        .pagination .page-link:hover {
+            background-color: #e0e0e0;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #212121;
+            color: #fff;
+            pointer-events: none;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #aaa;
+            pointer-events: none;
+        }
+        .pagination .ellipsis {
+            padding: 6px 12px;
+            color: #999;
+        }
     </style>
 </head>
 <body>
@@ -140,18 +132,20 @@
     </div>
 
     <!-- 게시글 카드 반복 -->
-    <c:forEach var="content" items="${postList}">
+    <c:forEach var="entry" items="${postMap}">
+        <c:set var="content" value="${entry.key}" />
+        <c:set var="file" value="${entry.value}" />
+
         <a href="${pageContext.request.contextPath}/info/detail?id=${content.id}" class="card-link">
-            <div class="card">
-                <p class="quote">“${content.content}”</p>paging.jsp
-                <div class="d-flex justify-content-between align-items-center mt-2">
-                    <div class="d-flex align-items-center">
-                        <img src="${pageContext.request.contextPath}/resources/img/default-profile.png" alt="기본프로필">
-                        <div class="ms-2">
-                            <div class="fw-semibold">${content.title}</div>
-                        </div>
+            <div class="card d-flex">
+                <div class="d-flex align-items-center">
+                    <c:if test="${not empty file}">
+                        <img src="/info/preview?storedFileName=${file.storedFileName}" />
+                    </c:if>
+                    <div>
+                        <div class="fw-semibold">${content.title}</div>
+                        <p class="quote mt-2">“${content.content}”</p>
                     </div>
-                    <span class="text-muted">▶</span>
                 </div>
             </div>
         </a>
@@ -161,7 +155,6 @@
     <nav aria-label="Page navigation">
         <ul class="pagination mt-4">
             <c:choose>
-             <%-- 1페이지인 경우 이전 비활성화 --%>
                 <c:when test="${paging.page <= 1}">
                     <li class="page-item disabled"><a class="page-link">← Previous</a></li>
                 </c:when>
@@ -173,20 +166,15 @@
             <c:forEach var="i" begin="${paging.startPage}" end="${paging.endPage}">
                 <c:choose>
                     <c:when test="${i eq paging.page}">
-                        <li class="page-item active">
-                      <a class="page-link" href="#">
-
-                        ${i}</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">${i}</a></li>
                     </c:when>
                     <c:otherwise>
-                        <li class="page-item">
-                        <a class="page-link" href="/info/paging?page=${i}">${i}</a></li>
+                        <li class="page-item"><a class="page-link" href="${pageContext.request.contextPath}/info/paging?page=${i}">${i}</a></li>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
 
             <c:choose>
-             <%-- 마지막 페이지일 경우 다음 비활성화 --%>
                 <c:when test="${paging.page >= paging.maxPage}">
                     <li class="page-item disabled"><a class="page-link">Next →</a></li>
                 </c:when>

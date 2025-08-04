@@ -18,10 +18,8 @@ public class Info_commentController {
 
     @PostMapping("/save")
     public @ResponseBody List<Info_commentDTO> save (@ModelAttribute Info_commentDTO infoCommentDTO){
-        System.out.println("댓글 저장정보 전송 완");
         infoCommentService.save(infoCommentDTO);
         List<Info_commentDTO> CommentDTOList = infoCommentService.findAll(infoCommentDTO.getPost_id());
-        System.out.println("댓글 저장정보"+CommentDTOList);
         return CommentDTOList;
     }
 

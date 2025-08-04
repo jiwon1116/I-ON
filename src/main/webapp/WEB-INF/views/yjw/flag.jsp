@@ -139,8 +139,6 @@
 <div class="main-content">
 
 
-
-
     <!-- 상단 검색 & 글쓰기 -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <form class="d-flex search-bar" role="search" method="get" action="${pageContext.request.contextPath}/flag/search">

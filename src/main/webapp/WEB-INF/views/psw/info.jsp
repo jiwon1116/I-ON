@@ -148,10 +148,11 @@
         </div>
     </div>
 
+    <!-- 게시글 카드 반복 -->
     <div class="card-grid">
         <c:forEach var="content" items="${postList}">
             <div class="card" onclick="location.href='/info/detail?id=${content.id}'">
-                <img src="${content.imageUrl != null ? content.imageUrl : '/resources/images/default.jpg'}" alt="카드 이미지">
+              <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;"/>
                 <div class="card-body">
                     <div class="title">${content.title}</div>
                     <div class="author">${content.writer != null ? content.writer : 'admin'}</div>

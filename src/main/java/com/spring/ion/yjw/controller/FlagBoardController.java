@@ -92,7 +92,6 @@ public class FlagBoardController {
     }
 
 
-
     // 수정 폼 이동 시 기존 파일 리스트도 함께 넘김
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable("id") int id, Model model) {
@@ -112,7 +111,6 @@ public class FlagBoardController {
                          @RequestParam(value = "boardFile", required = false) MultipartFile boardFile) throws IOException {
 
         boolean result = flagService.update(flagPostDTO, deleteFileIds, boardFile);
-
         return result ? "redirect:/flag/" + flagPostDTO.getId() : "yjw/flagUpdate";
     }
 

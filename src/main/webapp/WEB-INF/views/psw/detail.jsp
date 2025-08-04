@@ -195,8 +195,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>첨부파일</label>
-                    <input type="file" name="file" />
+                    <p><strong>미리보기 : </strong></p>
+                 <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;"/>
                 </div>
 
                 <input type="hidden" name="id" value="${findDto.id}" />
@@ -224,7 +224,7 @@
                 <div id = "comment-list">
                 <c:forEach items="${commentList}" var="comment">
                     <div class="comment-box">
-                        <div class="comment-writer">작성자</div>
+                        <div class="comment-writer">${comment.nickname}</div>
                         <div>${comment.content}</div>
                         <div class="comment-date">
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
