@@ -1,12 +1,12 @@
 package com.spring.ion.psw.service;
 
+import com.spring.ion.psw.dto.Info_FileDTO;
 import com.spring.ion.psw.dto.Info_PageDTO;
 import com.spring.ion.psw.dto.Info_contentDTO;
 import com.spring.ion.psw.repository.Info_contentRepository;
-import com.spring.ion.yjw.dto.FlagPageDTO;
-import com.spring.ion.yjw.dto.FlagPostDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +42,8 @@ public class Info_contentService {
             return false;
         }
     }
+
+
     // 게시물 삭제
     public void delete(long id) {
         infoContentRepository.delete(id);
@@ -95,5 +97,23 @@ public class Info_contentService {
         infoPage.setMaxPage(maxPage);
 
         return infoPage;
+    }
+
+    // 이미지 파일 저장
+    public void saveFile(Info_FileDTO infoFileDTO) {
+        infoContentRepository.saveFile(infoFileDTO);
+    }
+
+    // 이미지 파일 가져오기
+    public Info_FileDTO findFile(Long boardId) {
+    return infoContentRepository.findFile(boardId);
+
+    }
+
+    // 이미지 수정하기
+    public void updateFile(Info_FileDTO infoFileDTO) {
+        infoContentRepository.update(infoFileDTO);
+
+
     }
 }
