@@ -95,9 +95,16 @@
             <form id="commentForm">
                 <input type="hidden" name="post_id" id="post_id" value="${flag != null ? flag.id : ''}"/>
                 <div class="mb-2">
-                    <input type="text" class="form-control" id="nickname" name="nickname"
-                           value="${sessionScope.loginNickname != null ? sessionScope.loginNickname : ''}"
-                           placeholder="닉네임 입력" ${sessionScope.loginNickname != null ? "readonly" : ""} required/>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="nickname"
+                        name="nickname"
+                        value="${sessionScope.loginNickname}"
+                        placeholder="닉네임 입력"
+                        <c:if test="${not empty sessionScope.loginNickname}">readonly</c:if>
+                        required
+                    />
                 </div>
                 <div class="mb-2">
                     <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요" required></textarea>
@@ -120,7 +127,7 @@
                             ${comment.nickname} |
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
                             <button class="btn btn-sm btn-outline-danger float-end"
-                                    onclick="deleteComment(${comment.id}, ${comment.post_id})">삭제</button>
+                                    onclick="deleteComment(${comment.id},${flag.id})">삭제</button>
                         </footer>
                     </div>
                 </div>
