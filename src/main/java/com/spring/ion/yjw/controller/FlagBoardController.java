@@ -21,7 +21,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -177,12 +179,6 @@ public class FlagBoardController {
 
 
 
-    @PostMapping("/like/{postId}")
-    public String like(@PathVariable("postId") Long postId, HttpSession session) {
-        Long memberId = (Long) session.getAttribute("loginId");
-        boolean result = flagService.like(postId, memberId);
-        return "redirect:/flag/" + postId;
-    }
 
 
 
