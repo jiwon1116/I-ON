@@ -17,18 +17,25 @@ public class FlagCommentController {
 
     // 댓글 작성
     @PostMapping("/write")
-    public @ResponseBody List<FlagCommentDTO> write(@ModelAttribute FlagCommentDTO flagCommentDTO) {
-        flagCommentService.write(flagCommentDTO);
-        List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(flagCommentDTO.getPost_id());
+    public List<FlagCommentDTO> write(@RequestParam("nickname") String nickname,
+                                      @RequestParam("content") String content,
+                                      @RequestParam("post_id") long post_id) {
+        FlagCommentDTO dto = new FlagCommentDTO();
+        dto.setNickname(nickname);
+        dto.setContent(content);
+        dto.setPost_id(post_id);
 
-        // 디버깅용 로그 출력
-        for (FlagCommentDTO dto : flagCommentDTOList) {
-            System.out.println("댓글 목록: " + dto);
-        }
 
-        return flagCommentDTOList;
+        flagCommentService.write(dto);
+
+        System.out.println("닉네임: " + nickname);
+        System.out.println("내용: " + content);
+        System.out.println("게시글 ID: " + post_id);
+
+
+
+        return flagCommentService.findAll(post_id);
     }
-
 
 
     // 댓글 삭제

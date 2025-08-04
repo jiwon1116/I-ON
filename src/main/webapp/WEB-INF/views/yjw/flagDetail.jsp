@@ -111,7 +111,9 @@
 
 <script>
     $(document).ready(function () {
-        $('#submitCommentBtn').on('click', function () {
+        // 댓글 등록
+        $('#commentForm').submit(function (e) {
+            e.preventDefault();
             const nickname = $('#nickname').val();
             const content = $('#content').val();
             const post_id = $('#post_id').val();
@@ -124,8 +126,8 @@
 
             $.ajax({
                 type: 'POST',
-                url: '${pageContext.request.contextPath}/FlagComment/write',
-                data: {nickname, content, post_id},
+                 url: '${pageContext.request.contextPath}/comment/write',
+                            data: {nickname, content, post_id},
                 dataType: 'json',
                 success: function (data) {
                     renderCommentList(data);

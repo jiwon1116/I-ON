@@ -16,7 +16,7 @@ public class FlagCommentRepository {
 
 
     public List<FlagCommentDTO> findAll(long postId) {
-        return sql.selectList("FlagComment.findAll", postId); // parameterType=long
+        return sql.selectList("FlagComment.findAll", postId);
     }
 
 
