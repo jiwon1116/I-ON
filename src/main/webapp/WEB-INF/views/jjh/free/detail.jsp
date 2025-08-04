@@ -24,6 +24,13 @@
       제목 : <input type="text" name="title" value="${free.title}" readonly/><br>
       작성자 : <input type="text" name="nickname" value="${free.nickname}" readonly /><br>
       내용 : <textarea name="content" cols="30" rows="10" readonly>${free.content}</textarea><br>
+      <c:forEach items="${fileList}" var="file">
+        <div>
+          <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
+            <img src="/free/preview?fileName=${file.storedFileName}" style="max-width:200px;" />
+          </c:if>
+        </div>
+      </c:forEach>
       <button onclick="updateLikeCount()" type="button">좋아요 ${free.like_count}</button>
       <button onclick="updateFn()" type="button">수정하기</button>
       <button onclick="deleteFn()" type="button">삭제하기</button>
@@ -52,7 +59,7 @@
                         <td>${comment.content}</td>
                         <td>${comment.nickname}</td>
                         <td><fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd"/></td>
-
+                        <td><button onclick="commentDelete(${comment.id})" type="button">삭제</button></td>
                     </tr>
                 </c:forEach>
             </table>
@@ -75,6 +82,14 @@
         location.href = "/free"
     }
 
+    const commentDelete = (commentId) => {
+      const confirmed = confirm("댓글을 삭제하시겠습니까?");
+      if (confirmed) {
+        location.href = "/comment/delete?id=" + commentId;
+      }
+    }
+
+
     const commentWrite = () => {
             const nickname = document.getElementById("nickname").value;
             const content = document.getElementById("content").value;
@@ -90,22 +105,25 @@
                 dataType : "json",
                 success : function(commentList) {
                     console.log("성공 : " + commentList);
-                    let out = "<table border='1'width='50%' style='border-collapse: collapse; text-align: center'><tr>";
-                    out += "<td>내용</td>";
-                    out += "<td>작성자</td>";
-                    out += "<td>작성 시간</td>";
+                    let out = "<table border='1' width='50%' style='border-collapse: collapse; text-align: center'><tr>";
+                    out += "<th>내용</th>";
+                    out += "<th>작성자</th>";
+                    out += "<th>작성 시간</th>";
+                    out += "<th>삭제</th>";
                     out += "</tr>"
                     for (let i in commentList) {
                         out += "<tr>"
                         out += "<td>"+ commentList[i].content +"</td>";
                         out += "<td>"+ commentList[i].nickname +"</td>";
                         out += "<td>"+ commentList[i].created_at  +"</td>";
+                        out += "<td><button onclick='commentDelete(" + commentList[i].id + ")'>삭제</button></td>";
                         out += "</tr>"
                     }
                     out += "</table>";
                     document.getElementById("comment-list").innerHTML = out;
                     document.getElementById("nickname").value = "";
                     document.getElementById("content").value = "";
+
                 },
                 error : function() {
                     console.log("실패");

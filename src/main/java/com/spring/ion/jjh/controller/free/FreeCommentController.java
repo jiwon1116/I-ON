@@ -17,10 +17,21 @@ public class FreeCommentController {
     @PostMapping("/save")
     public @ResponseBody List<FreeCommentDTO> save(@ModelAttribute FreeCommentDTO commentDTO) {
         freeCommentService.save(commentDTO);
-        System.out.println("댓글 dto : " + commentDTO);
+
         // 해당 게시글에 작성된 댓글 리스트 반환
         // 원래 있던 댓글 리스트 반환
         List<FreeCommentDTO> commentDTOList = freeCommentService.findAll(commentDTO.getPost_id());
         return commentDTOList;
+    }
+
+    @GetMapping("/delete")
+    public String delete(@RequestParam("id") long id) {
+        FreeCommentDTO comment = freeCommentService.findById(id);
+        long postId = comment.getPost_id(); // 게시글 ID 추출
+
+        if (comment != null) {
+            freeCommentService.delete(id);
+        }
+        return "redirect:/free/detail?id=" + postId;
     }
 }

@@ -21,4 +21,11 @@ public class FreeCommentService {
         return freeCommentRepository.findAll(postId);
     }
 
+    public FreeCommentDTO findById(long id) {
+        return freeCommentRepository.findById(id);
+    }
+
+    public void delete(long id) {
+        freeCommentRepository.delete(id);
+    }
 }

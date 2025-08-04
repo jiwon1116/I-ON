@@ -1,6 +1,7 @@
 package com.spring.ion.jjh.repository.free;
 
 import com.spring.ion.jjh.dto.free.FreeDTO;
+import com.spring.ion.jjh.dto.free.FreeFileDTO;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -47,5 +48,17 @@ public class FreeRepository {
 
     public void updateLikeCount(long clickId) {
         sql.update("Free.updateLikeCount", clickId);
+    }
+
+    public void saveFile(FreeFileDTO fileDTO) {
+        sql.insert("Free.saveFile", fileDTO);
+    }
+
+    public List<FreeFileDTO> findFileById(long clickId) {
+        return sql.selectList("Free.findFileById", clickId);
+    }
+
+    public void deleteFileById(long id) {
+        sql.delete("Free.deleteFileById", id);
     }
 }
