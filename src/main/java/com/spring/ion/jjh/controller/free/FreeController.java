@@ -14,11 +14,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/free")
@@ -61,9 +64,20 @@ public class FreeController {
     }
 
     @GetMapping("/detail")
-    public String detail(FreeDTO freeDTO, Model model) {
+    public String detail(FreeDTO freeDTO, Model model, HttpSession session) {
         long clickId = freeDTO.getId();
-        freeService.updateViewCount(clickId);
+
+        Set<Long> viewCount = (Set<Long>) session.getAttribute("viewCount");
+        if(viewCount == null) {
+            viewCount = new HashSet<>();
+        }
+
+        if (!viewCount.contains(clickId)) {
+            freeService.updateViewCount(clickId);
+            viewCount.add(clickId);
+            session.setAttribute("viewCount", viewCount);
+        }
+
         FreeDTO free = freeService.findById(clickId);
         model.addAttribute("free", free);
 
@@ -75,15 +89,12 @@ public class FreeController {
         return "jjh/free/detail";
     }
 
-    @GetMapping("/updateLikeCount")
-    public String updateLikeCount(FreeDTO freeDTO, Model model) {
-        long clickId = freeDTO.getId();
-        freeService.updateLikeCount(clickId);
-        FreeDTO free = freeService.findById(clickId);
-        model.addAttribute("free", free);
-        List<FreeCommentDTO> commentDTO = commentService.findAll(clickId);
-        model.addAttribute("commentList", commentDTO);
-        return "jjh/free/detail";
+    @PostMapping("/updateLikeCount")
+    @ResponseBody
+    public int updateLikeCount(@RequestParam("id") long id) {
+        freeService.updateLikeCount(id);
+        FreeDTO updated = freeService.findById(id);
+        return updated.getLike_count(); // 좋아요 수만 반환
     }
 
     @GetMapping("/update")
@@ -131,5 +142,6 @@ public class FreeController {
             fis.close();
         }
     }
+
 
 }
