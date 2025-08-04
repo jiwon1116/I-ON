@@ -27,6 +27,7 @@
 </head>
 <body style="background-color: #f9f9f9;">
 <div class="container mt-5">
+<%@ include file="/WEB-INF/views/header.jsp" %>
 
     <!-- 게시글 상세 -->
     <div class="card shadow-sm mb-4">
