@@ -18,7 +18,6 @@ public class Info_commentService {
 
     // 댓글 찾기
     public List<Info_commentDTO> findAll(long postId) {
-        System.out.println("commentService:"+postId);
         return infoCommentRepository.findAll(postId);
     }
 }

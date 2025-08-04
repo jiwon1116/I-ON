@@ -108,7 +108,7 @@
     <main class="content">
         <div class="form-container">
             <h2>정보 공유 글쓰기</h2>
-            <form action="/info/update" method="post">
+            <form action="/info/update" method="post" enctype="multipart/form-data">
 
                 <div class="form-group">
                     <label for="title">제목</label>

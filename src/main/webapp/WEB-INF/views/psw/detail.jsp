@@ -177,7 +177,7 @@
     <main class="content">
         <div class="form-container">
             <h2>글 상세보기</h2>
-            <form action="/info/detail" method="post" name="updateForm">
+            <form action="/info/detail" method="post" name="infoupdateForm">
                 <div class="form-group">
                     <label>제목</label>
                     <input type="text" name="title" value="${findDto.title}" readonly />
@@ -213,15 +213,15 @@
             <div class="comment-section">
                 <h3>댓글</h3>
 
-                <!-- 댓글 작성 폼 -->
-        <input type = "text" id = "commentWriter" placeholder = "작성자">
-        <input type = "text" id = "commentContents" placeholder = "내용">
-          <div class="form-actions">
-               <button type="button" onclick="commentWrite()">댓글 작성</button>
-           </div>
+            <!-- 댓글 작성 폼 -->
+              <input type = "text" id = "commentWriter" placeholder = "작성자"  />
+              <input type = "text" id = "commentContents" placeholder = "내용"  />
+               <div class="form-actions">
+                 <button type="button" onclick="commentWrite()">댓글 작성</button>
+               </div>
 
-                <!-- 댓글 목록 -->
-                 <div id = "comment-list">
+               <!-- 댓글 목록 -->
+                <div id = "comment-list">
                 <c:forEach items="${commentList}" var="comment">
                     <div class="comment-box">
                         <div class="comment-writer">작성자</div>
@@ -238,22 +238,35 @@
 
 <script>
     const updatefn = () => {
-        alert("관리자만 수정이 가능합니다😣");
-        document.updateForm.submit();
+        alert("관리자만 수정이 가능한 게시글입니다😣");
+        document.infoupdateForm.submit();
     }
 
     const infoForm = () => {
         location.href = "/info";
     }
 
-    const likefn = () => {
-        const id = "${findDto.id}";
-        alert("좋아요를 눌렀습니다.💓");
-        location.href = "/info/like?id=" + id;
-    }
+   const likefn = () => {
+       const id = "${findDto.id}";
+
+       $.ajax({
+           type: "POST",
+           url: "/info/like",
+           data: { id: id },
+           success: function(response) {
+               alert("좋아요가 반영되었습니다.💓");
+               location.reload(); // 새로고침으로 좋아요 수 반영
+           },
+           error: function() {
+               alert("좋아요 처리에 실패했습니다.");
+           }
+       });
+   }
+
 
     const deletefn = () => {
         const id = "${findDto.id}";
+        alert("관리자만 삭제 가능한 게시글입니다😣");
         const confirmed = confirm("정말 삭제하시겠습니까?");
         if (confirmed) {
             location.href = "/info/delete?id=" + id;
@@ -261,9 +274,15 @@
       }
 
       const commentWrite = () => {
-              const nickname = document.getElementById("commentWriter").value;
-              const content = document.getElementById("commentContents").value;
+              const nickname = document.getElementById("commentWriter").value.trim();
+              const content = document.getElementById("commentContents").value.trim();
               const post_id = "${findDto.id}";
+
+              if (!nickname || !content) {
+                      alert("내용을 입력해주세요.");
+                      return;
+               }
+
               $.ajax({
                   type: "post",
                   url: "/infocomment/save",
