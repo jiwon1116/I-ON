@@ -2,6 +2,7 @@ package com.spring.ion.psw.repository;
 
 import com.spring.ion.psw.dto.Info_FileDTO;
 import com.spring.ion.psw.dto.Info_contentDTO;
+import com.spring.ion.yjw.dto.FlagPostDTO;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -72,6 +73,11 @@ public class Info_contentRepository {
     // 이미지 수정
     public void update(Info_FileDTO infoFileDTO) {
         sql.insert("Info.infoUpdateFile", infoFileDTO);
+    }
+
+    // 검색
+    public List<Info_contentDTO> search(String keyword) {
+        return sql.selectList("Info.infoSearch", keyword);
     }
 }
 

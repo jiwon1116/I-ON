@@ -116,4 +116,9 @@ public class Info_contentService {
 
 
     }
+
+    //글 찾기
+    public List<Info_contentDTO> search(String keyword) {
+       return infoContentRepository.search(keyword);
+    }
 }

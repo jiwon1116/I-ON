@@ -14,7 +14,9 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -114,9 +116,16 @@ public class Info_contentController{
     @GetMapping("/detail")
     public String detailForm(@RequestParam("id") long id, Model model,
                              @ModelAttribute Info_contentDTO dto,
-                             @ModelAttribute Info_FileDTO infoFileDTO) {
-        // 조회수 증가
-        infoContentService.updateHits(id);
+                             @ModelAttribute Info_FileDTO infoFileDTO,
+                             HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String viewKey = "viewed_post_" + id;
+
+        if (session.getAttribute(viewKey) == null) {
+            infoContentService.updateHits(id);
+            session.setAttribute(viewKey, true); // 조회수 중복 방지
+        }
+
         Info_contentDTO findDto = infoContentService.findContext(id);
         List<Info_commentDTO> infoCommentList= infoCommentService.findAll(id);
 
@@ -162,7 +171,6 @@ public class Info_contentController{
         int likeCount = updatedDto.getLike_count(); // 좋아요 수 필드에 따라 수정
         return ResponseEntity.ok(likeCount);
     }
-
 
     // 글 수정 처리
     @PostMapping("/update")
@@ -254,4 +262,28 @@ public class Info_contentController{
         }
     }
 
+    // 검색기능
+    @GetMapping("/search")
+    public String infoSearch(@RequestParam(value = "keyword", required = false) String keyword,
+                             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                             Model model) {
+        System.out.println("검색 키워드:"+keyword);
+        List<Info_contentDTO> contentList;
+        Map<Info_contentDTO, Info_FileDTO> postFileMap = new LinkedHashMap<>();
+
+        // 키워드가 null이거나 비어있으면 전체 목록을 가져오고, 그렇지 않으면 검색
+        if (keyword != null && !keyword.isEmpty()) {
+            contentList = infoContentService.search(keyword);
+        } else {
+            contentList = infoContentService.AllfindList();
+        }
+
+        for (Info_contentDTO post : contentList) {
+            Info_FileDTO file = infoContentService.findFile(post.getId());
+            postFileMap.put(post, file);
+        }
+
+        model.addAttribute("postMap", postFileMap);
+        return "psw/info";
+    }
 }

@@ -157,6 +157,23 @@
             font-size: 13px;
             margin-top: 5px;
         }
+
+        .like-btn .heart {
+                    font-size: 1.4em;
+                    vertical-align: middle;
+                    transition: color 0.15s;
+                }
+                .like-btn.liked .heart {
+                    color: #f44336;
+                }
+                .like-btn .heart {
+                    color: #fff;
+                    text-shadow: 0 0 2px #d1d1d1;
+                }
+                .like-btn {
+                    border: 1.5px solid #f44336 !important;
+                }
+
     </style>
 </head>
 <body>
@@ -186,7 +203,6 @@
                 <div class="meta-info">
                     <div>🕒 작성일: <fmt:formatDate value="${findDto.created_at}" pattern="yyyy-MM-dd" /></div>
                     <div>👁️‍ 조회수: ${findDto.view_count}</div>
-                    <div>💗 좋아요: ${findDto.like_count}</div>
                 </div>
 
                 <div class="form-group">
@@ -201,8 +217,17 @@
 
                 <input type="hidden" name="id" value="${findDto.id}" />
 
+            <!-- 좋아요 버튼 (하트 토글) -->
+            <div class="mb-2">
+                <button type="button" class="btn like-btn ${findDto != null && findDto.liked ? 'liked' : ''}" id="likeBtn">
+                    <span class="heart">${findDto != null && findDto.liked ? '❤️' : '🤍'}</span>
+                    <span id="likeCount">${findDto != null ? findDto.like_count : 0}</span>
+                </button>
+            </div>
+
+            좋아요: <span id="likeCountDisplay">${findDto != null ? findDto.like_count : 0}</span>
+
                 <div class="form-actions">
-                    <button type="button" onclick="likefn()">좋아요</button>
                     <button type="button" onclick="updatefn()">수정</button>
                     <button type="button" onclick="deletefn()">삭제</button>
                     <button type="button" onclick="infoForm()">목록</button>
@@ -246,23 +271,33 @@
         location.href = "/info";
     }
 
-   const likefn = () => {
-       const id = "${findDto.id}";
-
-       $.ajax({
-           type: "POST",
-           url: "/info/like",
-           data: { id: id },
-           success: function(response) {
-               alert("좋아요가 반영되었습니다.💓");
-               location.reload(); // 새로고침으로 좋아요 수 반영
-           },
-           error: function() {
-               alert("좋아요 처리에 실패했습니다.");
-           }
-       });
-   }
-
+      // 좋아요 버튼
+        $('#likeBtn').click(function(){
+            event.preventDefault();
+            const findId = '${findDto.id}';
+            $.ajax({
+                type: 'POST',
+                url: '${pageContext.request.contextPath}/infoLike/like/' + findId,
+                success: function(data){
+                    if(data.error){
+                        alert(data.error);
+                        return;
+                    }
+                    $('#likeCount').text(data.likeCount);
+                    $('#likeCountDisplay').text(data.likeCount);
+                    if(data.liked){
+                        $('#likeBtn').addClass('liked');
+                        $('#likeBtn .heart').text('❤️');
+                    } else {
+                        $('#likeBtn').removeClass('liked');
+                        $('#likeBtn .heart').text('🤍');
+                    }
+                },
+                error: function(){
+                    alert('좋아요 처리 실패!');
+                }
+            });
+        });
 
     const deletefn = () => {
         const id = "${findDto.id}";

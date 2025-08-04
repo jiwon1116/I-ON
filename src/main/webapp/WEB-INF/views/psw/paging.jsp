@@ -124,10 +124,10 @@
 
     <!-- 상단 검색 & 글쓰기 -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <form class="d-flex search-bar" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-dark" type="submit">🔍</button>
-        </form>
+       <form class="d-flex search-bar" role="search" action="${pageContext.request.contextPath}/info/search" method="get">
+           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="keyword">
+           <button class="btn btn-outline-dark" type="submit">🔍</button>
+       </form>
         <a href="${pageContext.request.contextPath}/info/save" class="btn btn-dark">✏ 글쓰기</a>
     </div>
 
