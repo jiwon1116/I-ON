@@ -1,9 +1,11 @@
 package com.spring.ion.psw.repository;
 
+import com.spring.ion.psw.dto.Info_FileDTO;
 import com.spring.ion.psw.dto.Info_contentDTO;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -57,5 +59,19 @@ public class Info_contentRepository {
         return sql.selectOne("Info.infoCount");
     }
 
+    //이미지 파일 저장
+    public void saveFile(Info_FileDTO infoFileDTO) {
+        sql.insert("Info.infoSaveFile", infoFileDTO);
     }
+
+    //이미지 파일 가져오기
+    public Info_FileDTO findFile(Long boardId) {
+    return sql.selectOne("Info.findInfoFile",boardId);
+    }
+
+    // 이미지 수정
+    public void update(Info_FileDTO infoFileDTO) {
+        sql.insert("Info.infoUpdateFile", infoFileDTO);
+    }
+}
 

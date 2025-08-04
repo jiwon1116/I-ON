@@ -121,9 +121,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="file">첨부파일</label>
-                    <input type="file" id="file" name="file"/>
+                    <label for="file"></label>
+                    <input type="file" id="file" name="file" required/>
                 </div>
+                 <div class="form-group">
+               <p><strong> 썸네일 이미지 </strong></p>
+                <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;"/>
+                </div>
+
                 <input type="hidden" name="id" value="${findDto.id}" readonly/>
                 <div class="form-actions">
                     <button  onclick="updatefinish()" >수정</button>
