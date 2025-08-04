@@ -37,8 +37,8 @@ public class FlagCommentController {
 
 
     // 댓글 삭제
-    @DeleteMapping("/delete/{id}")
-    public @ResponseBody List<FlagCommentDTO> delete(@PathVariable Long id, @RequestParam("post_id") long post_id) {
+    @GetMapping("/delete")
+    public @ResponseBody List<FlagCommentDTO> delete(@RequestParam("id") Long id, @RequestParam("post_id") long post_id) {
         flagCommentService.delete(id);
         List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(post_id);
 

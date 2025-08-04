@@ -123,10 +123,10 @@
                     <div class="card-body">
                         <p class="card-text">${comment.content}</p>
                         <footer class="blockquote-footer">
-                            ${comment.nickname} |
+                            ${comment.nickname} | ${dateText}
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
                             <button class="btn btn-sm btn-outline-danger float-end"
-                                    onclick="deleteComment(${comment.id},${flag.id})">삭제</button>
+                                    onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
                         </footer>
                     </div>
                 </div>
@@ -197,6 +197,9 @@
 
     // ↓↓↓ 아래 함수들은 document ready 블록 밖에서 선언!
     function deleteComment(id, post_id) {
+    console.log("삭제 클릭:", id, post_id); // 이거 추가해서 값 확인
+
+
         if (!confirm("정말 삭제하시겠습니까?")) return;
         if (!id || !post_id) {
             alert("잘못된 댓글/게시글 정보입니다.");
@@ -204,11 +207,12 @@
         }
 
         $.ajax({
-            type: 'DELETE',
-            url: `/FlagComment/delete/${id}?post_id=${post_id}`,
+            type: 'get',
+            url: '/FlagComment/delete?id=' + id + '&post_id=' + post_id,
             dataType: 'json',
             success: function (data) {
                 renderCommentList(data);
+                location.reload();
 
             },
             error: function () {
@@ -218,11 +222,15 @@
     }
 
     function renderCommentList(data) {
-        $('#commentList').empty();
+
         if (!data || data.length === 0) {
             $('#commentList').append('<div class="text-center text-muted">댓글이 없습니다.</div>');
             return;
         }
+
+           $('#commentList').empty();
+                const flagId = $('#post_id').val();
+
         data.forEach(function (comment) {
             const dateText = comment.created_at ? new Date(comment.created_at).toLocaleString() : '날짜 없음';
             const html = `
@@ -232,7 +240,7 @@
                         <footer class="blockquote-footer">
                             ${comment.nickname} | ${dateText}
                             <button class="btn btn-sm btn-outline-danger float-end"
-                                    onclick="deleteComment(${comment.id}, ${comment.post_id})">삭제</button>
+                                    onclick="deleteComment(${comment.id}, ${flagId})">삭제</button>
                         </footer>
                     </div>
                 </div>`;

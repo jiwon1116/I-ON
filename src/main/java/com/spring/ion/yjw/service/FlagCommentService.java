@@ -23,7 +23,7 @@ public class FlagCommentService {
     }
 
     // 댓글 삭제
-    public int delete(Long id) {
+    public int delete(long id) {
         return flagCommentRepository.delete(id);
     }
 
