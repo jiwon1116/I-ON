@@ -89,15 +89,12 @@ public class FreeController {
         return "jjh/free/detail";
     }
 
-    @GetMapping("/updateLikeCount")
-    public String updateLikeCount(FreeDTO freeDTO, Model model) {
-        long clickId = freeDTO.getId();
-        freeService.updateLikeCount(clickId);
-        FreeDTO free = freeService.findById(clickId);
-        model.addAttribute("free", free);
-        List<FreeCommentDTO> commentDTO = commentService.findAll(clickId);
-        model.addAttribute("commentList", commentDTO);
-        return "jjh/free/detail";
+    @PostMapping("/updateLikeCount")
+    @ResponseBody
+    public int updateLikeCount(@RequestParam("id") long id) {
+        freeService.updateLikeCount(id);
+        FreeDTO updated = freeService.findById(id);
+        return updated.getLike_count(); // 좋아요 수만 반환
     }
 
     @GetMapping("/update")

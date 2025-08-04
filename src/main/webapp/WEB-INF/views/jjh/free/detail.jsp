@@ -3,132 +3,430 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>🎈자유 게시판</title>
-    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <meta charset="UTF-8">
+  <title>자유 게시판</title>
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", sans-serif;
+      background-color: #fff8e7;
+    }
+
+    /* 상단바 스타일 */
+    /* 네비게이션 바 */
+    /* 네비게이션 바 */
+    .top-nav {
+      background-color: #ffc727;
+      padding: 0 24px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 60px;
+      font-weight: bold;
+      font-size: 14px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo-section img {
+      height: 36px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 메인 메뉴 공통 */
+    .main-menu {
+      position: relative;
+      padding: 12px 24px;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      cursor: pointer;
+      background-color: transparent;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease;
+    }
+
+    /* ✅ hover 시 텍스트 색상만 밝아짐 */
+    .main-menu:hover {
+      color: #ffffffcc; /* 연한 흰색 */
+    }
+
+    /* ✅ 활성 탭 (흰색 배경 & 검정 텍스트) */
+    .main-menu.active {
+      background-color: white;
+      color: #222;
+      z-index: 2;
+      margin-bottom: 0; /* ❗ 빠져나오지 않도록 */
+    }
+
+    /* ✅ 서브 메뉴 */
+    .sub-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%; /* ✅ 메인 메뉴와 너비 일치 */
+      box-sizing: border-box;
+      background: #ffc727;
+      list-style: none;
+      padding: 8px 0;
+      margin: 0;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+      border-radius: 0 0 12px 12px;
+      z-index: 5;
+    }
+
+    /* hover 시 서브 메뉴 보임 */
+    .main-menu:hover .sub-menu {
+      display: block;
+    }
+
+    /* 서브 메뉴 항목 */
+    .sub-menu li {
+      padding: 10px 16px;
+      white-space: nowrap;
+      font-size: 14px;
+      color: #333;
+      transition: color 0.2s;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    /* ✅ hover 시 텍스트 색상만 진해짐 */
+    .sub-menu li:hover {
+      color: #000;
+    }
+
+    /* 오른쪽 아이콘 */
+    .icons {
+      display: flex;
+      gap: 16px;
+      font-size: 20px;
+      padding-bottom: 10px;
+    }
+
+    /* 게시글 스타일 */
+    .post-container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 32px;
+      border-radius: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .post-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+    .post-meta {
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .post-content {
+      white-space: pre-wrap;
+      line-height: 1.6;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .post-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      font-size: 14px;
+      color: #777;
+      cursor:pointer;
+    }
+    .reaction-bar {
+      margin-top: 20px;
+      font-size: 15px;
+      color: #444;
+    }
+
+    /* 댓글 스타일 */
+    .comments-section {
+      margin-top: 40px;
+    }
+    .comment-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .comment-form input[type=text] {
+      padding: 8px 10px;
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .comment-form button {
+      padding: 8px 16px;
+      background-color: #ffc727;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .comment-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      text-align: center;
+    }
+    .comment-table th, .comment-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    .preview-img {
+      max-width: 250px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .comment-card {
+      display: flex;
+      padding: 16px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #eee;
+      align-items: flex-start;
+    }
+
+    .comment-avatar img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .comment-body {
+      margin-left: 12px;
+      flex: 1;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .comment-nickname {
+      font-weight: bold;
+    }
+
+    .comment-date {
+      font-size: 12px;
+      color: #aaa;
+      margin-left: auto;
+      margin-right: 8px;
+    }
+
+    .comment-delete {
+      font-size: 12px;
+      color: #999;
+      cursor: pointer;
+    }
+
+    .comment-delete:hover {
+      color: #f44;
+    }
+
+    .comment-content {
+      font-size: 15px;
+      color: #333;
+      white-space: pre-wrap;
+    }
+
+    .comment-input-wrapper {
+      display: flex;
+      margin-top: 24px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .comment-input-wrapper textarea {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      resize: none;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .comment-input-wrapper button {
+      background-color: #ffc727;
+      border: none;
+      padding: 0 20px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-<div class="sidebar">
-    <h2>logo</h2>
-    <ul>
-        <li>마이페이지</li>
-        <li>범죄 예방 지도</li>
-        <li>커뮤니티</li>
-        <li>제보 및 신고</li>
-        <li>정보 공유</li>
+
+<!-- ✅ 상단바 시작 -->
+<header>
+  <nav class="top-nav">
+    <div class="logo-section">
+      <img src="/logo.png" alt="logo">
+    </div>
+    <ul class="nav-tabs">
+      <li class="main-menu">
+        마이페이지
+      </li>
+      <li class="main-menu">
+        범죄 예방 지도
+      </li>
+      <li class="main-menu active">
+        커뮤니티
+        <ul class="sub-menu">
+          <li>자유</li>
+          <li>위탁</li>
+          <li>실종 및 유괴</li>
+        </ul>
+      </li>
+      <li class="main-menu">
+        제보 및 신고
+      </li>
+      <li class="main-menu">
+        정보 공유
+      </li>
     </ul>
-</div>
-    <form>
-      제목 : <input type="text" name="title" value="${free.title}" readonly/><br>
-      작성자 : <input type="text" name="nickname" value="${free.nickname}" readonly /><br>
-      내용 : <textarea name="content" cols="30" rows="10" readonly>${free.content}</textarea><br>
-      <c:forEach items="${fileList}" var="file">
-        <div>
-          <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
-            <img src="/free/preview?fileName=${file.storedFileName}" style="max-width:200px;" />
-          </c:if>
+    <div class="icons">
+      <span class="icon">🔔</span>
+      <span class="icon">✉️</span>
+    </div>
+  </nav>
+</header>
+
+<!-- ✅ 상단바 끝 -->
+
+<div class="post-container">
+    <div class="post-title">${free.title}</div>
+    <div class="post-meta">${free.nickname}</div>
+    <div class="post-content">${free.content}</div>
+
+    <c:forEach items="${fileList}" var="file">
+    <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
+      <img class="preview-img" src="/free/preview?fileName=${file.storedFileName}" />
+    </c:if>
+    </c:forEach>
+
+    <div class="reaction-bar" style="cursor: pointer;" onclick="updateLikeCount()">
+    <span id="like-icon">🤍</span>
+    <span id="like-count">${free.like_count}</span>
+    </div>
+
+    <div class="post-actions">
+    <span onclick="updateFn()">수정</span>
+    <span onclick="deleteFn()">삭제</span>
+    <span>신고</span>
+    </div>
+
+    <div class="comment-input-wrapper">
+      <input id="nickname" placeholder="작성자"></textarea>
+      <textarea id="content" placeholder="댓글을 작성해주세요"></textarea>
+      <button onclick="commentWrite()">작성</button>
+    </div>
+
+    <div class="comment-list">
+      <c:forEach items="${commentList}" var="comment">
+        <div class="comment-card">
+          <div class="comment-avatar">
+            <img src="/img/avatar${comment.id % 3 + 1}.png" alt="profile" />
+          </div>
+          <div class="comment-body">
+            <div class="comment-header">
+              <span class="comment-nickname">${comment.nickname}</span>
+              <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
+              <span class="comment-delete" onclick="commentDelete(${comment.id})">삭제</span>
+            </div>
+            <div class="comment-content">${comment.content}</div>
+          </div>
         </div>
       </c:forEach>
-      <button onclick="updateLikeCount()" type="button">좋아요 ${free.like_count}</button>
-      <button onclick="updateFn()" type="button">수정하기</button>
-      <button onclick="deleteFn()" type="button">삭제하기</button>
-      <button onclick="backFn()" type="button">목록</button>
-    </form>
+    </div>
 
-    <br><br>
+</div>
 
-        <div>
-            <input type = "text" id = "nickname" placeholder = "작성자">
-            <input type = "text" id = "content" placeholder = "내용">
-            <button id = "commentBtn" onclick="commentWrite()">댓글 작성</button>
-        </div>
-
-        <br>
-
-        <div id = "comment-list">
-            <table border="1" width="50%" style="border-collapse: collapse; text-align: center">
-                <tr>
-                    <th>내용</th>
-                    <th>작성자</th>
-                    <th>작성 시간</th>
-                </tr>
-                <c:forEach items = "${commentList}" var = "comment">
-                    <tr>
-                        <td>${comment.content}</td>
-                        <td>${comment.nickname}</td>
-                        <td><fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd"/></td>
-                        <td><button onclick="commentDelete(${comment.id})" type="button">삭제</button></td>
-                    </tr>
-                </c:forEach>
-            </table>
-        </div>
-</body>
 <script>
-    const updateFn = () => {
-        location.href = "/free/update?id=${free.id}";
+  const updateFn = () => {
+    location.href = "/free/update?id=${free.id}";
+  }
+  const deleteFn = () => {
+    const confirmed = confirm("정말 삭제하시겠습니까?");
+    if (confirmed) {
+      location.href = "/free/delete?id=${free.id}";
     }
-    const deleteFn = () => {
-        const confirmed = confirm("정말 삭제하시겠습니까?");
-        if(confirmed) {
-            location.href = "/free/delete?id=${free.id}";
-        }
-    }
-    const updateLikeCount = () => {
-        location.href = "/free/updateLikeCount?id=${free.id}"
-    }
-    const backFn = () => {
-        location.href = "/free"
-    }
-
-    const commentDelete = (commentId) => {
-      const confirmed = confirm("댓글을 삭제하시겠습니까?");
-      if (confirmed) {
-        location.href = "/comment/delete?id=" + commentId;
+  }
+  const updateLikeCount = () => {
+    $.ajax({
+      type: "POST",
+      url: "/free/updateLikeCount",
+      data: { id: "${free.id}" },
+      success: function(newCount) {
+        $("#like-count").text(newCount);
+      },
+      error: function() {
+        alert("좋아요 처리 실패");
       }
+    });
+  }
+
+  const commentDelete = (commentId) => {
+    const confirmed = confirm("댓글을 삭제하시겠습니까?");
+    if (confirmed) {
+      location.href = "/comment/delete?id=" + commentId;
     }
-
-
-    const commentWrite = () => {
-            const nickname = document.getElementById("nickname").value;
-            const content = document.getElementById("content").value;
-            const postId = "${free.id}";
-            $.ajax({
-                type: "post",
-                url: "/comment/save",
-                data: {
-                    nickname : nickname,
-                    content : content,
-                    post_id : postId
-                },
-                dataType : "json",
-                success : function(commentList) {
-                    console.log("성공 : " + commentList);
-                    let out = "<table border='1' width='50%' style='border-collapse: collapse; text-align: center'><tr>";
-                    out += "<th>내용</th>";
-                    out += "<th>작성자</th>";
-                    out += "<th>작성 시간</th>";
-                    out += "<th>삭제</th>";
-                    out += "</tr>"
-                    for (let i in commentList) {
-                        out += "<tr>"
-                        out += "<td>"+ commentList[i].content +"</td>";
-                        out += "<td>"+ commentList[i].nickname +"</td>";
-                        out += "<td>"+ commentList[i].created_at  +"</td>";
-                        out += "<td><button onclick='commentDelete(" + commentList[i].id + ")'>삭제</button></td>";
-                        out += "</tr>"
-                    }
-                    out += "</table>";
-                    document.getElementById("comment-list").innerHTML = out;
-                    document.getElementById("nickname").value = "";
-                    document.getElementById("content").value = "";
-
-                },
-                error : function() {
-                    console.log("실패");
-                }
-            });
-        }
+  }
+  const commentWrite = () => {
+    const nickname = document.getElementById("nickname").value;
+    const content = document.getElementById("content").value;
+    const postId = "${free.id}";
+    $.ajax({
+      type: "post",
+      url: "/comment/save",
+      data: {
+        nickname: nickname,
+        content: content,
+        post_id: postId
+      },
+      dataType: "json",
+      success: function(commentList) {
+        location.reload();
+      },
+      error: function() {
+        alert("댓글 등록 실패");
+      }
+    });
+  }
 </script>
+</body>
 </html>
