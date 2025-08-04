@@ -5,6 +5,7 @@ import com.spring.ion.jjh.dto.free.FreeCommentDTO;
 import com.spring.ion.jjh.dto.free.FreeDTO;
 import com.spring.ion.jjh.dto.free.FreeFileDTO;
 import com.spring.ion.jjh.service.free.FreeCommentService;
+import com.spring.ion.jjh.service.free.FreeLikeService;
 import com.spring.ion.jjh.service.free.FreeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -29,17 +30,23 @@ import java.util.Set;
 public class FreeController {
     private final FreeService freeService;
     private final FreeCommentService commentService;
+    private final FreeLikeService freeLikeService;
 
     @GetMapping
     public String paging(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-            // 현재 페이지에 해당하는 게시글 목록 가져오기
-            List<FreeDTO> pagingList = freeService.pagingList(page);
+        // 현재 페이지에 해당하는 게시글 목록 가져오기
+        List<FreeDTO> pagingList = freeService.pagingList(page);
 
-            // 페이징에 필요한 정보 계산(전체 페이지수, 현재 페이지, 시작 페이지 등)
-            PageDTO pageDTO = freeService.pagingParam(page);
+        // 페이징에 필요한 정보 계산(전체 페이지수, 현재 페이지, 시작 페이지 등)
+        PageDTO pageDTO = freeService.pagingParam(page);
 
-            model.addAttribute("freeboardList", pagingList);
-            model.addAttribute("paging", pageDTO);
+        for (FreeDTO post : pagingList) {
+            int likeCount = freeLikeService.getLikeCount(post.getId());
+            post.setLike_count(likeCount);
+        }
+
+        model.addAttribute("freeboardList", pagingList);
+        model.addAttribute("paging", pageDTO);
 
         return "jjh/free/free";
     }
@@ -63,34 +70,43 @@ public class FreeController {
         }
     }
 
-    @GetMapping("/detail")
-    public String detail(FreeDTO freeDTO, Model model, HttpSession session) {
-        long clickId = freeDTO.getId();
-
+    @GetMapping("/{id}") // detail 페이지
+    public String detail(@PathVariable("id") Long id, FreeDTO freeDTO, Model model, HttpSession session) {
         Set<Long> viewCount = (Set<Long>) session.getAttribute("viewCount");
-        if(viewCount == null) {
+        if (viewCount == null) {
             viewCount = new HashSet<>();
-        }
-
-        if (!viewCount.contains(clickId)) {
-            freeService.updateViewCount(clickId);
-            viewCount.add(clickId);
             session.setAttribute("viewCount", viewCount);
         }
 
-        FreeDTO free = freeService.findById(clickId);
+        if (!viewCount.contains(id)) {
+            freeService.updateViewCount(id);
+            viewCount.add(id);
+        }
+
+        FreeDTO free = freeService.findById(id);
+
+        int likeCount = freeLikeService.getLikeCount(id);
+        free.setLike_count(likeCount);
+
+        // 로그인 사용자 좋아요 여부
+//        String memberId = (String) session.getAttribute("loginId");
+//        if (memberId != null) {
+//            boolean liked = freeLikeService.isLiked(id, memberId);
+//            free.setLiked(liked);
+//        }
+
         model.addAttribute("free", free);
 
-        List<FreeCommentDTO> commentDTO = commentService.findAll(clickId);
+        List<FreeCommentDTO> commentDTO = commentService.findAll(id);
         model.addAttribute("commentList", commentDTO);
 
-        List<FreeFileDTO> fileList = freeService.findFileById(clickId);
+        List<FreeFileDTO> fileList = freeService.findFileById(id);
         model.addAttribute("fileList", fileList);
         return "jjh/free/detail";
     }
 
     @GetMapping("/search")
-    public String searchResult(@RequestParam(value = "searchContent", required = false) String searchContent, Model model ) {
+    public String searchResult(@RequestParam(value = "searchContent", required = false) String searchContent, Model model) {
         List<FreeDTO> freeboardList;
 
         if (searchContent != null && !searchContent.isEmpty()) {
@@ -103,17 +119,18 @@ public class FreeController {
         return "jjh/free/free";
     }
 
-    @GetMapping("/update")
-    public String updateForm(FreeDTO freeDTO, Model model) {
-        long clickId = freeDTO.getId();
-        FreeDTO free = freeService.findById(clickId);
+    @GetMapping("/update/{id}")
+    public String updateForm(@PathVariable("id") Long id, Model model) {
+        FreeDTO free = freeService.findById(id);
         model.addAttribute("free", free);
         return "jjh/free/update";
     }
 
-    @PostMapping("/update")
-    public String update(@ModelAttribute FreeDTO freeDTO,
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable("id") Long id,
+                         @ModelAttribute FreeDTO freeDTO,
                          @RequestParam("file") MultipartFile file) {
+        freeDTO.setId(id);
         boolean result = freeService.update(freeDTO, file);
 
         if (result) {

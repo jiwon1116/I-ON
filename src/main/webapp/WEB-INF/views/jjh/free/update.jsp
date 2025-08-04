@@ -212,7 +212,7 @@
     <h2 style="text-align: center;">글쓰기</h2>
 
     <div class="write-container">
-      <form action="/free/update" method="post" enctype="multipart/form-data" class="write-form">
+      <form action="/free/update/${free.id}" method="post" enctype="multipart/form-data" class="write-form">
         <input type="hidden" name="id" value="${free.id}" />
 
         <label for="title">제목</label>
