@@ -20,6 +20,7 @@
         <security:intercept-url pattern="/miss" access="hasAnyRole('ROLE_AUTH_MEMBER', 'ROLE_ADMIN')"/>
         <security:intercept-url pattern="/register" access="isAnonymous()"/>
         <security:intercept-url pattern="/login" access="isAnonymous()"/>
+
         <security:form-login login-page="/login"/>
         <security:logout
                 logout-url="/logout"

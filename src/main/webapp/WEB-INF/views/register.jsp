@@ -6,18 +6,19 @@ pageEncoding="UTF-8"%>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Insert title here</title>
+  <title>회원가입</title>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 
-<h1>회원가입(미완성)</h1>
+<h1>회원가입</h1>
+<!-- 나중에 ajax 처리하기(아이디,닉네임 중복, 비밀번호 유효성 등)-->
     <form action="/register" method="post">
         <div>
             <label for="reg-userId">아이디:</label>
             <input type="text" id="reg-userId" name="userId" required/>
         </div>
         <div>
-            <!-- 나중에 비밀번호 유효성(자릿수, 숫자/영어 포함 등 ajax로 넣기)-->
             <label for="reg-password">비밀번호:</label>
             <input type="password" id="reg-password" name="password" required/>
         </div>
@@ -37,8 +38,12 @@ pageEncoding="UTF-8"%>
             <input type="text" id="reg-region" name="region" required/>
         </div>
         <div>
+            <!-- <div class="g-recaptcha" data-sitekey="6LfdKZgrAAAAAHP9TN8ZYOJDbKMmdx7Chl1CyUWP"></div> -->
             <input type="submit" value="회원가입"/>
         </div>
+        <!-- <c:if test="${not empty reCaptchaError}">
+                <p style="color: red;">${reCaptchaError}</p>
+        </c:if> -->
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
     </form>
 

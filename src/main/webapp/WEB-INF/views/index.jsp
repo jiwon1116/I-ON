@@ -22,6 +22,13 @@
         </form>
     </security:authorize>
 
+    <security:authorize access="isAuthenticated()">
+        <form action="/withdraw" method="post">
+            <input type="hidden" name="_method" value="delete" />
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+            <button type="submit">회원 탈퇴(작동 안함)</button>
+        </form>
+    </security:authorize>
 
     <a href="/flag">flag</a>
 
