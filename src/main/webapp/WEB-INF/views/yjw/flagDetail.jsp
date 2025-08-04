@@ -157,6 +157,7 @@
                 success: function (data) {
                     renderCommentList(data);
                     $('#content').val('');
+                    location.reload();
                 },
                 error: function () {
                     alert("댓글 등록 실패");
@@ -208,6 +209,7 @@
             dataType: 'json',
             success: function (data) {
                 renderCommentList(data);
+
             },
             error: function () {
                 alert("댓글 삭제 실패");
