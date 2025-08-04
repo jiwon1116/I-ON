@@ -6,6 +6,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,4 +47,15 @@ public class Info_contentRepository {
     public void updateLike(long id) {
         sql.update("Info.updateLike", id);
     }
-}
+
+    //페이지 리스트
+    public List<Info_contentDTO> pagingList(Map<String, Integer> pagingParams) {
+        return sql.selectList("Info.infoPagingList", pagingParams);
+    }
+
+    public int infoCount() {
+        return sql.selectOne("Info.infoCount");
+    }
+
+    }
+

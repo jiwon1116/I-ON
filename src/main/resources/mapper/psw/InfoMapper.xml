@@ -31,8 +31,16 @@
     </update>
 
     <update id="updateLike" keyProperty="long">
-        UPDATE info_content SET like_count = like_count + 1
+        UPDATE info_content
+        SET like_count = like_count + 1
         WHERE id = #{id}
     </update>
+    <select id="infoPagingList" parameterType="java.util.HashMap" resultType="infoContent">
+        SELECT * FROM info_content ORDER BY id DESC LIMIT #{start}, #{limit}
+    </select>
+
+    <select id="infoCount" resultType="int">
+        SELECT COUNT(id) FROM info_content
+    </select>
 
 </mapper>

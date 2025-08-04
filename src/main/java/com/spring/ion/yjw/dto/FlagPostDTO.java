@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 // 관리자만 작성 가능
 @Data
@@ -14,11 +15,7 @@ public class FlagPostDTO {
     private String content; // 게시물 내용
     private int like_count; // 좋아요 수
     private int view_count; // 조회수
-    private LocalDateTime created_at; // 작성일
+    private Date created_at; // 작성일
 
-    // 포맷된 문자열 반환용 메서드
-    public String getFormattedCreatedAt() {
-        return created_at != null ? created_at.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")) : "";
-    }
 
 }
