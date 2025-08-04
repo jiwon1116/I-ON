@@ -17,7 +17,6 @@
         .like-btn.liked .heart {
             color: #f44336;
         }
-        .like-btn .heart {
             color: #fff;
             text-shadow: 0 0 2px #d1d1d1;
         }

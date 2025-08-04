@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Data
 public class FreeLikeDTO {
-    private long id;
-    private long post_id;
-    private long member_id;
+    private Long id;
+    private Long post_id;
+    private String member_id;
 }

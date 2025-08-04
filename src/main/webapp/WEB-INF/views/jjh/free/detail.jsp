@@ -149,11 +149,7 @@
       color: #777;
       cursor:pointer;
     }
-    .reaction-bar {
-      margin-top: 20px;
-      font-size: 15px;
-      color: #444;
-    }
+
 
     /* 댓글 스타일 */
     .comments-section {
@@ -287,6 +283,22 @@
       font-size: 14px;
       cursor: pointer;
     }
+
+    .like-btn .heart {
+        font-size: 1.4em;
+        vertical-align: middle;
+        transition: color 0.15s;
+    }
+    .like-btn.liked .heart {
+        color: #f44336;
+    }
+    .like-btn .heart {
+        color: #fff;
+        text-shadow: 0 0 2px #d1d1d1;
+    }
+    .like-btn {
+        border: 1.5px solid #f44336 !important;
+    }
   </style>
 </head>
 <body>
@@ -339,9 +351,11 @@
     </c:if>
     </c:forEach>
 
-    <div class="reaction-bar" style="cursor: pointer;" onclick="updateLikeCount()">
-    <span id="like-icon">🤍</span>
-    <span id="like-count">${free.like_count}</span>
+    <div class="mb-2">
+        <button type="button" class="btn like-btn ${free != null && free.liked ? 'liked' : ''}" id="likeBtn">
+            <span class="heart">${free != null && free.liked ? '❤️' : '🤍'}</span>
+            <span id="likeCount">${free != null ? free.like_count : 0}</span>
+        </button>
     </div>
 
     <div class="post-actions">
@@ -386,19 +400,7 @@
       location.href = "/free/delete?id=${free.id}";
     }
   }
-  const updateLikeCount = () => {
-    $.ajax({
-      type: "POST",
-      url: "/free/updateLikeCount",
-      data: { id: "${free.id}" },
-      success: function(newCount) {
-        $("#like-count").text(newCount);
-      },
-      error: function() {
-        alert("좋아요 처리 실패");
-      }
-    });
-  }
+
 
   const commentDelete = (commentId) => {
     const confirmed = confirm("댓글을 삭제하시겠습니까?");
@@ -427,6 +429,43 @@
       }
     });
   }
+</script>
+<script>
+    $(document).ready(function () {
+    // 좋아요 버튼
+        $('#likeBtn').click(function(){
+            const freeId = '${free.id}';
+            $.ajax({
+                type: 'POST',
+                url: '${pageContext.request.contextPath}/freeLike/like/' + freeId,
+                success: function(data){
+                    if(data.error){
+                        alert(data.error);
+                        return;
+                    }
+                    $('#likeCount').text(data.likeCount);
+                    $('#likeCountDisplay').text(data.likeCount);
+                    // 하트 토글
+                    if(data.liked){
+                        $('#likeBtn').addClass('liked');
+                        $('#likeBtn .heart').text('❤️');
+                    } else {
+                        $('#likeBtn').removeClass('liked');
+                        $('#likeBtn .heart').text('🤍');
+                    }
+                },
+                error: function(xhr) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        alert(data.error || "좋아요 처리 실패!");
+                    } catch (e) {
+                        alert("좋아요 처리 실패!");
+                    }
+                }
+            });
+        });
+
+    });
 </script>
 </body>
 </html>
