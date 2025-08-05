@@ -14,26 +14,6 @@
             background-color: #f8f9fa;
         }
 
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background-color: #f6a623;
-            position: fixed;
-            padding-top: 40px;
-            color: #fff;
-        }
-
-        .sidebar a {
-            color: #fff;
-            display: block;
-            padding: 15px 30px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .sidebar a:hover {
-            background-color: rgba(255,255,255,0.2);
-        }
 
         .main-content {
             margin-left: 220px;
@@ -123,17 +103,7 @@
 </head>
 <body>
 
-<!-- 사이드바 -->
-<div class="sidebar">
-    <div class="text-center mb-4">
-        <h4>logo</h4>
-    </div>
-    <a href="#">마이페이지</a>
-    <a href="#">범죄 예방 지도</a>
-    <a href="#">커뮤니티</a>
-    <a href="#">제보 및 신고</a>
-    <a href="#">정보 공유</a>
-</div>
+<%@ include file="/WEB-INF/views/header.jsp" %>
 
 <!-- 메인 콘텐츠 -->
 <div class="main-content">

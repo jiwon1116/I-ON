@@ -1,10 +1,8 @@
 package com.spring.ion.lcw.service;
 
 import com.spring.ion.lcw.dto.MemberDTO;
-import com.spring.ion.lcw.mapper.MemberRepository;
-import com.spring.ion.psw.repository.Info_contentRepository;
+import com.spring.ion.lcw.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +19,9 @@ public class MemberService {
         memberRepository.delete(username);
     }
 
-
+    public void edit(MemberDTO memberDTO){
+        memberRepository.edit(memberDTO);
+    }
 
 
 }

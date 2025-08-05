@@ -33,12 +33,20 @@ public class EntrustController {
     private final EntrustLikeService entrustLikeService;
 
     @GetMapping
-    public String paging(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        // 현재 페이지에 해당하는 게시글 목록 가져오기
-        List<EntrustDTO> pagingList = entrustService.pagingList(page);
+    public String paging(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                         @RequestParam(value = "searchContent", required = false) String searchContent,
+                         Model model) {
 
-        // 페이징에 필요한 정보 계산(전체 페이지수, 현재 페이지, 시작 페이지 등)
-        PageDTO pageDTO = entrustService.pagingParam(page);
+        List<EntrustDTO> pagingList;
+        PageDTO pageDTO;
+
+        if (searchContent != null && !searchContent.isEmpty()) {
+            pagingList = entrustService.searchPagingList(searchContent, page);
+            pageDTO = entrustService.searchPagingParam(searchContent, page);
+        } else {
+            pagingList = entrustService.pagingList(page);
+            pageDTO = entrustService.pagingParam(page);
+        }
 
         for (EntrustDTO post : pagingList) {
             int likeCount = entrustLikeService.getLikeCount(post.getId());
@@ -47,6 +55,7 @@ public class EntrustController {
 
         model.addAttribute("entrustboardList", pagingList);
         model.addAttribute("paging", pageDTO);
+        model.addAttribute("searchContent", searchContent); // 검색 유지용
 
         return "jjh/entrust/entrust";
     }
@@ -103,20 +112,6 @@ public class EntrustController {
         List<EntrustFileDTO> fileList = entrustService.findFileById(id);
         model.addAttribute("fileList", fileList);
         return "jjh/entrust/detail";
-    }
-
-    @GetMapping("/search")
-    public String searchResult(@RequestParam(value = "searchContent", required = false) String searchContent, Model model) {
-        List<EntrustDTO> entrustboardList;
-
-        if (searchContent != null && !searchContent.isEmpty()) {
-            entrustboardList = entrustService.search(searchContent);
-        } else {
-            entrustboardList = entrustService.allEntrustList();
-        }
-
-        model.addAttribute("entrustboardList", entrustboardList);
-        return "jjh/entrust/entrust";
     }
 
     @GetMapping("/update/{id}")

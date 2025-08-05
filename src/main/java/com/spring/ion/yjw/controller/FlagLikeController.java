@@ -1,6 +1,6 @@
 package com.spring.ion.yjw.controller;
 
-import com.spring.ion.lcw.dto.CustomUserDetails;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.yjw.service.FlagLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

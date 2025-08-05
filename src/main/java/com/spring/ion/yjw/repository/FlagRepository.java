@@ -91,4 +91,8 @@ public class FlagRepository {
         sql.update("Flag.updateLikeCount", postId); // 네임스페이스를 'Flag'로!
     }
 
+    // 내가 쓴 글 찾아보기 (마이페이지 연동)
+    public List<FlagPostDTO> findAllByWriter(String nickname) {
+        return sql.selectList("Flag.findAllByWriter", nickname);
+    }
 }

@@ -58,10 +58,6 @@ public class EntrustRepository {
         sql.delete("Entrust.deleteFileById", id);
     }
 
-    public List<EntrustDTO> search(String searchContent) {
-        return sql.selectList("Entrust.search", searchContent);
-    }
-
     public void increaseLikeCount(Long postId) {
         sql.update("Entrust.increaseLikeCount", postId);
     };
@@ -69,5 +65,18 @@ public class EntrustRepository {
     public void decreaseLikeCount(Long postId) {
         sql.update("Entrust.decreaseLikeCount", postId);
     };
+
+    public List<EntrustDTO> searchPagingList(String searchContent, int pagingStart, int pageLimit) {
+        Map<String, Object> paramMap = Map.of(
+                "keyword", searchContent,
+                "start", pagingStart,
+                "limit", pageLimit
+        );
+        return sql.selectList("Entrust.searchPagingList", paramMap);
+    }
+
+    public int searchCount(String searchContent) {
+        return sql.selectOne("Entrust.searchCount", searchContent);
+    }
 
 }

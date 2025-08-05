@@ -1,14 +1,13 @@
 package com.spring.ion.lcw.dto;
 
 import lombok.Data;
-import lombok.ToString;
-
-import java.sql.Timestamp;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@ToString
-public class MemberDTO {
+public class MemberDTO implements Serializable {
+
     private Long id;
     private String userId;
     private String password;
@@ -18,7 +17,7 @@ public class MemberDTO {
     private String profile_img;
     private Boolean enrollment_verified;
     private Integer trust_score;
-    private Timestamp created_at;
+    private LocalDateTime created_at;
     private Boolean enabled;
     private List<String> authorities;
 }

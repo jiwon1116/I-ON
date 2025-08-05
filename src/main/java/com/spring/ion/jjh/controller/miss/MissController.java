@@ -33,12 +33,20 @@ public class MissController {
     private final MissLikeService missLikeService;
 
     @GetMapping
-    public String paging(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        // 현재 페이지에 해당하는 게시글 목록 가져오기
-        List<MissDTO> pagingList = missService.pagingList(page);
+    public String paging(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                         @RequestParam(value = "searchContent", required = false) String searchContent,
+                         Model model) {
 
-        // 페이징에 필요한 정보 계산(전체 페이지수, 현재 페이지, 시작 페이지 등)
-        PageDTO pageDTO = missService.pagingParam(page);
+        List<MissDTO> pagingList;
+        PageDTO pageDTO;
+
+        if (searchContent != null && !searchContent.isEmpty()) {
+            pagingList = missService.searchPagingList(searchContent, page);
+            pageDTO = missService.searchPagingParam(searchContent, page);
+        } else {
+            pagingList = missService.pagingList(page);
+            pageDTO = missService.pagingParam(page);
+        }
 
         for (MissDTO post : pagingList) {
             int likeCount = missLikeService.getLikeCount(post.getId());
@@ -47,6 +55,7 @@ public class MissController {
 
         model.addAttribute("missboardList", pagingList);
         model.addAttribute("paging", pageDTO);
+        model.addAttribute("searchContent", searchContent); // 검색 유지용
 
         return "jjh/miss/miss";
     }
@@ -103,20 +112,6 @@ public class MissController {
         List<MissFileDTO> fileList = missService.findFileById(id);
         model.addAttribute("fileList", fileList);
         return "jjh/miss/detail";
-    }
-
-    @GetMapping("/search")
-    public String searchResult(@RequestParam(value = "searchContent", required = false) String searchContent, Model model) {
-        List<MissDTO> missboardList;
-
-        if (searchContent != null && !searchContent.isEmpty()) {
-            missboardList = missService.search(searchContent);
-        } else {
-            missboardList = missService.allMissList();
-        }
-
-        model.addAttribute("missboardList", missboardList);
-        return "jjh/miss/miss";
     }
 
     @GetMapping("/update/{id}")

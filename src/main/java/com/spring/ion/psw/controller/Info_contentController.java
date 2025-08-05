@@ -46,8 +46,8 @@ public class Info_contentController{
                 org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
-        if (principal instanceof com.spring.ion.lcw.dto.CustomUserDetails) {
-            memberId = ((com.spring.ion.lcw.dto.CustomUserDetails) principal).getUsername();
+        if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
+            memberId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
             memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
         } else if (principal instanceof String) {
@@ -135,10 +135,16 @@ public class Info_contentController{
 
         // 로그인 사용자 정보 추출
         String memberId = null;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principal instanceof com.spring.ion.lcw.dto.CustomUserDetails) {
-            memberId = ((com.spring.ion.lcw.dto.CustomUserDetails) principal).getUsername();
+        // 현재 로그인한 사용자의 정보가 principal 객체에 들어 있음
+        // principal은 상황에 따라 타입이 다를 수 있으므로 3가지 경우로 나눠 처리
+        org.springframework.security.core.Authentication authentication =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+   
+        if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
+            memberId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
+
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
             memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
         } else if (principal instanceof String && !"anonymousUser".equals(principal)) {

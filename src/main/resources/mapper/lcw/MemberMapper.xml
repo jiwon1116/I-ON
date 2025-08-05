@@ -4,16 +4,15 @@
 <mapper namespace="Member">
 
     <resultMap id="memberWithAuthoritiesResultMap" type="com.spring.ion.lcw.dto.MemberDTO">
-        <id property="userId" column="userId"/>
-        <result property="password" column="password"/>
-        <result property="nickname" column="nickname"/>
-        <result property="gender" column="gender"/>
-        <result property="region" column="region"/>
-        <result property="enabled" column="enabled"/>
-        <result property="createdAt" column="created_at"/>
-
-        <collection property="authorities" ofType="string">
-            <result column="authority"/>
+        <id property="userId" column="userId" />
+        <result property="password" column="password" />
+        <result property="nickname" column="nickname" />
+        <result property="gender" column="gender" />
+        <result property="region" column="region" />
+        <result property="enabled" column="enabled" />
+        <result property="created_at" column="created_at" />
+        <collection property="authorities" ofType="java.lang.String">
+            <result column="authority" />
         </collection>
     </resultMap>
 
@@ -54,10 +53,34 @@
     </select>
 
     <select id="findByUserIdWithAuthorities" parameterType="String" resultMap="memberWithAuthoritiesResultMap">
-        SELECT
-        m.userId, m.password, m.nickname, m.gender, m.region, m.enabled, m.created_at, ma.authority
-        FROM member m LEFT JOIN member_authority ma ON m.userId = ma.userId
-        WHERE
-        m.userId = #{userId}
+        SELECT m.userId, m.password, m.nickname, m.gender, m.region, m.enabled, m.created_at, ma.authority
+        FROM member m
+        LEFT JOIN member_authority ma ON m.userId = ma.userId
+        WHERE m.userId = #{userId}
     </select>
+
+    <update id="updateMember" parameterType="com.spring.ion.lcw.dto.MemberDTO">
+        UPDATE member
+        <set>
+            <if test="password != null and !password.isEmpty()">
+                password = #{password},
+            </if>
+            <if test="nickname != null and !nickname.isEmpty()">
+                nickname = #{nickname},
+            </if>
+            region = #{region}
+        </set>
+        WHERE userId = #{userId}
+    </update>
+
+    <update id="updateNaverMember" parameterType="com.spring.ion.lcw.dto.MemberDTO">
+        UPDATE member
+        <set>
+            <if test="nickname != null and !nickname.isEmpty()">
+                nickname = #{nickname},
+            </if>
+            region = #{region}
+        </set>
+        WHERE userId = #{userId}
+    </update>
 </mapper>

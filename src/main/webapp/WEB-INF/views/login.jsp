@@ -13,7 +13,7 @@
 	<h1>로그인</h1>
 	<h2>${error}</h2>
 	<h2>${logout}</h2>
-	<form action="/login" method="post">
+	<form action="${pageContext.request.contextPath}/login" method="post">
 		<div> <input type="text" name="username" /> </div>
 		<div> <input type="password" name="password" /> </div>
 		<div> <input type="submit"/> </div>
