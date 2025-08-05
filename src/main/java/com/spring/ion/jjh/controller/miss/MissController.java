@@ -7,7 +7,10 @@ import com.spring.ion.jjh.dto.miss.MissFileDTO;
 import com.spring.ion.jjh.service.miss.MissCommentService;
 import com.spring.ion.jjh.service.miss.MissLikeService;
 import com.spring.ion.jjh.service.miss.MissService;
+import com.spring.ion.lcw.dto.MemberDTO;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -61,7 +64,10 @@ public class MissController {
     }
 
     @GetMapping("/write")
-    public String writeForm() {
+    public String writeForm(Model model){
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+        model.addAttribute("member", memberDTO);
         return "jjh/miss/write";
     }
 
@@ -70,6 +76,12 @@ public class MissController {
             @ModelAttribute MissDTO missDTO,
             @RequestParam(value = "uploadFiles", required = false) List<MultipartFile> uploadFiles
     ) {
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+
+        missDTO.setUserId(user.getUsername());
+        missDTO.setNickname(memberDTO.getNickname());
+
         int result = missService.write(missDTO, uploadFiles);
 
         if (result > 0) {
@@ -93,6 +105,10 @@ public class MissController {
         }
 
         MissDTO miss = missService.findById(id);
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = user.getUsername();
+        model.addAttribute("loginUserId", loginUserId);
 
         int likeCount = missLikeService.getLikeCount(id);
         miss.setLike_count(likeCount);
@@ -129,7 +145,7 @@ public class MissController {
         boolean result = missService.update(missDTO, file);
 
         if (result) {
-            return "redirect:/miss";
+            return "redirect:/miss/{id}";
         } else {
             return "jjh/miss/update";
         }

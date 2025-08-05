@@ -80,8 +80,8 @@
       <form action="/free/write" method="post" enctype="multipart/form-data" class="write-form">
         <label for="title">제목</label>
         <input type="text" name="title" id="title" placeholder="제목을 입력해주세요" required />
-        <label for="title">작성자</label>
-        <input type="text" name="nickname" id="nickname" placeholder="작성자를 입력해주세요" required />
+        <label for="nickname">작성자</label>
+        <input type="text" name="nickname" id="nickname" value="${member.nickname}" readonly />
 
         <label for="uploadFiles">파일 업로드</label>
         <input type="file" name="uploadFiles" id="uploadFiles" multiple />

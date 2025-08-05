@@ -7,7 +7,10 @@ import com.spring.ion.jjh.dto.entrust.EntrustFileDTO;
 import com.spring.ion.jjh.service.entrust.EntrustCommentService;
 import com.spring.ion.jjh.service.entrust.EntrustLikeService;
 import com.spring.ion.jjh.service.entrust.EntrustService;
+import com.spring.ion.lcw.dto.MemberDTO;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -61,7 +64,10 @@ public class EntrustController {
     }
 
     @GetMapping("/write")
-    public String writeForm() {
+    public String writeForm(Model model){
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+        model.addAttribute("member", memberDTO);
         return "jjh/entrust/write";
     }
 
@@ -70,6 +76,12 @@ public class EntrustController {
             @ModelAttribute EntrustDTO entrustDTO,
             @RequestParam(value = "uploadFiles", required = false) List<MultipartFile> uploadFiles
     ) {
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+
+        entrustDTO.setUserId(user.getUsername());
+        entrustDTO.setNickname(memberDTO.getNickname());
+
         int result = entrustService.write(entrustDTO, uploadFiles);
 
         if (result > 0) {
@@ -93,6 +105,10 @@ public class EntrustController {
         }
 
         EntrustDTO entrust = entrustService.findById(id);
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = user.getUsername();
+        model.addAttribute("loginUserId", loginUserId);
 
         int likeCount = entrustLikeService.getLikeCount(id);
         entrust.setLike_count(likeCount);
@@ -129,7 +145,7 @@ public class EntrustController {
         boolean result = entrustService.update(entrustDTO, file);
 
         if (result) {
-            return "redirect:/entrust";
+            return "redirect:/entrust/{id}";
         } else {
             return "jjh/entrust/update";
         }

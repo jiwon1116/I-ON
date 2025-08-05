@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ include file="/WEB-INF/views/header.jsp" %>
 
 <!DOCTYPE html>
@@ -222,13 +223,15 @@
     </div>
 
     <div class="post-actions">
-    <span onclick="updateFn()">수정</span>
-    <span onclick="deleteFn()">삭제</span>
-    <span>신고</span>
+    <sec:authentication property="principal" var="loginUser" />
+        <c:if test="${loginUserId eq entrust.userId}">
+            <span onclick="updateFn()">수정</span>
+            <span onclick="deleteFn()">삭제</span>
+        </c:if>
     </div>
 
     <div class="comment-input-wrapper">
-      <input id="nickname" placeholder="작성자"></textarea>
+      <input type="hidden" id="nickname" value="${member.nickname}" />
       <textarea id="content" placeholder="댓글을 작성해주세요"></textarea>
       <button onclick="commentWrite()">작성</button>
     </div>
@@ -279,7 +282,6 @@
       type: "post",
       url: "/entrustComment/save",
       data: {
-        nickname: nickname,
         content: content,
         post_id: postId
       },

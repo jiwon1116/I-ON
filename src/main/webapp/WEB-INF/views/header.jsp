@@ -16,12 +16,12 @@
         <a href="/free">커뮤니티</a>
         <ul class="sub-menu">
           <li><a href="/free">자유</a></li>
-          <li><a href="entrust">위탁</a></li>
-          <li><a href="miss">실종 및 유괴</a></li>
+          <li><a href="/entrust">위탁</a></li>
+          <li><a href="/miss">실종 및 유괴</a></li>
         </ul>
       </li>
-      <li class="main-menu"><a href="flag">제보 및 신고</a></li>
-      <li class="main-menu"><a href="info">정보 공유</a></li>
+      <li class="main-menu"><a href="/flag">제보 및 신고</a></li>
+      <li class="main-menu"><a href="/info">정보 공유</a></li>
     </ul>
     <div class="icons">
       <span class="icon">🔔</span>

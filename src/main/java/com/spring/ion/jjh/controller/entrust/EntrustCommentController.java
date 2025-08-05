@@ -2,8 +2,12 @@ package com.spring.ion.jjh.controller.entrust;
 
 import com.spring.ion.jjh.dto.entrust.EntrustCommentDTO;
 import com.spring.ion.jjh.service.entrust.EntrustCommentService;
+import com.spring.ion.lcw.dto.MemberDTO;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +19,11 @@ public class EntrustCommentController {
     private final EntrustCommentService entrustCommentService;
 
     @PostMapping("/save")
-    public @ResponseBody List<EntrustCommentDTO> save(@ModelAttribute EntrustCommentDTO commentDTO) {
+    public @ResponseBody List<EntrustCommentDTO> save(@ModelAttribute EntrustCommentDTO commentDTO, Model model){
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        commentDTO.setNickname(user.getMemberDTO().getNickname());
+        MemberDTO memberDTO = user.getMemberDTO();
+        model.addAttribute("member", memberDTO);
         entrustCommentService.save(commentDTO);
 
         // 해당 게시글에 작성된 댓글 리스트 반환
