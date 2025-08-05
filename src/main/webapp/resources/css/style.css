@@ -1,0 +1,138 @@
+ /* reset.css */
+
+*{
+margin:0;
+padding:0;
+box-sizing: border-box;
+}
+
+ol,ul,li{
+list-style: none;
+}
+
+a{
+text-decoration: none;
+color: inherit;
+}
+
+:root {
+  /* === 컬러 === */
+  --color-point: #F2AC28;
+
+  /* 텍스트 컬러 */
+  --text-main: #212121;     /* 기본 텍스트 */
+  --text-sub: #666666;      /* 서브 텍스트 */
+  --text-light: #999999;    /* 약한 텍스트 */
+  --text-white: #ffffff;    /* 흰색 텍스트 */
+  --text-point: var(--color-point); /* 강조 텍스트 */
+
+  /* === 폰트 사이즈 === */
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-md: 16px;
+  --font-lg: 18px;
+  --font-xl: 20px;
+  --font-title: 24px;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  background-color: #fff8e7;
+}
+
+/* 네비게이션 바 */
+.top-nav {
+  background-color: #ffc727;
+  padding: 0 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 60px;
+  font-weight: bold;
+  font-size: 14px;
+  position: relative;
+  z-index: 10;
+}
+
+.logo-section img {
+  height: 36px;
+}
+
+.nav-tabs {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 메인 메뉴 공통 */
+.main-menu {
+  position: relative;
+  padding: 12px 24px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  cursor: pointer;
+  background-color: transparent;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+/* hover 시 텍스트 색상만 밝아짐 */
+.main-menu:hover {
+  color: #ffffffcc;
+}
+
+/* 활성 탭 */
+.main-menu.active {
+  background-color: white;
+  color: #222;
+  z-index: 2;
+  margin-bottom: 0;
+}
+
+/* 서브 메뉴 */
+.sub-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffc727;
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  border-radius: 0 0 12px 12px;
+  z-index: 5;
+}
+
+/* hover 시 서브 메뉴 보임 */
+.main-menu:hover .sub-menu {
+  display: block;
+}
+
+/* 서브 메뉴 항목 */
+.sub-menu li {
+  padding: 10px 16px;
+  white-space: nowrap;
+  font-size: 14px;
+  color: #333;
+  transition: color 0.2s;
+  font-weight: 500;
+  text-align: center;
+}
+.sub-menu li:hover {
+  color: #000;
+}
+
+.icons {
+  display: flex;
+  gap: 16px;
+  font-size: 20px;
+  padding-bottom: 10px;
+}
