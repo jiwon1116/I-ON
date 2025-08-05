@@ -141,7 +141,6 @@ public class Info_contentController{
 
         model.addAttribute("findDto", findDto);
         model.addAttribute("commentList", infoCommentList);
-        model.addAttribute("memberNickname", memberDTO.getNickname());
         model.addAttribute("findFileDto", secondImage); // secondImage를 기존 변수명에 맞게 전달
         return "psw/detail";
     }
@@ -183,11 +182,8 @@ public class Info_contentController{
         // 기존 파일 서버 + DB 삭제
         List<Info_FileDTO> existingFiles = infoContentService.findFiles(id);
         infoContentService.deleteFilesFromServer(existingFiles); // 서버에서 삭제
-
         // 새 파일 저장
         infoContentService.saveFiles(files, id);
-
-
         return result ? "redirect:/info/" : "psw/update";
     }
 

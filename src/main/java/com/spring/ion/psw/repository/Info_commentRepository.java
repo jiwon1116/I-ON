@@ -22,4 +22,6 @@ public class Info_commentRepository {
     public List<Info_commentDTO> findAll(long postId) {
         return sql.selectList("infoComment.findAll", postId);
     }
+
+
 }
