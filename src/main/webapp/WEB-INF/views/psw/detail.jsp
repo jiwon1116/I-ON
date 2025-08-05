@@ -206,8 +206,10 @@
                 </div>
 
                 <div class="form-group">
-                  <!-- 게시물에 첨부된 사진 넣기(썸네일x)-->
-                     <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;"/>
+                  <!-- 게시물에 첨부된 사진 넣기(두 번째 이미지 출력)-->
+                    <c:if test="${not empty findFileDto}">
+                        <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;" />
+                    </c:if>
                </div>
 
                 <div class="form-group">
