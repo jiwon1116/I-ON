@@ -1,7 +1,7 @@
 package com.spring.ion.jjh.controller.miss;
 
 import com.spring.ion.jjh.service.miss.MissLikeService;
-import com.spring.ion.lcw.dto.CustomUserDetails;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

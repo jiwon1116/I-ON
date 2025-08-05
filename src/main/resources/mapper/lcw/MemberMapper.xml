@@ -68,7 +68,7 @@
             <if test="nickname != null and !nickname.isEmpty()">
                 nickname = #{nickname},
             </if>
-                region = #{region}
+            region = #{region}
         </set>
         WHERE userId = #{userId}
     </update>
