@@ -237,6 +237,7 @@
     </div>
 
     <div class="comment-list">
+    <sec:authentication property="principal" var="loginUser" />
       <c:forEach items="${commentList}" var="comment">
         <div class="comment-card">
           <div class="comment-avatar">
@@ -246,7 +247,9 @@
             <div class="comment-header">
               <span class="comment-nickname">${comment.nickname}</span>
               <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
-              <span class="comment-delete" onclick="commentDelete(${comment.id})">삭제</span>
+              <c:if test="${loginUserId eq comment.userId}">
+                <span class="comment-delete" onclick="commentDelete('${comment.id}')">삭제</span>
+              </c:if>
             </div>
             <div class="comment-content">${comment.content}</div>
           </div>
@@ -283,7 +286,8 @@
       url: "/comment/save",
       data: {
         content: content,
-        post_id: postId
+        post_id: postId,
+        nickname: nickname
       },
       dataType: "json",
       success: function(commentList) {

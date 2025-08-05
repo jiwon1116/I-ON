@@ -22,6 +22,7 @@ public class EntrustCommentController {
     public @ResponseBody List<EntrustCommentDTO> save(@ModelAttribute EntrustCommentDTO commentDTO, Model model){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         commentDTO.setNickname(user.getMemberDTO().getNickname());
+        commentDTO.setUserId(user.getUsername());
         MemberDTO memberDTO = user.getMemberDTO();
         model.addAttribute("member", memberDTO);
         entrustCommentService.save(commentDTO);
@@ -40,6 +41,6 @@ public class EntrustCommentController {
         if (comment != null) {
             entrustCommentService.delete(id);
         }
-        return "redirect:/entrust/detail?id=" + postId;
+        return "redirect:/entrust/" + postId;
     }
 }

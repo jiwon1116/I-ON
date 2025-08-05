@@ -22,6 +22,7 @@ public class FreeCommentController {
     public @ResponseBody List<FreeCommentDTO> save(@ModelAttribute FreeCommentDTO commentDTO, Model model){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         commentDTO.setNickname(user.getMemberDTO().getNickname());
+        commentDTO.setUserId(user.getUsername());
         MemberDTO memberDTO = user.getMemberDTO();
         model.addAttribute("member", memberDTO);
         freeCommentService.save(commentDTO);
@@ -40,6 +41,6 @@ public class FreeCommentController {
         if (comment != null) {
             freeCommentService.delete(id);
         }
-        return "redirect:/free/detail?id=" + postId;
+        return "redirect:/free/" + postId;
     }
 }

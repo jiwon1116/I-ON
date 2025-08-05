@@ -22,6 +22,7 @@ public class MissCommentController {
     public @ResponseBody List<MissCommentDTO> save(@ModelAttribute MissCommentDTO commentDTO, Model model){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         commentDTO.setNickname(user.getMemberDTO().getNickname());
+        commentDTO.setUserId(user.getUsername());
         MemberDTO memberDTO = user.getMemberDTO();
         model.addAttribute("member", memberDTO);
         missCommentService.save(commentDTO);
@@ -39,6 +40,6 @@ public class MissCommentController {
         if (comment != null) {
             missCommentService.delete(id);
         }
-        return "redirect:/miss/detail?id=" + postId;
+        return "redirect:/miss/" + postId;
     }
 }
