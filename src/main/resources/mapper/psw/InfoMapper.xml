@@ -60,11 +60,19 @@
     </update>
 
 
-    <select id="infoSearch" parameterType="string" resultType="infoContent">
+     <!-- 검색 결과 개수 -->
+    <select id="searchCount" resultType="int">
+        SELECT COUNT(*) FROM info_content
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 검색된 결과 페이징 -->
+    <select id="searchPagingList" resultType="infoContent">
         SELECT * FROM info_content
         WHERE title LIKE CONCAT('%', #{keyword}, '%')
         OR content LIKE CONCAT('%', #{keyword}, '%')
         ORDER BY id DESC
+        LIMIT #{start}, #{limit}
     </select>
 
 </mapper>

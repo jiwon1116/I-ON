@@ -75,9 +75,14 @@ public class Info_contentRepository {
         sql.insert("Info.infoUpdateFile", infoFileDTO);
     }
 
-    // 검색
-    public List<Info_contentDTO> search(String keyword) {
-        return sql.selectList("Info.infoSearch", keyword);
+
+    //검색 전용 글 찾기
+    public List<Info_contentDTO> searchPagingList(Map<String, Object> pagingParams) {
+        return sql.selectList("Info.searchPagingList", pagingParams);
+    }
+
+    public int searchCount(String keyword) {
+        return sql.selectOne("Info.searchCount", keyword);
     }
 }
 
