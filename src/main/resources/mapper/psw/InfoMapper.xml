@@ -48,8 +48,11 @@
         VALUES (#{board_id}, #{originalFileName}, #{storedFileName})
     </insert>
 
-    <select id="findInfoFile" parameterType="long" resultType="infoFile">
-        SELECT * FROM info_file WHERE board_id = #{boardId}
+    <select id="findInfoFile" resultType="infoFile">
+        SELECT * FROM info_file
+        WHERE board_id = #{boardId}
+        ORDER BY id ASC
+        LIMIT 1
     </select>
 
     <update id="infoUpdateFile" parameterType="infoFile">
@@ -74,5 +77,18 @@
         ORDER BY id DESC
         LIMIT #{start}, #{limit}
     </select>
+
+    <!-- 게시글에 첨부된 전체 이미지 파일 조회 -->
+    <select id="findFiles" resultType="infoFile">
+        SELECT *
+        FROM info_file
+        WHERE board_id = #{boardId}
+        ORDER BY id ASC
+    </select>
+
+    <delete id="deleteFile" parameterType="long">
+        DELETE FROM info_file
+        WHERE board_id = #{boardId}
+    </delete>
 
 </mapper>

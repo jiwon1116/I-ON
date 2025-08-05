@@ -8,16 +8,58 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 
 public class Info_contentService {
     private final Info_contentRepository infoContentRepository;
-    
+
+
+     //파일 저장 코드
+    public void saveFiles(List<MultipartFile> files, Long boardId) throws IOException {
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                String originalFileName = file.getOriginalFilename();
+                String storedFileName = UUID.randomUUID() + "_" + originalFileName;
+                String savePath = "C:/upload/" + storedFileName;
+
+                file.transferTo(new File(savePath)); // 파일 저장
+
+                Info_FileDTO fileDTO = new Info_FileDTO();
+                fileDTO.setBoard_id(boardId);
+                fileDTO.setOriginalFileName(originalFileName);
+                fileDTO.setStoredFileName(storedFileName);
+
+                saveFile(fileDTO); // 기존 파일 저장 메서드 호출
+            }
+        }
+    }
+
+    // 파일에 남아있는 이미지 제거
+    public void deleteFilesFromServer(List<Info_FileDTO> fileList) {
+        for (Info_FileDTO fileDTO : fileList) {
+            String filePath = "C:/upload/" + fileDTO.getStoredFileName();
+            File file = new File(filePath);
+
+            System.out.println("삭제 시도 파일 경로: " + filePath);
+            System.out.println("파일 존재 여부: " + file.exists());
+
+            if (file.exists()) {
+                file.delete(); // 서버에서 실제 파일 삭제
+            }
+            infoContentRepository.deleteFile(fileDTO.getBoard_id()); // 💡 DB에서도 삭제
+
+        }
+    }
+
+
 
     // 작성된 글 추가
     public int save(Info_contentDTO infoContentDTO) {
@@ -141,4 +183,8 @@ public class Info_contentService {
         return infoPage;
     }
 
+    // 이미지 전체 조회
+    public List<Info_FileDTO> findFiles(long id) {
+        return infoContentRepository.findFiles(id);
+    }
 }

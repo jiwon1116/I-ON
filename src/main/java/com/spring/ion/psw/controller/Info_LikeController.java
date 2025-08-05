@@ -1,8 +1,7 @@
 package com.spring.ion.psw.controller;
 
-import com.spring.ion.lcw.dto.CustomUserDetails;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.psw.service.Info_LikeService;
-import com.spring.ion.yjw.service.FlagLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

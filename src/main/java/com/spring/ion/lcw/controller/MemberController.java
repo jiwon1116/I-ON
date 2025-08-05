@@ -1,10 +1,10 @@
 package com.spring.ion.lcw.controller;
 
 //import com.spring.ion.lcw.service.MemberService;
-import com.spring.ion.lcw.dto.CustomUserDetails;
+import com.spring.ion.lcw.repository.MemberRepository;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.service.MemberService;
-import com.spring.ion.lcw.service.ReCaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,11 +15,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Member;
 
 @Controller
 public class MemberController {
@@ -29,6 +30,8 @@ public class MemberController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MemberRepository memberRepository;
 //    @Autowired
 //    private ReCaptchaService reCaptchaService;
 
@@ -70,18 +73,52 @@ public class MemberController {
     @DeleteMapping("/withdraw")
     public String withdraw(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userId = null;
-        if (auth != null) {
-            Object principal = auth.getPrincipal();
-            if (principal instanceof CustomUserDetails) {
-                userId = ((CustomUserDetails) principal).getUsername();
-            }
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-            if (userId != null) {
-                memberService.delete(userId);
-            }
+        if (auth == null || !auth.isAuthenticated()) {
+            return "redirect:/login";
         }
 
+        String userId = null;
+        Object principal = auth.getPrincipal();
+        if (principal instanceof CustomUserDetails) {
+            userId = ((CustomUserDetails) principal).getUsername();
+        } else {
+            return "redirect:/error";
+        }
+
+        if (userId == null) {
+            return "redirect:/error";
+        }
+
+        try {
+            memberService.delete(userId);
+        } catch (Exception e) {
+            return "redirect:/error";
+        }
+        new SecurityContextLogoutHandler().logout(request, response, auth);
+        return "redirect:/";
+    }
+
+    @GetMapping("/edit")
+    public String showEditForm(Model model) {
+
+            CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            MemberDTO memberDTO = user.getMemberDTO();
+            model.addAttribute("member", memberDTO);
+
+        return "edit";
+    }
+
+
+    @PatchMapping("/edit")
+    public String edit(MemberDTO memberDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model){
+        memberDTO.setUserId(customUserDetails.getUsername());
+
+        if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
+            memberDTO.setPassword(encodedPassword);
+        }
+
+        memberService.edit(memberDTO);
         return "redirect:/";
     }
 
