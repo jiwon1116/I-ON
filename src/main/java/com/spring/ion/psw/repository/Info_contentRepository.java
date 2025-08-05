@@ -89,5 +89,10 @@ public class Info_contentRepository {
     public List<Info_FileDTO> findFiles(long id) {
         return sql.selectList("Info.findFiles", id);
     }
+
+    // 해당 게시물 사진 삭제
+    public void deleteFile(long boardId) {
+      sql.delete("Info.deleteFile", boardId);
+    }
 }
 
