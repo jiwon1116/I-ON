@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ include file="/WEB-INF/views/header.jsp" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,34 +12,6 @@
             margin: 0;
             font-family: 'Arial', sans-serif;
             background: #f5f5f5;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 200px;
-            height: 100%;
-            background: #f6a500;
-            color: white;
-            padding: 40px 20px;
-            box-sizing: border-box;
-        }
-
-        .sidebar h2 {
-            font-size: 24px;
-            margin-bottom: 40px;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar li {
-            margin-bottom: 20px;
-            font-weight: bold;
-            cursor: pointer;
         }
 
         .main {
@@ -138,20 +110,9 @@
 </head>
 <body>
 
-<div class="sidebar">
-    <h2>logo</h2>
-    <ul>
-        <li>마이페이지</li>
-        <li>범죄 예방 지도</li>
-        <li>커뮤니티</li>
-        <li>제보 및 신고</li>
-        <li>정보 공유</li>
-    </ul>
-</div>
-
 <div class="main">
     <div class="search-bar-container">
-        <form class="search-bar" method="get" action="/miss/search">
+        <form class="search-bar" method="get" action="/miss">
             <input type="text" name="searchContent" placeholder="제목, 내용으로 검색" />
             <button type="submit">검색</button>
         </form>
@@ -183,7 +144,7 @@
 			</c:when>
 			<c:otherwise>
 				<%-- 1페이지가 아닌 경우 : 이전 페이지 클릭 시 현재 페이지보다 1만큼 작은 페이지 요청 --%>
-				<a href="/miss?page=${paging.page - 1 }">[이전]</a>
+				<a href="/miss?page=${paging.page - 1 }&searchContent=${param.searchContent}">[이전]</a>
 			</c:otherwise>
 		</c:choose>
 
@@ -195,7 +156,7 @@
 					<span>${i }</span>
 				</c:when>
 				<c:otherwise>
-					<a href="/miss?page=${i }">${i }</a>
+					<a href="/miss?page=${i }&searchContent=${param.searchContent}">${i }</a>
 				</c:otherwise>
 			</c:choose>
 		</c:forEach>
@@ -206,7 +167,7 @@
 				<span>[다음]</span>
 			</c:when>
 			<c:otherwise>
-				<a href="/miss?page=${paging.page + 1 }">[다음]</a>
+				<a href="/miss?page=${paging.page + 1 }&searchContent=${param.searchContent}">[다음]</a>
 			</c:otherwise>
 		</c:choose>
 	</div>

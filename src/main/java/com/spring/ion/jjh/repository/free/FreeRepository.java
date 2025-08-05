@@ -58,10 +58,6 @@ public class FreeRepository {
         sql.delete("Free.deleteFileById", id);
     }
 
-    public List<FreeDTO> search(String searchContent) {
-        return sql.selectList("Free.search", searchContent);
-    }
-
     public void increaseLikeCount(Long postId) {
         sql.update("Free.increaseLikeCount", postId);
     };
@@ -69,4 +65,18 @@ public class FreeRepository {
     public void decreaseLikeCount(Long postId) {
         sql.update("Free.decreaseLikeCount", postId);
     };
+
+    public List<FreeDTO> searchPagingList(String searchContent, int pagingStart, int pageLimit) {
+        Map<String, Object> paramMap = Map.of(
+                "keyword", searchContent,
+                "start", pagingStart,
+                "limit", pageLimit
+        );
+        return sql.selectList("Free.searchPagingList", paramMap);
+    }
+
+    public int searchCount(String searchContent) {
+        return sql.selectOne("Free.searchCount", searchContent);
+    }
+
 }

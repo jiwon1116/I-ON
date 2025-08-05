@@ -58,10 +58,6 @@ public class MissRepository {
         sql.delete("Miss.deleteFileById", id);
     }
 
-    public List<MissDTO> search(String searchContent) {
-        return sql.selectList("Miss.search", searchContent);
-    }
-
     public void increaseLikeCount(Long postId) {
         sql.update("Miss.increaseLikeCount", postId);
     };
@@ -69,5 +65,18 @@ public class MissRepository {
     public void decreaseLikeCount(Long postId) {
         sql.update("Miss.decreaseLikeCount", postId);
     };
+
+    public List<MissDTO> searchPagingList(String searchContent, int pagingStart, int pageLimit) {
+        Map<String, Object> paramMap = Map.of(
+                "keyword", searchContent,
+                "start", pagingStart,
+                "limit", pageLimit
+        );
+        return sql.selectList("Miss.searchPagingList", paramMap);
+    }
+
+    public int searchCount(String searchContent) {
+        return sql.selectOne("Miss.searchCount", searchContent);
+    }
 
 }

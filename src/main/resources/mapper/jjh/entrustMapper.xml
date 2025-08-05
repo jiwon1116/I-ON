@@ -67,5 +67,22 @@
         UPDATE entrust_post SET like_count = like_count - 1 WHERE id = #{postId} AND like_count > 0
     </update>
 
+    <!-- 검색 + 페이징된 게시글 리스트 -->
+    <select id="searchPagingList" parameterType="map" resultType="entrust">
+        SELECT *
+        FROM entrust_post
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY created_at DESC
+        LIMIT #{start}, #{limit}
+    </select>
 
+    <!-- 검색된 게시글 수 -->
+    <select id="searchCount" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM entrust_post
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+    
 </mapper>

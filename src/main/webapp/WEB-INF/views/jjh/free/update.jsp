@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="/WEB-INF/views/header.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,106 +13,6 @@
           background-color: #fff8e7;
         }
 
-        /* 상단바 스타일 */
-        /* 네비게이션 바 */
-        /* 네비게이션 바 */
-        .top-nav {
-          background-color: #ffc727;
-          padding: 0 24px;
-          display: flex;
-          align-items: flex-end;
-          justify-content: space-between;
-          height: 60px;
-          font-weight: bold;
-          font-size: 14px;
-          position: relative;
-          z-index: 10;
-        }
-
-        .logo-section img {
-          height: 36px;
-        }
-
-        .nav-tabs {
-          display: flex;
-          list-style: none;
-          margin: 0;
-          padding: 0;
-        }
-
-        /* 메인 메뉴 공통 */
-        .main-menu {
-          position: relative;
-          padding: 12px 24px;
-          border-top-left-radius: 20px;
-          border-top-right-radius: 20px;
-          cursor: pointer;
-          background-color: transparent;
-          color: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: color 0.2s ease;
-        }
-
-        /* ✅ hover 시 텍스트 색상만 밝아짐 */
-        .main-menu:hover {
-          color: #ffffffcc; /* 연한 흰색 */
-        }
-
-        /* ✅ 활성 탭 (흰색 배경 & 검정 텍스트) */
-        .main-menu.active {
-          background-color: white;
-          color: #222;
-          z-index: 2;
-          margin-bottom: 0; /* ❗ 빠져나오지 않도록 */
-        }
-
-        /* ✅ 서브 메뉴 */
-        .sub-menu {
-          display: none;
-          position: absolute;
-          top: 100%;
-          left: 0;
-          width: 100%; /* ✅ 메인 메뉴와 너비 일치 */
-          box-sizing: border-box;
-          background: #ffc727;
-          list-style: none;
-          padding: 8px 0;
-          margin: 0;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-          border-radius: 0 0 12px 12px;
-          z-index: 5;
-        }
-
-        /* hover 시 서브 메뉴 보임 */
-        .main-menu:hover .sub-menu {
-          display: block;
-        }
-
-        /* 서브 메뉴 항목 */
-        .sub-menu li {
-          padding: 10px 16px;
-          white-space: nowrap;
-          font-size: 14px;
-          color: #333;
-          transition: color 0.2s;
-          font-weight: 500;
-          text-align: center;
-        }
-
-        /* ✅ hover 시 텍스트 색상만 진해짐 */
-        .sub-menu li:hover {
-          color: #000;
-        }
-
-        /* 오른쪽 아이콘 */
-        .icons {
-          display: flex;
-          gap: 16px;
-          font-size: 20px;
-          padding-bottom: 10px;
-        }
         .write-container {
           display: flex;
           justify-content: center;
@@ -174,40 +75,6 @@
     </style>
 </head>
 <body>
-    <!-- ✅ 상단바 시작 -->
-    <header>
-      <nav class="top-nav">
-        <div class="logo-section">
-          <img src="/logo.png" alt="logo">
-        </div>
-        <ul class="nav-tabs">
-          <li class="main-menu">
-            마이페이지
-          </li>
-          <li class="main-menu">
-            범죄 예방 지도
-          </li>
-          <li class="main-menu active">
-            커뮤니티
-            <ul class="sub-menu">
-              <li>자유</li>
-              <li>위탁</li>
-              <li>실종 및 유괴</li>
-            </ul>
-          </li>
-          <li class="main-menu">
-            제보 및 신고
-          </li>
-          <li class="main-menu">
-            정보 공유
-          </li>
-        </ul>
-        <div class="icons">
-          <span class="icon">🔔</span>
-          <span class="icon">✉️</span>
-        </div>
-      </nav>
-    </header>
 
     <h2 style="text-align: center;">글쓰기</h2>
 
