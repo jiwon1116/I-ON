@@ -2,32 +2,26 @@
 <!-- 공통 헤더: 상단 네비게이션 바만 -->
 <!-- 필요하면 css 링크, 아이콘 CDN 추가 가능 -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-<!-- 또는 아래에 <style>로 바로 스타일링도 가능 -->
-<style>
-body {
-  margin: 0;
-  font-family: "Noto Sans KR", sans-serif;
-  background-color: #fff8e7;
-}
-</style>
+
+
 <header>
   <nav class="top-nav">
     <div class="logo-section">
-      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
+      <img src="${pageContext.request.contextPath}/logo.png" alt="logo">
     </div>
     <ul class="nav-tabs">
-      <li class="main-menu"><a href="/mypage">마이페이지</a></li>
-      <li class="main-menu"><a href="/map">범죄 예방 지도</a></li>
+      <li class="main-menu">마이페이지</li>
+      <li class="main-menu">범죄 예방 지도</li>
       <li class="main-menu active">
-        <a href="/free">커뮤니티</a>
+        커뮤니티
         <ul class="sub-menu">
-          <li><a href="/free">자유</a></li>
-          <li><a href="/entrust">위탁</a></li>
-          <li><a href="/miss">실종 및 유괴</a></li>
+          <li>자유</li>
+          <li>위탁</li>
+          <li>실종 및 유괴</li>
         </ul>
       </li>
-      <li class="main-menu"><a href="/flag">제보 및 신고</a></li>
-      <li class="main-menu"><a href="/info">정보 공유</a></li>
+      <li class="main-menu">제보 및 신고</li>
+      <li class="main-menu">정보 공유</li>
     </ul>
     <div class="icons">
       <span class="icon">🔔</span>

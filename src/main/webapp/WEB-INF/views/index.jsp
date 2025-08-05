@@ -11,8 +11,10 @@
     <a href="/free">자유</a>
     <a href="/entrust">위탁</a>
     <a href="/miss">실종</a>
-    <a href="/map">지도</a>
+
     <a href="/mypage">마이페이지</a>
+
+    <a href="/map">지도</a>
 
 
     <security:authorize access="isAnonymous()">
