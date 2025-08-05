@@ -8,8 +8,8 @@
     </select>
 
     <insert id="write" parameterType="free" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO free_post (title, nickname, content)
-        VALUES (#{title}, #{nickname}, #{content})
+        INSERT INTO free_post (title, nickname, content, userId)
+        VALUES (#{title}, #{nickname}, #{content}, #{userId})
     </insert>
 
     <select id="findById" parameterType="long" resultType="free">

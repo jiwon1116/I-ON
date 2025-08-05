@@ -4,8 +4,8 @@
 
 <mapper namespace="FreeComment">
     <insert id="save" parameterType="freeComment">
-        INSERT INTO free_comment (nickname, content, post_id)
-        VALUES (#{nickname}, #{content}, #{post_id});
+        INSERT INTO free_comment (nickname, content, post_id, userId)
+        VALUES (#{nickname}, #{content}, #{post_id}, #{userId});
     </insert>
 
     <select id="findAll" resultType="freeComment">

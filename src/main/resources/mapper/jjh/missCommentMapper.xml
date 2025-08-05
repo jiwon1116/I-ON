@@ -4,8 +4,8 @@
 
 <mapper namespace="MissComment">
     <insert id="save" parameterType="missComment">
-        INSERT INTO miss_comment (nickname, content, post_id)
-        VALUES (#{nickname}, #{content}, #{post_id});
+        INSERT INTO miss_comment (nickname, content, post_id, userId)
+        VALUES (#{nickname}, #{content}, #{post_id}, #{userId});
     </insert>
 
     <select id="findAll" resultType="missComment">
