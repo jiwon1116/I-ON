@@ -9,6 +9,7 @@ import com.spring.ion.psw.service.Info_commentService;
 import com.spring.ion.psw.service.Info_contentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -22,10 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/info")
@@ -34,7 +32,6 @@ public class Info_contentController{
     private final Info_contentService infoContentService;
     private final Info_commentService infoCommentService;
     private final Info_LikeService infoLikeService;
-
 
 
     //게시물 불러오는 리스트
@@ -62,14 +59,19 @@ public class Info_contentController{
         }
         System.out.println("로그인한 유저:"+memberId);
 
+        // 페이징된 글 목록 리스트
         List<Info_contentDTO> pagingList = infoContentService.pagingList(page);
+        // 페이징 정보
         Info_PageDTO pageDTO = infoContentService.pagingParam(page);
 
+        // 글 내용, 파일 함께들어간 맵
         Map<Info_contentDTO, Info_FileDTO> postFileMap = new LinkedHashMap<>();
+
         for (Info_contentDTO post : pagingList) {
             Info_FileDTO file = infoContentService.findFile(post.getId());
-            postFileMap.put(post, file);
+            postFileMap.put(post, file); // 글, 파일 매칭(key, value)해서 저장
         }
+        
 
         model.addAttribute("memberId",memberId);
         model.addAttribute("postMap", postFileMap);
@@ -78,67 +80,44 @@ public class Info_contentController{
         return "psw/info";
     }
 
-
-    //글 쓰기 폼으로 이동
+    // 글 작성 페이지 이동
     @GetMapping("/save")
-    public String writeForm() {
-
+    public String writeForm(){
         return "psw/write";
     }
 
-    // 글 저장처리
+    // 글 저장 처리
     @PostMapping("/save")
-    // 인코딩타입 : multipart > 자동으로 매핑 불가
     public String save(@ModelAttribute Info_contentDTO dto,
-                       @ModelAttribute Info_FileDTO infoFileDTO,
-                       @RequestParam("file") MultipartFile infoFile, Model model)throws IOException {
+                       @RequestParam("file") List<MultipartFile> files) throws IOException {
 
-        // 파일이 실제로 첨부 되어있는지 확인
-        if (!infoFile.isEmpty()) {
-            // 사용자가 업로드한 원래 파일 명
-            String originalFileName = infoFile.getOriginalFilename(); // pom.xml에 작성한 파일 업로드 라이브러리 때문에 get~ 사용 가능
-            // 고유한 파일 이름 생성을 위해 UUID 사용
-            String uuid = UUID.randomUUID().toString();
+        infoContentService.save(dto); // 게시글 저장
+        Long boardId = dto.getId();   // 저장된 게시글 ID
 
-            // 실제 서버에 저장될 파일이름
-            String storedFileName = uuid + "_" + originalFileName;
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                String originalFileName = file.getOriginalFilename();
+                String storedFileName = UUID.randomUUID() + "_" + originalFileName;
+                String savePath = "C:/upload/" + storedFileName;
 
-            String savePath = "C:/upload/" + storedFileName;
+                file.transferTo(new File(savePath)); // 파일 저장
 
-            // 지정한 경로에 파일 저장
-            infoFile.transferTo(new File(savePath));
+                // 파일 정보 저장
+                Info_FileDTO fileDTO = new Info_FileDTO();
+                fileDTO.setBoard_id(boardId);
+                fileDTO.setOriginalFileName(originalFileName);
+                fileDTO.setStoredFileName(storedFileName);
 
-            // 파일은 자동 매핑 안되기 때문에 setter로 넣어줌
-            // 서버에 저장될 파일명
-            infoFileDTO.setStoredFileName(storedFileName);
-            // 사용자가 업로드한 파일의 원래 이름
-            infoFileDTO.setOriginalFileName(originalFileName);
-
+                infoContentService.saveFile(fileDTO); // 파일 저장
+            }
         }
-        // 게시판 글 저장
-        infoContentService.save(dto);
 
-        Long boardId = dto.getId();
-
-        infoFileDTO.setBoard_id(boardId);
-
-        // 게시판 이미지 파일 저장
-        infoContentService.saveFile(infoFileDTO);
-
-        // 게시판 이미지 파일 가져오기
-        Info_FileDTO infoFileCard =  infoContentService.findFile(boardId);
-
-        model.addAttribute("findFileDto",infoFileCard);
-        // 저장 후 게시판 목록으로 이동
         return "redirect:/info";
     }
 
 
-    // 상세보기
     @GetMapping("/detail")
     public String detailForm(@RequestParam("id") long id, Model model,
-                             @ModelAttribute Info_contentDTO infoContentDTO,
-                             @ModelAttribute Info_FileDTO infoFileDTO,
                              HttpServletRequest request) {
         HttpSession session = request.getSession();
         String viewKey = "viewed_post_" + id;
@@ -148,11 +127,15 @@ public class Info_contentController{
             session.setAttribute(viewKey, true); // 조회수 중복 방지
         }
 
+        // 게시글 정보
         Info_contentDTO findDto = infoContentService.findContext(id);
-        List<Info_commentDTO> infoCommentList= infoCommentService.findAll(id);
 
-        // 1. 로그인 유저 정보 구하기
+        // 댓글 정보
+        List<Info_commentDTO> infoCommentList = infoCommentService.findAll(id);
+
+        // 로그인 사용자 정보 추출
         String memberId = null;
+
         // 현재 로그인한 사용자의 정보가 principal 객체에 들어 있음
         // principal은 상황에 따라 타입이 다를 수 있으므로 3가지 경우로 나눠 처리
         org.springframework.security.core.Authentication authentication =
@@ -161,39 +144,38 @@ public class Info_contentController{
    
         if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
             memberId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
+
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
             memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
-        } else if (principal instanceof String) {
-            //로그인하지 않은 상태에서는 principal이 "anonymousUser"라는 문자열이 되기 때문에 예외처리
-            if (!"anonymousUser".equals(principal)) {
-                memberId = (String) principal;
-            }
-
+        } else if (principal instanceof String && !"anonymousUser".equals(principal)) {
+            memberId = (String) principal;
         }
-        System.out.println("로그인한 유저:"+memberId);
-        // 2. 좋아요 눌렀는지 체크
-        boolean liked = false;
-        if (memberId != null) {
-            liked = infoLikeService.isLiked(id, memberId);
-        }
-        infoContentDTO.setLiked(liked);
 
-        // 3. 좋아요 카운트
-        infoContentDTO.setLike_count(infoLikeService.getLikeCount(id));
+        System.out.println("로그인한 유저: " + memberId);
+
+        // 좋아요 여부 및 카운트 설정
+        boolean liked = memberId != null && infoLikeService.isLiked(id, memberId);
+        findDto.setLiked(liked);
+        findDto.setLike_count(infoLikeService.getLikeCount(id));
+
+        // 게시글 이미지 전체 조회
+        List<Info_FileDTO> fileList = infoContentService.findFiles(id); // 2개 이상 저장된 경우
+
+        Info_FileDTO secondImage = null;
+        if (fileList.size() >= 2) {
+            secondImage = fileList.get(1); // 두 번째 이미지
+        } else if (!fileList.isEmpty()) {
+            secondImage = fileList.get(0); // 하나만 있을 경우
+        }
+
         model.addAttribute("findDto", findDto);
         model.addAttribute("commentList", infoCommentList);
-
-        Long boardId = id;
-
-        infoFileDTO.setBoard_id(boardId);
-        // 게시판 이미지 파일 가져오기
-        Info_FileDTO infoFile =  infoContentService.findFile(boardId);
-
-      model.addAttribute("memberId",memberId);
-      model.addAttribute("findFileDto",infoFile);
+        model.addAttribute("memberId", memberId);
+        model.addAttribute("findFileDto", secondImage); // secondImage를 기존 변수명에 맞게 전달
 
         return "psw/detail";
     }
+
 
     // 글 수정 폼
     @PostMapping("/detail")
@@ -207,9 +189,6 @@ public class Info_contentController{
 
         infoFileDTO.setBoard_id(boardId);
 
-        // 게시판 이미지 파일 가져오기
-        Info_FileDTO infoFile =  infoContentService.findFile(boardId);
-        model.addAttribute("findFileDto",infoFile);
 
         return "psw/update";
     }
@@ -227,37 +206,20 @@ public class Info_contentController{
     // 글 수정 처리
     @PostMapping("/update")
     public String update(@ModelAttribute Info_contentDTO infoContentDTO,
-                         @ModelAttribute Info_FileDTO infoFileDTO,
-                         @RequestParam("file") MultipartFile file,
+                         @RequestParam("file") List<MultipartFile> files,
                          @RequestParam("id") long id) throws IOException {
 
         // 게시글 내용 수정
         boolean result = infoContentService.update(infoContentDTO);
 
-        // 파일이 새로 업로드된 경우에만 파일 처리
-        if (!file.isEmpty()) {
-            String originalFileName = file.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
-            String storedFileName = uuid + "_" + originalFileName;
-            String savePath = "C:/upload/" + storedFileName;
+        // 기존 파일 서버에서 삭제 + DB에서도 삭제 (필요시)
+        List<Info_FileDTO> existingFiles = infoContentService.findFiles(id);
+        infoContentService.deleteFilesFromServer(existingFiles); // 서버에서 삭제
 
-            // 파일 저장
-            file.transferTo(new File(savePath));
+        // 새 파일 저장
+        infoContentService.saveFiles(files, id);
 
-            // DTO에 파일 정보 세팅
-            infoFileDTO.setOriginalFileName(originalFileName);
-            infoFileDTO.setStoredFileName(storedFileName);
-            infoFileDTO.setBoard_id(id);
-
-            // 파일 정보 수정 (기존 파일 대체)
-            infoContentService.updateFile(infoFileDTO);
-        }
-
-        if (result) {
-            return "redirect:/info/";
-        } else {
-            return "psw/update";
-        }
+        return result ? "redirect:/info/" : "psw/update";
     }
 
 

@@ -84,5 +84,10 @@ public class Info_contentRepository {
     public int searchCount(String keyword) {
         return sql.selectOne("Info.searchCount", keyword);
     }
+
+    // 이미지 전체 조회
+    public List<Info_FileDTO> findFiles(long id) {
+        return sql.selectList("Info.findFiles", id);
+    }
 }
 
