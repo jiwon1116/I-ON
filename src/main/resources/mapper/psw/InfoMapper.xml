@@ -7,7 +7,7 @@
         SELECT * FROM info_content ORDER BY id DESC
     </select>
 
-    <insert id="save"  parameterType="infoContent">
+    <insert id="save"  parameterType="infoContent" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO info_content (title, content)
         VALUES (#{title}, #{content})
     </insert>
@@ -41,6 +41,38 @@
 
     <select id="infoCount" resultType="int">
         SELECT COUNT(id) FROM info_content
+    </select>
+
+    <insert id="infoSaveFile"  parameterType="infoFile" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO info_file (board_id, originalFileName, storedFileName)
+        VALUES (#{board_id}, #{originalFileName}, #{storedFileName})
+    </insert>
+
+    <select id="findInfoFile" parameterType="long" resultType="infoFile">
+        SELECT * FROM info_file WHERE board_id = #{boardId}
+    </select>
+
+    <update id="infoUpdateFile" parameterType="infoFile">
+        UPDATE info_file
+        SET originalFileName = #{originalFileName},
+        storedFileName = #{storedFileName}
+        WHERE board_id = #{board_id}
+    </update>
+
+
+     <!-- 검색 결과 개수 -->
+    <select id="searchCount" resultType="int">
+        SELECT COUNT(*) FROM info_content
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 검색된 결과 페이징 -->
+    <select id="searchPagingList" resultType="infoContent">
+        SELECT * FROM info_content
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id DESC
+        LIMIT #{start}, #{limit}
     </select>
 
 </mapper>

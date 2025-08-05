@@ -15,8 +15,8 @@ public class FlagCommentRepository {
     private final SqlSessionTemplate sql;
 
 
-    public List<FlagCommentDTO> findAll(long postId) {
-        return sql.selectList("FlagComment.findAll", postId);
+    public List<FlagCommentDTO> findAll(long post_id) {
+        return sql.selectList("FlagComment.findAll", post_id);
     }
 
 
@@ -25,7 +25,7 @@ public class FlagCommentRepository {
     }
 
 
-    public int delete(Long id) {
+    public int delete(long id) {
         return sql.delete("FlagComment.delete", id);
     }
 

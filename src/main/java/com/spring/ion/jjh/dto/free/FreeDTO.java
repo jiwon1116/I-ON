@@ -13,4 +13,6 @@ public class FreeDTO {
     private int like_count; // 좋아요 수
     private int view_count; // 조회수
     private Date created_at; // 등록 날짜
+
+    private Boolean liked;
 }

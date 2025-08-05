@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Entrust">
+    <select id="allEntrustList" resultType="entrust">
+        SELECT * FROM entrust_post ORDER BY id DESC
+    </select>
+
+    <insert id="write" parameterType="entrust" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO entrust_post (title, nickname, content)
+        VALUES (#{title}, #{nickname}, #{content})
+    </insert>
+
+    <select id="findById" parameterType="long" resultType="entrust">
+        SELECT * FROM entrust_post WHERE id = #{id}
+    </select>
+
+    <select id="search" parameterType="string" resultType="entrust">
+        SELECT * FROM entrust_post
+        WHERE title LIKE CONCAT('%', #{searchContent}, '%')
+        OR content LIKE CONCAT('%', #{searchContent}, '%')
+        ORDER BY id DESC
+    </select>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM entrust_post WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="entrust">
+        UPDATE entrust_post SET title = #{title}, content = #{content} WHERE id = #{id}
+    </update>
+
+    <select id="pagingList" parameterType="java.util.HashMap" resultType="entrust">
+        SELECT * FROM entrust_post ORDER BY id DESC LIMIT #{start}, #{limit}
+    </select>
+
+    <select id="boardCount" resultType="int">
+        SELECT COUNT(id) FROM entrust_post
+    </select>
+
+    <update id="updateViewCount" keyProperty="int">
+        UPDATE entrust_post SET view_count = view_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <insert id="saveFile" parameterType="entrustFile">
+        INSERT INTO entrust_file (board_id, originalFileName, storedFileName)
+        VALUES (#{board_id}, #{originalFileName}, #{storedFileName})
+    </insert>
+
+    <select id="findFileById" parameterType="long" resultType="entrustFile">
+        SELECT * FROM entrust_file WHERE board_id = #{id}
+    </select>
+
+    <delete id="deleteFileById" parameterType="long">
+        DELETE FROM entrust_file WHERE board_id = #{id}
+    </delete>
+
+    <!-- 좋아요 수 증가 -->
+    <update id="increaseLikeCount" parameterType="long">
+        UPDATE entrust_post SET like_count = like_count + 1 WHERE id = #{postId}
+    </update>
+
+    <!-- 좋아요 수 감소 -->
+    <update id="decreaseLikeCount" parameterType="long">
+        UPDATE entrust_post SET like_count = like_count - 1 WHERE id = #{postId} AND like_count > 0
+    </update>
+
+    <!-- 검색 + 페이징된 게시글 리스트 -->
+    <select id="searchPagingList" parameterType="map" resultType="entrust">
+        SELECT *
+        FROM entrust_post
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY created_at DESC
+        LIMIT #{start}, #{limit}
+    </select>
+
+    <!-- 검색된 게시글 수 -->
+    <select id="searchCount" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM entrust_post
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+    
+</mapper>

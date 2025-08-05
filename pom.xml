@@ -202,8 +202,6 @@
         </dependency>
     </dependencies>
 
-
-
     <!-- 빌드 관련 설정  -->
     <build>
         <finalName>mvc_test</finalName>   <!-- 최종 war 파일 이름  -->

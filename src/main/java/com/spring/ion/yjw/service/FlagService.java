@@ -153,5 +153,10 @@ public class FlagService {
     public List<FlagFileDTO> findFilesByBoardId(int id) {
         return flagRepository.findFilesByBoardId(id);
     }
+
+    // 내가 쓴 글 찾아보기 (마이페이지 연동)
+    public List<FlagPostDTO> findMyPosts(String nickname) {
+        return flagRepository.findAllByWriter(nickname);
+    }
 }
 

@@ -46,10 +46,6 @@ public class FreeRepository {
         sql.update("Free.updateViewCount", clickId);
     }
 
-    public void updateLikeCount(long clickId) {
-        sql.update("Free.updateLikeCount", clickId);
-    }
-
     public void saveFile(FreeFileDTO fileDTO) {
         sql.insert("Free.saveFile", fileDTO);
     }
@@ -61,4 +57,26 @@ public class FreeRepository {
     public void deleteFileById(long id) {
         sql.delete("Free.deleteFileById", id);
     }
+
+    public void increaseLikeCount(Long postId) {
+        sql.update("Free.increaseLikeCount", postId);
+    };
+
+    public void decreaseLikeCount(Long postId) {
+        sql.update("Free.decreaseLikeCount", postId);
+    };
+
+    public List<FreeDTO> searchPagingList(String searchContent, int pagingStart, int pageLimit) {
+        Map<String, Object> paramMap = Map.of(
+                "keyword", searchContent,
+                "start", pagingStart,
+                "limit", pageLimit
+        );
+        return sql.selectList("Free.searchPagingList", paramMap);
+    }
+
+    public int searchCount(String searchContent) {
+        return sql.selectOne("Free.searchCount", searchContent);
+    }
+
 }

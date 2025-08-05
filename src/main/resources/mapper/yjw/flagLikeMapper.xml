@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="FlagLikeMapper">
+
+    <!-- 좋아요 유무 체크 -->
+    <select id="exists" resultType="int">
+        SELECT COUNT(*) FROM flag_like WHERE post_id = #{postId} AND member_id = #{memberId}
+    </select>
+
+    <!-- 좋아요 추가 -->
+    <insert id="insert">
+        INSERT INTO flag_like (post_id, member_id) VALUES (#{postId}, #{memberId})
+    </insert>
+
+    <!-- 좋아요 취소 -->
+    <delete id="delete">
+        DELETE FROM flag_like WHERE post_id = #{postId} AND member_id = #{memberId}
+    </delete>
+
+    <!-- 좋아요 개수 카운트 -->
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM flag_like WHERE post_id = #{postId}
+    </select>
+
+    <update id="updateLikeCount" parameterType="long">
+        UPDATE flag_post
+        SET like_count = (SELECT COUNT(*) FROM flag_like WHERE post_id = #{postId})
+        WHERE id = #{postId}
+    </update>
+
+</mapper>
+

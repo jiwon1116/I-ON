@@ -10,7 +10,7 @@
     <style>
         body {
             background-color: #f8f9fa;
-            padding: 50px 20px;
+
         }
         .write-card {
             max-width: 800px;
@@ -23,7 +23,7 @@
     </style>
 </head>
 <body>
-
+<%@ include file="/WEB-INF/views/header.jsp" %>
 <div class="write-card">
     <h4 class="mb-4 fw-bold text-primary">제보 및 신고 글 작성</h4>
 

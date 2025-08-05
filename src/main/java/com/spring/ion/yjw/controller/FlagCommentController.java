@@ -17,7 +17,7 @@ public class FlagCommentController {
 
     // 댓글 작성
     @PostMapping("/write")
-    public List<FlagCommentDTO> write(@RequestParam("nickname") String nickname,
+    public @ResponseBody List<FlagCommentDTO> write(@RequestParam("nickname") String nickname,
                                       @RequestParam("content") String content,
                                       @RequestParam("post_id") long post_id) {
         FlagCommentDTO dto = new FlagCommentDTO();
@@ -32,17 +32,15 @@ public class FlagCommentController {
         System.out.println("내용: " + content);
         System.out.println("게시글 ID: " + post_id);
 
-
-
         return flagCommentService.findAll(post_id);
     }
 
 
     // 댓글 삭제
-    @DeleteMapping("/delete/{id}")
-    public @ResponseBody List<FlagCommentDTO> delete(@PathVariable Long id, @RequestParam("post_id") long postId) {
+    @GetMapping("/delete")
+    public @ResponseBody List<FlagCommentDTO> delete(@RequestParam("id") Long id, @RequestParam("post_id") long post_id) {
         flagCommentService.delete(id);
-        List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(postId);
+        List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(post_id);
 
         // 삭제 후 결과 로그
         for (FlagCommentDTO dto : flagCommentDTOList) {

@@ -157,11 +157,32 @@ public class FreeService {
         freeRepository.updateViewCount(clickId);
     }
 
-    public void updateLikeCount(long clickId) {
-        freeRepository.updateLikeCount(clickId);
-    }
 
     public List<FreeFileDTO> findFileById(long clickId) {
         return freeRepository.findFileById(clickId);
     }
+
+    public List<FreeDTO> searchPagingList(String searchContent, int page) {
+        int pagingStart = (page - 1) * pageLimit;
+        return freeRepository.searchPagingList(searchContent, pagingStart, pageLimit);
+    }
+
+    public PageDTO searchPagingParam(String searchContent, int page) {
+        int boardCount = freeRepository.searchCount(searchContent);
+        int maxPage = (int) Math.ceil((double) boardCount / pageLimit);
+        int startPage = (((int) (Math.ceil((double) page / blockLimit))) - 1) * blockLimit + 1;
+        int endPage = startPage + blockLimit - 1;
+        if (endPage > maxPage) {
+            endPage = maxPage;
+        }
+
+        PageDTO pageDTO = new PageDTO();
+        pageDTO.setPage(page);
+        pageDTO.setMaxPage(maxPage);
+        pageDTO.setStartPage(startPage);
+        pageDTO.setEndPage(endPage);
+
+        return pageDTO;
+    }
+
 }

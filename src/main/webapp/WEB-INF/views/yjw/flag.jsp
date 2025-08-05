@@ -14,26 +14,6 @@
             background-color: #f8f9fa;
         }
 
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background-color: #f6a623;
-            position: fixed;
-            padding-top: 40px;
-            color: #fff;
-        }
-
-        .sidebar a {
-            color: #fff;
-            display: block;
-            padding: 15px 30px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .sidebar a:hover {
-            background-color: rgba(255,255,255,0.2);
-        }
 
         .main-content {
             margin-left: 220px;
@@ -123,22 +103,10 @@
 </head>
 <body>
 
-<!-- 사이드바 -->
-<div class="sidebar">
-    <div class="text-center mb-4">
-        <h4>logo</h4>
-    </div>
-    <a href="#">마이페이지</a>
-    <a href="#">범죄 예방 지도</a>
-    <a href="#">커뮤니티</a>
-    <a href="#">제보 및 신고</a>
-    <a href="#">정보 공유</a>
-</div>
+<%@ include file="/WEB-INF/views/header.jsp" %>
 
 <!-- 메인 콘텐츠 -->
 <div class="main-content">
-
-
 
 
     <!-- 상단 검색 & 글쓰기 -->
@@ -158,12 +126,12 @@
 <c:forEach var="post" items="${postList}">
     <a href="${pageContext.request.contextPath}/flag/${post.id}" class="card-link">
         <div class="card">
-            <p class="quote">“${post.content}”</p>
+            <p class="quote">“${post.title}”</p>${post.content}
             <div class="d-flex justify-content-between align-items-center mt-2">
                 <div class="d-flex align-items-center">
                     <img src="https://www.w3schools.com/howto/img_avatar.png" alt="기본프로필">
                     <div class="ms-2">
-                        <div class="fw-semibold">${post.title}</div>
+                        <div class="fw-semibold">${post.nickname}</div>
                         <div class="text-muted" style="font-size: 0.9rem;">
                             조회수: ${post.view_count}, 좋아요: ${post.like_count}
                         </div>

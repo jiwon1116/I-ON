@@ -157,6 +157,23 @@
             font-size: 13px;
             margin-top: 5px;
         }
+
+        .like-btn .heart {
+                    font-size: 1.4em;
+                    vertical-align: middle;
+                    transition: color 0.15s;
+                }
+                .like-btn.liked .heart {
+                    color: #f44336;
+                }
+                .like-btn .heart {
+                    color: #fff;
+                    text-shadow: 0 0 2px #d1d1d1;
+                }
+                .like-btn {
+                    border: 1.5px solid #f44336 !important;
+                }
+
     </style>
 </head>
 <body>
@@ -186,23 +203,30 @@
                 <div class="meta-info">
                     <div>🕒 작성일: <fmt:formatDate value="${findDto.created_at}" pattern="yyyy-MM-dd" /></div>
                     <div>👁️‍ 조회수: ${findDto.view_count}</div>
-                    <div>💗 좋아요: ${findDto.like_count}</div>
                 </div>
 
                 <div class="form-group">
-                    <label>내용</label>
+                  <!-- 게시물에 첨부된 사진 넣기(썸네일x)-->
+                     <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;"/>
+               </div>
+
+                <div class="form-group">
                     <textarea name="content" readonly>${findDto.content}</textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>첨부파일</label>
-                    <input type="file" name="file" />
                 </div>
 
                 <input type="hidden" name="id" value="${findDto.id}" />
 
+            <!-- 좋아요 버튼 (하트 토글) -->
+            <div class="mb-2">
+                <button type="button" class="btn like-btn ${findDto != null && findDto.liked ? 'liked' : ''}" id="likeBtn">
+                            <span class="heart">${findDto.liked ? '❤️' : '🤍'}</span>
+                           <span id="likeCount">${findDto.like_count}</span>
+                </button>
+            </div>
+
+            좋아요: <span id="likeCountDisplay">${findDto != null ? findDto.like_count : 0}</span>
+
                 <div class="form-actions">
-                    <button type="button" onclick="likefn()">좋아요</button>
                     <button type="button" onclick="updatefn()">수정</button>
                     <button type="button" onclick="deletefn()">삭제</button>
                     <button type="button" onclick="infoForm()">목록</button>
@@ -224,7 +248,7 @@
                 <div id = "comment-list">
                 <c:forEach items="${commentList}" var="comment">
                     <div class="comment-box">
-                        <div class="comment-writer">작성자</div>
+                        <div class="comment-writer">${comment.nickname}</div>
                         <div>${comment.content}</div>
                         <div class="comment-date">
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
@@ -238,45 +262,65 @@
 
 <script>
     const updatefn = () => {
+    const memberId = '${memberId}';
+    if(memberId !== "admin"){
         alert("관리자만 수정이 가능한 게시글입니다😣");
-        document.infoupdateForm.submit();
+        return;
+    }else {
+        document.infoupdateForm.submit();}
     }
 
     const infoForm = () => {
         location.href = "/info";
     }
 
-   const likefn = () => {
-       const id = "${findDto.id}";
-
-       $.ajax({
-           type: "POST",
-           url: "/info/like",
-           data: { id: id },
-           success: function(response) {
-               alert("좋아요가 반영되었습니다.💓");
-               location.reload(); // 새로고침으로 좋아요 수 반영
-           },
-           error: function() {
-               alert("좋아요 처리에 실패했습니다.");
-           }
-       });
-   }
-
-
+      // 좋아요 버튼
+        $('#likeBtn').click(function(){
+            event.preventDefault();
+            const findId = '${findDto.id}';
+            $.ajax({
+                type: 'POST',
+                url: '${pageContext.request.contextPath}/infoLike/like/' + findId,
+                success: function(data){
+                    if(data.error){
+                        alert(data.error);
+                        return;
+                    }
+                    $('#likeCount').text(data.likeCount);
+                    $('#likeCountDisplay').text(data.likeCount);
+                    if(data.liked){
+                        $('#likeBtn').addClass('liked');
+                        $('#likeBtn .heart').text('❤️');
+                    } else {
+                        $('#likeBtn').removeClass('liked');
+                        $('#likeBtn .heart').text('🤍');
+                    }
+                },
+                error: function(){
+                    alert('좋아요 처리 실패!');
+                }
+            });
+        });
+       // 삭제 버튼
     const deletefn = () => {
         const id = "${findDto.id}";
-        alert("관리자만 삭제 가능한 게시글입니다😣");
-        const confirmed = confirm("정말 삭제하시겠습니까?");
-        if (confirmed) {
-            location.href = "/info/delete?id=" + id;
-        }
+        const memberId = '${memberId}';
+            if(memberId !== "admin"){
+                   alert("관리자만 삭제 가능한 게시글입니다😣");
+                return;
+            }else {
+                const confirmed = confirm("정말 삭제하시겠습니까?");
+                  if (confirmed) {
+                     location.href = "/info/delete?id=" + id;
+                  }
+            }
       }
-
       const commentWrite = () => {
+      //댓글을 작성한 사람의 닉네임과 댓글의 닉네임 비교 후 댓글id 찾아서 삭제
               const nickname = document.getElementById("commentWriter").value.trim();
               const content = document.getElementById("commentContents").value.trim();
               const post_id = "${findDto.id}";
+              const memberId = '${memberId}';
 
               if (!nickname || !content) {
                       alert("내용을 입력해주세요.");

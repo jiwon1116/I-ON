@@ -7,5 +7,5 @@ import lombok.Data;
 public class FlagLikeDTO {
     private Long id;
     private Long post_id;
-    private String user_id;
+    private String member_id;
 }

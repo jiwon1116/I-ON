@@ -81,9 +81,15 @@
         DELETE FROM flag_file WHERE id = #{fileId}
     </delete>
 
+    <update id="updateLikeCount" parameterType="long">
+        UPDATE flag_post
+        SET like_count = (SELECT COUNT(*) FROM flag_like WHERE post_id = #{postId})
+        WHERE id = #{postId}
+    </update>
 
-
-
+    <select id="findAllByWriter" parameterType="String" resultType="com.spring.ion.yjw.dto.FlagPostDTO">
+        SELECT * FROM flag_post WHERE nickname = #{nickname} ORDER BY created_at DESC
+    </select>
 
 
 

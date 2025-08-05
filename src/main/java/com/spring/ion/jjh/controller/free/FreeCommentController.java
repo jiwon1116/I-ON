@@ -19,7 +19,7 @@ public class FreeCommentController {
         freeCommentService.save(commentDTO);
 
         // 해당 게시글에 작성된 댓글 리스트 반환
-        // 원래 있던 댓글 리스트 반환
+        //        // 원래 있던 댓글 리스트 반환
         List<FreeCommentDTO> commentDTOList = freeCommentService.findAll(commentDTO.getPost_id());
         return commentDTOList;
     }

@@ -142,23 +142,32 @@
 <body>
 <div class="container">
     <div class="top-bar">
-        <input type="text" class="search-input" placeholder="검색어를 입력하세요..."/>
+      <form method="get" action="${pageContext.request.contextPath}/info/search">
+          <input type="search" class="search-input" name="keyword"
+                 value="${param.keyword}" placeholder="검색어를 입력하세요..." />
+          <button type="submit">🔍</button>
+      </form>
+
         <div class="filter-buttons">
-            <button onclick="writeFn()">글 작성하기</button>
+            <button type="button" onclick="writeFn()">글 작성하기</button>
         </div>
     </div>
 
-    <div class="card-grid">
-        <c:forEach var="content" items="${postList}">
-            <div class="card" onclick="location.href='/info/detail?id=${content.id}'">
-                <img src="${content.imageUrl != null ? content.imageUrl : '/resources/images/default.jpg'}" alt="카드 이미지">
-                <div class="card-body">
-                    <div class="title">${content.title}</div>
-                    <div class="author">${content.writer != null ? content.writer : 'admin'}</div>
-                </div>
-            </div>
-        </c:forEach>
-    </div>
+   <!-- 게시글 카드 반복 -->
+   <div class="card-grid">
+       <c:forEach var="entry" items="${postMap}">
+           <c:set var="content" value="${entry.key}" />
+           <c:set var="file" value="${entry.value}" />
+
+           <div class="card" onclick="location.href='/info/detail?id=${content.id}'">
+               <img src="/info/preview?storedFileName=${file.storedFileName}" style="width:300px; height:300px;" />
+               <div class="card-body">
+                   <div class="title">${content.title}</div>
+               </div>
+           </div>
+       </c:forEach>
+   </div>
+
 
     <nav aria-label="Page navigation">
         <ul class="pagination">
@@ -199,11 +208,16 @@
         </ul>
     </nav>
 </div>
-
 <script>
     function writeFn() {
-        location.href = "/info/save";
-    }
+            const memberId = '${memberId}';
+                if(memberId !== "admin"){
+                       alert("관리자만 글 작성이 가능합니다.😣");
+                    return;
+                }else {
+                        location.href = "/info/save";
+                }
+         }
 </script>
 </body>
 </html>
