@@ -86,4 +86,9 @@
         ORDER BY id ASC
     </select>
 
+    <delete id="deleteFile" parameterType="long">
+        DELETE FROM info_file
+        WHERE board_id = #{boardId}
+    </delete>
+
 </mapper>

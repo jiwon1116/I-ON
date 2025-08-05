@@ -41,14 +41,21 @@ public class Info_contentService {
             }
         }
     }
+
     // 파일에 남아있는 이미지 제거
     public void deleteFilesFromServer(List<Info_FileDTO> fileList) {
         for (Info_FileDTO fileDTO : fileList) {
             String filePath = "C:/upload/" + fileDTO.getStoredFileName();
             File file = new File(filePath);
+
+            System.out.println("삭제 시도 파일 경로: " + filePath);
+            System.out.println("파일 존재 여부: " + file.exists());
+
             if (file.exists()) {
                 file.delete(); // 서버에서 실제 파일 삭제
             }
+            infoContentRepository.deleteFile(fileDTO.getBoard_id()); // 💡 DB에서도 삭제
+
         }
     }
 
