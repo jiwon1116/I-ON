@@ -4,6 +4,7 @@ import com.spring.ion.psw.dto.Info_FileDTO;
 import com.spring.ion.psw.dto.Info_PageDTO;
 import com.spring.ion.psw.dto.Info_commentDTO;
 import com.spring.ion.psw.dto.Info_contentDTO;
+import com.spring.ion.psw.service.Info_LikeService;
 import com.spring.ion.psw.service.Info_commentService;
 import com.spring.ion.psw.service.Info_contentService;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,34 @@ import java.util.UUID;
 public class Info_contentController{
     private final Info_contentService infoContentService;
     private final Info_commentService infoCommentService;
+    private final Info_LikeService infoLikeService;
+
 
 
     //게시물 불러오는 리스트
     @GetMapping
     public String list(Model model,
                        @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+        // 1. 로그인 유저 정보 구하기
+        String memberId = null;
+        // 현재 로그인한 사용자의 정보가 principal 객체에 들어 있음
+        // principal은 상황에 따라 타입이 다를 수 있으므로 3가지 경우로 나눠 처리
+        org.springframework.security.core.Authentication authentication =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof com.spring.ion.lcw.dto.CustomUserDetails) {
+            memberId = ((com.spring.ion.lcw.dto.CustomUserDetails) principal).getUsername();
+        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
+            memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof String) {
+            //로그인하지 않은 상태에서는 principal이 "anonymousUser"라는 문자열이 되기 때문에 예외처리
+            if (!"anonymousUser".equals(principal)) {
+                memberId = (String) principal;
+            }
+
+        }
+        System.out.println("로그인한 유저:"+memberId);
 
         List<Info_contentDTO> pagingList = infoContentService.pagingList(page);
         Info_PageDTO pageDTO = infoContentService.pagingParam(page);
@@ -48,10 +71,11 @@ public class Info_contentController{
             postFileMap.put(post, file);
         }
 
+        model.addAttribute("memberId",memberId);
         model.addAttribute("postMap", postFileMap);
         model.addAttribute("paging", pageDTO);
 
-        return "psw/paging";
+        return "psw/info";
     }
 
 
@@ -68,9 +92,9 @@ public class Info_contentController{
     public String save(@ModelAttribute Info_contentDTO dto,
                        @ModelAttribute Info_FileDTO infoFileDTO,
                        @RequestParam("file") MultipartFile infoFile, Model model)throws IOException {
+
         // 파일이 실제로 첨부 되어있는지 확인
         if (!infoFile.isEmpty()) {
-            // 파일이 있을 때
             // 사용자가 업로드한 원래 파일 명
             String originalFileName = infoFile.getOriginalFilename(); // pom.xml에 작성한 파일 업로드 라이브러리 때문에 get~ 사용 가능
             // 고유한 파일 이름 생성을 위해 UUID 사용
@@ -79,8 +103,7 @@ public class Info_contentController{
             // 실제 서버에 저장될 파일이름
             String storedFileName = uuid + "_" + originalFileName;
 
-            // ex) C:/upload/uuid_cat.jpg 이런 유형의 경로를 문자열로 저장
-            String savePath = "C:/upload/" + storedFileName; // 경로 복붙하면 C:\\upload 로 나오는데 /로 변경
+            String savePath = "C:/upload/" + storedFileName;
 
             // 지정한 경로에 파일 저장
             infoFile.transferTo(new File(savePath));
@@ -107,15 +130,14 @@ public class Info_contentController{
 
         model.addAttribute("findFileDto",infoFileCard);
         // 저장 후 게시판 목록으로 이동
-        return "redirect:/info/paging";
-        
+        return "redirect:/info";
     }
 
 
     // 상세보기
     @GetMapping("/detail")
     public String detailForm(@RequestParam("id") long id, Model model,
-                             @ModelAttribute Info_contentDTO dto,
+                             @ModelAttribute Info_contentDTO infoContentDTO,
                              @ModelAttribute Info_FileDTO infoFileDTO,
                              HttpServletRequest request) {
         HttpSession session = request.getSession();
@@ -129,6 +151,35 @@ public class Info_contentController{
         Info_contentDTO findDto = infoContentService.findContext(id);
         List<Info_commentDTO> infoCommentList= infoCommentService.findAll(id);
 
+        // 1. 로그인 유저 정보 구하기
+        String memberId = null;
+        // 현재 로그인한 사용자의 정보가 principal 객체에 들어 있음
+        // principal은 상황에 따라 타입이 다를 수 있으므로 3가지 경우로 나눠 처리
+        org.springframework.security.core.Authentication authentication =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+   
+        if (principal instanceof com.spring.ion.lcw.dto.CustomUserDetails) {
+            memberId = ((com.spring.ion.lcw.dto.CustomUserDetails) principal).getUsername();
+        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
+            memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof String) {
+            //로그인하지 않은 상태에서는 principal이 "anonymousUser"라는 문자열이 되기 때문에 예외처리
+            if (!"anonymousUser".equals(principal)) {
+                memberId = (String) principal;
+            }
+
+        }
+        System.out.println("로그인한 유저:"+memberId);
+        // 2. 좋아요 눌렀는지 체크
+        boolean liked = false;
+        if (memberId != null) {
+            liked = infoLikeService.isLiked(id, memberId);
+        }
+        infoContentDTO.setLiked(liked);
+
+        // 3. 좋아요 카운트
+        infoContentDTO.setLike_count(infoLikeService.getLikeCount(id));
         model.addAttribute("findDto", findDto);
         model.addAttribute("commentList", infoCommentList);
 
@@ -136,8 +187,9 @@ public class Info_contentController{
 
         infoFileDTO.setBoard_id(boardId);
         // 게시판 이미지 파일 가져오기
-      Info_FileDTO infoFile =  infoContentService.findFile(boardId);
-        
+        Info_FileDTO infoFile =  infoContentService.findFile(boardId);
+
+      model.addAttribute("memberId",memberId);
       model.addAttribute("findFileDto",infoFile);
 
         return "psw/detail";
@@ -177,8 +229,7 @@ public class Info_contentController{
     public String update(@ModelAttribute Info_contentDTO infoContentDTO,
                          @ModelAttribute Info_FileDTO infoFileDTO,
                          @RequestParam("file") MultipartFile file,
-                         @RequestParam("id") long id,
-                         Model model) throws IOException {
+                         @RequestParam("id") long id) throws IOException {
 
         // 게시글 내용 수정
         boolean result = infoContentService.update(infoContentDTO);
@@ -224,6 +275,7 @@ public class Info_contentController{
 
         // 게시글 리스트 가져오기
         List<Info_contentDTO> pagingList = infoContentService.pagingList(page);
+        // 페이징에 필요한 정보 계산
         Info_PageDTO pageDTO = infoContentService.pagingParam(page);
 
         // 게시글마다 파일 매핑
@@ -236,7 +288,7 @@ public class Info_contentController{
         model.addAttribute("postMap", postFileMap);
         model.addAttribute("paging", pageDTO);
 
-        return "psw/paging";
+        return "psw/info";
     }
 
 
@@ -267,15 +319,18 @@ public class Info_contentController{
     public String infoSearch(@RequestParam(value = "keyword", required = false) String keyword,
                              @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                              Model model) {
-        System.out.println("검색 키워드:"+keyword);
+        System.out.println("검색 키워드: " + keyword);
         List<Info_contentDTO> contentList;
         Map<Info_contentDTO, Info_FileDTO> postFileMap = new LinkedHashMap<>();
 
-        // 키워드가 null이거나 비어있으면 전체 목록을 가져오고, 그렇지 않으면 검색
         if (keyword != null && !keyword.isEmpty()) {
-            contentList = infoContentService.search(keyword);
+            contentList = infoContentService.searchPagingList(keyword, page);  //검색 결과 페이징
+            Info_PageDTO pageDTO = infoContentService.searchPagingParam(keyword, page); //페이징 정보
+            model.addAttribute("paging", pageDTO);
         } else {
-            contentList = infoContentService.AllfindList();
+            contentList = infoContentService.pagingList(page);
+            Info_PageDTO pageDTO = infoContentService.pagingParam(page);
+            model.addAttribute("paging", pageDTO);
         }
 
         for (Info_contentDTO post : contentList) {
@@ -284,6 +339,12 @@ public class Info_contentController{
         }
 
         model.addAttribute("postMap", postFileMap);
+        model.addAttribute("postList", contentList);
+        model.addAttribute("keyword", keyword);
+
         return "psw/info";
     }
+
 }
+
+

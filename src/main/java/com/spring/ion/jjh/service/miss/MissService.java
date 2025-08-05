@@ -161,8 +161,27 @@ public class MissService {
         return missRepository.findFileById(clickId);
     }
 
-    public List<MissDTO> search(String searchContent) {
-        return missRepository.search(searchContent);
+
+    public List<MissDTO> searchPagingList(String searchContent, int page) {
+        int pagingStart = (page - 1) * pageLimit;
+        return missRepository.searchPagingList(searchContent, pagingStart, pageLimit);
     }
 
+    public PageDTO searchPagingParam(String searchContent, int page) {
+        int boardCount = missRepository.searchCount(searchContent);
+        int maxPage = (int) Math.ceil((double) boardCount / pageLimit);
+        int startPage = (((int) (Math.ceil((double) page / blockLimit))) - 1) * blockLimit + 1;
+        int endPage = startPage + blockLimit - 1;
+        if (endPage > maxPage) {
+            endPage = maxPage;
+        }
+
+        PageDTO pageDTO = new PageDTO();
+        pageDTO.setPage(page);
+        pageDTO.setMaxPage(maxPage);
+        pageDTO.setStartPage(startPage);
+        pageDTO.setEndPage(endPage);
+
+        return pageDTO;
+    }
 }

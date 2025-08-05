@@ -33,12 +33,20 @@ public class FreeController {
     private final FreeLikeService freeLikeService;
 
     @GetMapping
-    public String paging(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        // 현재 페이지에 해당하는 게시글 목록 가져오기
-        List<FreeDTO> pagingList = freeService.pagingList(page);
+    public String paging(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                         @RequestParam(value = "searchContent", required = false) String searchContent,
+                         Model model) {
 
-        // 페이징에 필요한 정보 계산(전체 페이지수, 현재 페이지, 시작 페이지 등)
-        PageDTO pageDTO = freeService.pagingParam(page);
+        List<FreeDTO> pagingList;
+        PageDTO pageDTO;
+
+        if (searchContent != null && !searchContent.isEmpty()) {
+            pagingList = freeService.searchPagingList(searchContent, page);
+            pageDTO = freeService.searchPagingParam(searchContent, page);
+        } else {
+            pagingList = freeService.pagingList(page);
+            pageDTO = freeService.pagingParam(page);
+        }
 
         for (FreeDTO post : pagingList) {
             int likeCount = freeLikeService.getLikeCount(post.getId());
@@ -47,6 +55,7 @@ public class FreeController {
 
         model.addAttribute("freeboardList", pagingList);
         model.addAttribute("paging", pageDTO);
+        model.addAttribute("searchContent", searchContent); // 검색 유지용
 
         return "jjh/free/free";
     }
@@ -103,20 +112,6 @@ public class FreeController {
         List<FreeFileDTO> fileList = freeService.findFileById(id);
         model.addAttribute("fileList", fileList);
         return "jjh/free/detail";
-    }
-
-    @GetMapping("/search")
-    public String searchResult(@RequestParam(value = "searchContent", required = false) String searchContent, Model model) {
-        List<FreeDTO> freeboardList;
-
-        if (searchContent != null && !searchContent.isEmpty()) {
-            freeboardList = freeService.search(searchContent);
-        } else {
-            freeboardList = freeService.allFreeList();
-        }
-
-        model.addAttribute("freeboardList", freeboardList);
-        return "jjh/free/free";
     }
 
     @GetMapping("/update/{id}")

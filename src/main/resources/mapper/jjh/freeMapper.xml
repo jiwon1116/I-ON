@@ -16,13 +16,6 @@
         SELECT * FROM free_post WHERE id = #{id}
     </select>
 
-    <select id="search" parameterType="string" resultType="free">
-        SELECT * FROM free_post
-        WHERE title LIKE CONCAT('%', #{searchContent}, '%')
-        OR content LIKE CONCAT('%', #{searchContent}, '%')
-        ORDER BY id DESC
-    </select>
-
     <delete id="delete" parameterType="long">
         DELETE FROM free_post WHERE id = #{id}
     </delete>
@@ -66,5 +59,23 @@
     <update id="decreaseLikeCount" parameterType="long">
         UPDATE free_post SET like_count = like_count - 1 WHERE id = #{postId} AND like_count > 0
     </update>
+
+    <!-- 검색 + 페이징된 게시글 리스트 -->
+    <select id="searchPagingList" parameterType="map" resultType="free">
+        SELECT *
+        FROM free_post
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY created_at DESC
+        LIMIT #{start}, #{limit}
+    </select>
+
+    <!-- 검색된 게시글 수 -->
+    <select id="searchCount" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM free_post
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%')
+    </select>
 
 </mapper>

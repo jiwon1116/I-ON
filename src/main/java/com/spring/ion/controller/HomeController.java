@@ -16,7 +16,7 @@ public class HomeController {
 
     @GetMapping("/map")
     public String map(){
-        return "map";
+        return "jjh/map";
     }
 
     @GetMapping("/mypage")
