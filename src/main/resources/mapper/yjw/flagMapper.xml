@@ -87,6 +87,12 @@
         WHERE id = #{postId}
     </update>
 
+    <select id="findAllByWriter" parameterType="String" resultType="com.spring.ion.yjw.dto.FlagPostDTO">
+        SELECT * FROM flag_post WHERE nickname = #{nickname} ORDER BY created_at DESC
+    </select>
+
+
+
 
 
 </mapper>

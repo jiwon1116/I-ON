@@ -190,7 +190,7 @@
                     </div>
                     <div class="card p-4">
                         <span>내가 작성한 글</span>
-                        <a href="/flag" class="btn btn-warning btn-sm mt-2">
+                        <a href="/myPost" class="btn btn-warning btn-sm mt-2">
                                 바로가기
                             </a>
                     </div>
