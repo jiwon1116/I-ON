@@ -186,7 +186,9 @@
                 <div class="dashboard-row">
                     <div class="card p-4">
                         <span>자녀 등록</span>
-                        <div class="bg-light rounded mt-2" style="height:40px"></div>
+                         <a href="/#" class="btn btn-warning btn-sm mt-2">
+                                                        바로가기
+                                                    </a>
                     </div>
                     <div class="card p-4">
                         <span>내가 작성한 글</span>
