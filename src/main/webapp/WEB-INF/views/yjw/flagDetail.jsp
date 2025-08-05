@@ -25,7 +25,7 @@
         }
     </style>
 </head>
-<body style="background-color: #f9f9f9;">
+<body>
 <div class="container mt-5">
 <%@ include file="/WEB-INF/views/header.jsp" %>
 
