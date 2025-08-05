@@ -121,18 +121,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="file"></label>
-                    <input type="file" id="file" name="file" required/>
-                </div>
-
-                 <div class="form-group">
-               <p><strong> 썸네일 이미지 </strong></p>
-                <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;"/>
+                    <label for="file">썸네일 이미지(필수)</label>
+                    <input type="file" id="file" name="file" required multiple/>
                 </div>
 
                <div class="form-group">
                  <label for="file" class="form-label">게시물 이미지</label>
-                 <input type="file" class="form-control" id="file" name="file">
+                 <input type="file" class="form-control" id="file" name="file" required multiple>
               </div>
 
                 <input type="hidden" name="id" value="${findDto.id}" readonly/>

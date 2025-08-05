@@ -59,14 +59,19 @@ public class Info_contentController{
         }
         System.out.println("로그인한 유저:"+memberId);
 
+        // 페이징된 글 목록 리스트
         List<Info_contentDTO> pagingList = infoContentService.pagingList(page);
+        // 페이징 정보
         Info_PageDTO pageDTO = infoContentService.pagingParam(page);
 
+        // 글 내용, 파일 함께들어간 맵
         Map<Info_contentDTO, Info_FileDTO> postFileMap = new LinkedHashMap<>();
+
         for (Info_contentDTO post : pagingList) {
             Info_FileDTO file = infoContentService.findFile(post.getId());
-            postFileMap.put(post, file);
+            postFileMap.put(post, file); // 글, 파일 매칭(key, value)해서 저장
         }
+        
 
         model.addAttribute("memberId",memberId);
         model.addAttribute("postMap", postFileMap);
@@ -178,9 +183,6 @@ public class Info_contentController{
 
         infoFileDTO.setBoard_id(boardId);
 
-        // 게시판 이미지 파일 가져오기
-        Info_FileDTO infoFile =  infoContentService.findFile(boardId);
-        model.addAttribute("findFileDto",infoFile);
 
         return "psw/update";
     }
