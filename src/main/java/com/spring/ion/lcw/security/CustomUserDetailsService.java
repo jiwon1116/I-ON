@@ -1,8 +1,7 @@
-package com.spring.ion.lcw.service;
+package com.spring.ion.lcw.security;
 
-import com.spring.ion.lcw.dto.CustomUserDetails;
 import com.spring.ion.lcw.dto.MemberDTO;
-import com.spring.ion.lcw.mapper.MemberRepository;
+import com.spring.ion.lcw.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,10 +16,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        MemberDTO memberDTO = memberRepository.findByUserIdWithAuthorities(username);
-        if (memberDTO == null) {
-            throw new UsernameNotFoundException("memberDTO is null");
+        MemberDTO member = memberRepository.findByUserIdWithAuthorities(username);
+        if (member == null) {
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username);
         }
-        return new CustomUserDetails(memberDTO);
+        System.out.println("로그인 멤버 정보: " + member);
+        return new CustomUserDetails(member);
     }
+
+
 }
