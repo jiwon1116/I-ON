@@ -4,6 +4,8 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 <!-- 또는 아래에 <style>로 바로 스타일링도 가능 -->
 
+<style>
+
 <header>
   <nav class="top-nav">
     <div class="logo-section">
