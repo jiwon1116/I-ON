@@ -1,7 +1,7 @@
-package com.spring.ion.lcw.mapper;
+package com.spring.ion.lcw.repository;
 
 import com.spring.ion.lcw.dto.MemberDTO;
-import com.spring.ion.psw.dto.Info_contentDTO;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -29,5 +29,9 @@ public class MemberRepository {
 
     public MemberDTO findByUserIdWithAuthorities(String username) {
         return sql.selectOne("Member.findByUserIdWithAuthorities", username);
+    }
+
+    public void edit(MemberDTO memberDTO){
+        sql.update("Member.updateMember", memberDTO);
     }
 }
