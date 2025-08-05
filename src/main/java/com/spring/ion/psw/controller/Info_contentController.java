@@ -62,7 +62,6 @@ public class Info_contentController{
         }
         System.out.println("로그인한 유저:"+memberId);
 
-
         List<Info_contentDTO> pagingList = infoContentService.pagingList(page);
         Info_PageDTO pageDTO = infoContentService.pagingParam(page);
 
@@ -71,7 +70,6 @@ public class Info_contentController{
             Info_FileDTO file = infoContentService.findFile(post.getId());
             postFileMap.put(post, file);
         }
-
 
         model.addAttribute("memberId",memberId);
         model.addAttribute("postMap", postFileMap);
@@ -277,6 +275,7 @@ public class Info_contentController{
 
         // 게시글 리스트 가져오기
         List<Info_contentDTO> pagingList = infoContentService.pagingList(page);
+        // 페이징에 필요한 정보 계산
         Info_PageDTO pageDTO = infoContentService.pagingParam(page);
 
         // 게시글마다 파일 매핑
@@ -318,21 +317,27 @@ public class Info_contentController{
     // 검색기능
     @GetMapping("/search")
     public String infoSearch(@RequestParam(value = "keyword", required = false) String keyword,
+                             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                              Model model) {
-        System.out.println("검색 키워드:"+keyword);
+        System.out.println("검색 키워드: " + keyword);
         List<Info_contentDTO> contentList;
         Map<Info_contentDTO, Info_FileDTO> postFileMap = new LinkedHashMap<>();
 
         if (keyword != null && !keyword.isEmpty()) {
-            contentList = infoContentService.search(keyword);
+            contentList = infoContentService.searchPagingList(keyword, page);  //검색 결과 페이징
+            Info_PageDTO pageDTO = infoContentService.searchPagingParam(keyword, page); //페이징 정보
+            model.addAttribute("paging", pageDTO);
         } else {
-            contentList = infoContentService.AllfindList();
+            contentList = infoContentService.pagingList(page);
+            Info_PageDTO pageDTO = infoContentService.pagingParam(page);
+            model.addAttribute("paging", pageDTO);
         }
 
         for (Info_contentDTO post : contentList) {
             Info_FileDTO file = infoContentService.findFile(post.getId());
             postFileMap.put(post, file);
         }
+
         model.addAttribute("postMap", postFileMap);
         model.addAttribute("postList", contentList);
         model.addAttribute("keyword", keyword);
@@ -340,5 +345,6 @@ public class Info_contentController{
         return "psw/info";
     }
 
-
 }
+
+
