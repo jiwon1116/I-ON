@@ -161,8 +161,27 @@ public class EntrustService {
         return entrustRepository.findFileById(clickId);
     }
 
-    public List<EntrustDTO> search(String searchContent) {
-        return entrustRepository.search(searchContent);
+    public List<EntrustDTO> searchPagingList(String searchContent, int page) {
+        int pagingStart = (page - 1) * pageLimit;
+        return entrustRepository.searchPagingList(searchContent, pagingStart, pageLimit);
+    }
+
+    public PageDTO searchPagingParam(String searchContent, int page) {
+        int boardCount = entrustRepository.searchCount(searchContent);
+        int maxPage = (int) Math.ceil((double) boardCount / pageLimit);
+        int startPage = (((int) (Math.ceil((double) page / blockLimit))) - 1) * blockLimit + 1;
+        int endPage = startPage + blockLimit - 1;
+        if (endPage > maxPage) {
+            endPage = maxPage;
+        }
+
+        PageDTO pageDTO = new PageDTO();
+        pageDTO.setPage(page);
+        pageDTO.setMaxPage(maxPage);
+        pageDTO.setStartPage(startPage);
+        pageDTO.setEndPage(endPage);
+
+        return pageDTO;
     }
 
 }
