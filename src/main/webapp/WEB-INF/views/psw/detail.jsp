@@ -206,13 +206,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label>내용</label>
-                    <textarea name="content" readonly>${findDto.content}</textarea>
-                </div>
+                  <!-- 게시물에 첨부된 사진 넣기(썸네일x)-->
+                     <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;"/>
+               </div>
 
                 <div class="form-group">
-                    <p><strong>미리보기 : </strong></p>
-                 <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;"/>
+                    <textarea name="content" readonly>${findDto.content}</textarea>
                 </div>
 
                 <input type="hidden" name="id" value="${findDto.id}" />
@@ -316,9 +315,8 @@
                   }
             }
       }
-
       const commentWrite = () => {
-      //댓글을 작성한 사람의 닉네임과 댓글의 닉네임 비교 후
+      //댓글을 작성한 사람의 닉네임과 댓글의 닉네임 비교 후 댓글id 찾아서 삭제
               const nickname = document.getElementById("commentWriter").value.trim();
               const content = document.getElementById("commentContents").value.trim();
               const post_id = "${findDto.id}";
