@@ -1,6 +1,5 @@
 package com.spring.ion.yjw.controller;
 
-import com.spring.ion.lcw.dto.CustomUserDetails;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPageDTO;

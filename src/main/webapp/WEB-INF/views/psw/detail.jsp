@@ -260,6 +260,12 @@
                         <div class="comment-date">
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
                         </div>
+                        <div>
+                        <c:if test="${comment.nickname == member.nickname}">
+                            <button type="button" onclick="commentDelete()">삭제</button>
+                        </c:if>
+
+                        </div>
                     </div>
                 </c:forEach>
                  </div>
@@ -269,7 +275,8 @@
 
 <script>
     const updatefn = () => {
-        document.infoupdateForm.submit();}
+        document.infoupdateForm.submit();
+        }
 
     const infoForm = () => {
         location.href = "/info";
@@ -310,9 +317,9 @@
                   location.href = "/info/delete?id=" + id;
                   }
       }
+
       const commentWrite = () => {
-      //댓글을 작성한 사람 닉네임 띄우기
-              const nickname ="${memberNickname}";
+              const nickname ="${member.nickname}";
               const content = document.getElementById("commentContents").value.trim();
               const post_id = "${findDto.id}";
 
@@ -337,6 +344,30 @@
                       console.log("실패");
                   }
               });
+          }
+          // 댓글 삭제(삭제를 누른 댓글 아이디, 해당 작성자 닉네임 받아서 삭제)
+          const commentDelete = () => {
+                 const nickname ="${comment.nickname}"; // 작성자 닉네임
+                 const commentId = "${comment.id}"; // 댓글 아이디
+                 const confirmed = confirm("정말 삭제하시겠습니까?");
+
+                  $.ajax({
+                           type: "post",
+                            url: "/infocomment/delete",
+                            data: {
+                              nickname : nickname,
+                                    id : commentId,
+                                   },
+                               dataType : "json",
+                              success : function(commentList) {
+                                    console.log("댓글 삭제 성공");
+                                    location.reload(); // 페이지 전체 새로고침 (위 리스트에 새로운 댓글 반영)
+                                   },
+                                   error : function() {
+                                       console.log("댓글 삭제 실패");
+                                   }
+                               });
+
           }
 </script>
 </body>

@@ -23,6 +23,15 @@ public class Info_commentController {
         return CommentDTOList;
     }
 
+    // 댓글 삭제 기능
+    @PostMapping("/delete")
+    public @ResponseBody List<Info_commentDTO> delete (@ModelAttribute Info_commentDTO infoCommentDTO){
+        System.out.println("삭제할 댓글 아이디:"+infoCommentDTO.getNickname());
+        System.out.println("삭제할 댓글 아이디:"+infoCommentDTO.getId());
+       // infoCommentService.delete(infoCommentDTO);
+        List<Info_commentDTO> CommentDTOList = infoCommentService.findAll(infoCommentDTO.getPost_id());
+        return CommentDTOList;
+     }
    }
 
 
