@@ -54,10 +54,8 @@
             <security:concurrency-control max-sessions="1" expired-url="/login"/>
         </security:session-management>
 
-
         <!-- CSRF 개발 중 비활성화 (운영 시 삭제 권장) -->
         <security:csrf disabled="true" />
-
 
     </security:http>
 

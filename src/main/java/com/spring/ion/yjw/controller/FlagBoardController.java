@@ -91,8 +91,8 @@ public class FlagBoardController {
         org.springframework.security.core.Authentication authentication =
                 org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
-        if (principal instanceof com.spring.ion.lcw.dto.CustomUserDetails) {
-            memberId = ((com.spring.ion.lcw.dto.CustomUserDetails) principal).getUsername();
+        if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
+            memberId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
             memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
         } else if (principal instanceof String) {
