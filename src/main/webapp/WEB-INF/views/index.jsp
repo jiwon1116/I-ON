@@ -17,7 +17,6 @@
     <a href="/map">지도</a>
 
 
-
     <security:authorize access="isAnonymous()">
         <a href="/login">로그인</a>
     </security:authorize>

@@ -7,21 +7,21 @@
 <header>
   <nav class="top-nav">
     <div class="logo-section">
-      <img src="${pageContext.request.contextPath}/logo.png" alt="logo">
+      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
     </div>
     <ul class="nav-tabs">
-      <li class="main-menu">마이페이지</li>
-      <li class="main-menu">범죄 예방 지도</li>
+      <li class="main-menu"><a href="/mypage">마이페이지</a></li>
+      <li class="main-menu"><a href="/map">범죄 예방 지도</a></li>
       <li class="main-menu active">
-        커뮤니티
+        <a href="/free">커뮤니티</a>
         <ul class="sub-menu">
-          <li>자유</li>
-          <li>위탁</li>
-          <li>실종 및 유괴</li>
+          <li><a href="/free">자유</a></li>
+          <li><a href="entrust">위탁</a></li>
+          <li><a href="miss">실종 및 유괴</a></li>
         </ul>
       </li>
-      <li class="main-menu">제보 및 신고</li>
-      <li class="main-menu">정보 공유</li>
+      <li class="main-menu"><a href="flag">제보 및 신고</a></li>
+      <li class="main-menu"><a href="info">정보 공유</a></li>
     </ul>
     <div class="icons">
       <span class="icon">🔔</span>
