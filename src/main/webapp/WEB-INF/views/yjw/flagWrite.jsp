@@ -29,10 +29,10 @@
 
     <form action="/flag/write" method="post" enctype="multipart/form-data">
 
-        <!-- 닉네임은 세션에서 가져와서 hidden으로 전송 -->
+        <!-- 닉네임 -->
         <div class="mb-3">
             <label for="nickname" class="form-label">닉네임</label>
-            <input type="text" class="form-control" id="nickname" name="nickname" required>
+            <input type="text" class="form-control" id="nickname" name="nickname" value="${nickname}" required >
         </div>
 
         <div class="mb-3">
