@@ -17,6 +17,7 @@ public class Info_contentRepository {
 
     public final SqlSessionTemplate sql;
 
+    //게시물 가져오기
     public List<Info_contentDTO> AllfindList() {
        return sql.selectList("Info.allInfoList");
     }

@@ -8,8 +8,8 @@
     </select>
 
     <insert id="save"  parameterType="infoContent" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO info_content (title, content)
-        VALUES (#{title}, #{content})
+        INSERT INTO info_content (title, content, nickname)
+        VALUES (#{title}, #{content}, #{nickname})
     </insert>
 
     <select id="find" parameterType="infoContent" resultType="infoContent">

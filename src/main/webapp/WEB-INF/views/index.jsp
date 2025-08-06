@@ -8,20 +8,24 @@
     <title>index</title>
 </head>
 <body>
-
+    <c:if test="${not empty withdrawError}">
+        <script>
+            alert('${withdrawError}');
+        </script>
+    </c:if>
     <security:authorize access="isAuthenticated()">
-            <p>안녕하세요, <c:out value="${member.nickname}"/>님!</p>
+            <p>안녕하세요, ${member.nickname}님!</p>
     </security:authorize>
 
-    <h2>Hello Spring Framework</h2>
+    <h2>홈 화면</h2>
     <a href="/free">자유</a>
     <a href="/entrust">위탁</a>
     <a href="/miss">실종</a>
 
-    <a href="/mypage">마이페이지</a>
+    <a href="/myPage/">마이페이지</a>
 
     <a href="/map">지도</a>
-
+    <a href="/info">정보공유게시판</a>
 
     <security:authorize access="isAnonymous()">
         <a href="/login">로그인</a>
@@ -35,11 +39,11 @@
     </security:authorize>
 
     <security:authorize access="isAuthenticated()">
-        <a href="/edit">회원 정보 수정(작동안함)</a>
+        <a href="/edit">회원 정보 수정</a>
     </security:authorize>
 
     <security:authorize access="isAuthenticated()">
-        <form action="/withdraw" method="post">
+        <form action="/withdraw" method="post" onsubmit="return confirm('정말 회원을 탈퇴하시겠습니까?');">
             <input type="hidden" name="_method" value="delete" />
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <button type="submit">회원 탈퇴</button>
@@ -47,6 +51,11 @@
     </security:authorize>
 
     <a href="/flag">flag</a>
+
+    <security:authorize access="hasRole('ROLE_ADMIN')">
+        <a href="/admin">관리자 페이지</a>
+    </security:authorize>
+
 
 </body>
 </html>

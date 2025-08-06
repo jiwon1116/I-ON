@@ -9,10 +9,23 @@
 <title>로그인</title>
 </head>
 <body>
-
+    <c:if test="${not empty registerSuccess}">
+        <script>
+            alert('${registerSuccess}');
+        </script>
+    </c:if>
+    <c:if test="${not empty sessionScope.loginError}">
+        <script>
+            alert('${sessionScope.loginError}');
+        </script>
+        <c:remove var="loginError" scope="session"/>
+    </c:if>
+    <c:if test="${not empty withdrawSuccess}">
+        <script>
+            alert('${withdrawSuccess}');
+        </script>
+    </c:if>
 	<h1>로그인</h1>
-	<h2>${error}</h2>
-	<h2>${logout}</h2>
 	<form action="${pageContext.request.contextPath}/login" method="post">
 		<div> <input type="text" name="username" /> </div>
 		<div> <input type="password" name="password" /> </div>

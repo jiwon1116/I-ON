@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -130,6 +132,11 @@
     <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
 </head>
 <body>
+    <c:if test="${not empty editSuccess}">
+        <script>
+            alert('${editSuccess}');
+        </script>
+    </c:if>
     <div class="mypage-layout">
         <!-- 왼쪽 사이드바 -->
         <aside class="sidebar">
@@ -139,7 +146,7 @@
                     <img src="https://img.icons8.com/ios-glyphs/60/000000/user.png" class="profile-img" id="profileImgPreview" alt="프로필 이미지">
                 </label>
                 <input type="file" name="profileImg" id="profileImgInput" accept="image/*" style="display:none;" onchange="previewProfileImg(event)">
-                <div class="profile-name">정지현</div>
+                <div class="profile-name">${member.nickname}</div>
                 <button type="submit" class="profile-edit-btn mt-1">이미지 수정하기</button>
             </form>
             <div class="sidebar-bottom">
@@ -208,7 +215,8 @@
                         <span>내 소식</span>
                         <div class="text-center text-muted py-5">
                             <i class="fas fa-bell fa-2x mb-2"></i><br>
-                            <span>새로운 소식이 없습니다.</span>
+                            <span>알림 넣기</span>
+                             <!-- 알림 목록 -->
                         </div>
                     </div>
                     <div class="card p-4" style="flex:1">

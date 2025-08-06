@@ -1,7 +1,6 @@
 package com.spring.ion.lcw.repository;
 
 import com.spring.ion.lcw.dto.MemberDTO;
-import com.spring.ion.lcw.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -33,5 +32,9 @@ public class MemberRepository {
 
     public void edit(MemberDTO memberDTO){
         sql.update("Member.updateMember", memberDTO);
+    }
+
+    public void unban(MemberDTO memberDTO){
+        sql.update("Member.unban", memberDTO);
     }
 }

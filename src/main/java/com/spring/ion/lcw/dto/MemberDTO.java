@@ -19,5 +19,6 @@ public class MemberDTO implements Serializable {
     private Integer trust_score;
     private LocalDateTime created_at;
     private Boolean enabled;
+    private LocalDateTime banUntil;
     private List<String> authorities;
 }
