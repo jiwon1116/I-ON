@@ -1,5 +1,6 @@
 package com.spring.ion.yjw.controller;
 
+import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPageDTO;
@@ -8,6 +9,7 @@ import com.spring.ion.yjw.service.FlagCommentService;
 import com.spring.ion.yjw.service.FlagLikeService;
 import com.spring.ion.yjw.service.FlagService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -66,10 +68,22 @@ public class FlagBoardController {
     @PostMapping("/write")
     public String write(@ModelAttribute FlagPostDTO flagPostDTO,
                         @RequestParam("boardFile") List<MultipartFile> fileList) throws IOException {
+        // 로그인 유저
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = null;
+        if (principal instanceof CustomUserDetails) {
+            userId = ((CustomUserDetails) principal).getUsername();
+        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
+            userId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof String) {
+            userId = (String) principal;
+        }
+        flagPostDTO.setUserId(userId); // 꼭 넣어줘야 함
 
         flagService.write(flagPostDTO, fileList);
         return "redirect:/flag";
     }
+
 
 
     // 게시글 목록 조회
@@ -164,10 +178,29 @@ public class FlagBoardController {
 
     // 게시글 삭제
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") int id) {
-        flagService.delete(id);
+    public String delete(@PathVariable("id") int id, HttpServletRequest request) {
+        FlagPostDTO post = flagService.findById(id);
+        if (post == null) return "redirect:/flag"; // 글 없으면 목록으로
+
+        // 로그인한 유저 id
+        Object principal = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = null;
+        if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
+            loginUserId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
+        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
+            loginUserId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof String && !"anonymousUser".equals(principal)) {
+            loginUserId = (String) principal;
+        }
+
+        // 글쓴이와 로그인 유저가 같을 때만 삭제
+        if (loginUserId != null && loginUserId.equals(post.getUserId())) {
+            flagService.delete(id);
+        }
         return "redirect:/flag/";
     }
+
+
 
     // 페이징
     @GetMapping("/paging")

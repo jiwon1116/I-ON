@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -60,8 +61,12 @@
 
             <div class="text-end mb-2">
                 <!-- 수정 버튼 추가 -->
-                <a href="${pageContext.request.contextPath}/flag/update/${flag.id}" class="btn btn-outline-secondary btn-sm me-2">수정</a>
-                <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}" class="btn btn-outline-dark btn-sm" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
+                <security:authentication property="principal.username" var="loginUserId"/>
+                <c:if test="${loginUserId eq flag.userId}">
+                    <a href="${pageContext.request.contextPath}/flag/update/${flag.id}" ...>수정</a>
+                    <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}" ...>삭제</a>
+                </c:if>
+
             </div>
 
             <!-- 좋아요 버튼 (하트 토글) -->
