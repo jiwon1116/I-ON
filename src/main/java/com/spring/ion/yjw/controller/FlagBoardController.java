@@ -87,6 +87,8 @@ public class FlagBoardController {
 
 
     // 상세보기
+    // FlagBoardController.java
+
     @GetMapping("/{id}")
     public String detail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
         HttpSession session = request.getSession();
@@ -97,41 +99,43 @@ public class FlagBoardController {
             session.setAttribute(viewKey, true); // 조회수 중복 방지
         }
 
+        // 게시글/댓글/첨부파일 조회
         FlagPostDTO flagPostDTO = flagService.findById(id);
         List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(id);
         List<FlagFileDTO> fileList = flagService.findFilesByBoardId(id);
 
-        // 1. 로그인 유저 정보 구하기
-        String memberId = null;
+        // 로그인 유저 정보 구하기
+        String loginUserId = null;
         org.springframework.security.core.Authentication authentication =
                 org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
-            memberId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
+            loginUserId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
-            memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+            loginUserId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
         } else if (principal instanceof String) {
             if (!"anonymousUser".equals(principal)) {
-                memberId = (String) principal;
+                loginUserId = (String) principal;
             }
         }
+        model.addAttribute("loginUserId", loginUserId);
 
-        // 2. 좋아요 눌렀는지 체크
+        // 좋아요 정보
         boolean liked = false;
-        if (memberId != null) {
-            liked = flagLikeService.isLiked((long) id, memberId);
+        if (loginUserId != null) {
+            liked = flagLikeService.isLiked((long) id, loginUserId);
         }
         flagPostDTO.setLiked(liked); // DTO에 liked 필드가 있어야 함
-
-        // 3. 좋아요 카운트
         flagPostDTO.setLike_count(flagLikeService.getLikeCount((long) id));
 
+        // 모델에 값 전달
         model.addAttribute("flag", flagPostDTO);
         model.addAttribute("flagCommentDTOList", flagCommentDTOList);
         model.addAttribute("fileList", fileList);
 
         return "yjw/flagDetail";
     }
+
 
 
 

@@ -96,9 +96,7 @@
             <form id="commentForm">
                 <input type="hidden" name="post_id" id="post_id" value="${flag != null ? flag.id : ''}"/>
                 <div class="mb-2">
-                    <!-- nickname input은 굳이 받을 필요 없습니다(숨겨도 됨) -->
-                    <input type="text" id="nickname" name="nickname" value="${nickname}" readonly />
-
+                    <!-- nickname input 삭제!! -->
                 </div>
                 <div class="mb-2">
                     <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요" required></textarea>
@@ -110,6 +108,7 @@
         </div>
     </div>
 
+
     <!-- 댓글 출력 영역 -->
     <div id="commentList">
         <c:if test="${not empty flagCommentDTOList}">
@@ -120,8 +119,12 @@
                         <footer class="blockquote-footer">
                             ${comment.nickname} | ${dateText}
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
-                            <button class="btn btn-sm btn-outline-danger float-end"
-                                    onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
+                            <!-- comment.userId == 로그인한 유저의 userId일 때만 삭제 버튼 노출 -->
+                            <c:if test="${comment.userId eq loginUserId}">
+                                <button class="btn btn-sm btn-outline-danger float-end"
+                                        onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
+                            </c:if>
+
                         </footer>
                     </div>
                 </div>
@@ -135,30 +138,34 @@
         // 댓글 등록
         $('#commentForm').submit(function (e) {
             e.preventDefault();
-            const nickname = $('#nickname').val();
             const content = $('#content').val();
             const post_id = $('#post_id').val();
 
-            if (!nickname || !content || !post_id) {
-                alert("닉네임, 내용, 게시글 ID를 입력하세요");
+            if (!content || !post_id) {
+                alert("내용, 게시글 ID를 입력하세요");
                 return;
             }
 
             $.ajax({
                 type: 'POST',
                 url: '${pageContext.request.contextPath}/FlagComment/write',
-                data: {nickname, content, post_id},
+                data: {
+                    content: $('#content').val(),
+                    post_id: $('#post_id').val()
+                },
                 dataType: 'json',
-                success: function (data) {
+                success: function(data) {
                     renderCommentList(data);
                     $('#content').val('');
                     location.reload();
                 },
-                error: function () {
+                error: function() {
                     alert("댓글 등록 실패");
                 }
             });
+
         });
+
 
         // 좋아요 버튼
         $('#likeBtn').click(function(){
