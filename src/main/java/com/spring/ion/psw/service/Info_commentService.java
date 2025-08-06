@@ -20,4 +20,6 @@ public class Info_commentService {
     public List<Info_commentDTO> findAll(long postId) {
         return infoCommentRepository.findAll(postId);
     }
+
+
 }

@@ -7,7 +7,10 @@ import com.spring.ion.jjh.dto.free.FreeFileDTO;
 import com.spring.ion.jjh.service.free.FreeCommentService;
 import com.spring.ion.jjh.service.free.FreeLikeService;
 import com.spring.ion.jjh.service.free.FreeService;
+import com.spring.ion.lcw.dto.MemberDTO;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -61,7 +64,10 @@ public class FreeController {
     }
 
     @GetMapping("/write")
-    public String writeForm() {
+    public String writeForm(Model model) {
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+        model.addAttribute("member", memberDTO);
         return "jjh/free/write";
     }
 
@@ -70,6 +76,12 @@ public class FreeController {
             @ModelAttribute FreeDTO freeDTO,
             @RequestParam(value = "uploadFiles", required = false) List<MultipartFile> uploadFiles
     ) {
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+
+        freeDTO.setUserId(user.getUsername());
+        freeDTO.setNickname(memberDTO.getNickname());
+
         int result = freeService.write(freeDTO, uploadFiles);
 
         if (result > 0) {
@@ -93,6 +105,10 @@ public class FreeController {
         }
 
         FreeDTO free = freeService.findById(id);
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = user.getUsername();
+        model.addAttribute("loginUserId", loginUserId);
 
         int likeCount = freeLikeService.getLikeCount(id);
         free.setLike_count(likeCount);
@@ -129,7 +145,7 @@ public class FreeController {
         boolean result = freeService.update(freeDTO, file);
 
         if (result) {
-            return "redirect:/free";
+            return "redirect:/free/{id}";
         } else {
             return "jjh/free/update";
         }

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ include file="/WEB-INF/views/header.jsp" %>
 
 <!DOCTYPE html>
@@ -222,18 +223,21 @@
     </div>
 
     <div class="post-actions">
-    <span onclick="updateFn()">수정</span>
-    <span onclick="deleteFn()">삭제</span>
-    <span>신고</span>
+    <sec:authentication property="principal" var="loginUser" />
+        <c:if test="${loginUserId eq free.userId}">
+            <span onclick="updateFn()">수정</span>
+            <span onclick="deleteFn()">삭제</span>
+        </c:if>
     </div>
 
     <div class="comment-input-wrapper">
-      <input id="nickname" placeholder="작성자"></textarea>
+      <input type="hidden" id="nickname" value="${member.nickname}" />
       <textarea id="content" placeholder="댓글을 작성해주세요"></textarea>
       <button onclick="commentWrite()">작성</button>
     </div>
 
     <div class="comment-list">
+    <sec:authentication property="principal" var="loginUser" />
       <c:forEach items="${commentList}" var="comment">
         <div class="comment-card">
           <div class="comment-avatar">
@@ -243,7 +247,9 @@
             <div class="comment-header">
               <span class="comment-nickname">${comment.nickname}</span>
               <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
-              <span class="comment-delete" onclick="commentDelete(${comment.id})">삭제</span>
+              <c:if test="${loginUserId eq comment.userId}">
+                <span class="comment-delete" onclick="commentDelete('${comment.id}')">삭제</span>
+              </c:if>
             </div>
             <div class="comment-content">${comment.content}</div>
           </div>
@@ -279,9 +285,9 @@
       type: "post",
       url: "/comment/save",
       data: {
-        nickname: nickname,
         content: content,
-        post_id: postId
+        post_id: postId,
+        nickname: nickname
       },
       dataType: "json",
       success: function(commentList) {

@@ -11,4 +11,5 @@ public class MissCommentDTO {
     private String nickname;
     private String content;
     private Date created_at;
+    private String userId;
 }
