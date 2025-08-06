@@ -25,4 +25,9 @@ public class Info_commentRepository {
     public void commentDelete(Info_commentDTO infoCommentDTO) {
         sql.delete("infoComment.commentDelete", infoCommentDTO);
     }
+
+    // 모든 댓글 가져오기
+    public List<Info_commentDTO> findAllComment() {
+        return sql.selectList("infoComment.infoFindAllComment");
+    }
 }

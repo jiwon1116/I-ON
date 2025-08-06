@@ -8,6 +8,7 @@ import java.util.Date;
 @Data
 public class Info_contentDTO {
     private long id; //정보 공유 게시물 아이디
+    private String nickname; //회원 닉네임
     private String title; // 게시물 제목
     private String content; // 게시물 내용
     private int like_count; // 좋아요 수

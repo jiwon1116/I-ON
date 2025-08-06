@@ -59,8 +59,6 @@ public class Info_contentService {
         }
     }
 
-
-
     // 작성된 글 추가
     public int save(Info_contentDTO infoContentDTO) {
         return infoContentRepository.save(infoContentDTO);
