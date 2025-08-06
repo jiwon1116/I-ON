@@ -11,6 +11,7 @@
         <result property="region" column="region" />
         <result property="enabled" column="enabled" />
         <result property="created_at" column="created_at" />
+        <result property="banUntil" column="ban_until" />
         <collection property="authorities" ofType="java.lang.String">
             <result column="authority" />
         </collection>
@@ -53,7 +54,7 @@
     </select>
 
     <select id="findByUserIdWithAuthorities" parameterType="String" resultMap="memberWithAuthoritiesResultMap">
-        SELECT m.userId, m.password, m.nickname, m.gender, m.region, m.enabled, m.created_at, ma.authority
+        SELECT m.userId, m.password, m.nickname, m.gender, m.region, m.enabled, m.created_at, m.ban_until, ma.authority
         FROM member m
         LEFT JOIN member_authority ma ON m.userId = ma.userId
         WHERE m.userId = #{userId}
@@ -83,4 +84,11 @@
         </set>
         WHERE userId = #{userId}
     </update>
+
+    <update id="unban" parameterType="com.spring.ion.lcw.dto.MemberDTO">
+        UPDATE member
+        SET enabled = #{enabled}, ban_until = null
+        WHERE userId = #{userId}
+    </update>
 </mapper>
+
