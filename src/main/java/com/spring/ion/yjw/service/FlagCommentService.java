@@ -1,5 +1,6 @@
 package com.spring.ion.yjw.service;
 
+import com.spring.ion.jjh.dto.free.FreeCommentDTO;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.repository.FlagCommentRepository;
 import com.spring.ion.yjw.repository.FlagRepository;
@@ -28,4 +29,7 @@ public class FlagCommentService {
     }
 
 
+    public FlagCommentDTO findById(long id) {
+        return flagCommentRepository.findById(id);
+    }
 }

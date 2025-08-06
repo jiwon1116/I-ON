@@ -1,5 +1,6 @@
 package com.spring.ion.yjw.repository;
 
+import com.spring.ion.jjh.dto.free.FreeCommentDTO;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.dto.FlagPostDTO;
 import lombok.RequiredArgsConstructor;
@@ -30,4 +31,7 @@ public class FlagCommentRepository {
     }
 
 
+    public FlagCommentDTO findById(long id) {
+        return sql.selectOne("FlagComment.findById", id);
+    }
 }

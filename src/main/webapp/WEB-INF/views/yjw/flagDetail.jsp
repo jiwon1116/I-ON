@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -60,8 +61,12 @@
 
             <div class="text-end mb-2">
                 <!-- 수정 버튼 추가 -->
-                <a href="${pageContext.request.contextPath}/flag/update/${flag.id}" class="btn btn-outline-secondary btn-sm me-2">수정</a>
-                <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}" class="btn btn-outline-dark btn-sm" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
+                <security:authentication property="principal.username" var="loginUserId"/>
+                <c:if test="${loginUserId eq flag.userId}">
+                    <a href="${pageContext.request.contextPath}/flag/update/${flag.id}" ...>수정</a>
+                    <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}" ...>삭제</a>
+                </c:if>
+
             </div>
 
             <!-- 좋아요 버튼 (하트 토글) -->
@@ -96,16 +101,7 @@
             <form id="commentForm">
                 <input type="hidden" name="post_id" id="post_id" value="${flag != null ? flag.id : ''}"/>
                 <div class="mb-2">
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="nickname"
-                        name="nickname"
-                        value="${sessionScope.loginNickname}"
-                        placeholder="닉네임 입력"
-                        <c:if test="${not empty sessionScope.loginNickname}">readonly</c:if>
-                        required
-                    />
+                    <!-- nickname input 삭제!! -->
                 </div>
                 <div class="mb-2">
                     <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요" required></textarea>
@@ -117,6 +113,7 @@
         </div>
     </div>
 
+
     <!-- 댓글 출력 영역 -->
     <div id="commentList">
         <c:if test="${not empty flagCommentDTOList}">
@@ -127,8 +124,12 @@
                         <footer class="blockquote-footer">
                             ${comment.nickname} | ${dateText}
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
-                            <button class="btn btn-sm btn-outline-danger float-end"
-                                    onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
+                            <!-- comment.userId == 로그인한 유저의 userId일 때만 삭제 버튼 노출 -->
+                            <c:if test="${comment.userId eq loginUserId}">
+                                <button class="btn btn-sm btn-outline-danger float-end"
+                                        onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
+                            </c:if>
+
                         </footer>
                     </div>
                 </div>
@@ -142,30 +143,34 @@
         // 댓글 등록
         $('#commentForm').submit(function (e) {
             e.preventDefault();
-            const nickname = $('#nickname').val();
             const content = $('#content').val();
             const post_id = $('#post_id').val();
 
-            if (!nickname || !content || !post_id) {
-                alert("닉네임, 내용, 게시글 ID를 입력하세요");
+            if (!content || !post_id) {
+                alert("내용, 게시글 ID를 입력하세요");
                 return;
             }
 
             $.ajax({
                 type: 'POST',
                 url: '${pageContext.request.contextPath}/FlagComment/write',
-                data: {nickname, content, post_id},
+                data: {
+                    content: $('#content').val(),
+                    post_id: $('#post_id').val()
+                },
                 dataType: 'json',
-                success: function (data) {
+                success: function(data) {
                     renderCommentList(data);
                     $('#content').val('');
                     location.reload();
                 },
-                error: function () {
+                error: function() {
                     alert("댓글 등록 실패");
                 }
             });
+
         });
+
 
         // 좋아요 버튼
         $('#likeBtn').click(function(){

@@ -8,8 +8,8 @@
 
     <insert id="write" parameterType="FlagPost"
             useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO flag_post (title, nickname, content)
-        VALUES (#{title}, #{nickname}, #{content})
+        INSERT INTO flag_post (title, nickname, content,userId)
+        VALUES (#{title}, #{nickname}, #{content},#{userId})
     </insert>
 
 
