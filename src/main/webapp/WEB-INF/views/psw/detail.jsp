@@ -320,7 +320,10 @@
       }
 
       const commentWrite = () => {
-              const nickname ="${member.nickname}";
+              // 게시물 작성자 닉네임이 없으면 관리자임
+             const rawNickname = "${member.nickname}";
+             const nickname = (rawNickname && rawNickname !== "null" && rawNickname !== "") ? rawNickname : "admin";
+
               const content = document.getElementById("commentContents").value.trim();
               const post_id = "${findDto.id}";
 

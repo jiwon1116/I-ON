@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
@@ -6,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <title>마이페이지</title>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background: #F8F9FA;
@@ -122,6 +123,60 @@
             flex: 1;
         }
 
+         /* 알림창 */
+        .notification-box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: 300px; /* 적당한 높이로 조절 가능 */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notification-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .notification-list {
+            flex: 1;
+            overflow-y: auto; /* 스크롤바 생김 */
+            padding-right: 8px;
+        }
+
+        .notification-item {
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+        }
+
+        .notify-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        .notify-content {
+            margin-top: 4px;
+            color: #333;
+        }
+
+        .notify-date {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #888;
+        }
+        .notify-icon {
+            margin-right: 6px;
+        }
+        .notify-header {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
         @media (max-width: 1200px) {
             .main-board { padding: 18px 10px 18px 10px; }
         }
@@ -134,7 +189,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <c:if test="${not empty editSuccess}">
         <script>
             alert('${editSuccess}');
@@ -149,11 +203,8 @@
                     <img src="https://img.icons8.com/ios-glyphs/60/000000/user.png" class="profile-img" id="profileImgPreview" alt="프로필 이미지">
                 </label>
                 <input type="file" name="profileImg" id="profileImgInput" accept="image/*" style="display:none;" onchange="previewProfileImg(event)">
-                <security:authorize access="isAuthenticated()">
                 <div class="profile-name">${member.nickname}</div>
-                </security:authorize>
-                <button type="button" class="profile-edit-btn mt-1" onclick="location.href='/edit'">회원 정보 수정하기</button>
-
+                <button type="submit" class="profile-edit-btn mt-1">이미지 수정하기</button>
             </form>
             <div class="sidebar-bottom">
                 <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
@@ -216,7 +267,7 @@
                         <span>내가 작성한 댓글</span>
                         <a href="/myComment" class="btn btn-warning btn-sm mt-2">
                                 바로가기
-                            </a>
+                        </a>
                     </div>
                 </div>
                 <div class="dashboard-row">
@@ -224,8 +275,25 @@
                         <span>내 소식</span>
                         <div class="text-center text-muted py-5">
                             <i class="fas fa-bell fa-2x mb-2"></i><br>
-                            <span>알림 넣기</span>
-                             <!-- 알림 목록 -->
+                           <div class="notification-list" id="notifyList">
+                                  <c:forEach var="notify" items="${notifyList}">
+                                      <div class="notification-item">
+                                          <div class="notify-header">
+                                              <span class="notify-icon">
+                                                  <c:choose>
+                                                      <c:when test="${notify.type == 'COMMENT'}">[댓글]</c:when>
+                                                      <c:when test="${notify.type == 'DANGER_ALERT'}">[위험]</c:when>
+                                                      <c:otherwise>[알림]</c:otherwise>
+                                                  </c:choose>
+                                              </span>
+                                          </div>
+                                          <div class="notify-content">${notify.content}</div>
+                                          <div class="notify-date">
+                                              <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                                          </div>
+                                      </div>
+                                  </c:forEach>
+                               </div>
                         </div>
                     </div>
                     <div class="card p-4" style="flex:1; position:relative;">

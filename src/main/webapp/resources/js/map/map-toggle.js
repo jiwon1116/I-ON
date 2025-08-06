@@ -1,5 +1,4 @@
-const toggledLayers = {
-  crime: false,
+window.toggledLayers = {
   sexOffender: false,
   emergency: false,   // ← 이 key를 아래 switch 문과 일치시켜야 함
   safeHouse: false
@@ -14,9 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
       toggledLayers[type] = !toggledLayers[type];
 
       switch (type) {
-        case "crime":
-          toggleCrimeMarkers(toggledLayers[type]);
-          break;
         case "sexoffender":
           toggleSexOffenderMarkers(toggledLayers[type]);
           break;
@@ -34,3 +30,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+function toggleEmergencyMarkers(checked) {
+  if (checked) {
+    window.loadEmergencyMarkersByBounds();
+  } else {
+    window.clearEmergencyMarkers();
+  }
+}

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Service
@@ -16,10 +17,13 @@ public class NotifyService {
     private final NotifyRepository notifyRepository;
 
     // 댓글 알림저장
-    public void createCommentNotify(Info_commentDTO infoCommentDTO, Info_contentDTO post) {
+    public void createCommentNotify(Info_commentDTO infoCommentDTO, Info_contentDTO content) {
+
+        // 닉네임이 없으면 관리자
+        String receiver = (content.getNickname() != null) ? content.getNickname() : "admin";
 
         NotifyDTO notify = new NotifyDTO();
-        notify.setNickname(post.getNickname());
+        notify.setNickname(receiver);
         notify.setType(NotifyDTO.NotificationType.COMMENT);
         notify.setContent(infoCommentDTO.getNickname() + "님이 댓글을 남겼습니다.");
         notify.setRelated_post_id(infoCommentDTO.getPost_id()); // 관련 게시글
@@ -29,5 +33,9 @@ public class NotifyService {
 
         notifyRepository.saveNotify(notify);
        }
+    // 해당 닉네임의 알림 가져오기
+    public List<NotifyDTO> findAllByNotify(String nickname) {
+        return notifyRepository.findAllByNotify(nickname);
     }
+}
 
