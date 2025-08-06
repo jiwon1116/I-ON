@@ -44,4 +44,5 @@ public class MapController {
 
         return ResponseEntity.ok(filtered);
     }
+
 }
