@@ -24,4 +24,11 @@
     </delete>
 
 
+    <insert id="insertComment" parameterType="FlagComment">
+        INSERT INTO flag_comment (content, nickname, userId, post_id)
+        VALUES (#{content}, #{nickname}, #{userId}, #{post_id})
+    </insert>
+
+
+
 </mapper>

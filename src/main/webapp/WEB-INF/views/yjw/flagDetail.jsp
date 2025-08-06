@@ -96,16 +96,9 @@
             <form id="commentForm">
                 <input type="hidden" name="post_id" id="post_id" value="${flag != null ? flag.id : ''}"/>
                 <div class="mb-2">
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="nickname"
-                        name="nickname"
-                        value="${sessionScope.loginNickname}"
-                        placeholder="닉네임 입력"
-                        <c:if test="${not empty sessionScope.loginNickname}">readonly</c:if>
-                        required
-                    />
+                    <!-- nickname input은 굳이 받을 필요 없습니다(숨겨도 됨) -->
+                    <input type="text" id="nickname" name="nickname" value="${nickname}" readonly />
+
                 </div>
                 <div class="mb-2">
                     <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요" required></textarea>

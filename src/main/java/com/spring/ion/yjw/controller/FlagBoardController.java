@@ -1,6 +1,5 @@
 package com.spring.ion.yjw.controller;
 
-import com.spring.ion.lcw.dto.CustomUserDetails;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPageDTO;
@@ -9,7 +8,6 @@ import com.spring.ion.yjw.service.FlagCommentService;
 import com.spring.ion.yjw.service.FlagLikeService;
 import com.spring.ion.yjw.service.FlagService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -45,10 +43,23 @@ public class FlagBoardController {
 
     // 글쓰기 폼 이동
     @GetMapping("write")
-    public String writeForm() {
+    public String writeForm(Model model) {
+        // 현재 인증된 Principal 객체 가져오기
+        Object principal = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String nickname = "";
+        if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
+            nickname = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getMemberDTO().getNickname();
+        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
+            // 닉네임 정보가 없으니 username만 가져올 수 있음
+            nickname = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof String) {
+            nickname = (String) principal;
+        }
+
+        model.addAttribute("nickname", nickname);
         return "yjw/flagWrite";
     }
-
 
 
     // 글 저장 처리
