@@ -79,7 +79,7 @@
     </select>
 
     <select id="findAllByWriter" parameterType="String" resultType="miss">
-        SELECT * FROM miss_post WHERE nickname = #{nickname} ORDER BY created_at DESC
+        SELECT * FROM miss_post WHERE userId = #{userId} ORDER BY created_at DESC
     </select>
 
 </mapper>

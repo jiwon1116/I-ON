@@ -28,7 +28,7 @@ public class EntrustCommentService {
         entrustCommentRepository.delete(id);
     }
 
-    public List<EntrustCommentDTO>  findMyComments(String nickname) {
-        return entrustCommentRepository.findAllByUserId(nickname);
+    public List<EntrustCommentDTO>  findMyComments(String userId) {
+        return entrustCommentRepository.findAllByUserId(userId);
     }
 }

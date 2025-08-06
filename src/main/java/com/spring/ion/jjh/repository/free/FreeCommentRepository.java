@@ -27,7 +27,7 @@ public class FreeCommentRepository {
         sql.delete("FreeComment.delete", id);
     }
 
-    public List<FreeCommentDTO> findAllByUserId(String nickname) {
-        return sql.selectList("FreeComment.findAllByUserId", nickname);
+    public List<FreeCommentDTO> findAllByUserId(String userId) {
+        return sql.selectList("FreeComment.findAllByUserId", userId);
     }
 }

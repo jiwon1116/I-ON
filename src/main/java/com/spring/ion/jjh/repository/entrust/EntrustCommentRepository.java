@@ -27,7 +27,7 @@ public class EntrustCommentRepository {
         sql.delete("EntrustComment.delete", id);
     }
 
-    public List<EntrustCommentDTO> findAllByUserId(String nickname) {
-        return sql.selectList("EntrustComment.findAllByUserId", nickname);
+    public List<EntrustCommentDTO> findAllByUserId(String userId) {
+        return sql.selectList("EntrustComment.findAllByUserId", userId);
     }
 }
