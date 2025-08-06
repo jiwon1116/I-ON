@@ -20,10 +20,11 @@
 
     // 지도 idle 시 마커 자동 로드
     kakao.maps.event.addListener(window.map, 'idle', () => {
-      if (window.toggledLayers?.emergency ?? true) {
+      if (window.toggledLayers?.emergencybell === true) {
         window.loadEmergencyMarkersByBounds();
       }
     });
+
     console.log("✅ 지도 및 클러스터러 초기화 완료");
   }
 

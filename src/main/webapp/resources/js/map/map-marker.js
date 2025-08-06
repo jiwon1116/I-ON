@@ -1,5 +1,13 @@
 let emergencyMarkers = [];
 
+window.clearEmergencyMarkers = function () {
+  if (window.clusterer) {
+    window.clusterer.removeMarkers(emergencyMarkers);
+  }
+  emergencyMarkers.forEach(mk => mk.setMap(null));
+  emergencyMarkers = [];
+};
+
 window.loadEmergencyMarkersByBounds = function () {
   if (!window.map) return;
 
@@ -12,6 +20,7 @@ window.loadEmergencyMarkersByBounds = function () {
   fetch(url)
     .then(res => res.json())
     .then(data => {
+      console.log("📌 비상벨 마커 로딩됨:", data.length);
       window.clearEmergencyMarkers();
 
       const newMarkers = [];
@@ -22,8 +31,8 @@ window.loadEmergencyMarkersByBounds = function () {
 
         const position = new kakao.maps.LatLng(latitude, longitude);
 
-        const markerImageUrl = "/resources/img/emergencybell-marker.png";  // 마커 이미지 경로
-        const imageSize = new kakao.maps.Size(32, 32);                     // 마커 이미지 크기
+        const markerImageUrl = "/resources/img/emergencybell-marker.png";
+        const imageSize = new kakao.maps.Size(32, 32);
         const markerImage = new kakao.maps.MarkerImage(markerImageUrl, imageSize);
 
         const mk = new kakao.maps.Marker({
@@ -31,33 +40,14 @@ window.loadEmergencyMarkersByBounds = function () {
           image: markerImage
         });
 
-
-        if (window.clusterer) {
-          window.clusterer.addMarker(mk);
-        }
-
         attachPopup(marker, mk, "emergency");
         emergencyMarkers.push(mk);
         newMarkers.push(mk);
       });
 
+      if (window.clusterer && newMarkers.length > 0) {
+        window.clusterer.addMarkers(newMarkers);  // ✅ 수정됨
+      }
     })
-    .catch(err => console.error("❗ 마커 로딩 실패", err));
-};
-
-// ✅ 이 함수가 없어서 에러 발생 중 → 아래 코드 추가
-window.toggleEmergencyMarkers = function (checked) {
-  if (checked) {
-    window.loadEmergencyMarkersByBounds();
-  } else {
-    window.clearEmergencyMarkers();
-  }
-};
-
-window.clearEmergencyMarkers = function () {
-  if (window.clusterer) {
-    window.clusterer.removeMarkers(emergencyMarkers);
-  }
-  emergencyMarkers.forEach(mk => mk.setMap(null));
-  emergencyMarkers = [];
+    .catch(err => console.error("❗ 비상벨 마커 로딩 실패:", err));
 };
