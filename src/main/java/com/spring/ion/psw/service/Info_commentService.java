@@ -21,5 +21,8 @@ public class Info_commentService {
         return infoCommentRepository.findAll(postId);
     }
 
-
+    // 댓글 삭제하기
+    public void delete(Info_commentDTO infoCommentDTO) {
+        infoCommentRepository.commentDelete(infoCommentDTO);
+    }
 }

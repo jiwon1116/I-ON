@@ -14,8 +14,6 @@ public class Info_commentRepository {
 
     public void save(Info_commentDTO infoCommentDTO) {
         int result=  sql.insert("infoComment.save", infoCommentDTO);
-        System.out.println("댓글 저장 완료:"+result);
-
     }
 
     // 댓글 불러오기
@@ -23,5 +21,8 @@ public class Info_commentRepository {
         return sql.selectList("infoComment.findAll", postId);
     }
 
-
+    // 댓글 삭제하기
+    public void commentDelete(Info_commentDTO infoCommentDTO) {
+        sql.delete("infoComment.commentDelete", infoCommentDTO);
+    }
 }
