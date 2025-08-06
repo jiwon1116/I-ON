@@ -30,7 +30,7 @@
 
     <select id="findAllByUserId" parameterType="string" resultType="FlagComment">
         SELECT * FROM flag_comment
-        WHERE nickname = #{nickname}
+        WHERE userId = #{userId}
         ORDER BY created_at DESC
     </select>
 

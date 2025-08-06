@@ -51,22 +51,22 @@ public class MyPostController {
     /** 내가 쓴 글 목록 */
     @GetMapping("/myPost")
     public String allMyPosts(Model model, Principal principal) {
-        String nickname = principal.getName();
-        model.addAttribute("freePosts", freeService.findMyPosts(nickname));
-        model.addAttribute("flagPosts", flagService.findMyPosts(nickname));
-        model.addAttribute("missPosts", missService.findMyPosts(nickname));
-        model.addAttribute("entrustPosts", entrustService.findMyPosts(nickname));
+        String userId = principal.getName();
+        model.addAttribute("freePosts", freeService.findMyPosts(userId));
+        model.addAttribute("flagPosts", flagService.findMyPosts(userId));
+        model.addAttribute("missPosts", missService.findMyPosts(userId));
+        model.addAttribute("entrustPosts", entrustService.findMyPosts(userId));
         return "yjw/myPost";
     }
 
     /** 내가 쓴 댓글 목록 */
     @GetMapping("/myComment")
     public String allMyComments(Model model, Principal principal) {
-        String nickname = principal.getName();
-        model.addAttribute("freeComments", freeCommentService.findMyComments(nickname));
-        model.addAttribute("flagComments", flagCommentService.findMyComments(nickname));
-        model.addAttribute("missComments", missCommentService.findMyComments(nickname));
-        model.addAttribute("entrustComments", entrustCommentService.findMyComments(nickname));
+        String userId = principal.getName();
+        model.addAttribute("freeComments", freeCommentService.findMyComments(userId));
+        model.addAttribute("flagComments", flagCommentService.findMyComments(userId));
+        model.addAttribute("missComments", missCommentService.findMyComments(userId));
+        model.addAttribute("entrustComments", entrustCommentService.findMyComments(userId));
         return "yjw/myComment";
     }
 }

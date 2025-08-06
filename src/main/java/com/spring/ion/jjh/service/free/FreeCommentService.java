@@ -29,7 +29,7 @@ public class FreeCommentService {
         freeCommentRepository.delete(id);
     }
 
-    public List<FreeCommentDTO> findMyComments(String nickname) {
-        return freeCommentRepository.findAllByUserId(nickname);
+    public List<FreeCommentDTO> findMyComments(String userId) {
+        return freeCommentRepository.findAllByUserId(userId);
     }
 }

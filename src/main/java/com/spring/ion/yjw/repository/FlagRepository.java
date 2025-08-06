@@ -92,7 +92,7 @@ public class FlagRepository {
     }
 
     // 내가 쓴 글 찾아보기 (마이페이지 연동)
-    public List<FlagPostDTO> findAllByWriter(String nickname) {
-        return sql.selectList("Flag.findAllByWriter", nickname);
+    public List<FlagPostDTO> findAllByWriter(String userId) {
+        return sql.selectList("Flag.findAllByWriter", userId);
     }
 }

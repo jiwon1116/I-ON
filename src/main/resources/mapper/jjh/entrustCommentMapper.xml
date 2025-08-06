@@ -22,7 +22,7 @@
 
     <select id="findAllByUserId" parameterType="string" resultType="entrustComment">
         SELECT * FROM entrust_comment
-        WHERE nickname = #{nickname}
+        WHERE userId = #{userId}
         ORDER BY created_at DESC
     </select>
 </mapper>

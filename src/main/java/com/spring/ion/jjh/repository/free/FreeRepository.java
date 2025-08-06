@@ -79,7 +79,7 @@ public class FreeRepository {
         return sql.selectOne("Free.searchCount", searchContent);
     }
 
-    public List<FreeDTO> findAllByWriter(String nickname) {
-        return sql.selectList("Free.findAllByWriter", nickname);
+    public List<FreeDTO> findAllByWriter(String userId) {
+        return sql.selectList("Free.findAllByWriter", userId);
     }
 }

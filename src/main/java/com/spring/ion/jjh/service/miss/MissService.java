@@ -186,7 +186,7 @@ public class MissService {
         return pageDTO;
     }
 
-    public List<MissDTO> findMyPosts(String nickname) {
-        return missRepository.findAllByWriter(nickname);
+    public List<MissDTO> findMyPosts(String userId) {
+        return missRepository.findAllByWriter(userId);
     }
 }

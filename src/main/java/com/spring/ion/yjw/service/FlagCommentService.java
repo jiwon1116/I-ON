@@ -33,7 +33,7 @@ public class FlagCommentService {
         return flagCommentRepository.findById(id);
     }
 
-    public List<FlagCommentDTO> findMyComments(String nickname) {
-        return flagCommentRepository.findAllByUserId(nickname);
+    public List<FlagCommentDTO> findMyComments(String userId) {
+        return flagCommentRepository.findAllByUserId(userId);
     }
 }

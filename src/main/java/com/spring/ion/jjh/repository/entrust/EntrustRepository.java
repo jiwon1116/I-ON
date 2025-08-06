@@ -79,7 +79,7 @@ public class EntrustRepository {
         return sql.selectOne("Entrust.searchCount", searchContent);
     }
 
-    public List<EntrustDTO> findAllByWriter(String nickname) {
-        return sql.selectList("Entrust.findAllByWriter", nickname);
+    public List<EntrustDTO> findAllByWriter(String userId) {
+        return sql.selectList("Entrust.findAllByWriter", userId);
     }
 }
