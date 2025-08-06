@@ -184,4 +184,8 @@ public class EntrustService {
         return pageDTO;
     }
 
+    // 내가 쓴 글 찾아보기 (마이페이지 연동)
+    public List<EntrustDTO> findMyPosts(String nickname) {
+        return entrustRepository.findAllByWriter(nickname);
+    }
 }

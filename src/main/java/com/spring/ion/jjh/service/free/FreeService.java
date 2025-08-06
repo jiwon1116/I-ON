@@ -185,4 +185,7 @@ public class FreeService {
         return pageDTO;
     }
 
+    public List<FreeDTO> findMyPosts(String nickname) {
+        return freeRepository.findAllByWriter(nickname);
+    }
 }

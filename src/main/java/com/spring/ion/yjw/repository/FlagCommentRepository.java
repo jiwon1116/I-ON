@@ -34,4 +34,9 @@ public class FlagCommentRepository {
     public FlagCommentDTO findById(long id) {
         return sql.selectOne("FlagComment.findById", id);
     }
+
+
+    public List<FlagCommentDTO> findAllByUserId(String nickname) {
+        return sql.selectList("FlagComment.findAllByUserId", nickname);
+    }
 }

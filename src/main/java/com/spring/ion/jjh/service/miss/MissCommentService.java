@@ -27,4 +27,8 @@ public class MissCommentService {
     public void delete(long id) {
         missCommentRepository.delete(id);
     }
+
+    public List<MissCommentDTO>  findMyComments(String nickname) {
+        return missCommentRepository.findAllByUserId(nickname);
+    }
 }

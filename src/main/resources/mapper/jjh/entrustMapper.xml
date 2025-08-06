@@ -84,5 +84,9 @@
         WHERE title LIKE CONCAT('%', #{keyword}, '%')
         OR content LIKE CONCAT('%', #{keyword}, '%')
     </select>
+
+    <select id="findAllByWriter" parameterType="String" resultType="entrust">
+        SELECT * FROM entrust_post WHERE nickname = #{nickname} ORDER BY created_at DESC
+    </select>
     
 </mapper>

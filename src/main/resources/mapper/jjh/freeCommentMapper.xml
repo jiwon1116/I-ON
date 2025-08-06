@@ -19,4 +19,11 @@
     <delete id="delete" parameterType="long">
         DELETE FROM free_comment WHERE id = #{id}
     </delete>
+
+    <select id="findAllByUserId" parameterType="string" resultType="freeComment">
+        SELECT * FROM free_comment
+        WHERE nickname = #{nickname}
+        ORDER BY created_at DESC
+    </select>
+
 </mapper>

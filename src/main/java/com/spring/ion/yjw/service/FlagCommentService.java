@@ -32,4 +32,8 @@ public class FlagCommentService {
     public FlagCommentDTO findById(long id) {
         return flagCommentRepository.findById(id);
     }
+
+    public List<FlagCommentDTO> findMyComments(String nickname) {
+        return flagCommentRepository.findAllByUserId(nickname);
+    }
 }

@@ -1,6 +1,7 @@
 package com.spring.ion.jjh.service.miss;
 
 import com.spring.ion.jjh.dto.PageDTO;
+import com.spring.ion.jjh.dto.entrust.EntrustDTO;
 import com.spring.ion.jjh.dto.miss.MissDTO;
 import com.spring.ion.jjh.dto.miss.MissFileDTO;
 import com.spring.ion.jjh.repository.miss.MissRepository;
@@ -183,5 +184,9 @@ public class MissService {
         pageDTO.setEndPage(endPage);
 
         return pageDTO;
+    }
+
+    public List<MissDTO> findMyPosts(String nickname) {
+        return missRepository.findAllByWriter(nickname);
     }
 }

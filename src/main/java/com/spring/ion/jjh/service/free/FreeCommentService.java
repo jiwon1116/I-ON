@@ -28,4 +28,8 @@ public class FreeCommentService {
     public void delete(long id) {
         freeCommentRepository.delete(id);
     }
+
+    public List<FreeCommentDTO> findMyComments(String nickname) {
+        return freeCommentRepository.findAllByUserId(nickname);
+    }
 }
