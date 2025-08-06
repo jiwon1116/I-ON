@@ -123,6 +123,7 @@
             flex: 1;
         }
 
+
          /* 알림창 */
         .notification-box {
             background-color: #ffffff;
@@ -177,6 +178,7 @@
             align-items: center;
         }
 
+
         @media (max-width: 1200px) {
             .main-board { padding: 18px 10px 18px 10px; }
         }
@@ -189,6 +191,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <c:if test="${not empty editSuccess}">
         <script>
             alert('${editSuccess}');
@@ -204,7 +207,8 @@
                 </label>
                 <input type="file" name="profileImg" id="profileImgInput" accept="image/*" style="display:none;" onchange="previewProfileImg(event)">
                 <div class="profile-name">${member.nickname}</div>
-                <button type="submit" class="profile-edit-btn mt-1">이미지 수정하기</button>
+                <button type="button" class="profile-edit-btn mt-1" onclick="location.href='/edit'">회원 정보 수정하기</button>
+
             </form>
             <div class="sidebar-bottom">
                 <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
