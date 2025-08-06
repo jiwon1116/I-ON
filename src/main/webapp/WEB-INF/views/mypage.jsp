@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <title>마이페이지</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
             background: #F8F9FA;
@@ -124,6 +124,7 @@
             flex: 1;
         }
 
+
          /* 알림창 */
         .notification-box {
             background-color: #ffffff;
@@ -178,6 +179,7 @@
             align-items: center;
         }
 
+
         @media (max-width: 1200px) {
             .main-board { padding: 18px 10px 18px 10px; }
         }
@@ -187,8 +189,10 @@
         }
     </style>
     <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <c:if test="${not empty editSuccess}">
         <script>
             alert('${editSuccess}');
@@ -203,8 +207,11 @@
                     <img src="https://img.icons8.com/ios-glyphs/60/000000/user.png" class="profile-img" id="profileImgPreview" alt="프로필 이미지">
                 </label>
                 <input type="file" name="profileImg" id="profileImgInput" accept="image/*" style="display:none;" onchange="previewProfileImg(event)">
+                <security:authorize access="isAuthenticated()">
                 <div class="profile-name">${member.nickname}</div>
-                <button type="submit" class="profile-edit-btn mt-1">이미지 수정하기</button>
+                </security:authorize>
+                <button type="button" class="profile-edit-btn mt-1" onclick="location.href='/edit'">회원 정보 수정하기</button>
+
             </form>
             <div class="sidebar-bottom">
                 <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
@@ -247,6 +254,9 @@
                         <span>어린이 범죄 예방 지도</span>
                     </div>
                 </div>
+
+
+                 <!-- 자녀 등록 -->
                 <div class="dashboard-row">
                     <div class="card p-4">
                         <span>자녀 등록</span>
@@ -293,17 +303,22 @@
                                </div>
                         </div>
                     </div>
-                    <div class="card p-4" style="flex:1">
-                        <span>신뢰도 점수판</span>
+                    <div class="card p-4" style="flex:1; position:relative;">
+                        <span style="font-weight:600; font-size:1.08rem;">신뢰도 점수판</span>
+                        <!-- 물음표 버튼(모달 트리거) -->
+                        <button type="button"
+                            class="btn btn-light rounded-circle"
+                            style="position:absolute; top:20px; right:22px; width:28px; height:28px; padding:0; border:1.5px solid #eee; color:#888;"
+                            data-bs-toggle="modal" data-bs-target="#trustScoreModal">
+                            <i class="fas fa-question"></i>
+                        </button>
                         <div class="mt-3">
+                            <!-- ... 기존 점수판 내용 ... -->
                             <div class="d-flex justify-content-between">
                                 <span>제보 횟수</span>
                                 <span style="color:#f6a623; font-size:1.1rem;">⭐</span>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <span>글</span>
-                                <span style="color:#f6a623; font-size:1.1rem;">⭐</span>
-                            </div>
+
                             <div class="d-flex justify-content-between">
                                 <span>위탁 횟수</span>
                                 <span style="color:#f6a623; font-size:1.1rem;">⭐</span>
@@ -314,24 +329,38 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- 신뢰도 설명 모달 -->
+                    <div class="modal fade" id="trustScoreModal" tabindex="-1" aria-labelledby="trustScoreModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="trustScoreModalLabel">신뢰도 점수판 안내</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                          </div>
+                          <div class="modal-body">
+                            <ul style="padding-left: 1rem;">
+                              <li><b>제보 횟수</b> : 신고/제보 게시판에 올린 게시글 수를 의미합니다.</li>
+                              <li><b>위탁 횟수</b> : 위탁 게시판에 작성한 게시글 수를 의미합니다.</li>
+                              <li><b>댓글</b> : 내가 단 댓글의 총 개수를 의미합니다.</li>
+                            </ul>
+                            <div class="mt-2 text-secondary" style="font-size:0.98rem;">
+                              신뢰도 점수판은 커뮤니티 활동의 활발함과 신뢰도를 시각적으로 보여줍니다.<br>
+                              활동이 많을수록 별이 더 많이 채워집니다.
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">확인</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                 </div>
             </div><!-- main-board -->
         </div><!-- mypage-main -->
     </div><!-- mypage-layout -->
 
-    <!-- 프로필 이미지 미리보기 스크립트 -->
-    <script>
-        function previewProfileImg(event) {
-            const input = event.target;
-            const preview = document.getElementById('profileImgPreview');
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
+
 </body>
 </html>
