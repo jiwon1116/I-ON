@@ -296,6 +296,8 @@
                                </div>
                         </div>
                     </div>
+
+
                     <div class="card p-4" style="flex:1; position:relative;">
                         <span style="font-weight:600; font-size:1.08rem;">신뢰도 점수판</span>
                         <!-- 물음표 버튼(모달 트리거) -->
