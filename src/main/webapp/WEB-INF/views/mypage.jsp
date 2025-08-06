@@ -1,6 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -121,6 +123,61 @@
         .dashboard-row .card {
             flex: 1;
         }
+
+         /* 알림창 */
+        .notification-box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: 300px; /* 적당한 높이로 조절 가능 */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notification-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .notification-list {
+            flex: 1;
+            overflow-y: auto; /* 스크롤바 생김 */
+            padding-right: 8px;
+        }
+
+        .notification-item {
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+        }
+
+        .notify-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        .notify-content {
+            margin-top: 4px;
+            color: #333;
+        }
+
+        .notify-date {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #888;
+        }
+        .notify-icon {
+            margin-right: 6px;
+        }
+        .notify-header {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
         @media (max-width: 1200px) {
             .main-board { padding: 18px 10px 18px 10px; }
         }
@@ -207,7 +264,7 @@
                         <span>내가 작성한 댓글</span>
                         <a href="/flag" class="btn btn-warning btn-sm mt-2">
                                 바로가기
-                            </a>
+                        </a>
                     </div>
                 </div>
                 <div class="dashboard-row">
@@ -215,8 +272,25 @@
                         <span>내 소식</span>
                         <div class="text-center text-muted py-5">
                             <i class="fas fa-bell fa-2x mb-2"></i><br>
-                            <span>알림 넣기</span>
-                             <!-- 알림 목록 -->
+                           <div class="notification-list" id="notifyList">
+                                  <c:forEach var="notify" items="${notifyList}">
+                                      <div class="notification-item">
+                                          <div class="notify-header">
+                                              <span class="notify-icon">
+                                                  <c:choose>
+                                                      <c:when test="${notify.type == 'COMMENT'}">[댓글]</c:when>
+                                                      <c:when test="${notify.type == 'DANGER_ALERT'}">[위험]</c:when>
+                                                      <c:otherwise>[알림]</c:otherwise>
+                                                  </c:choose>
+                                              </span>
+                                          </div>
+                                          <div class="notify-content">${notify.content}</div>
+                                          <div class="notify-date">
+                                              <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                                          </div>
+                                      </div>
+                                  </c:forEach>
+                               </div>
                         </div>
                     </div>
                     <div class="card p-4" style="flex:1">

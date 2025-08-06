@@ -76,6 +76,12 @@ public class Info_contentController{
     public String save(@ModelAttribute Info_contentDTO dto,
                        @RequestParam("file") List<MultipartFile> files) throws IOException {
 
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+
+        //로그인 유저의 nickname은 이렇게 직접 넣어줘야함
+        dto.setNickname(memberDTO.getNickname());
+
         infoContentService.save(dto); // 게시글 저장
         Long boardId = dto.getId();   // 저장된 게시글 ID
 

@@ -10,7 +10,7 @@
       <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
     </div>
     <ul class="nav-tabs">
-      <li class="main-menu"><a href="/mypage">마이페이지</a></li>
+      <li class="main-menu"><a href="/myPage/">마이페이지</a></li>
       <li class="main-menu"><a href="/map">범죄 예방 지도</a></li>
       <li class="main-menu active">
         <a href="/free">커뮤니티</a>

@@ -118,9 +118,9 @@ public class MemberController {
     @GetMapping("/edit")
     public String showEditForm(Model model) {
 
-            CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            MemberDTO memberDTO = user.getMemberDTO();
-            model.addAttribute("member", memberDTO);
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+        model.addAttribute("member", memberDTO);
 
         return "edit";
     }
@@ -131,20 +131,25 @@ public class MemberController {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MemberDTO currentMember = userDetails.getMemberDTO();
 
-        if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
-            currentMember.setNickname(memberDTO.getNickname());
-        }
 
         if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
             currentMember.setPassword(encodedPassword);
         }
+
+        if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
+            currentMember.setNickname(memberDTO.getNickname());
+        }
+
+        if (memberDTO.getRegion() != null && !memberDTO.getRegion().isEmpty()) {
+            currentMember.setRegion(memberDTO.getRegion());
+        }
         try {
             memberService.edit(currentMember);
             redirectAttributes.addFlashAttribute("editSuccess", "회원 정보가 수정되었습니다!");
-            return "redirect:/mypage";
+            return "redirect:/myPage/";
         }catch (DataIntegrityViolationException e){
-            redirectAttributes.addFlashAttribute("editError", "이미 사용 중인 아이디 또는 닉네임입니다.");
+            redirectAttributes.addFlashAttribute("editError", "이미 사용 중인 닉네임입니다.");
             redirectAttributes.addFlashAttribute("member", currentMember);
             return "redirect:/edit";
         } catch (Exception e){
