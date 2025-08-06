@@ -1,6 +1,5 @@
 package com.spring.ion.yjw.controller;
 
-import com.spring.ion.lcw.dto.CustomUserDetails;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPageDTO;
@@ -9,7 +8,6 @@ import com.spring.ion.yjw.service.FlagCommentService;
 import com.spring.ion.yjw.service.FlagLikeService;
 import com.spring.ion.yjw.service.FlagService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
