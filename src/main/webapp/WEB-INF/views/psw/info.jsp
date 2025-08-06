@@ -141,6 +141,9 @@
     </style>
 </head>
 <body>
+
+<%@ include file="/WEB-INF/views/header.jsp" %>
+
 <div class="container">
     <div class="top-bar">
       <form method="get" action="${pageContext.request.contextPath}/info/search">

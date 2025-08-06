@@ -35,6 +35,8 @@
 
         <typeAlias type="com.spring.ion.lcw.dto.MemberDTO" alias="member"></typeAlias>
 
+        <typeAlias type="com.spring.ion.psw.dto.NotifyDTO" alias="notify"></typeAlias>
+
     </typeAliases>
 
     <mappers>
@@ -50,12 +52,14 @@
 
         <mapper resource="mapper/psw/InfoMapper.xml"/>
         <mapper resource="mapper/psw/CommentMapper.xml"/>
-        <mapper resource="mapper/psw/info_LikeMapper.xml"/>
+        <mapper resource="mapper/psw/Info_LikeMapper.xml"/>
+        <mapper resource="mapper/psw/NotifyMapper.xml"/>
 
         <mapper resource="mapper/yjw/flagMapper.xml"/>
         <mapper resource="mapper/yjw/flagCommentMapper.xml"/>
         <mapper resource="mapper/yjw/flagLikeMapper.xml"/>
 
         <mapper resource="mapper/lcw/MemberMapper.xml"/>
+
     </mappers>
 </configuration>

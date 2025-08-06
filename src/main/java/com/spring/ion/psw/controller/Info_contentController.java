@@ -46,7 +46,6 @@ public class Info_contentController{
         MemberDTO memberDTO = user.getMemberDTO();
         model.addAttribute("member", memberDTO);
 
-        System.out.println("로그인한 유저: " + memberDTO);
         // 페이징된 글 목록 리스트
         List<Info_contentDTO> pagingList = infoContentService.pagingList(page);
         // 페이징 정보

@@ -16,4 +16,9 @@
         DELETE FROM info_comment
         WHERE id = #{id} AND nickname=#{nickname}
     </delete>
+
+    <select id="infoFindAllComment" resultType="infoComment">
+        SELECT * FROM info_comment ORDER BY id DESC
+    </select>
+
 </mapper>

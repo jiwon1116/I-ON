@@ -23,15 +23,16 @@ public class HomeController {
     }
 
 
-
     @GetMapping("/map")
     public String map(){
         return "jjh/map";
     }
 
+/*
     @GetMapping("/mypage")
+
     public String mypage(){
         return "mypage";
-    }
+    }*/
 
 }
