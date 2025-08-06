@@ -78,4 +78,8 @@
         OR content LIKE CONCAT('%', #{keyword}, '%')
     </select>
 
+    <select id="findAllByWriter" parameterType="String" resultType="miss">
+        SELECT * FROM miss_post WHERE nickname = #{nickname} ORDER BY created_at DESC
+    </select>
+
 </mapper>

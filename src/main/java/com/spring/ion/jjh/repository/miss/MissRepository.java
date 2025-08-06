@@ -79,4 +79,7 @@ public class MissRepository {
         return sql.selectOne("Miss.searchCount", searchContent);
     }
 
+    public List<MissDTO> findAllByWriter(String nickname) {
+        return sql.selectList("Miss.findAllByWriter", nickname);
+    }
 }

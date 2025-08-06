@@ -34,10 +34,10 @@ public class MyPostController {
     public String allMyPosts(Model model, Principal principal) {
         String nickname = principal.getName(); // 로그인한 유저 아이디
 
-//        model.addAttribute("freePosts", freeService.findMyPosts(loginId));
+        model.addAttribute("freePosts", freeService.findMyPosts(nickname));
         model.addAttribute("flagPosts", flagService.findMyPosts(nickname));
-//        model.addAttribute("missPosts", missService.findMyPosts(loginId));
-//        model.addAttribute("entrustPosts", entrustService.findMyPosts(loginId));
+        model.addAttribute("missPosts", missService.findMyPosts(nickname));
+        model.addAttribute("entrustPosts", entrustService.findMyPosts(nickname));
 
         return "yjw/myPost"; // /WEB-INF/views/myPost.jsp
     }
