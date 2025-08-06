@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -130,6 +132,11 @@
     <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
 </head>
 <body>
+    <c:if test="${not empty editSuccess}">
+        <script>
+            alert('${editSuccess}');
+        </script>
+    </c:if>
     <div class="mypage-layout">
         <!-- 왼쪽 사이드바 -->
         <aside class="sidebar">

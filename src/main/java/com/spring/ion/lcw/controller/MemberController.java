@@ -1,26 +1,22 @@
 package com.spring.ion.lcw.controller;
 
-//import com.spring.ion.lcw.service.MemberService;
 import com.spring.ion.lcw.repository.MemberRepository;
 import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Member;
 
 @Controller
 public class MemberController {
@@ -46,13 +42,25 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public String register( MemberDTO memberDTO) {
+    public String register(MemberDTO memberDTO, RedirectAttributes redirectAttributes) {
 
         String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
         memberDTO.setPassword(encodedPassword);
         memberDTO.setEnabled(true);
-        memberService.save(memberDTO);
-        return "redirect:/login";
+
+        try {
+            memberService.save(memberDTO);
+            redirectAttributes.addFlashAttribute("registerSuccess", "회원가입이 완료되었습니다!");
+            return "redirect:/login";
+
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("registerError", "이미 사용 중인 아이디 또는 닉네임입니다.");
+            return "redirect:/register";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("registerError", "회원가입 중 알 수 없는 오류가 발생했습니다.");
+            return "redirect:/register";
+        }
     }
 
 //    @PostMapping("/register")
@@ -65,37 +73,46 @@ public class MemberController {
 //        String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
 //        memberDTO.setPassword(encodedPassword);
 //        memberDTO.setEnabled(true);
-//        memberService.save(memberDTO);
-//        return "redirect:/login";
+//        try {
+//            memberService.save(memberDTO);
+//            redirectAttributes.addFlashAttribute("registerSuccess", "회원가입이 완료되었습니다!");
+//            return "redirect:/login";
+//
+//        } catch (DataIntegrityViolationException e) {
+//            redirectAttributes.addFlashAttribute("registerError", "이미 사용 중인 아이디 또는 닉네임입니다.");
+//            return "redirect:/register";
+//
+//        } catch (Exception e) {
+//            redirectAttributes.addFlashAttribute("registerError", "회원가입 중 알 수 없는 오류가 발생했습니다.");
+//            return "redirect:/register";
+//        }
 //    }
 
 
     @DeleteMapping("/withdraw")
-    public String withdraw(HttpServletRequest request, HttpServletResponse response) {
+    public String withdraw(HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
             return "redirect:/login";
         }
-
         String userId = null;
         Object principal = auth.getPrincipal();
         if (principal instanceof CustomUserDetails) {
             userId = ((CustomUserDetails) principal).getUsername();
         } else {
-            return "redirect:/error";
-        }
-
-        if (userId == null) {
-            return "redirect:/error";
+            return "redirect:/";
         }
 
         try {
             memberService.delete(userId);
+            redirectAttributes.addFlashAttribute("withdrawSuccess", "회원 탈퇴 처리가 완료되었습니다.");
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+            return "redirect:/login";
+
         } catch (Exception e) {
-            return "redirect:/error";
+            redirectAttributes.addFlashAttribute("withdrawError", "회원 탈퇴 처리에 실패했습니다. 다시 로그인하여 시도해 보시고, 같은 문제가 반복될 경우 관리자에게 문의해 주세요.");
+            return "redirect:/";
         }
-        new SecurityContextLogoutHandler().logout(request, response, auth);
-        return "redirect:/";
     }
 
     @GetMapping("/edit")
@@ -110,16 +127,31 @@ public class MemberController {
 
 
     @PatchMapping("/edit")
-    public String edit(MemberDTO memberDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails, Model model){
-        memberDTO.setUserId(customUserDetails.getUsername());
+    public String edit(@ModelAttribute MemberDTO memberDTO, RedirectAttributes redirectAttributes){
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO currentMember = userDetails.getMemberDTO();
+
+        if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
+            currentMember.setNickname(memberDTO.getNickname());
+        }
 
         if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
-            memberDTO.setPassword(encodedPassword);
+            currentMember.setPassword(encodedPassword);
         }
-
-        memberService.edit(memberDTO);
-        return "redirect:/";
+        try {
+            memberService.edit(currentMember);
+            redirectAttributes.addFlashAttribute("editSuccess", "회원 정보가 수정되었습니다!");
+            return "redirect:/mypage";
+        }catch (DataIntegrityViolationException e){
+            redirectAttributes.addFlashAttribute("editError", "이미 사용 중인 아이디 또는 닉네임입니다.");
+            redirectAttributes.addFlashAttribute("member", currentMember);
+            return "redirect:/edit";
+        } catch (Exception e){
+            redirectAttributes.addFlashAttribute("editError", "회원정보 수정 중 알 수 없는 오류가 발생했습니다.");
+            redirectAttributes.addFlashAttribute("member", currentMember);
+            return "redirect:/edit";
+        }
     }
 
 
