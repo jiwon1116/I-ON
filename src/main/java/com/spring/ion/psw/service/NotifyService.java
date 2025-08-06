@@ -17,22 +17,21 @@ public class NotifyService {
     private final NotifyRepository notifyRepository;
 
     // 댓글 알림저장
-    public void createCommentNotify(Info_commentDTO infoCommentDTO, Info_contentDTO content) {
-
-        // 닉네임이 없으면 관리자
-        String receiver = (content.getNickname() != null) ? content.getNickname() : "admin";
+    public void createCommentNotify(String postWriter, String commentWriter, Long postId, Long commentId,String boardType) {
+        if (postWriter == null || postWriter.equals(commentWriter)) return; // 자기 글엔 알림 X
 
         NotifyDTO notify = new NotifyDTO();
-        notify.setNickname(receiver);
+        notify.setNickname(postWriter); // 알림 받는 사람
         notify.setType(NotifyDTO.NotificationType.COMMENT);
-        notify.setContent(infoCommentDTO.getNickname() + "님이 댓글을 남겼습니다.");
-        notify.setRelated_post_id(infoCommentDTO.getPost_id()); // 관련 게시글
-        notify.setRelated_comment_id(infoCommentDTO.getId()); // 관련 댓글
-        notify.setIs_read(false);
+        notify.setContent(commentWriter + "님이 댓글을 남겼습니다.");
+        notify.setRelated_post_id(postId);
+        notify.setRelated_comment_id(commentId);
         notify.setCreated_at(new Date());
+        notify.setRelated_board(boardType);
 
         notifyRepository.saveNotify(notify);
-       }
+    }
+
     // 해당 닉네임의 알림 가져오기
     public List<NotifyDTO> findAllByNotify(String nickname) {
         return notifyRepository.findAllByNotify(nickname);
