@@ -260,6 +260,13 @@
                         <div class="comment-date">
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
                         </div>
+                        <div>
+                        <c:if test="${comment.nickname == member.nickname}">
+                           <!-- 댓글 안에 버튼에 인자로 넘겨줘야 함 -->
+                           <button type="button" onclick="commentDelete('${comment.nickname}', ${comment.id})">삭제</button>
+                        </c:if>
+
+                        </div>
                     </div>
                 </c:forEach>
                  </div>
@@ -269,7 +276,8 @@
 
 <script>
     const updatefn = () => {
-        document.infoupdateForm.submit();}
+        document.infoupdateForm.submit();
+        }
 
     const infoForm = () => {
         location.href = "/info";
@@ -310,9 +318,9 @@
                   location.href = "/info/delete?id=" + id;
                   }
       }
+
       const commentWrite = () => {
-      //댓글을 작성한 사람 닉네임 띄우기
-              const nickname ="${memberNickname}";
+              const nickname ="${member.nickname}";
               const content = document.getElementById("commentContents").value.trim();
               const post_id = "${findDto.id}";
 
@@ -320,7 +328,6 @@
                       alert("내용을 입력해주세요.");
                       return;
                }
-
               $.ajax({
                   type: "post",
                   url: "/infocomment/save",
@@ -338,6 +345,30 @@
                   }
               });
           }
+
+         // JS 함수는 인자로 받아야 정확하게 타겟팅 가능
+         const commentDelete = (nickname, commentId) => {
+             const confirmed = confirm("정말 삭제하시겠습니까?");
+             if (!confirmed) return;
+
+             $.ajax({
+                 type: "post",
+                 url: "/infocomment/delete",
+                 data: {
+                     nickname: nickname,
+                     id: commentId
+                 },
+                 dataType: "json",
+                 success: function (commentList) {
+                     console.log("댓글 삭제 성공");
+                     location.reload();
+                 },
+                 error: function () {
+                     console.log("댓글 삭제 실패");
+                 }
+             });
+         };
+
 </script>
 </body>
 </html>

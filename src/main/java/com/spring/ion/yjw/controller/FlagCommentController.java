@@ -1,52 +1,62 @@
 package com.spring.ion.yjw.controller;
 
+import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.service.FlagCommentService;
+import com.spring.ion.lcw.dto.MemberDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("FlagComment")
+@RequestMapping("/FlagComment")
 public class FlagCommentController {
 
     private final FlagCommentService flagCommentService;
 
-    // 댓글 작성
+    // 댓글 등록
     @PostMapping("/write")
-    public @ResponseBody List<FlagCommentDTO> write(@RequestParam("nickname") String nickname,
-                                      @RequestParam("content") String content,
+    @ResponseBody
+    public List<FlagCommentDTO> write(@RequestParam("content") String content,
                                       @RequestParam("post_id") long post_id) {
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         FlagCommentDTO dto = new FlagCommentDTO();
-        dto.setNickname(nickname);
+        dto.setNickname(user.getMemberDTO().getNickname());
+        dto.setUserId(user.getUsername()); // 실제로는 userId 값!
         dto.setContent(content);
         dto.setPost_id(post_id);
-
-
         flagCommentService.write(dto);
-
-        System.out.println("닉네임: " + nickname);
-        System.out.println("내용: " + content);
-        System.out.println("게시글 ID: " + post_id);
-
         return flagCommentService.findAll(post_id);
     }
 
 
+
     // 댓글 삭제
     @GetMapping("/delete")
-    public @ResponseBody List<FlagCommentDTO> delete(@RequestParam("id") Long id, @RequestParam("post_id") long post_id) {
-        flagCommentService.delete(id);
-        List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(post_id);
+    public @ResponseBody List<FlagCommentDTO> delete(
+            @RequestParam("id") long id,
+            @RequestParam("post_id") long postId
+    ) {
+        // 현재 로그인 유저
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = user.getUsername(); // 또는 getMemberDTO().getUserId();
 
-        // 삭제 후 결과 로그
-        for (FlagCommentDTO dto : flagCommentDTOList) {
-            System.out.println("삭제 후 댓글 목록: " + dto);
+        // 댓글 정보 조회
+        FlagCommentDTO comment = flagCommentService.findById(id);
+
+        // 작성자와 로그인 유저가 다르면 삭제 불가
+        if (!loginUserId.equals(comment.getUserId())) {
+            throw new RuntimeException("본인 댓글만 삭제할 수 있습니다.");
         }
 
-        return flagCommentDTOList;
+        // 삭제 진행
+        flagCommentService.delete(id);
+        return flagCommentService.findAll(postId);
     }
+
 }

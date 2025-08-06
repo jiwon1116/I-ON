@@ -23,6 +23,13 @@ public class Info_commentController {
         return CommentDTOList;
     }
 
+    // 댓글 삭제 기능
+    @PostMapping("/delete")
+    public @ResponseBody List<Info_commentDTO> delete (@ModelAttribute Info_commentDTO infoCommentDTO){
+        infoCommentService.delete(infoCommentDTO);
+        List<Info_commentDTO> CommentDTOList = infoCommentService.findAll(infoCommentDTO.getPost_id());
+        return CommentDTOList;
+     }
    }
 
 
