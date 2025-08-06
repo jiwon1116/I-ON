@@ -142,7 +142,7 @@ public class MemberController {
         try {
             memberService.edit(currentMember);
             redirectAttributes.addFlashAttribute("editSuccess", "회원 정보가 수정되었습니다!");
-            return "redirect:/mypage";
+            return "redirect:/myPage/";
         }catch (DataIntegrityViolationException e){
             redirectAttributes.addFlashAttribute("editError", "이미 사용 중인 닉네임입니다.");
             redirectAttributes.addFlashAttribute("member", currentMember);
