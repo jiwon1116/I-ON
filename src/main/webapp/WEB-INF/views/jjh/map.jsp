@@ -1,49 +1,73 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="/WEB-INF/views/header.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8"/>
-	<title>Map</title>
-	<style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <title>안전지도</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+
+  <!-- 카카오 클러스터 -->
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=355b679f9ec17e7c677b8177cc2b3695&libraries=clusterer"></script>
+
+  <!-- Custom JS -->
+  <script src="${pageContext.request.contextPath}/resources/js/map/map-load.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/js/map/map-marker.js"></script>
+  <script src="${pageContext.request.contextPath}/resources/js/map/map-toggle.js" defer></script>
+  <script src="${pageContext.request.contextPath}/resources/js/map/map-marker-detail.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #map {
+      width: 100vw;
+      height: calc(100vh - 60px); /* 헤더 + 토글버튼 영역 제외 */
+    }
+
+    #marker-controls {
+      padding: 10px;
+      background: #f8f8f8;
+      border-top: 1px solid #ddd;
+      text-align: center;
+    }
+
+    #marker-controls label {
+      margin-right: 20px;
+      font-weight: bold;
+    }
+
+    .main-menu.active {
+      background-color: #fff;
+      color: #000;
+      border-radius: 5px;
+    }
+
+  </style>
 </head>
+
 <body>
-	<div id="map" style="width:100vw; height:100%;"></div>
-	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=355b679f9ec17e7c677b8177cc2b3695"></script>
-	<script>
+<header>
+  <nav class="top-nav">
+    <div class="logo-section">
+      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
+    </div>
+    <ul class="nav-tabs">
+      <li class="main-menu" data-type="crime">범죄 발생 지역</li>
+      <li class="main-menu" data-type="sexoffender">성범죄자 거주지</li>
+      <li class="main-menu" data-type="emergencybell">비상벨</li>
+      <li class="main-menu" data-type="safehouse">안전 지킴이집</li>
+    </ul>
+    <div class="icons">
+      <span class="icon">🔔</span>
+      <span class="icon">✉️</span>
+    </div>
+  </nav>
+</header>
 
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-
-            // 원래 기준 offsetLat = 0.00345
-            const offsetLat = 0.0033;
-            const offsetLon = 0.01285;
-
-            const locPosition = new kakao.maps.LatLng(lat + offsetLat, lon - offsetLon);
-            const mapContainer = document.getElementById('map');
-            const mapOption = {
-              center: locPosition,
-              level: 1
-            };
-
-            const map = new kakao.maps.Map(mapContainer, mapOption);
-
-            }, function (error) {
-                    alert('위치 정보를 가져올 수 없습니다.');
-                    console.error(error);
-               });
-            } else {
-              alert('이 브라우저는 위치 기능을 지원하지 않습니다.');
-            }
-	</script>
+<div id="map"></div>
 </body>
 </html>
