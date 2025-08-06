@@ -1,47 +1,41 @@
 (function () {
-  const fallbackLat = 37.489996; // 신림역 위도
-  const fallbackLon = 126.927081; // 신림역 경도
-
-  // 맵 초기화 콜백 등록용
-  window.onMapReady = null;
+  const fallbackLat = 37.489996;
+  const fallbackLon = 126.927081;
 
   function initMap(lat, lon) {
     const locPosition = new kakao.maps.LatLng(lat, lon);
-    const mapContainer = document.getElementById('map');
+    const mapContainer = document.getElementById("map");
     const mapOption = {
       center: locPosition,
-      level: 4
+      level: 2
     };
 
     window.map = new kakao.maps.Map(mapContainer, mapOption);
 
-    //  클러스터러도 함께 초기화
     window.clusterer = new kakao.maps.MarkerClusterer({
       map: window.map,
       averageCenter: true,
       minLevel: 10
     });
 
-    //  지도와 클러스터러가 준비된 이후 실행
-    if (typeof window.onMapReady === 'function') {
-      window.onMapReady();
-    }
+    // 지도 idle 시 마커 자동 로드
+    kakao.maps.event.addListener(window.map, 'idle', () => {
+      if (window.toggledLayers?.emergency ?? true) {
+        window.loadEmergencyMarkersByBounds();
+      }
+    });
+    console.log("✅ 지도 및 클러스터러 초기화 완료");
   }
 
-  // 이 부분이 바깥으로 빠져야 합니다!
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-
+      (pos) => {
         const offsetLat = 0.0033;
         const offsetLon = 0.01285;
-
-        initMap(lat + offsetLat, lon - offsetLon);
+        initMap(pos.coords.latitude + offsetLat, pos.coords.longitude - offsetLon);
       },
-      (err) => {
-        console.warn("위치 정보를 가져오지 못해 기본 위치로 대체합니다.");
+      () => {
+        console.warn("❗ 위치 실패, 기본 좌표로 지도 표시");
         initMap(fallbackLat, fallbackLon);
       }
     );

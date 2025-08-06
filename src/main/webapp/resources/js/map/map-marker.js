@@ -1,83 +1,63 @@
 let emergencyMarkers = [];
-let cctvMarkers = [];
-let aedMarkers = [];
-let safeReturnMarkers = [];
 
-// clusterer는 map-load.js에서 생성되므로 전역에서 접근
-// window.clusterer 사용 가정
+window.loadEmergencyMarkersByBounds = function () {
+  if (!window.map) return;
 
-function loadMarkers(apiUrl, markerArray, type, iconUrl = null) {
-  fetch(apiUrl)
+  const bounds = window.map.getBounds();
+  const sw = bounds.getSouthWest();
+  const ne = bounds.getNorthEast();
+
+  const url = `/map/emergencybell?swLat=${sw.getLat()}&swLng=${sw.getLng()}&neLat=${ne.getLat()}&neLng=${ne.getLng()}`;
+
+  fetch(url)
     .then(res => res.json())
     .then(data => {
+      window.clearEmergencyMarkers();
+
       const newMarkers = [];
 
       data.forEach(marker => {
-        if (!marker.latitude || !marker.longitude) {
-          console.warn("좌표 누락 마커:", marker);
-          return;
+        const { latitude, longitude } = marker;
+        if (!latitude || !longitude || latitude === 0 || longitude === 0) return;
+
+        const position = new kakao.maps.LatLng(latitude, longitude);
+
+        const markerImageUrl = "/resources/img/emergencybell-marker.png";  // 마커 이미지 경로
+        const imageSize = new kakao.maps.Size(32, 32);                     // 마커 이미지 크기
+        const markerImage = new kakao.maps.MarkerImage(markerImageUrl, imageSize);
+
+        const mk = new kakao.maps.Marker({
+          position,
+          image: markerImage
+        });
+
+
+        if (window.clusterer) {
+          window.clusterer.addMarker(mk);
         }
 
-        const position = new kakao.maps.LatLng(marker.latitude, marker.longitude);
-        const markerOptions = { position };
-
-        if (iconUrl) {
-          markerOptions.image = new kakao.maps.MarkerImage(iconUrl, new kakao.maps.Size(32, 32));
-        }
-
-        const mk = new kakao.maps.Marker(markerOptions);
-        attachPopup(marker, mk, type);
-
-        markerArray.push(mk);
+        attachPopup(marker, mk, "emergency");
+        emergencyMarkers.push(mk);
         newMarkers.push(mk);
       });
 
-      // 클러스터러에 한 번에 추가
-      if (window.clusterer) {
-        window.clusterer.addMarkers(newMarkers);
-      } else {
-        console.warn("❗ clusterer가 아직 초기화되지 않았습니다.");
-      }
     })
-    .catch(err => console.error(`❗ Failed to load markers from ${apiUrl}`, err));
-}
+    .catch(err => console.error("❗ 마커 로딩 실패", err));
+};
 
-// 마커 제거 함수
-function clearMarkers(markerArray) {
-  if (window.clusterer) {
-    window.clusterer.removeMarkers(markerArray);
+// ✅ 이 함수가 없어서 에러 발생 중 → 아래 코드 추가
+window.toggleEmergencyMarkers = function (checked) {
+  if (checked) {
+    window.loadEmergencyMarkersByBounds();
+  } else {
+    window.clearEmergencyMarkers();
   }
-  markerArray.forEach(mk => mk.setMap(null));
-  markerArray.length = 0;
-}
+};
 
-// 마커 토글 함수들
-function toggleEmergencyMarkers(checked) {
-  console.log("비상벨 토글:", checked);
-  checked
-    ? loadMarkers("/map/emergencybell", emergencyMarkers, "emergency")
-    : clearMarkers(emergencyMarkers);
-}
-
-function toggleCctvMarkers(checked) {
-  checked
-    ? loadMarkers("/api/map/cctv", cctvMarkers, "cctv")
-    : clearMarkers(cctvMarkers);
-}
-
-function toggleAedMarkers(checked) {
-  checked
-    ? loadMarkers("/api/map/aed", aedMarkers, "aed")
-    : clearMarkers(aedMarkers);
-}
-
-function toggleSafeReturnMarkers(checked) {
-  checked
-    ? loadMarkers("/api/map/safe-return", safeReturnMarkers, "safeReturn")
-    : clearMarkers(safeReturnMarkers);
-}
-
-// 예: map-marker.js 하단에 추가
-window.onMapReady = () => {
-  toggleEmergencyMarkers(true); // 초기 표시할 마커
+window.clearEmergencyMarkers = function () {
+  if (window.clusterer) {
+    window.clusterer.removeMarkers(emergencyMarkers);
+  }
+  emergencyMarkers.forEach(mk => mk.setMap(null));
+  emergencyMarkers = [];
 };

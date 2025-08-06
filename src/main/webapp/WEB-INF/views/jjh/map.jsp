@@ -25,7 +25,7 @@
 
     #map {
       width: 100vw;
-      height: calc(100vh - 60px - 45px); /* 헤더 + 토글버튼 영역 제외 */
+      height: calc(100vh - 60px); /* 헤더 + 토글버튼 영역 제외 */
     }
 
     #marker-controls {

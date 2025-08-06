@@ -31,14 +31,13 @@ public class EmergencybellConversion {
 
                 Map<String, Object> marker = new HashMap<>();
                 marker.put("id", getString(row.getCell(0)));
-                marker.put("locationName", getString(row.getCell(4)));
                 marker.put("roadAddress", getString(row.getCell(5)));
                 marker.put("jibunAddress", getString(row.getCell(6)));
                 marker.put("latitude", getDouble(row.getCell(7)));
                 marker.put("longitude", getDouble(row.getCell(8)));
                 marker.put("linkType", getString(row.getCell(9)));
                 marker.put("policeLinked", getString(row.getCell(10)));
-                marker.put("agencyPhone", getString(row.getCell(17)));
+                marker.put("agencyPhone", getString(row.getCell(18)));
 
                 result.add(marker);
             }

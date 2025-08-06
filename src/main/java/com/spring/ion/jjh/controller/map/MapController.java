@@ -1,80 +1,47 @@
 package com.spring.ion.jjh.controller.map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.ion.jjh.dto.map.EmergencyBellDTO;
-import org.apache.poi.ss.usermodel.Cell;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/map")
 public class MapController {
 
-    private List<EmergencyBellDTO> cachedList = null;
+    private final List<EmergencyBellDTO> cachedList;
+
+    public MapController() throws IOException {
+        // JSON을 읽어 초기화
+        ClassPathResource resource = new ClassPathResource("data/emergencybell.json");
+        byte[] jsonData = StreamUtils.copyToByteArray(resource.getInputStream());
+
+        ObjectMapper mapper = new ObjectMapper();
+        cachedList = Arrays.asList(mapper.readValue(jsonData, EmergencyBellDTO[].class));
+    }
 
     @GetMapping("/emergencybell")
-    public ResponseEntity<?> getEmergencyBellMarkers() {
-        try {
-            // classpath 기준 경로
-            ClassPathResource resource = new ClassPathResource("src/main/webapp/resources/data/emergencybell.json");
+    public ResponseEntity<List<EmergencyBellDTO>> getMarkersByBounds(
+            @RequestParam double swLat,
+            @RequestParam double swLng,
+            @RequestParam double neLat,
+            @RequestParam double neLng) {
 
-            // 파일 내용을 문자열로 읽음
-            byte[] jsonData = StreamUtils.copyToByteArray(resource.getInputStream());
-            String json = new String(jsonData, StandardCharsets.UTF_8);
+        List<EmergencyBellDTO> filtered = cachedList.stream()
+                .filter(m -> m.getLatitude() >= swLat && m.getLatitude() <= neLat)
+                .filter(m -> m.getLongitude() >= swLng && m.getLongitude() <= neLng)
+                .collect(Collectors.toList());
 
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(json);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"JSON 파일 로딩 실패\"}");
-        }
+        return ResponseEntity.ok(filtered);
     }
-
-    // 셀에서 문자열 가져오기
-    private String getString(Cell cell) {
-        if (cell == null) return "";
-
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue().trim();
-            case NUMERIC:
-                return String.valueOf(cell.getNumericCellValue());
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            default:
-                return "";
-        }
-    }
-
-    // 셀에서 double 가져오기
-    private double getDouble(Cell cell) {
-        if (cell == null) return 0.0;
-
-        switch (cell.getCellType()) {
-            case NUMERIC:
-                return cell.getNumericCellValue();
-            case STRING:
-                try {
-                    return Double.parseDouble(cell.getStringCellValue().trim());
-                } catch (NumberFormatException e) {
-                    System.err.println("잘못된 숫자 형식: " + cell.getStringCellValue());
-                    return 0.0;
-                }
-            default:
-                return 0.0;
-        }
-    }
-
 }
