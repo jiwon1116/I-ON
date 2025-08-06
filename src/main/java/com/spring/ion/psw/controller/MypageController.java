@@ -25,16 +25,18 @@ public class MypageController {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MemberDTO member = user.getMemberDTO();
 
-        System.out.println("마이페이지 로그인 유저 객체:"+member);
-
         String nickname = member.getNickname(); // 로그인한 회원 닉네임
 
         //알림 모아둔 리스트에서 해당 닉네임 가진 알림 가져오기
         List<NotifyDTO> notifyList = notifyService.findAllByNotify(nickname);
+        System.out.println("알림 객체:"+notifyList);
+
+
 
          model.addAttribute("notifyList", notifyList);
          model.addAttribute("member", member);
         return "mypage";
+
     }
 
 }
