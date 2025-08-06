@@ -19,4 +19,10 @@
     <delete id="delete" parameterType="long">
         DELETE FROM miss_comment WHERE id = #{id}
     </delete>
+
+    <select id="findAllByUserId" parameterType="string" resultType="missComment">
+        SELECT * FROM miss_comment
+        WHERE nickname = #{nickname}
+        ORDER BY created_at DESC
+    </select>
 </mapper>

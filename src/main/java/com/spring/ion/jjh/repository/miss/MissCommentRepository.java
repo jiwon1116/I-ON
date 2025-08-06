@@ -26,4 +26,8 @@ public class MissCommentRepository {
     public void delete(long id) {
         sql.delete("MissComment.delete", id);
     }
+
+    public List<MissCommentDTO> findAllByUserId(String nickname) {
+        return sql.selectList("MissComment.findAllByUserId", nickname);
+    }
 }

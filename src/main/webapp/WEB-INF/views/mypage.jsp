@@ -205,7 +205,7 @@
                     </div>
                     <div class="card p-4">
                         <span>내가 작성한 댓글</span>
-                        <a href="/flag" class="btn btn-warning btn-sm mt-2">
+                        <a href="/myComment" class="btn btn-warning btn-sm mt-2">
                                 바로가기
                             </a>
                     </div>
