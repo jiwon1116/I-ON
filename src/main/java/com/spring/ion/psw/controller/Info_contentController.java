@@ -1,5 +1,7 @@
 package com.spring.ion.psw.controller;
 
+import com.spring.ion.lcw.dto.MemberDTO;
+import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.psw.dto.Info_FileDTO;
 import com.spring.ion.psw.dto.Info_PageDTO;
 import com.spring.ion.psw.dto.Info_commentDTO;
@@ -38,26 +40,11 @@ public class Info_contentController{
     @GetMapping
     public String list(Model model,
                        @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        // 1. 로그인 유저 정보 구하기
-        String memberId = null;
-        // 현재 로그인한 사용자의 정보가 principal 객체에 들어 있음
-        // principal은 상황에 따라 타입이 다를 수 있으므로 3가지 경우로 나눠 처리
-        org.springframework.security.core.Authentication authentication =
-                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
 
-        if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
-            memberId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
-        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
-            memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
-        } else if (principal instanceof String) {
-            //로그인하지 않은 상태에서는 principal이 "anonymousUser"라는 문자열이 되기 때문에 예외처리
-            if (!"anonymousUser".equals(principal)) {
-                memberId = (String) principal;
-            }
-
-        }
-        System.out.println("로그인한 유저:"+memberId);
+        // 로그인 유저 정보
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+        model.addAttribute("member", memberDTO);
 
         // 페이징된 글 목록 리스트
         List<Info_contentDTO> pagingList = infoContentService.pagingList(page);
@@ -71,9 +58,7 @@ public class Info_contentController{
             Info_FileDTO file = infoContentService.findFile(post.getId());
             postFileMap.put(post, file); // 글, 파일 매칭(key, value)해서 저장
         }
-        
 
-        model.addAttribute("memberId",memberId);
         model.addAttribute("postMap", postFileMap);
         model.addAttribute("paging", pageDTO);
 
@@ -133,28 +118,13 @@ public class Info_contentController{
         // 댓글 정보
         List<Info_commentDTO> infoCommentList = infoCommentService.findAll(id);
 
-        // 로그인 사용자 정보 추출
-        String memberId = null;
-
-        // 현재 로그인한 사용자의 정보가 principal 객체에 들어 있음
-        // principal은 상황에 따라 타입이 다를 수 있으므로 3가지 경우로 나눠 처리
-        org.springframework.security.core.Authentication authentication =
-                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-   
-        if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
-            memberId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
-
-        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
-            memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
-        } else if (principal instanceof String && !"anonymousUser".equals(principal)) {
-            memberId = (String) principal;
-        }
-
-        System.out.println("로그인한 유저: " + memberId);
+        //로그인 유저 정보
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+        model.addAttribute("member", memberDTO);
 
         // 좋아요 여부 및 카운트 설정
-        boolean liked = memberId != null && infoLikeService.isLiked(id, memberId);
+        boolean liked = memberDTO.getUserId() != null && infoLikeService.isLiked(id, memberDTO.getUserId());
         findDto.setLiked(liked);
         findDto.setLike_count(infoLikeService.getLikeCount(id));
 
@@ -170,9 +140,7 @@ public class Info_contentController{
 
         model.addAttribute("findDto", findDto);
         model.addAttribute("commentList", infoCommentList);
-        model.addAttribute("memberId", memberId);
         model.addAttribute("findFileDto", secondImage); // secondImage를 기존 변수명에 맞게 전달
-
         return "psw/detail";
     }
 
@@ -188,8 +156,6 @@ public class Info_contentController{
         Long boardId = id;
 
         infoFileDTO.setBoard_id(boardId);
-
-
         return "psw/update";
     }
     
@@ -212,20 +178,20 @@ public class Info_contentController{
         // 게시글 내용 수정
         boolean result = infoContentService.update(infoContentDTO);
 
-        // 기존 파일 서버에서 삭제 + DB에서도 삭제 (필요시)
+        // 기존 파일 서버 + DB 삭제
         List<Info_FileDTO> existingFiles = infoContentService.findFiles(id);
         infoContentService.deleteFilesFromServer(existingFiles); // 서버에서 삭제
-
         // 새 파일 저장
         infoContentService.saveFiles(files, id);
-
         return result ? "redirect:/info/" : "psw/update";
     }
-
 
     // 글 삭제
     @GetMapping("/delete")
     public String delete(@RequestParam("id") long id) {
+        // 기존 파일 서버에서 삭제 + DB에서도 삭제 (필요시)
+        List<Info_FileDTO> existingFiles = infoContentService.findFiles(id);
+        infoContentService.deleteFilesFromServer(existingFiles); // 서버에서 삭제
         infoContentService.delete(id);
         return "redirect:/info/";
     }

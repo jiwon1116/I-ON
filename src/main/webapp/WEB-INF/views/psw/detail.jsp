@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -228,9 +230,13 @@
 
             좋아요: <span id="likeCountDisplay">${findDto != null ? findDto.like_count : 0}</span>
 
+         <security:authorize access="hasRole('ROLE_ADMIN')">
+            <div class="form-actions">
+               <button type="button" onclick="updatefn()">수정</button>
+               <button type="button" onclick="deletefn()">삭제</button>
+            </div>
+         </security:authorize>
                 <div class="form-actions">
-                    <button type="button" onclick="updatefn()">수정</button>
-                    <button type="button" onclick="deletefn()">삭제</button>
                     <button type="button" onclick="infoForm()">목록</button>
                 </div>
             </form>
@@ -240,7 +246,6 @@
                 <h3>댓글</h3>
 
             <!-- 댓글 작성 폼 -->
-              <input type = "text" id = "commentWriter" placeholder = "작성자"  />
               <input type = "text" id = "commentContents" placeholder = "내용"  />
                <div class="form-actions">
                  <button type="button" onclick="commentWrite()">댓글 작성</button>
@@ -255,6 +260,13 @@
                         <div class="comment-date">
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
                         </div>
+                        <div>
+                        <c:if test="${comment.nickname == member.nickname}">
+                           <!-- 댓글 안에 버튼에 인자로 넘겨줘야 함 -->
+                           <button type="button" onclick="commentDelete('${comment.nickname}', ${comment.id})">삭제</button>
+                        </c:if>
+
+                        </div>
                     </div>
                 </c:forEach>
                  </div>
@@ -264,13 +276,8 @@
 
 <script>
     const updatefn = () => {
-    const memberId = '${memberId}';
-    if(memberId !== "admin"){
-        alert("관리자만 수정이 가능한 게시글입니다😣");
-        return;
-    }else {
-        document.infoupdateForm.submit();}
-    }
+        document.infoupdateForm.submit();
+        }
 
     const infoForm = () => {
         location.href = "/info";
@@ -306,29 +313,21 @@
        // 삭제 버튼
     const deletefn = () => {
         const id = "${findDto.id}";
-        const memberId = '${memberId}';
-            if(memberId !== "admin"){
-                   alert("관리자만 삭제 가능한 게시글입니다😣");
-                return;
-            }else {
-                const confirmed = confirm("정말 삭제하시겠습니까?");
-                  if (confirmed) {
-                     location.href = "/info/delete?id=" + id;
+        const confirmed = confirm("정말 삭제하시겠습니까?");
+           if (confirmed) {
+                  location.href = "/info/delete?id=" + id;
                   }
-            }
       }
+
       const commentWrite = () => {
-      //댓글을 작성한 사람의 닉네임과 댓글의 닉네임 비교 후 댓글id 찾아서 삭제
-              const nickname = document.getElementById("commentWriter").value.trim();
+              const nickname ="${member.nickname}";
               const content = document.getElementById("commentContents").value.trim();
               const post_id = "${findDto.id}";
-              const memberId = '${memberId}';
 
               if (!nickname || !content) {
                       alert("내용을 입력해주세요.");
                       return;
                }
-
               $.ajax({
                   type: "post",
                   url: "/infocomment/save",
@@ -339,32 +338,37 @@
                   },
                   dataType : "json",
                   success : function(commentList) {
-                      console.log("성공 : " + commentList);
-                      let out = "<table border='1'width='50%' style='border-collapse: collapse; text-align: center'><tr>";
-                      out += "<td>댓글 번호</td>";
-                      out += "<td>작성자</td>";
-                      out += "<td>내용</td>";
-                      out += "<td>작성 시간</td>";
-                      out += "</tr>"
-                      for (let i in commentList) {
-                      console.log("작성 댓글 출력 : " +commentList[i].commentWriter);
-                          out += "<tr>"
-                          out += "<td>"+ commentList[i].id +"</td>";
-                          out += "<td>"+ commentList[i].nickname +"</td>";
-                          out += "<td>"+ commentList[i].content +"</td>";
-                          out += "<td>"+ commentList[i].created_at  +"</td>";
-                          out += "</tr>"
-                      }
-                      out += "</table>";
-                      document.getElementById("comment-list").innerHTML = out;
-                      document.getElementById("commentWriter").value = "";
-                      document.getElementById("commentContents").value = "";
+                   location.reload(); // 페이지 전체 새로고침 (위 리스트에 새로운 댓글 반영)
                   },
                   error : function() {
                       console.log("실패");
                   }
               });
           }
+
+         // JS 함수는 인자로 받아야 정확하게 타겟팅 가능
+         const commentDelete = (nickname, commentId) => {
+             const confirmed = confirm("정말 삭제하시겠습니까?");
+             if (!confirmed) return;
+
+             $.ajax({
+                 type: "post",
+                 url: "/infocomment/delete",
+                 data: {
+                     nickname: nickname,
+                     id: commentId
+                 },
+                 dataType: "json",
+                 success: function (commentList) {
+                     console.log("댓글 삭제 성공");
+                     location.reload();
+                 },
+                 error: function () {
+                     console.log("댓글 삭제 실패");
+                 }
+             });
+         };
+
 </script>
 </body>
 </html>

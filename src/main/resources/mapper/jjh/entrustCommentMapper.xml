@@ -4,8 +4,8 @@
 
 <mapper namespace="EntrustComment">
     <insert id="save" parameterType="entrustComment">
-        INSERT INTO entrust_comment (nickname, content, post_id)
-        VALUES (#{nickname}, #{content}, #{post_id});
+        INSERT INTO entrust_comment (nickname, content, post_id, userId)
+        VALUES (#{nickname}, #{content}, #{post_id}, #{userId});
     </insert>
 
     <select id="findAll" resultType="entrustComment">

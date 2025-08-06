@@ -8,6 +8,7 @@ import java.util.Date;
 public class FreeCommentDTO {
     private long id;
     private long post_id;
+    private String userId;
     private String nickname;
     private String content;
     private Date created_at;

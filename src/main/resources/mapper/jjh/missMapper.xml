@@ -8,8 +8,8 @@
     </select>
 
     <insert id="write" parameterType="miss" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO miss_post (title, nickname, content)
-        VALUES (#{title}, #{nickname}, #{content})
+        INSERT INTO miss_post (title, nickname, content, userId)
+        VALUES (#{title}, #{nickname}, #{content}, #{userId})
     </insert>
 
     <select id="findById" parameterType="long" resultType="miss">

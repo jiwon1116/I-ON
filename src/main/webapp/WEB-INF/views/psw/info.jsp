@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -140,6 +141,9 @@
     </style>
 </head>
 <body>
+
+<%@ include file="/WEB-INF/views/header.jsp" %>
+
 <div class="container">
     <div class="top-bar">
       <form method="get" action="${pageContext.request.contextPath}/info/search">
@@ -148,9 +152,11 @@
           <button type="submit">🔍</button>
       </form>
 
-        <div class="filter-buttons">
+        <security:authorize access="hasRole('ROLE_ADMIN')">
+         <div class="filter-buttons">
             <button type="button" onclick="writeFn()">글 작성하기</button>
         </div>
+         </security:authorize>
     </div>
 
    <!-- 게시글 카드 반복 -->
@@ -210,13 +216,7 @@
 </div>
 <script>
     function writeFn() {
-            const memberId = '${memberId}';
-                if(memberId !== "admin"){
-                       alert("관리자만 글 작성이 가능합니다.😣");
-                    return;
-                }else {
-                        location.href = "/info/save";
-                }
+                       location.href = "/info/save";
          }
 </script>
 </body>

@@ -15,5 +15,6 @@ public class FlagCommentDTO {
     private String nickname; // 댓글 작성자 아이디
     private String content; // 댓글 내용
     private Date created_at; // 댓글 작성일
+    private String userId;
 
 }

@@ -17,6 +17,7 @@ public class Info_contentRepository {
 
     public final SqlSessionTemplate sql;
 
+    //게시물 가져오기
     public List<Info_contentDTO> AllfindList() {
        return sql.selectList("Info.allInfoList");
     }
@@ -88,6 +89,11 @@ public class Info_contentRepository {
     // 이미지 전체 조회
     public List<Info_FileDTO> findFiles(long id) {
         return sql.selectList("Info.findFiles", id);
+    }
+
+    // 해당 게시물 사진 삭제
+    public void deleteFile(long boardId) {
+      sql.delete("Info.deleteFile", boardId);
     }
 }
 

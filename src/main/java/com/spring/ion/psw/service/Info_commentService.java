@@ -11,6 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Info_commentService {
     private final Info_commentRepository infoCommentRepository;
+
     // 댓글 저장
     public void save(Info_commentDTO infoCommentDTO) {
         infoCommentRepository.save(infoCommentDTO);
@@ -20,4 +21,14 @@ public class Info_commentService {
     public List<Info_commentDTO> findAll(long postId) {
         return infoCommentRepository.findAll(postId);
     }
+
+    // 댓글 삭제하기
+    public void delete(Info_commentDTO infoCommentDTO) {
+        infoCommentRepository.commentDelete(infoCommentDTO);
+    }
+    // 모든 댓글 가져오기
+    public List<Info_commentDTO> findAllComment(){
+        return infoCommentRepository.findAllComment();
+    }
+
 }

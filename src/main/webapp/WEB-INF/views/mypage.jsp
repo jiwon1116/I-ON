@@ -146,7 +146,7 @@
                     <img src="https://img.icons8.com/ios-glyphs/60/000000/user.png" class="profile-img" id="profileImgPreview" alt="프로필 이미지">
                 </label>
                 <input type="file" name="profileImg" id="profileImgInput" accept="image/*" style="display:none;" onchange="previewProfileImg(event)">
-                <div class="profile-name">정지현</div>
+                <div class="profile-name">${member.nickname}</div>
                 <button type="submit" class="profile-edit-btn mt-1">이미지 수정하기</button>
             </form>
             <div class="sidebar-bottom">
@@ -193,7 +193,9 @@
                 <div class="dashboard-row">
                     <div class="card p-4">
                         <span>자녀 등록</span>
-                        <div class="bg-light rounded mt-2" style="height:40px"></div>
+                         <a href="/#" class="btn btn-warning btn-sm mt-2">
+                                                        바로가기
+                                                    </a>
                     </div>
                     <div class="card p-4">
                         <span>내가 작성한 글</span>
@@ -213,7 +215,8 @@
                         <span>내 소식</span>
                         <div class="text-center text-muted py-5">
                             <i class="fas fa-bell fa-2x mb-2"></i><br>
-                            <span>새로운 소식이 없습니다.</span>
+                            <span>알림 넣기</span>
+                             <!-- 알림 목록 -->
                         </div>
                     </div>
                     <div class="card p-4" style="flex:1">

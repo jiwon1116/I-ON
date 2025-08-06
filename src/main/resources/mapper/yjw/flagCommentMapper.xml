@@ -6,8 +6,8 @@
 <mapper namespace="FlagComment">
 
     <insert id="write" parameterType="FlagComment" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO flag_comment(post_id, nickname, content, created_at)
-        VALUES(#{post_id}, #{nickname}, #{content}, NOW())
+        INSERT INTO flag_comment (post_id, nickname, userId, content, created_at)
+        VALUES (#{post_id}, #{nickname}, #{userId}, #{content}, NOW())
     </insert>
 
 
@@ -18,10 +18,14 @@
         ORDER BY id DESC
     </select>
 
+
+    <select id="findById" parameterType="long" resultType="FlagComment">
+        SELECT * FROM flag_comment WHERE id = #{id}
+    </select>
+
     <!-- 댓글 삭제 -->
     <delete id="delete" parameterType="long">
         DELETE FROM flag_comment WHERE id = #{id}
     </delete>
-
 
 </mapper>

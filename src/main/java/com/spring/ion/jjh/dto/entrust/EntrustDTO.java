@@ -7,6 +7,7 @@ import java.util.Date;
 @Data
 public class EntrustDTO {
     private long id; // PK. 글번호
+    private String userId;
     private String nickname; // FK. 멤버 닉네임 = 작성자
     private String title; // 제목
     private String content; // 내용

@@ -11,4 +11,14 @@
     <select id="findAll" parameterType="long" resultType="infoComment">
         SELECT * FROM info_comment WHERE post_id = #{post_id} ORDER BY id DESC
     </select>
+
+    <delete id="commentDelete" parameterType="infoComment">
+        DELETE FROM info_comment
+        WHERE id = #{id} AND nickname=#{nickname}
+    </delete>
+
+    <select id="infoFindAllComment" resultType="infoComment">
+        SELECT * FROM info_comment ORDER BY id DESC
+    </select>
+
 </mapper>
