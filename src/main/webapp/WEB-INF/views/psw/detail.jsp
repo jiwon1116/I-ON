@@ -262,7 +262,8 @@
                         </div>
                         <div>
                         <c:if test="${comment.nickname == member.nickname}">
-                            <button type="button" onclick="commentDelete()">삭제</button>
+                           <!-- 댓글 안에 버튼에 인자로 넘겨줘야 함 -->
+                           <button type="button" onclick="commentDelete('${comment.nickname}', ${comment.id})">삭제</button>
                         </c:if>
 
                         </div>
@@ -327,7 +328,6 @@
                       alert("내용을 입력해주세요.");
                       return;
                }
-
               $.ajax({
                   type: "post",
                   url: "/infocomment/save",
@@ -345,30 +345,30 @@
                   }
               });
           }
-          // 댓글 삭제(삭제를 누른 댓글 아이디, 해당 작성자 닉네임 받아서 삭제)
-          const commentDelete = () => {
-                 const nickname ="${comment.nickname}"; // 작성자 닉네임
-                 const commentId = "${comment.id}"; // 댓글 아이디
-                 const confirmed = confirm("정말 삭제하시겠습니까?");
 
-                  $.ajax({
-                           type: "post",
-                            url: "/infocomment/delete",
-                            data: {
-                              nickname : nickname,
-                                    id : commentId,
-                                   },
-                               dataType : "json",
-                              success : function(commentList) {
-                                    console.log("댓글 삭제 성공");
-                                    location.reload(); // 페이지 전체 새로고침 (위 리스트에 새로운 댓글 반영)
-                                   },
-                                   error : function() {
-                                       console.log("댓글 삭제 실패");
-                                   }
-                               });
+         // JS 함수는 인자로 받아야 정확하게 타겟팅 가능
+         const commentDelete = (nickname, commentId) => {
+             const confirmed = confirm("정말 삭제하시겠습니까?");
+             if (!confirmed) return;
 
-          }
+             $.ajax({
+                 type: "post",
+                 url: "/infocomment/delete",
+                 data: {
+                     nickname: nickname,
+                     id: commentId
+                 },
+                 dataType: "json",
+                 success: function (commentList) {
+                     console.log("댓글 삭제 성공");
+                     location.reload();
+                 },
+                 error: function () {
+                     console.log("댓글 삭제 실패");
+                 }
+             });
+         };
+
 </script>
 </body>
 </html>
