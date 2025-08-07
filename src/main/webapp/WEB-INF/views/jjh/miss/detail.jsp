@@ -281,6 +281,11 @@
     const nickname = document.getElementById("nickname").value;
     const content = document.getElementById("content").value;
     const postId = "${miss.id}";
+
+      if (!postId || !content) {
+                          alert("내용을 입력해주세요.");
+                          return;
+                   }
     $.ajax({
       type: "post",
       url: "/missComment/save",

@@ -125,9 +125,9 @@ public class MemberController {
     @GetMapping("/edit")
     public String showEditForm(Model model) {
 
-            CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            MemberDTO memberDTO = user.getMemberDTO();
-            model.addAttribute("member", memberDTO);
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+        model.addAttribute("member", memberDTO);
 
         return "edit";
     }
@@ -142,6 +142,11 @@ public class MemberController {
         if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
             currentMember.setPassword(encodedPassword);
+        }
+
+
+        if (memberDTO.getRegion() != null && !memberDTO.getRegion().isEmpty()) {
+            currentMember.setRegion(memberDTO.getRegion());
         }
 
         if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {

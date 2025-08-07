@@ -23,14 +23,16 @@ public class Info_commentController {
     // 댓글 저장과 알림 한번에 구현
     @PostMapping("/save")
     public @ResponseBody List<Info_commentDTO> save (@ModelAttribute Info_commentDTO infoCommentDTO){
-        infoCommentService.save(infoCommentDTO); // 댓글 저장
+        // 댓글 저장
+        infoCommentService.save(infoCommentDTO);
 
         //게시글 정보 조회
         Info_contentDTO post = infoContentService.findContext(infoCommentDTO.getPost_id());
 
         // 알림 생성 (서비스에서 nickname null 여부 처리)
-        notifyService.createCommentNotify(infoCommentDTO, post);
+        notifyService.createCommentNotify(post.getNickname(),infoCommentDTO.getNickname(),post.getId(),infoCommentDTO.getId(),"info");
 
+        // 댓글 목록 반환
         List<Info_commentDTO> commentDTOList = infoCommentService.findAll(infoCommentDTO.getPost_id());
         return commentDTOList;
     }

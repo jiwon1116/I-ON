@@ -30,7 +30,7 @@ public class FlagRepository {
         return sql.selectList("Flag.findAll");
     }
 
-    public FlagPostDTO findById(int id) {
+    public FlagPostDTO findById(long id) {
         return sql.selectOne("Flag.findById",id);
     }
 

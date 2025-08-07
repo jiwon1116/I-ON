@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="trust">
+
+    <select id="countFreeComments" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM free_comment WHERE nickname = #{nickname}
+    </select>
+    <select id="countFlagComments" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM flag_comment WHERE nickname = #{nickname}
+    </select>
+    <select id="countMissComments" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM miss_comment WHERE nickname = #{nickname}
+    </select>
+    <select id="countEntrustComments" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM entrust_comment WHERE nickname = #{nickname}
+    </select>
+    <select id="countAllReportsByNickname" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM flag_post WHERE nickname = #{nickname}
+    </select>
+    <select id="countAllEntrustsByNickname" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM entrust_post WHERE nickname = #{nickname}
+    </select>
+
+</mapper>
