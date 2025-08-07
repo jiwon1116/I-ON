@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <title>마이페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Chart.js CDN (필수!) -->
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -125,12 +125,9 @@
             margin-top: 18px;
             width: 220px !important;
             height: 220px !important;
-            min-width: 50px;!important;
-            min-height: 50px;!important;
-
+            min-width: 50px !important;
+            min-height: 50px !important;
         }
-
-
         .donut-box {
             display: flex;
             flex-direction: column;
@@ -159,6 +156,19 @@
             font-size: 16px;
             font-weight: 600;
         }
+
+        /* 게이지바 */
+        .trust-gauge-wrap { margin-top: 16px; }
+        .trust-gauge-bar-bg { width: 100%; height: 18px; background: #eee; border-radius: 9px; position: relative; overflow: hidden; }
+        .trust-gauge-bar {
+            height: 100%;
+            background: #FFC112; /* 한 가지 색상으로! */
+            border-radius: 9px 0 0 9px;
+            width: 0;  /* JS에서 제어 */
+            transition: width 0.9s cubic-bezier(.23,1.01,.32,1);
+        }
+        .trust-gauge-label { font-size: 0.93rem; text-align: right; margin-top: 4px;}
+
         @media (max-width: 1200px) {
             .main-board { padding: 18px 10px 18px 10px; }
         }
@@ -283,7 +293,7 @@
                               (${trustScore.totalScore}점)
                             </span>
                         </div>
-                        <!-- 도넛차트! -->
+                        <!-- 도넛차트 + 게이지바 -->
                         <div class="donut-box">
                             <canvas id="trustDonut"></canvas>
                             <div class="donut-labels">
@@ -291,17 +301,13 @@
                                 <span><span class="donut-label-dot" style="background:#f6a623"></span>위탁 ${trustScore.entrustCount}</span>
                                 <span><span class="donut-label-dot" style="background:#63a4fa"></span>댓글 ${trustScore.commentCount}</span>
                             </div>
-                        </div>
-                        <div class="small text-end mt-1" style="color:#666;">
-                          <c:choose>
-                            <c:when test="${fn:trim(trustScore.grade) eq '캡숑맘'}">최고 등급 달성!</c:when>
-                            <c:when test="${fn:trim(trustScore.grade) eq '도토리맘'}">
-                              <span>캡숑맘까지 <b>${30-trustScore.totalScore}</b>점 남았어요!</span>
-                            </c:when>
-                            <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">
-                              <span>도토리맘까지 <b>${10-trustScore.totalScore}</b>점 남았어요!</span>
-                            </c:when>
-                          </c:choose>
+                            <!-- 게이지바 영역 (차트 바로 아래) -->
+                            <div class="trust-gauge-wrap mt-4 w-100" style="max-width:230px;">
+                                <div class="trust-gauge-bar-bg">
+                                    <div class="trust-gauge-bar" id="trustGaugeBar"></div>
+                                </div>
+                                <div class="trust-gauge-label small text-end mt-1" id="trustGaugeText" style="color:#666;"></div>
+                            </div>
                         </div>
                         <!-- 모달 트리거(원하면 버튼추가) -->
                         <button type="button"
@@ -347,7 +353,7 @@
         </div><!-- mypage-main -->
     </div><!-- mypage-layout -->
 
-    <!-- 도넛차트 Chart.js 스크립트 -->
+    <!-- 도넛차트 Chart.js 스크립트 + 게이지바 스크립트 -->
     <script>
         // JSP 변수 치환 (꼭 Number로!)
         const reportCount = Number('${trustScore.reportCount}');
@@ -379,10 +385,29 @@
                                 return context.label + ': ' + context.raw + '개';
                             }
                         }
-                    }
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+                                  }
+                                    }
+                                }
+                            }); // ← ← ← ← ← ← ← ← **반드시 닫아줘야 함!**
+
+                            // 게이지바
+                            const totalScore = Number('${trustScore.totalScore}');
+                            let grade = '${fn:trim(trustScore.grade)}';
+                            const gaugeBar = document.getElementById('trustGaugeBar');
+                            const gaugeText = document.getElementById('trustGaugeText');
+                            const maxScore = 30;
+                            let percent = Math.min((totalScore / maxScore) * 100, 100);
+                            setTimeout(() => {
+                                gaugeBar.style.width = percent + '%';
+                            }, 300);
+
+                            let text = '';
+                            if (grade === '캡숑맘') {
+                                text = '최고 등급 달성! 👑';
+                            } else if (grade === '도토리맘') {
+                                text = `캡숑맘까지 <b>${30-trustScore.totalScore}</b>점 남았어요!`;
+                                      } else if (grade === '새싹맘') {
+                                          text = `도토리맘까지 <b>${10-trustScore.totalScore}</b>점 남았어요!`;
+                                      }
+                                      gaugeText.innerHTML = text;
+                                  </script>
