@@ -27,7 +27,6 @@ public class Info_contentRepository {
         return sql.insert("Info.save",infoContentDTO);
     }
 
-
     public Info_contentDTO findContext(long id) {
         return sql.selectOne("Info.find",id);
     }
