@@ -32,6 +32,23 @@ public class NotifyService {
         notifyRepository.saveNotify(notify);
     }
 
+    // 위험지역 알림저장
+    public void createDangerNotify(String postWriter, String contentWriter, Long postId, String city,String district, String boardType) {
+       /* if (postWriter == null || postWriter.equals(contentWriter)) return; // 자기가 작성한 제보 글은 알림 X*/
+
+        NotifyDTO notify = new NotifyDTO();
+        notify.setNickname(postWriter); // 알림 받는 사람
+        notify.setType(NotifyDTO.NotificationType.DANGER_ALERT);
+        notify.setRelated_post_id(postId);  // 제보 게시글 ID
+        notify.setCreated_at(new Date());
+        String fullRegion = city + " " + district;
+        notify.setContent(postWriter + "님"+ fullRegion +"에 신고제보가 들어왔습니다 주의하세요!" );
+        notify.setRelated_region(fullRegion); // 제보 글에서의 지역
+        notify.setRelated_board(boardType);
+
+        notifyRepository.saveNotify(notify);
+    }
+
     // 해당 닉네임의 알림 가져오기
     public List<NotifyDTO> findAllByNotify(String nickname) {
         return notifyRepository.findAllByNotify(nickname);
@@ -40,5 +57,10 @@ public class NotifyService {
     public void deleteById(Long id) {
             notifyRepository.deleteById(id);
     }
+
+    public boolean hasDangerAlertForRegion(String userRegion) {
+            return notifyRepository.countDangerAlertByRegion(userRegion) > 0;
+    }
+
 }
 
