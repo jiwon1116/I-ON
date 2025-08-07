@@ -23,6 +23,10 @@
       if (window.toggledLayers?.emergencybell === true) {
         window.loadEmergencyMarkersByBounds();
       }
+
+      if (toggledLayers.safehouse) {
+          window.loadSafehouseMarkersByBounds();
+        }
     });
 
     console.log("✅ 지도 및 클러스터러 초기화 완료");
