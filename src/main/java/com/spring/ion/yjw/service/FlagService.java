@@ -48,13 +48,11 @@ public class FlagService {
         return (int) postId;
     }
 
-
-
     public List<FlagPostDTO> findAll() {
         return flagRepository.findAll();
     }
 
-    public FlagPostDTO findById(int id) {
+    public FlagPostDTO findById(long id) {
         return flagRepository.findById(id);
     }
 

@@ -165,7 +165,7 @@
            <c:set var="content" value="${entry.key}" />
            <c:set var="file" value="${entry.value}" />
 
-           <div class="card" onclick="location.href='/info/detail?id=${content.id}'">
+           <div class="card" onclick="location.href='/info/${content.id}'">
                <img src="/info/preview?storedFileName=${file.storedFileName}" style="width:300px; height:300px;" />
                <div class="card-body">
                    <div class="title">${content.title}</div>

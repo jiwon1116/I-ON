@@ -1,9 +1,14 @@
 package com.spring.ion.jjh.controller.miss;
 
+import com.spring.ion.jjh.dto.entrust.EntrustDTO;
 import com.spring.ion.jjh.dto.miss.MissCommentDTO;
+import com.spring.ion.jjh.dto.miss.MissDTO;
+import com.spring.ion.jjh.service.entrust.EntrustService;
 import com.spring.ion.jjh.service.miss.MissCommentService;
+import com.spring.ion.jjh.service.miss.MissService;
 import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.security.CustomUserDetails;
+import com.spring.ion.psw.service.NotifyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,6 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MissCommentController {
     private final MissCommentService missCommentService;
+    private final MissService missService;
+    private final NotifyService notifyService;
 
     @PostMapping("/save")
     public @ResponseBody List<MissCommentDTO> save(@ModelAttribute MissCommentDTO commentDTO, Model model){
@@ -26,6 +33,13 @@ public class MissCommentController {
         MemberDTO memberDTO = user.getMemberDTO();
         model.addAttribute("member", memberDTO);
         missCommentService.save(commentDTO);
+
+        //게시글 정보 조회
+        MissDTO post = missService.findById(commentDTO.getPost_id());
+
+        // 알림 생성 (서비스에서 nickname null 여부 처리)
+        notifyService.createCommentNotify(post.getNickname(),commentDTO.getNickname(),post.getId(),commentDTO.getId(),"miss");
+
         // 해당 게시글에 작성된 댓글 리스트 반환
         // 원래 있던 댓글 리스트 반환
         List<MissCommentDTO> commentDTOList = missCommentService.findAll(commentDTO.getPost_id());

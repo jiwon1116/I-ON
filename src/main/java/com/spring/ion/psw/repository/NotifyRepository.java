@@ -20,4 +20,8 @@ public class NotifyRepository {
     public List<NotifyDTO> findAllByNotify(String nickname) {
         return sql.selectList("Notify.findAllByNotify",nickname);
     }
+
+    public void deleteById(Long id) {
+        sql.delete("Notify.deleteById",id);
+    }
 }

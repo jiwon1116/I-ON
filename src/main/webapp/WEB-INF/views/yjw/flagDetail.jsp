@@ -104,7 +104,7 @@
                     <!-- nickname input 삭제!! -->
                 </div>
                 <div class="mb-2">
-                    <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요" required></textarea>
+                    <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요"></textarea>
                 </div>
                 <div class="text-end">
                     <button type="submit" class="btn btn-primary" id="submitCommentBtn">댓글 등록</button>
@@ -146,10 +146,10 @@
             const content = $('#content').val();
             const post_id = $('#post_id').val();
 
-            if (!content || !post_id) {
-                alert("내용, 게시글 ID를 입력하세요");
-                return;
-            }
+                 if (!post_id || !content) {
+                                  alert("내용을 입력해주세요.");
+                          return;
+                  }
 
             $.ajax({
                 type: 'POST',
