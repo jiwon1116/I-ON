@@ -24,7 +24,7 @@ public class NotifyService {
         notify.setNickname(postWriter); // 알림 받는 사람
         notify.setType(NotifyDTO.NotificationType.COMMENT);
         notify.setContent(commentWriter + "님이 댓글을 남겼습니다.");
-        notify.setRelated_post_id(postId);
+        notify.setRelated_post_id(postId);  // 게시글 ID
         notify.setRelated_comment_id(commentId);
         notify.setCreated_at(new Date());
         notify.setRelated_board(boardType);
@@ -35,6 +35,10 @@ public class NotifyService {
     // 해당 닉네임의 알림 가져오기
     public List<NotifyDTO> findAllByNotify(String nickname) {
         return notifyRepository.findAllByNotify(nickname);
+    }
+
+    public void deleteById(Long id) {
+            notifyRepository.deleteById(id);
     }
 }
 

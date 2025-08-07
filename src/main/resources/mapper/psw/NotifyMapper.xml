@@ -19,4 +19,9 @@
         WHERE nickname = #{nickname};
     </select>
 
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM notification WHERE id = #{id}
+    </delete>
+
+
 </mapper>

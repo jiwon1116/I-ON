@@ -17,7 +17,7 @@
         SELECT * FROM flag_post ORDER BY id DESC
     </select>
 
-    <select id="findById" parameterType="int" resultType="FlagPost">
+    <select id="findById" parameterType="long" resultType="FlagPost">
         SELECT * FROM flag_post WHERE id=#{id}
     </select>
 

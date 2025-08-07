@@ -5,13 +5,12 @@ import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.psw.dto.NotifyDTO;
 import com.spring.ion.psw.service.NotifyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -32,16 +31,16 @@ public class MypageController {
         List<NotifyDTO> notifyList = notifyService.findAllByNotify(nickname);
         System.out.println("알림 객체:"+notifyList);
 
-
-
          model.addAttribute("notifyList", notifyList);
          model.addAttribute("member", member);
         return "mypage";
 
     }
-
-
-
-
+    // 알림 삭제
+    @PostMapping("/delete")
+    @ResponseBody
+    public ResponseEntity<String> deleteNotification(@RequestParam("id") Long id) {
+        notifyService.deleteById(id);
+        return ResponseEntity.ok().body("삭제 성공");
+    }
 }
-

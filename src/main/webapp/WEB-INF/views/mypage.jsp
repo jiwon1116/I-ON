@@ -190,6 +190,9 @@
     </style>
     <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!--jQuery CDN 추가 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -295,6 +298,11 @@
                                               </span>
                                           </div>
                                           <div class="notify-content">${notify.content}</div>
+                                          <button onclick="deleteNotify(${notify.id})">❌</button>
+                                        <a href="/${notify.related_board}/${notify.related_post_id}">
+                                            👉🏻해당 게시물로 이동
+                                          </a>
+
                                           <div class="notify-date">
                                               <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
                                           </div>
@@ -360,7 +368,22 @@
             </div><!-- main-board -->
         </div><!-- mypage-main -->
     </div><!-- mypage-layout -->
-
+ <script>
+    function deleteNotify(id) {
+    $.ajax({
+        type: "POST",
+        url: "/myPage/delete",
+        data: { id: id },
+        success: function(response) {
+            alert("알림이 삭제되었습니다.");
+            location.reload();
+        },
+        error: function() {
+            alert("삭제 실패");
+        }
+    });
+}
+</script>
 
 </body>
 </html>

@@ -107,8 +107,8 @@ public class Info_contentController{
     }
 
 
-    @GetMapping("/detail")
-    public String detailForm(@RequestParam("id") long id, Model model,
+    @GetMapping("/{id}")
+    public String detailForm(@PathVariable("id") long id, Model model,
                              HttpServletRequest request) {
         HttpSession session = request.getSession();
         String viewKey = "viewed_post_" + id;
