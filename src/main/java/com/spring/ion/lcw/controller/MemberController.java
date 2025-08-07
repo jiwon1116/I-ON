@@ -139,6 +139,18 @@ public class MemberController {
         MemberDTO currentMember = userDetails.getMemberDTO();
         String tmpNickname = currentMember.getNickname();
 
+        if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
+            currentMember.setPassword(encodedPassword);
+        }
+
+        if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
+            currentMember.setNickname(memberDTO.getNickname());
+        }
+
+        if (memberDTO.getRegion() != null && !memberDTO.getRegion().isEmpty()) {
+            currentMember.setRegion(memberDTO.getRegion());
+        }
         try {
             memberService.edit(currentMember, memberDTO);
             redirectAttributes.addFlashAttribute("editSuccess", "회원 정보가 수정되었습니다!");
