@@ -2,6 +2,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -303,33 +305,67 @@
 
 
                     <div class="card p-4" style="flex:1; position:relative;">
-                        <span style="font-weight:600; font-size:1.08rem;">신뢰도 점수판</span>
-                        <!-- 물음표 버튼(모달 트리거) -->
-                        <button type="button"
-                            class="btn btn-light rounded-circle"
-                            style="position:absolute; top:20px; right:22px; width:28px; height:28px; padding:0; border:1.5px solid #eee; color:#888;"
-                            data-bs-toggle="modal" data-bs-target="#trustScoreModal">
-                            <i class="fas fa-question"></i>
-                        </button>
-                        <div class="mt-3">
-                            <!-- ... 기존 점수판 내용 ... -->
-                            <div class="d-flex justify-content-between">
-                                <span>제보 횟수</span>
-                                <span style="color:#f6a623; font-size:1.1rem;">⭐</span>
+                        <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                            <span style="font-weight:600; font-size:1.08rem;">신뢰도 점수판</span>
+                            <!-- 등급 배지 & 반짝 효과 -->
+                            <span class="trust-grade-badge sparkle"
+                                  style="margin-left:6px;">
+                              ${trustScore.grade}
+                            </span>
+                            <!-- 모달 버튼 -->
+                            <div class="mb-2">
+                                <div class="progress" style="height:18px;">
+                                  <div class="progress-bar
+                                    <c:choose>
+                                      <c:when test="${trustScore.grade eq '새싹맘'}">bg-success</c:when>
+                                      <c:when test="${trustScore.grade eq '도토리맘'}">bg-warning</c:when>
+                                      <c:when test="${trustScore.grade eq '캡숑맘'}">bg-danger</c:when>
+                                    </c:choose>"
+                                    role="progressbar"
+                                    style="width: ${trustScore.totalScore >= 30 ? 100 : trustScore.totalScore >= 10 ? (trustScore.totalScore-10)*100/20 : trustScore.totalScore*100/10}%;"
+                                    aria-valuenow="${trustScore.totalScore}" aria-valuemin="0" aria-valuemax="30">
+                                    <c:choose>
+                                      <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">🌱</c:when>
+                                      <c:when test="${fn:trim(trustScore.grade) eq '도토리맘'}">🥜</c:when>
+                                      <c:when test="${fn:trim(trustScore.grade) eq '캡숑맘'}">👑</c:when>
+                                    </c:choose>
+                                  </div>
+                                </div>
+                                <div class="small text-end mt-1" style="color:#666;">
+                                  <c:choose>
+                                    <c:when test="${fn:trim(trustScore.grade) eq '캡숑맘'}">최고 등급 달성!</c:when>
+                                    <c:when test="${fn:trim(trustScore.grade) eq '도토리맘'}">
+                                      <span>캡숑맘까지 <b>${30-trustScore.totalScore}</b>점 남았어요!</span>
+                                    </c:when>
+                                    <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">
+                                      <span>도토리맘까지 <b>${10-trustScore.totalScore}</b>점 남았어요!</span>
+                                    </c:when>
+                                  </c:choose>
+                                </div>
                             </div>
 
+                        </div>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between">
+                                <span>제보 횟수</span>
+                                <span style="color:#f6a623; font-size:1.1rem;">${trustScore.reportCount} 개</span>
+                            </div>
                             <div class="d-flex justify-content-between">
                                 <span>위탁 횟수</span>
-                                <span style="color:#f6a623; font-size:1.1rem;">⭐</span>
+                                <span style="color:#f6a623; font-size:1.1rem;">${trustScore.entrustCount} 개</span>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <span>댓글</span>
-                                <span style="color:#f6a623; font-size:1.1rem;">⭐</span>
+                                <span style="color:#f6a623; font-size:1.1rem;">${trustScore.commentCount} 개</span>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <span style="font-weight:500;">총점</span>
+                                <span style="color:#2d63a3; font-weight:700;">${trustScore.totalScore} 점</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 신뢰도 설명 모달 -->
+                    <!-- 모달은 기존대로 -->
                     <div class="modal fade" id="trustScoreModal" tabindex="-1" aria-labelledby="trustScoreModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -342,6 +378,12 @@
                               <li><b>제보 횟수</b> : 신고/제보 게시판에 올린 게시글 수를 의미합니다.</li>
                               <li><b>위탁 횟수</b> : 위탁 게시판에 작성한 게시글 수를 의미합니다.</li>
                               <li><b>댓글</b> : 내가 단 댓글의 총 개수를 의미합니다.</li>
+                              <li><b>총점</b> : 제보+위탁+댓글의 합산 점수입니다.</li>
+                              <li><b>등급</b> : 총점에 따라 등급이 올라갑니다! <br>
+                                  <span style="color:#40a048; font-weight:500;">새싹맘 (0~9점)</span>,
+                                  <span style="color:#a8743d; font-weight:500;">도토리맘 (10~29점)</span>,
+                                  <span style="color:#f6a623; font-weight:500;">캡숑맘 (30점 이상)</span>
+                              </li>
                             </ul>
                             <div class="mt-2 text-secondary" style="font-size:0.98rem;">
                               신뢰도 점수판은 커뮤니티 활동의 활발함과 신뢰도를 시각적으로 보여줍니다.<br>
@@ -354,6 +396,7 @@
                         </div>
                       </div>
                     </div>
+
 
                 </div>
             </div><!-- main-board -->
