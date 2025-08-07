@@ -32,6 +32,7 @@
         <typeAlias type="com.spring.ion.yjw.dto.FlagCommentDTO" alias="FlagComment"></typeAlias>
         <typeAlias type="com.spring.ion.yjw.dto.FlagFileDTO" alias="FlagFile"></typeAlias>
         <typeAlias type="com.spring.ion.yjw.dto.FlagLikeDTO" alias="FlagLike"></typeAlias>
+        <typeAlias type="com.spring.ion.yjw.dto.TrustScoreDTO" alias="trust"></typeAlias>
 
         <typeAlias type="com.spring.ion.lcw.dto.MemberDTO" alias="member"></typeAlias>
 
@@ -58,6 +59,7 @@
         <mapper resource="mapper/yjw/flagMapper.xml"/>
         <mapper resource="mapper/yjw/flagCommentMapper.xml"/>
         <mapper resource="mapper/yjw/flagLikeMapper.xml"/>
+        <mapper resource="mapper/yjw/TrustScoreMapper.xml"/>
 
         <mapper resource="mapper/lcw/MemberMapper.xml"/>
 

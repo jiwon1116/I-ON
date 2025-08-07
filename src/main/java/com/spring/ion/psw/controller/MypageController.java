@@ -1,9 +1,10 @@
 package com.spring.ion.psw.controller;
-
 import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.psw.dto.NotifyDTO;
 import com.spring.ion.psw.service.NotifyService;
+import com.spring.ion.yjw.service.TrustScoreService;
+import com.spring.ion.yjw.dto.TrustScoreDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MypageController {
     private final NotifyService notifyService;
+    private final TrustScoreService trustScoreService;
 
     // mypage로 이동하며 정보(알림, 신뢰도) 뿌림
     @GetMapping
@@ -33,6 +35,10 @@ public class MypageController {
 
          model.addAttribute("notifyList", notifyList);
          model.addAttribute("member", member);
+
+         // 신뢰도 점수판 정보 추가
+        TrustScoreDTO trustScoreDTO = trustScoreService.getTrustScore(nickname);
+        model.addAttribute("trustScore",trustScoreDTO);
         return "mypage";
 
     }
