@@ -3,6 +3,7 @@ package com.spring.ion.jjh.controller.map;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.ion.jjh.dto.map.EmergencyBellDTO;
+import com.spring.ion.jjh.dto.map.OffenderDTO;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,19 @@ import java.util.stream.Collectors;
 public class MapController {
 
     private final List<EmergencyBellDTO> cachedList;
+    private final List<OffenderDTO> offenderList;
 
     public MapController() throws IOException {
-        // JSON을 읽어 초기화
-        ClassPathResource resource = new ClassPathResource("data/emergencybell.json");
-        byte[] jsonData = StreamUtils.copyToByteArray(resource.getInputStream());
-
+        // emergencybell.json 로딩
+        ClassPathResource emergencyResource = new ClassPathResource("data/emergencybell.json");
+        byte[] emergencyData = StreamUtils.copyToByteArray(emergencyResource.getInputStream());
         ObjectMapper mapper = new ObjectMapper();
-        cachedList = Arrays.asList(mapper.readValue(jsonData, EmergencyBellDTO[].class));
+        cachedList = Arrays.asList(mapper.readValue(emergencyData, EmergencyBellDTO[].class));
+
+        // offender.json 로딩
+        ClassPathResource offenderResource = new ClassPathResource("data/offender.json");
+        byte[] offenderData = StreamUtils.copyToByteArray(offenderResource.getInputStream());
+        offenderList = Arrays.asList(mapper.readValue(offenderData, OffenderDTO[].class));
     }
 
     @GetMapping("/emergencybell")
@@ -129,6 +135,21 @@ public class MapController {
                     .header("Content-Type", "application/json")
                     .body("{\"error\":\"safehouse fetch failed\"}");
         }
+    }
+
+    @GetMapping("/offender")
+    public ResponseEntity<List<OffenderDTO>> getOffendersByBounds(
+            @RequestParam double swLat,
+            @RequestParam double swLng,
+            @RequestParam double neLat,
+            @RequestParam double neLng) {
+
+        List<OffenderDTO> filtered = offenderList.stream()
+                .filter(o -> o.getLa() >= swLat && o.getLa() <= neLat)
+                .filter(o -> o.getLo() >= swLng && o.getLo() <= neLng)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(filtered);
     }
 
 }

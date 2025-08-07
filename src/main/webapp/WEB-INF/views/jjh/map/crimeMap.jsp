@@ -39,10 +39,10 @@
       <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
     </div>
     <ul class="nav-tabs">
-          <li class="main-menu"><a href="/map/crime">범죄 발생 지역</a></li>
-          <li class="main-menu"><a href="/map">성범죄자 거주지</a></li>
-          <li class="main-menu"><a href="/map">비상벨</a></li>
-          <li class="main-menu"><a href="/map">안전 지킴이집</a></li>
+          <li class="main-menu active">범죄 발생 지역</li>
+          <li class="main-menu"><a href="${pageContext.request.contextPath}/map/?type=offender">성범죄자 거주지</a></li>
+          <li class="main-menu"><a href="${pageContext.request.contextPath}/map/?type=emergencybell">비상벨</a></li>
+          <li class="main-menu"><a href="${pageContext.request.contextPath}/map/?type=safehouse">안전 지킴이집</a></li>
         </ul>
         <div class="icons">
           <span class="icon">🔔</span>

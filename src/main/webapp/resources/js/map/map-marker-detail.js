@@ -10,13 +10,28 @@ function attachPopup(marker, mk, type) {
       content = `
         <div style="padding:5px;">
           📍 <strong>${marker.roadAddress || marker.jibunAddress}</strong><br/>
-          🔁 연계방식: ${marker.linkType ?? '-'}<br/>
-          👮 경찰연계: ${marker.policeLinked ?? '-'}<br/>
-          ☎️ 관리기관 번호 :${marker.agencyPhone ?? '-'}
+          🔁 연계방식 : ${marker.linkType ?? '-'}<br/>
+          👮 경찰연계 : ${marker.policeLinked ?? '-'}<br/>
+          ☎️ 관리기관 번호 : ${marker.agencyPhone ?? '-'}
         </div>
       `;
       break;
+    case "safehouse":
+      content = `
+        <div class="custom-info-window">
+          🏠 <strong>${marker.bsshNm}</strong><br/>
+          📍 주소 : ${marker.adres} ${marker.etcAdres || ""}<br/>
+          ☎️ 전화번호 : ${marker.telno || "정보 없음"}<br/>
+        </div>`;
+      break;
 
+      case "offender":
+        content = `
+          <div class="custom-info-window">
+            🏠 <strong>거주지</strong><br/>
+            📍 주소 : ${marker.ctpvNm} ${marker.sggNm} ${marker.roadNm}<br/>
+          </div>`;
+        break;
     default:
       content = `<div>정보 없음</div>`;
       break;
@@ -34,7 +49,7 @@ function attachPopup(marker, mk, type) {
       if (currentInfoWindow) currentInfoWindow.close();
 
       currentInfoWindow = new kakao.maps.InfoWindow({ content });
-      currentInfoWindow.open(map, mk);
+      currentInfoWindow.open(window.map, mk);
       currentInfoTarget = mk;
     }
   });

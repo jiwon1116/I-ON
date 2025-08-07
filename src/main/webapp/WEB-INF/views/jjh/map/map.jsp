@@ -28,24 +28,10 @@
       height: calc(100vh - 60px); /* 헤더 + 토글버튼 영역 제외 */
     }
 
-    #marker-controls {
-      padding: 10px;
-      background: #f8f8f8;
-      border-top: 1px solid #ddd;
-      text-align: center;
+    .custom-info-window {
+        width: 350px;
+        height: 90px;
     }
-
-    #marker-controls label {
-      margin-right: 20px;
-      font-weight: bold;
-    }
-
-    .main-menu.active {
-      background-color: #fff;
-      color: #000;
-      border-radius: 5px;
-    }
-
   </style>
 </head>
 
@@ -57,7 +43,7 @@
     </div>
     <ul class="nav-tabs">
       <li class="main-menu"><a href="/map/crime">범죄 발생 지역</a></li>
-      <li class="main-menu" data-type="sexoffender">성범죄자 거주지</li>
+      <li class="main-menu" data-type="offender">성범죄자 거주지</li>
       <li class="main-menu" data-type="emergencybell">비상벨</li>
       <li class="main-menu" data-type="safehouse">안전 지킴이집</li>
     </ul>
