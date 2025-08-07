@@ -202,7 +202,7 @@
 
         </div>
         <div class="text-end mt-4">
-            <a href="${pageContext.request.contextPath}/" class="btn btn-warning">메인으로</a>
+            <a href="${pageContext.request.contextPath}/mypage" class="btn btn-warning">메인으로</a>
         </div>
     </div>
 </div>
