@@ -53,4 +53,11 @@ public class MemberService {
 
         memberRepository.edit(currentMember);
     }
+
+        // 회원 이미지 수정
+        public void updateProfileImg(String userId, String profileImg) {
+            memberRepository.updateProfileImg(userId, profileImg);
+        }
+
+
 }

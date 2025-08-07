@@ -100,5 +100,15 @@
         WHERE userId = #{userId}
     </update>
 
+    <update id="updateProfileImg">
+        UPDATE member
+        SET profile_img = #{profileImg}
+        WHERE userId = #{userId}
+    </update>
+
+
+
+
+
 </mapper>
 

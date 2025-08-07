@@ -224,7 +224,7 @@
 
     <div class="post-actions">
     <sec:authentication property="principal" var="loginUser" />
-        <c:if test="${loginUserId eq entrust.userId}">
+        <c:if test="${loginUserId eq entrust.userId || isAdmin}">
             <span onclick="updateFn()">수정</span>
             <span onclick="deleteFn()">삭제</span>
         </c:if>
@@ -247,7 +247,7 @@
             <div class="comment-header">
               <span class="comment-nickname">${comment.nickname}</span>
               <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
-              <c:if test="${loginUserId eq comment.userId}">
+              <c:if test="${loginUserId eq comment.userId || isAdmin}">
                 <span class="comment-delete" onclick="commentDelete('${comment.id}')">삭제</span>
               </c:if>
             </div>
