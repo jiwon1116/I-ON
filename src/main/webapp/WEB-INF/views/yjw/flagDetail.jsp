@@ -35,7 +35,16 @@
         <div class="card-header bg-warning text-white fw-bold">게시글 상세</div>
         <div class="card-body">
             <h4 class="card-title">${flag != null ? flag.title : ''}</h4>
-            <div class="mb-3 text-muted small">${flag != null ? flag.nickname : ''}</div>
+            <div class="mb-3 text-muted small">
+                ${flag != null ? flag.nickname : ''}
+
+                <c:if test="${not empty flag.city}">
+                    <span class="ms-2 badge bg-light text-dark border">
+                        ${flag.city} ${flag.district}
+                    </span>
+                </c:if>
+            </div>
+
             <p class="card-text">${flag != null ? flag.content : ''}</p>
 
             <%-- 파일 리스트 --%>
