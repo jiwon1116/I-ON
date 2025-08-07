@@ -3,7 +3,9 @@ package com.spring.ion.lcw.controller;
 import com.spring.ion.lcw.repository.MemberRepository;
 import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.lcw.dto.MemberDTO;
+import com.spring.ion.lcw.security.InfoChangeRestrictionException;
 import com.spring.ion.lcw.service.MemberService;
+import com.spring.ion.lcw.service.ReCaptchaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
@@ -17,6 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Controller
 public class MemberController {
@@ -28,8 +32,9 @@ public class MemberController {
 
     @Autowired
     private MemberRepository memberRepository;
-//    @Autowired
-//    private ReCaptchaService reCaptchaService;
+
+    @Autowired
+    private ReCaptchaService reCaptchaService;
 
     @GetMapping("/login")
     public String showLoginPage() {
@@ -47,6 +52,7 @@ public class MemberController {
         String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
         memberDTO.setPassword(encodedPassword);
         memberDTO.setEnabled(true);
+        memberDTO.setProvider("LOCAL");
 
         try {
             memberService.save(memberDTO);
@@ -64,7 +70,7 @@ public class MemberController {
     }
 
 //    @PostMapping("/register")
-//    public String register(@RequestParam("g-recaptcha-response") String reCaptchaResponse, MemberDTO memberDTO, Model model) {
+//    public String register(@RequestParam("g-recaptcha-response") String reCaptchaResponse, MemberDTO memberDTO, Model model, RedirectAttributes redirectAttributes) {
 //        if (!reCaptchaService.verify(reCaptchaResponse)) {
 //            model.addAttribute("reCaptchaError", "CAPTCHA 인증 실패");
 //            return "register";
@@ -73,6 +79,7 @@ public class MemberController {
 //        String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
 //        memberDTO.setPassword(encodedPassword);
 //        memberDTO.setEnabled(true);
+//
 //        try {
 //            memberService.save(memberDTO);
 //            redirectAttributes.addFlashAttribute("registerSuccess", "회원가입이 완료되었습니다!");
@@ -127,27 +134,27 @@ public class MemberController {
 
 
     @PatchMapping("/edit")
-    public String edit(@ModelAttribute MemberDTO memberDTO, RedirectAttributes redirectAttributes){
+    public String edit(@ModelAttribute MemberDTO memberDTO, RedirectAttributes redirectAttributes) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MemberDTO currentMember = userDetails.getMemberDTO();
+        String tmpNickname = currentMember.getNickname();
 
-        if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
-            currentMember.setNickname(memberDTO.getNickname());
-        }
-
-        if (memberDTO.getPassword() != null && !memberDTO.getPassword().isEmpty()) {
-            String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
-            currentMember.setPassword(encodedPassword);
-        }
         try {
-            memberService.edit(currentMember);
+            memberService.edit(currentMember, memberDTO);
             redirectAttributes.addFlashAttribute("editSuccess", "회원 정보가 수정되었습니다!");
             return "redirect:/myPage/";
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
+            currentMember.setNickname(tmpNickname);
             redirectAttributes.addFlashAttribute("editError", "이미 사용 중인 닉네임입니다.");
             redirectAttributes.addFlashAttribute("member", currentMember);
             return "redirect:/edit";
-        } catch (Exception e){
+        } catch (InfoChangeRestrictionException e) {
+            currentMember.setNickname(tmpNickname);
+            redirectAttributes.addFlashAttribute("editError", e.getMessage());
+            redirectAttributes.addFlashAttribute("member", currentMember);
+            return "redirect:/edit";
+        } catch (Exception e) {
+            currentMember.setNickname(tmpNickname);
             redirectAttributes.addFlashAttribute("editError", "회원정보 수정 중 알 수 없는 오류가 발생했습니다.");
             redirectAttributes.addFlashAttribute("member", currentMember);
             return "redirect:/edit";

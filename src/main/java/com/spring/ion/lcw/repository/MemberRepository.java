@@ -34,7 +34,8 @@ public class MemberRepository {
         sql.update("Member.updateMember", memberDTO);
     }
 
-    public void unban(MemberDTO memberDTO){
+    public void unban(MemberDTO memberDTO) {
         sql.update("Member.unban", memberDTO);
     }
+
 }

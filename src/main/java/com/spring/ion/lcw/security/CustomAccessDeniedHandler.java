@@ -17,7 +17,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         if (requestURI.startsWith("/admin")) {
             response.sendRedirect("/");
         }
-
         else {
             response.sendRedirect("/accessDenied");
         }

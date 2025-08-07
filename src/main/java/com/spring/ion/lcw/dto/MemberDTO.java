@@ -20,5 +20,7 @@ public class MemberDTO implements Serializable {
     private LocalDateTime created_at;
     private Boolean enabled;
     private LocalDateTime banUntil;
+    private LocalDateTime infoUntil;
+    private String provider;
     private List<String> authorities;
 }
