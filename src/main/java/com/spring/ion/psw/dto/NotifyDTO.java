@@ -10,6 +10,7 @@ public class NotifyDTO {
     private String nickname; // 알림 받는 사람
     private NotificationType type;
     private String content;
+    private Boolean is_read;
     private Date created_at;
 
     //  연관 데이터 참조용 필드

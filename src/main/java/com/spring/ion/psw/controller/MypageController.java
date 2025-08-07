@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -31,6 +32,7 @@ public class MypageController {
 
         //알림 모아둔 리스트에서 해당 닉네임 가진 알림 가져오기
         List<NotifyDTO> notifyList = notifyService.findAllByNotify(nickname);
+
         System.out.println("알림 객체:"+notifyList);
 
          model.addAttribute("notifyList", notifyList);
@@ -49,4 +51,5 @@ public class MypageController {
         notifyService.deleteById(id);
         return ResponseEntity.ok().body("삭제 성공");
     }
+
 }

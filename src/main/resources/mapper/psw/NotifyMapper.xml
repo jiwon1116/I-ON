@@ -6,12 +6,12 @@
      <insert id="saveNotify" parameterType="notify" useGeneratedKeys="true" keyProperty="id">
             INSERT INTO notification (
             nickname, type, content, created_at,
-            related_post_id, related_comment_id, related_board
+            related_post_id, related_comment_id, related_region, related_board
             ) VALUES (
             #{nickname}, #{type}, #{content}, #{created_at},
-            #{related_post_id}, #{related_comment_id}, #{related_board}
+            #{related_post_id}, #{related_comment_id}, #{related_region}, #{related_board}
             )
-    </insert>
+     </insert>
 
     <select id="findAllByNotify" parameterType="string" resultType="notify">
         SELECT *
@@ -23,5 +23,11 @@
         DELETE FROM notification WHERE id = #{id}
     </delete>
 
+    <select id="countDangerAlertByRegion" resultType="int">
+        SELECT COUNT(*) FROM notification
+        WHERE related_region LIKE CONCAT(#{region}, '%')
+        AND type = 'DANGER_ALERT'
+        AND is_read = false
+    </select>
 
 </mapper>

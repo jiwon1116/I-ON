@@ -10,7 +10,6 @@
     <meta charset="UTF-8">
     <title>마이페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -179,9 +178,8 @@
     </style>
     <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!--jQuery CDN 추가 -->
+    <%--jQuery CDN 추가 --%>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 </head>
 <body>
     <c:if test="${not empty editSuccess}">
@@ -190,9 +188,9 @@
         </script>
     </c:if>
     <div class="mypage-layout">
-        <!-- 왼쪽 사이드바 -->
+        <%-- 왼쪽 사이드바 --%>
         <aside class="sidebar">
-            <!-- 프로필 이미지 + 수정 -->
+            <%-- 프로필 이미지 + 수정 --%>
             <form action="/profile/upload" method="post" enctype="multipart/form-data" style="display:flex; flex-direction:column; align-items:center; width:100%;">
                 <label for="profileImgInput" style="cursor:pointer;">
                     <img src="https://img.icons8.com/ios-glyphs/60/000000/user.png" class="profile-img" id="profileImgPreview" alt="프로필 이미지">
@@ -205,9 +203,8 @@
                 <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
             </div>
         </aside>
-        <!-- 오른쪽 영역(헤더+내용) -->
+        <%-- 오른쪽 영역(헤더+내용) --%>
         <div class="mypage-main">
-            <!-- 헤더 -->
             <div class="main-header">
                 <button class="icon-btn" title="알림">
                     <i class="fas fa-bell"></i>
@@ -216,7 +213,7 @@
                     <i class="fas fa-envelope"></i>
                 </button>
             </div>
-            <!-- 메인 보드(카드 내용) -->
+            <%-- 메인 보드(카드 내용) --%>
             <div class="main-board">
                 <div class="dashboard-row">
                     <div class="card p-4 d-flex align-items-center position-relative">
@@ -242,7 +239,7 @@
                         <span>어린이 범죄 예방 지도</span>
                     </div>
                 </div>
-                <!-- 자녀 등록 -->
+                <%-- 자녀 등록 --%>
                 <div class="dashboard-row">
                     <div class="card p-4">
                         <span>자녀 등록</span>
@@ -263,32 +260,56 @@
                         <div class="text-center text-muted py-5">
                             <i class="fas fa-bell fa-2x mb-2"></i><br>
                            <div class="notification-list" id="notifyList">
-                                  <c:forEach var="notify" items="${notifyList}">
-                                      <div class="notification-item">
-                                          <div class="notify-header">
-                                              <span class="notify-icon">
-                                                  <c:choose>
-                                                      <c:when test="${notify.type == 'COMMENT'}">[댓글]</c:when>
-                                                      <c:when test="${notify.type == 'DANGER_ALERT'}">[위험]</c:when>
-                                                      <c:otherwise>[알림]</c:otherwise>
-                                                  </c:choose>
-                                              </span>
-                                          </div>
-                                          <div class="notify-content">${notify.content}</div>
-                                          <button onclick="deleteNotify(${notify.id})">❌</button>
-                                        <a href="/${notify.related_board}/${notify.related_post_id}">
-                                            👉🏻해당 게시물로 이동
-                                          </a>
-
-                                          <div class="notify-date">
-                                              <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
-                                          </div>
-                                      </div>
-                                  </c:forEach>
+                            <c:forEach var="notify" items="${notifyList}">
+                                <c:choose>
+                                    <c:when test="${notify.type == 'COMMENT'}">
+                                        <div class="notification-item">
+                                            <div class="notify-header">
+                                                <span class="notify-icon">[댓글]💬</span>
+                                            </div>
+                                            <div class="notify-content">${notify.content}</div>
+                                            <button onclick="deleteNotify(${notify.id})">❌</button>
+                                            <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
+                                            <div class="notify-date">
+                                                <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                                            </div>
+                                        </div>
+                                    </c:when>
+                                    <c:when test="${notify.type == 'DANGER_ALERT'}">
+                                        <%-- 자바스크립트 안 쓰고 hidden input으로 우회 저장 --%>
+                                        <input type="hidden" class="danger-alert" value="${notify.content}" />
+                                          <div class="notification-item">
+                                         <div class="notify-header">
+                                            <span class="notify-icon">[댓글]💬</span>
+                                         </div>
+                                             <div class="notify-content">${notify.content}</div>
+                                             <button onclick="deleteNotify(${notify.id})">❌</button>
+                                             <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
+                                        <div class="notify-date">
+                                            <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                                        </div>
+                                    </c:when>
+                                </c:choose>
+                            </c:forEach>
+                               </div>
+                               <div class="modal fade" id="dangerModal" tabindex="-1" role="dialog">
+                                 <div class="modal-dialog" role="document">
+                                   <div class="modal-content">
+                                     <div class="modal-header">
+                                       <h5 class="modal-title">📢 위험 알림</h5>
+                                     </div>
+                                     <div class="modal-body">
+                                       <%-- 여기에 메시지 들어감 --%>
+                                     </div>
+                                     <div class="modal-footer">
+                                       <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+                                     </div>
+                                   </div>
+                                 </div>
                                </div>
                         </div>
                     </div>
-                    <!-- 신뢰도 점수판(도넛차트) -->
+                    <%-- 신뢰도 점수판(도넛차트) --%>
                     <div class="card p-4" style="flex:1;">
                         <div class="d-flex align-items-center mb-2" style="gap: 10px;">
                             <span style="font-weight:600; font-size:1.08rem;">신뢰도 점수판</span>
@@ -301,7 +322,7 @@
                               (${trustScore.totalScore}점)
                             </span>
                         </div>
-                        <!-- 도넛차트 + 게이지바 -->
+                        <%-- 도넛차트 + 게이지바 --%>
                         <div class="donut-box">
                             <canvas id="trustDonut"></canvas>
                             <div class="donut-labels">
@@ -309,7 +330,7 @@
                                 <span><span class="donut-label-dot" style="background:#f6a623"></span>위탁 ${trustScore.entrustCount}</span>
                                 <span><span class="donut-label-dot" style="background:#63a4fa"></span>댓글 ${trustScore.commentCount}</span>
                             </div>
-                            <!-- 게이지바 영역 (차트 바로 아래) -->
+                            <%-- 게이지바 영역 (차트 바로 아래) --%>
                             <div class="trust-gauge-wrap mt-4 w-100" style="max-width:230px;">
                                 <div class="trust-gauge-bar-bg">
                                     <div class="trust-gauge-bar" id="trustGaugeBar"></div>
@@ -317,7 +338,7 @@
                                 <div class="trust-gauge-label small text-end mt-1" id="trustGaugeText" style="color:#666;"></div>
                             </div>
                         </div>
-                        <!-- 모달 트리거(원하면 버튼추가) -->
+                        <%-- 모달 트리거(원하면 버튼추가) --%>
                         <button type="button"
                                 class="btn btn-light rounded-circle"
                                 style="position:absolute; top:20px; right:22px; width:28px; height:28px; padding:0; border:1.5px solid #eee; color:#888;"
@@ -325,7 +346,7 @@
                             <i class="fas fa-question"></i>
                         </button>
                     </div>
-                    <!-- 모달은 기존대로 -->
+                    <%-- 모달은 기존대로 --%>
                     <div class="modal fade" id="trustScoreModal" tabindex="-1" aria-labelledby="trustScoreModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -357,9 +378,9 @@
                       </div>
                     </div>
                 </div>
-            </div><!-- main-board -->
-        </div><!-- mypage-main -->
-    </div><!-- mypage-layout -->
+            </div><%-- main-board --%>
+        </div><%-- mypage-main --%>
+    </div><%-- mypage-layout --%>
 
  <script>
     function deleteNotify(id) {
@@ -376,10 +397,26 @@
         }
     });
 }
+ </script>
+ <script>
+    // 지역 위험 알림 모달
+    document.addEventListener("DOMContentLoaded", function () {
+        let alerts = [];
+        document.querySelectorAll(".danger-alert").forEach(el => {
+            alerts.push(el.value);
+        });
+
+         // 지역 위험 알림의 수
+        if (alerts.length > 0) {
+            let message = alerts.join("<br>");
+            document.querySelector("#dangerModal .modal-body").innerHTML = message;
+            let myModal = new bootstrap.Modal(document.getElementById('dangerModal'), {});
+            myModal.show();
+        }
+    });
 </script>
 
-
-    <!-- 도넛차트 Chart.js 스크립트 + 게이지바 스크립트 -->
+    <%-- 도넛차트 Chart.js 스크립트 + 게이지바 스크립트 --%>
     <script>
         // JSP 변수 치환 (꼭 Number로!)
         const reportCount = Number('${trustScore.reportCount}');
@@ -411,30 +448,33 @@
                                 return context.label + ': ' + context.raw + '개';
                             }
                         }
-                                  }
-                                    }
-                                }
-                            }); // ← ← ← ← ← ← ← ← **반드시 닫아줘야 함!**
+                    }
+                }
+            }
+        });
 
-                            // 게이지바
-                            const totalScore = Number('${trustScore.totalScore}');
-                            let grade = '${fn:trim(trustScore.grade)}';
-                            const gaugeBar = document.getElementById('trustGaugeBar');
-                            const gaugeText = document.getElementById('trustGaugeText');
-                            const maxScore = 30;
-                            let percent = Math.min((totalScore / maxScore) * 100, 100);
-                            setTimeout(() => {
-                                gaugeBar.style.width = percent + '%';
-                            }, 300);
+        // 게이지바
+        const totalScore = Number('${trustScore.totalScore}');
+        let grade = '${fn:trim(trustScore.grade)}';
+        const gaugeBar = document.getElementById('trustGaugeBar');
+        const gaugeText = document.getElementById('trustGaugeText');
+        const maxScore = 30;
+        let percent = Math.min((totalScore / maxScore) * 100, 100);
+        setTimeout(() => {
+            gaugeBar.style.width = percent + '%';
+        }, 300);
 
 
-                            let text = '';
-                            if (grade === '캡숑맘') {
-                                text = '최고 등급 달성! 👑';
-                            } else if (grade === '도토리맘') {
-                                text = `캡숑맘까지 <b>${30-trustScore.totalScore}</b>점 남았어요!`;
-                                      } else if (grade === '새싹맘') {
-                                          text = `도토리맘까지 <b>${10-trustScore.totalScore}</b>점 남았어요!`;
-                                      }
-                                      gaugeText.innerHTML = text;
-                                  </script>
+        let text = '';
+        if (grade === '캡숑맘') {
+            text = '최고 등급 달성! 👑';
+        } else if (grade === '도토리맘') {
+            text = `캡숑맘까지 <b>${30-totalScore}</b>점 남았어요!`;
+        } else if (grade === '새싹맘') {
+            text = `도토리맘까지 <b>${10-totalScore}</b>점 남았어요!`;
+        }
+        gaugeText.innerHTML = text;
+
+    </script>
+</body>
+</html>

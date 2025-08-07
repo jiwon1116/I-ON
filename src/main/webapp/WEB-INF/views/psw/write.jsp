@@ -150,8 +150,8 @@
                 </div>
 
               <div class="form-group">
-                 <label for="file" class="form-label">게시물 이미지</label>
-                 <input type="file" class="form-control" id="file" name="file" >
+                 <label for="file" class="form-label">게시물 이미지(필수)</label>
+                 <input type="file" class="form-control" id="file" name="file" required>
               </div>
 
                 <div class="form-group">

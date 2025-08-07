@@ -1,6 +1,7 @@
 package com.spring.ion.yjw.controller;
 
 import com.spring.ion.lcw.security.CustomUserDetails;
+import com.spring.ion.psw.service.NotifyService;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPageDTO;
@@ -37,6 +38,7 @@ public class FlagBoardController {
     private final FlagService flagService;
     private final FlagCommentService flagCommentService;
     private final FlagLikeService flagLikeService;
+    private final NotifyService notifyService;
 
 //    @GetMapping
 //    public String flag() {
@@ -79,7 +81,18 @@ public class FlagBoardController {
             userId = (String) principal;
         }
         flagPostDTO.setUserId(userId); // 꼭 넣어줘야 함
+
         flagService.write(flagPostDTO, fileList);
+
+        String city = flagPostDTO.getCity(); // 제보글 시/도
+        String district = flagPostDTO.getDistrict(); // 구/군
+
+        System.out.println("제보글 시/도:"+city);
+        System.out.println("제보글 구/군:"+district);
+
+        // 알림 저장
+       notifyService.createDangerNotify(flagPostDTO.getNickname(),flagPostDTO.getNickname(),flagPostDTO.getId(),city,district,"flag");
+
         return "redirect:/flag";
     }
 
@@ -97,7 +110,6 @@ public class FlagBoardController {
         model.addAttribute("paging", pageDTO);
         return "yjw/flag";
     }
-
 
     // 상세보기
     // FlagBoardController.java
@@ -251,18 +263,6 @@ public class FlagBoardController {
         model.addAttribute("postList", postList);
         return "yjw/flag"; // 위의 JSP가 위치한 경로
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

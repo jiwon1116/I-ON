@@ -41,6 +41,7 @@ public class FlagCommentController {
         //게시글 정보 조회
         FlagPostDTO post = flagService.findById(dto.getPost_id());
 
+
         // 알림 생성 (서비스에서 nickname null 여부 처리)
         notifyService.createCommentNotify(post.getNickname(),dto.getNickname(),post.getId(),dto.getId(),"flag");
 
