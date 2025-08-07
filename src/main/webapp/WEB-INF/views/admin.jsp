@@ -306,9 +306,29 @@
                                      </div>
                                    </div>
                                  </div>
+
+
+                      <div class="dashboard-row">
+                          <!-- 내 소식 -->
+                          <div class="card p-4" style="flex:2">
+                              <span>내 소식</span>
+                              <div class="text-center text-muted py-5">
+                                  <i class="fas fa-bell fa-2x mb-2"></i><br>
+                                  <div class="notification-list" id="notifyList">
+                                      <%-- 알림 내용 --%>
+                                  </div>
+                              </div>
+                          </div>
+                          <!-- 게시물 승인 및 삭제 -->
+                          <div class="card p-4" style="flex:2">
+                              <span>게시물 승인 및 삭제</span>
+                              <div class="text-center text-muted py-5">
+                                  <i class="fas fa-check-square fa-2x mb-2"></i><br>
+                                  <span>승인/삭제할 게시물이 없습니다.</span>
+                              </div>
+                          </div>
                       </div>
-                    </div>
-                </div>
+
             </div><%-- main-board --%>
         </div><%-- mypage-main --%>
     </div><%-- mypage-layout --%>
