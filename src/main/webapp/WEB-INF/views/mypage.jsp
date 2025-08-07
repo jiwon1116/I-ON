@@ -10,6 +10,8 @@
     <meta charset="UTF-8">
     <title>마이페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js CDN (필수!) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background: #F8F9FA;
@@ -18,9 +20,8 @@
         }
         .mypage-layout {
             display: flex;
-            min-height: 100vh;     /* 한 화면 채우기 */
+            min-height: 100vh;
         }
-        /* 사이드바 */
         .sidebar {
             width: 220px;
             height: 100vh;
@@ -29,7 +30,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* 중앙정렬 */
             justify-content: center;
             padding: 0;
         }
@@ -72,7 +72,6 @@
             align-items: center;
             padding-bottom: 34px;
         }
-        /* 헤더 */
         .main-header {
             height: 64px;
             background: #D9D9D9;
@@ -81,8 +80,6 @@
             justify-content: flex-end;
             padding: 0 40px;
             border-bottom: 1.5px solid #eee;
-            /* 고정 X */
-            /* margin-left 없음! */
         }
         .main-header .icon-btn {
             background: transparent;
@@ -96,7 +93,6 @@
         .main-header .icon-btn:focus {
             outline: none;
         }
-        /* 메인 */
         .mypage-main {
             flex: 1 1 0;
             display: flex;
@@ -124,63 +120,45 @@
         .dashboard-row .card {
             flex: 1;
         }
+        /* 도넛차트 스타일 */
+        .donut-box canvas {
+            margin-top: 18px;
+            width: 220px !important;
+            height: 220px !important;
+            min-width: 50px;!important;
+            min-height: 50px;!important;
+
+        }
 
 
-         /* 알림창 */
-        .notification-box {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            height: 300px; /* 적당한 높이로 조절 가능 */
-            overflow: hidden;
+        .donut-box {
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
         }
-
-        .notification-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
-
-        .notification-list {
-            flex: 1;
-            overflow-y: auto; /* 스크롤바 생김 */
-            padding-right: 8px;
-        }
-
-        .notification-item {
-            border-bottom: 1px solid #eee;
-            padding: 8px 0;
-        }
-
-        .notify-header {
+        .donut-labels {
             display: flex;
-            justify-content: space-between;
-            font-weight: bold;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 12px;
+            font-size: 15px;
         }
-
-        .notify-content {
-            margin-top: 4px;
-            color: #333;
+        .donut-label-dot {
+            display: inline-block;
+            width: 12px; height: 12px;
+            border-radius: 6px;
+            margin-right: 5px;
         }
-
-        .notify-date {
-            margin-top: 4px;
-            font-size: 12px;
-            color: #888;
-        }
-        .notify-icon {
-            margin-right: 6px;
-        }
-        .notify-header {
-            font-weight: bold;
+        .donut-grade-badge {
             display: flex;
             align-items: center;
+            gap: 6px;
+            margin-top: 7px;
+            font-size: 16px;
+            font-weight: 600;
         }
-
-
         @media (max-width: 1200px) {
             .main-board { padding: 18px 10px 18px 10px; }
         }
@@ -193,7 +171,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <c:if test="${not empty editSuccess}">
         <script>
             alert('${editSuccess}');
@@ -210,7 +187,6 @@
                 <input type="file" name="profileImg" id="profileImgInput" accept="image/*" style="display:none;" onchange="previewProfileImg(event)">
                 <div class="profile-name">${member.nickname}</div>
                 <button type="button" class="profile-edit-btn mt-1" onclick="location.href='/edit'">회원 정보 수정하기</button>
-
             </form>
             <div class="sidebar-bottom">
                 <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
@@ -253,27 +229,19 @@
                         <span>어린이 범죄 예방 지도</span>
                     </div>
                 </div>
-
-
-                 <!-- 자녀 등록 -->
+                <!-- 자녀 등록 -->
                 <div class="dashboard-row">
                     <div class="card p-4">
                         <span>자녀 등록</span>
-                         <a href="/#" class="btn btn-warning btn-sm mt-2">
-                                                        바로가기
-                                                    </a>
+                         <a href="/#" class="btn btn-warning btn-sm mt-2">바로가기</a>
                     </div>
                     <div class="card p-4">
                         <span>내가 작성한 글</span>
-                        <a href="/myPost" class="btn btn-warning btn-sm mt-2">
-                                바로가기
-                            </a>
+                        <a href="/myPost" class="btn btn-warning btn-sm mt-2">바로가기</a>
                     </div>
                     <div class="card p-4">
                         <span>내가 작성한 댓글</span>
-                        <a href="/myComment" class="btn btn-warning btn-sm mt-2">
-                                바로가기
-                        </a>
+                        <a href="/myComment" class="btn btn-warning btn-sm mt-2">바로가기</a>
                     </div>
                 </div>
                 <div class="dashboard-row">
@@ -302,69 +270,47 @@
                                </div>
                         </div>
                     </div>
-
-
-                    <div class="card p-4" style="flex:1; position:relative;">
+                    <!-- 신뢰도 점수판(도넛차트) -->
+                    <div class="card p-4" style="flex:1;">
                         <div class="d-flex align-items-center mb-2" style="gap: 10px;">
                             <span style="font-weight:600; font-size:1.08rem;">신뢰도 점수판</span>
-                            <!-- 등급 배지 & 반짝 효과 -->
-                            <span class="trust-grade-badge sparkle"
-                                  style="margin-left:6px;">
-                              ${trustScore.grade}
+                            <span class="donut-grade-badge">
+                              <c:choose>
+                                <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">🌱 새싹맘</c:when>
+                                <c:when test="${fn:trim(trustScore.grade) eq '도토리맘'}">🥜 도토리맘</c:when>
+                                <c:when test="${fn:trim(trustScore.grade) eq '캡숑맘'}">👑 캡숑맘</c:when>
+                              </c:choose>
+                              (${trustScore.totalScore}점)
                             </span>
-                            <!-- 모달 버튼 -->
-                            <div class="mb-2">
-                                <div class="progress" style="height:18px;">
-                                  <div class="progress-bar
-                                    <c:choose>
-                                      <c:when test="${trustScore.grade eq '새싹맘'}">bg-success</c:when>
-                                      <c:when test="${trustScore.grade eq '도토리맘'}">bg-warning</c:when>
-                                      <c:when test="${trustScore.grade eq '캡숑맘'}">bg-danger</c:when>
-                                    </c:choose>"
-                                    role="progressbar"
-                                    style="width: ${trustScore.totalScore >= 30 ? 100 : trustScore.totalScore >= 10 ? (trustScore.totalScore-10)*100/20 : trustScore.totalScore*100/10}%;"
-                                    aria-valuenow="${trustScore.totalScore}" aria-valuemin="0" aria-valuemax="30">
-                                    <c:choose>
-                                      <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">🌱</c:when>
-                                      <c:when test="${fn:trim(trustScore.grade) eq '도토리맘'}">🥜</c:when>
-                                      <c:when test="${fn:trim(trustScore.grade) eq '캡숑맘'}">👑</c:when>
-                                    </c:choose>
-                                  </div>
-                                </div>
-                                <div class="small text-end mt-1" style="color:#666;">
-                                  <c:choose>
-                                    <c:when test="${fn:trim(trustScore.grade) eq '캡숑맘'}">최고 등급 달성!</c:when>
-                                    <c:when test="${fn:trim(trustScore.grade) eq '도토리맘'}">
-                                      <span>캡숑맘까지 <b>${30-trustScore.totalScore}</b>점 남았어요!</span>
-                                    </c:when>
-                                    <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">
-                                      <span>도토리맘까지 <b>${10-trustScore.totalScore}</b>점 남았어요!</span>
-                                    </c:when>
-                                  </c:choose>
-                                </div>
-                            </div>
-
                         </div>
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-between">
-                                <span>제보 횟수</span>
-                                <span style="color:#f6a623; font-size:1.1rem;">${trustScore.reportCount} 개</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>위탁 횟수</span>
-                                <span style="color:#f6a623; font-size:1.1rem;">${trustScore.entrustCount} 개</span>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>댓글</span>
-                                <span style="color:#f6a623; font-size:1.1rem;">${trustScore.commentCount} 개</span>
-                            </div>
-                            <div class="d-flex justify-content-between mt-2">
-                                <span style="font-weight:500;">총점</span>
-                                <span style="color:#2d63a3; font-weight:700;">${trustScore.totalScore} 점</span>
+                        <!-- 도넛차트! -->
+                        <div class="donut-box">
+                            <canvas id="trustDonut"></canvas>
+                            <div class="donut-labels">
+                                <span><span class="donut-label-dot" style="background:#4bc0c0"></span>제보 ${trustScore.reportCount}</span>
+                                <span><span class="donut-label-dot" style="background:#f6a623"></span>위탁 ${trustScore.entrustCount}</span>
+                                <span><span class="donut-label-dot" style="background:#63a4fa"></span>댓글 ${trustScore.commentCount}</span>
                             </div>
                         </div>
+                        <div class="small text-end mt-1" style="color:#666;">
+                          <c:choose>
+                            <c:when test="${fn:trim(trustScore.grade) eq '캡숑맘'}">최고 등급 달성!</c:when>
+                            <c:when test="${fn:trim(trustScore.grade) eq '도토리맘'}">
+                              <span>캡숑맘까지 <b>${30-trustScore.totalScore}</b>점 남았어요!</span>
+                            </c:when>
+                            <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">
+                              <span>도토리맘까지 <b>${10-trustScore.totalScore}</b>점 남았어요!</span>
+                            </c:when>
+                          </c:choose>
+                        </div>
+                        <!-- 모달 트리거(원하면 버튼추가) -->
+                        <button type="button"
+                                class="btn btn-light rounded-circle"
+                                style="position:absolute; top:20px; right:22px; width:28px; height:28px; padding:0; border:1.5px solid #eee; color:#888;"
+                                data-bs-toggle="modal" data-bs-target="#trustScoreModal">
+                            <i class="fas fa-question"></i>
+                        </button>
                     </div>
-
                     <!-- 모달은 기존대로 -->
                     <div class="modal fade" id="trustScoreModal" tabindex="-1" aria-labelledby="trustScoreModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered">
@@ -396,13 +342,47 @@
                         </div>
                       </div>
                     </div>
-
-
                 </div>
             </div><!-- main-board -->
         </div><!-- mypage-main -->
     </div><!-- mypage-layout -->
 
-
+    <!-- 도넛차트 Chart.js 스크립트 -->
+    <script>
+        // JSP 변수 치환 (꼭 Number로!)
+        const reportCount = Number('${trustScore.reportCount}');
+        const entrustCount = Number('${trustScore.entrustCount}');
+        const commentCount = Number('${trustScore.commentCount}');
+        // Chart.js 도넛 그리기
+        const ctx = document.getElementById('trustDonut').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['제보', '위탁', '댓글'],
+                datasets: [{
+                    data: [reportCount, entrustCount, commentCount],
+                    backgroundColor: [
+                        '#4bc0c0', // 제보
+                        '#f6a623', // 위탁
+                        '#63a4fa'  // 댓글
+                    ],
+                    borderWidth: 0,
+                }]
+            },
+            options: {
+                cutout: '65%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw + '개';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
