@@ -8,9 +8,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 @Service
 @RequiredArgsConstructor
@@ -29,10 +30,12 @@ public class CustomUserDetailsService implements UserDetailsService {
             if (LocalDateTime.now().isAfter(member.getBanUntil())) {
                 member.setEnabled(true);
                 memberRepository.unban(member);
+            } else {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분");
+                throw new DisabledException(member.getBanUntil().format(formatter) + "까지 비활성화된 계정입니다.");
             }
         }
 
-        System.out.println("로그인 멤버 정보: " + member);
         return new CustomUserDetails(member);
     }
 }
