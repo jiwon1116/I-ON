@@ -71,9 +71,11 @@
             <div class="text-end mb-2">
                 <!-- 수정 버튼 추가 -->
                 <security:authentication property="principal.username" var="loginUserId"/>
-                <c:if test="${loginUserId eq flag.userId}">
+                <c:if test="${loginUserId eq flag.userId or isAdmin}">
                     <a href="${pageContext.request.contextPath}/flag/update/${flag.id}" ...>수정</a>
-                    <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}" ...>삭제</a>
+                    <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}"
+                       onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
+
                 </c:if>
 
             </div>
@@ -134,7 +136,7 @@
                             ${comment.nickname} | ${dateText}
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
                             <!-- comment.userId == 로그인한 유저의 userId일 때만 삭제 버튼 노출 -->
-                            <c:if test="${comment.userId eq loginUserId}">
+                            <c:if test="${comment.userId eq loginUserId or isAdmin}">
                                 <button class="btn btn-sm btn-outline-danger float-end"
                                         onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
                             </c:if>
