@@ -110,6 +110,15 @@ public class MissController {
         String loginUserId = user.getUsername();
         model.addAttribute("loginUserId", loginUserId);
 
+        // --- 관리자 권한 체크 추가! ---
+        boolean isAdmin = false;
+        List<String> authorities = user.getMemberDTO().getAuthorities();
+        if (authorities != null && authorities.contains("ROLE_ADMIN")) {
+            isAdmin = true;
+        }
+        model.addAttribute("isAdmin", isAdmin);
+        // 여기까지
+
         int likeCount = missLikeService.getLikeCount(id);
         miss.setLike_count(likeCount);
 
@@ -157,7 +166,18 @@ public class MissController {
         long clickId = missDTO.getId();
         MissDTO miss = missService.findById(clickId);
 
-        if (miss != null) {
+        // 로그인 유저
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = user.getUsername();
+
+        // 관리자 체크
+        boolean isAdmin = false;
+        List<String> authorities = user.getMemberDTO().getAuthorities();
+        if (authorities != null && authorities.contains("ROLE_ADMIN")) {
+            isAdmin = true;
+        }
+
+        if (miss != null && (loginUserId.equals(miss.getUserId()) || isAdmin)) {
             missService.delete(clickId);
         }
         return "redirect:/miss";
