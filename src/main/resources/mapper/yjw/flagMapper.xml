@@ -99,6 +99,21 @@
         (#{nickname}, #{title}, #{content}, #{likeCount}, #{viewCount}, #{createdAt}, #{userId}, #{city}, #{district})
     </insert>
 
+    <select id="findAllApproved" resultType="FlagPost">
+        SELECT *
+        FROM flag_post
+        WHERE status = 'APPROVED'
+        ORDER BY id DESC
+    </select>
+
+    <select id="findAllForUser" parameterType="map" resultType="FlagPost">
+        SELECT *
+        FROM flag_post
+        WHERE status = 'APPROVED'
+        OR user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+
 
 
 
