@@ -2,8 +2,6 @@ package com.spring.ion.psw.service;
 
 import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.repository.MemberRepository;
-import com.spring.ion.psw.dto.Info_commentDTO;
-import com.spring.ion.psw.dto.Info_contentDTO;
 import com.spring.ion.psw.dto.NotifyDTO;
 import com.spring.ion.psw.repository.NotifyRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,27 +34,32 @@ public class NotifyService {
     }
 
     // 위험지역 알림저장
-/*    public void createDangerNotify(String postWriter, Long postId, String city, String boardType) {
+    public void createDangerNotify(String postWriter, Long postId, String city,String district, String boardType) {
         String writerNickname = postWriter;
-
         // 작성자 제외 같은 지역 회원 출력
-        System.out.println("[NotifyService] fullRegion=" + city + ", writer=" + writerNickname);
-        List<MemberDTO> members = memberRepository.findByRegionExceptWriter(city, writerNickname);
+        System.out.println("[NotifyService] fullRegion=" + city + district+ ", writer=" + writerNickname);
+        List<MemberDTO> members = memberRepository.findByRegionExceptWriter(city, district, writerNickname);
         System.out.println("[NotifyService] 대상 회원 수=" + members.size());
+        String fullRegion = city + " " + district;
 
         for (MemberDTO m : members) {
+            System.out.println("조회된 회원 수: " + members.size());
+
+            if (m.getUserId().equals("admin")){
+                continue;
+            }
             NotifyDTO notify = new NotifyDTO();
             notify.setNickname(m.getNickname()); // 수신자
             notify.setType(NotifyDTO.NotificationType.DANGER_ALERT);
-            notify.setContent("⚠️ [" + city + "] 위험 제보가 접수되었습니다.");
+            notify.setContent("⚠️ [" + city + district + "]에 위험 제보가 접수되었습니다.");
             notify.setRelated_post_id(postId);
             notify.setRelated_board(boardType);
-            notify.setRelated_region(city);
+            notify.setRelated_region(fullRegion);
             notify.setCreated_at(new Date());
             notifyRepository.saveNotify(notify);
         }
 
-    }*/
+    }
     // 해당 닉네임의 알림 가져오기
     public List<NotifyDTO> findAllByNotify(String nickname) {
         return notifyRepository.findAllByNotify(nickname);

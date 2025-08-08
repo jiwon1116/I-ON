@@ -88,11 +88,11 @@ public class FlagBoardController {
 
         System.out.println("글 작성자:"+ flagPostDTO.getNickname());
         System.out.println("글 아이디:"+ flagPostDTO.getId());
-        System.out.println("제보글 시/도:"+city);
+        System.out.println("제보글 시/도:"+ city);
         System.out.println("제보글 구/군:"+district);
 
         // 알림 저장
-     /*  notifyService.createDangerNotify(flagPostDTO.getNickname(),flagPostDTO.getId(),city,"flag");*/
+       notifyService.createDangerNotify(flagPostDTO.getNickname(),flagPostDTO.getId(),city,district,"flag");
 
         return "redirect:/flag";
     }

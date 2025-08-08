@@ -324,7 +324,7 @@
     function deleteNotify(id) {
     $.ajax({
         type: "POST",
-        url: "/myPage/delete",
+        url: "/mypage/delete",
         data: { id: id },
         success: function(response) {
             alert("알림이 삭제되었습니다.");
@@ -337,29 +337,28 @@
 }
  </script>
 
-  <script>
-    // 지역 위험 알림 모달
-  document.addEventListener("DOMContentLoaded", function () {
-      // 이미 띄웠으면 종료
-      if (sessionStorage.getItem("dangerModalShown") === "1") return;
+<script>
+    // 지역 사건 알림 모달
+    document.addEventListener("DOMContentLoaded", function () {  //HTML 문서의 DOM 요소가 전부 로드된 뒤에 안의 코드를 실행하겠다는 뜻
 
-      const alerts = Array.from(document.querySelectorAll(".danger-alert")) //.danger-alert 요소들에서 값만 뽑아서 배열로 만드는 과정
-                          .map(e => e.value)
-                          .filter(Boolean);
+    const sessionId = document.querySelector('meta[name="session-id"]').content;
+    const shownKey = `dangerModalShown_${sessionId}`; // 세션별로 다른 키
 
-      if (alerts.length > 0) {
-          document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
-          new bootstrap.Modal(document.getElementById('dangerModal')).show();
+    // 이미 이 세션에서 띄웠으면 종료
+    if (sessionStorage.getItem(shownKey) === "1") return;
 
-          // 이 세션에서는 다시 안 뜨게 저장
-          sessionStorage.setItem("dangerModalShown", "1");
-      }
-  });
-  </script>
+    const alerts = Array.from(document.querySelectorAll(".danger-alert"))
+                        .map(e => e.value)
+                        .filter(Boolean);
 
-   </script>
+    if (alerts.length > 0) {
+        document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
+        new bootstrap.Modal(document.getElementById('dangerModal')).show();
 
-
+        // 이 세션에서는 다시 안 뜨게 저장
+        sessionStorage.setItem(shownKey, "1");
+    }
+});
 </script>
 
     <%-- 도넛차트 Chart.js 스크립트 + 게이지바 스크립트 --%>
@@ -398,7 +397,6 @@
                 }
             }
         });
-
         // 게이지바
         const totalScore = Number('${trustScore.totalScore}');
         let grade = '${fn:trim(trustScore.grade)}';

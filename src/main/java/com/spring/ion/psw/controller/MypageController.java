@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/myPage")
+@RequestMapping("/mypage")
 @RequiredArgsConstructor
 public class MypageController {
     private final NotifyService notifyService;

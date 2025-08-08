@@ -51,12 +51,13 @@ public class MemberRepository {
         param.put("profileImg", profileImg);
         sql.update("Member.updateProfileImg", param);
     }
-/*    // 작성자 제외한 같은 지역에 사는 회원 조회
-    public List<MemberDTO> findByRegionExceptWriter(String city, String writerNickname) {
+    // 작성자 제외한 같은 지역에 사는 회원 조회
+    public List<MemberDTO> findByRegionExceptWriter(String city,String district, String writerNickname) {
         Map<String, String> params = new HashMap<>();
         params.put("city", city);
+        params.put("district", district);
         params.put("writerNickname", writerNickname);
 
         return sql.selectList("Member.findByRegionExceptWriter", params);
-    }*/
+    }
 }
