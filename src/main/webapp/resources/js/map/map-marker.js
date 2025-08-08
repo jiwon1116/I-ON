@@ -123,6 +123,8 @@ window.clearOffenderMarkers = function () {
 window.loadOffenderMarkersByBounds = function () {
   console.log("📌 offender 마커 로딩 시작");
 
+ clearOffenderMarkers();
+
   const bounds = window.map.getBounds();
   const sw = bounds.getSouthWest();
   const ne = bounds.getNorthEast();
@@ -155,7 +157,8 @@ window.loadOffenderMarkersByBounds = function () {
       console.log("item.la", item.la, "item.lo", item.lo);
         const lat = parseFloat(item.la);
         const lng = parseFloat(item.lo);
-        if (!lat || !lng) return;
+
+        if (isNaN(lat) || isNaN(lng)) return;
 
         const mk = new kakao.maps.Marker({
           position: new kakao.maps.LatLng(lat, lng),

@@ -40,6 +40,7 @@
     </div>
     <ul class="nav-tabs">
           <li class="main-menu active">범죄 발생 지역</li>
+          <!-- 파라미터 값으로 타입 받음 -->
           <li class="main-menu"><a href="${pageContext.request.contextPath}/map/?type=offender">성범죄자 거주지</a></li>
           <li class="main-menu"><a href="${pageContext.request.contextPath}/map/?type=emergencybell">비상벨</a></li>
           <li class="main-menu"><a href="${pageContext.request.contextPath}/map/?type=safehouse">안전 지킴이집</a></li>

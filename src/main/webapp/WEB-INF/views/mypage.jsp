@@ -234,7 +234,7 @@
                         <span>아동 범죄 예방 게시판</span>
                     </div>
                     <div class="card p-4 d-flex align-items-center position-relative">
-                        <a href="/map" class="stretched-link"></a>
+                        <a href="/map/" class="stretched-link"></a>
                         <img src="https://img.icons8.com/color/48/worldwide-location.png" class="me-3" width="34">
                         <span>어린이 범죄 예방 지도</span>
                     </div>
