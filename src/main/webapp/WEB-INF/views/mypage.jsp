@@ -8,6 +8,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <!-- 지역경보 모달을 위한 세션가져오기 -->
+    <meta name="session-id" content="${pageContext.session.id}">
     <title>마이페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -182,7 +184,7 @@
                                         <input type="hidden" class="danger-alert" value="${notify.content}" />
                                           <div class="notification-item">
                                          <div class="notify-header">
-                                            <span class="notify-icon">[댓글]💬</span>
+                                            <span class="notify-icon">[위험]🚨</span>
                                          </div>
                                              <div class="notify-content">${notify.content}</div>
                                              <button onclick="deleteNotify(${notify.id})">❌</button>
@@ -322,7 +324,7 @@
     function deleteNotify(id) {
     $.ajax({
         type: "POST",
-        url: "/myPage/delete",
+        url: "/mypage/delete",
         data: { id: id },
         success: function(response) {
             alert("알림이 삭제되었습니다.");
@@ -334,22 +336,29 @@
     });
 }
  </script>
- <script>
-    // 지역 위험 알림 모달
-    document.addEventListener("DOMContentLoaded", function () {
-        let alerts = [];
-        document.querySelectorAll(".danger-alert").forEach(el => {
-            alerts.push(el.value);
-        });
 
-         // 지역 위험 알림의 수
-        if (alerts.length > 0) {
-            let message = alerts.join("<br>");
-            document.querySelector("#dangerModal .modal-body").innerHTML = message;
-            let myModal = new bootstrap.Modal(document.getElementById('dangerModal'), {});
-            myModal.show();
-        }
-    });
+<script>
+    // 지역 사건 알림 모달
+    document.addEventListener("DOMContentLoaded", function () {  //HTML 문서의 DOM 요소가 전부 로드된 뒤에 안의 코드를 실행하겠다는 뜻
+
+    const sessionId = document.querySelector('meta[name="session-id"]').content;
+    const shownKey = `dangerModalShown_${sessionId}`; // 세션별로 다른 키
+
+    // 이미 이 세션에서 띄웠으면 종료
+    if (sessionStorage.getItem(shownKey) === "1") return;
+
+    const alerts = Array.from(document.querySelectorAll(".danger-alert"))
+                        .map(e => e.value)
+                        .filter(Boolean);
+
+    if (alerts.length > 0) {
+        document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
+        new bootstrap.Modal(document.getElementById('dangerModal')).show();
+
+        // 이 세션에서는 다시 안 뜨게 저장
+        sessionStorage.setItem(shownKey, "1");
+    }
+});
 </script>
 
     <%-- 도넛차트 Chart.js 스크립트 + 게이지바 스크립트 --%>
@@ -388,7 +397,6 @@
                 }
             }
         });
-
         // 게이지바
         const totalScore = Number('${trustScore.totalScore}');
         let grade = '${fn:trim(trustScore.grade)}';
