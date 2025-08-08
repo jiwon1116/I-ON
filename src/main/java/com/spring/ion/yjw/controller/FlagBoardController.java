@@ -79,7 +79,6 @@ public class FlagBoardController {
             userId = (String) principal;
         }
         flagPostDTO.setUserId(userId); // 꼭 넣어줘야 함
-
         flagService.write(flagPostDTO, fileList);
         return "redirect:/flag";
     }

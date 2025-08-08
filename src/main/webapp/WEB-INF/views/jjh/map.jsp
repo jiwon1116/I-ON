@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta charset="utf-8"/>
-  <title>안전지도</title>
+  <title>지도</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 
   <!-- 카카오 클러스터 -->
@@ -56,7 +56,7 @@
       <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
     </div>
     <ul class="nav-tabs">
-      <li class="main-menu" data-type="crime">범죄 발생 지역</li>
+      <li class="main-menu"><a href="/map/crime">범죄 발생 지역</a></li>
       <li class="main-menu" data-type="sexoffender">성범죄자 거주지</li>
       <li class="main-menu" data-type="emergencybell">비상벨</li>
       <li class="main-menu" data-type="safehouse">안전 지킴이집</li>

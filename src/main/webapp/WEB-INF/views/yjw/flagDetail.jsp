@@ -35,7 +35,16 @@
         <div class="card-header bg-warning text-white fw-bold">게시글 상세</div>
         <div class="card-body">
             <h4 class="card-title">${flag != null ? flag.title : ''}</h4>
-            <div class="mb-3 text-muted small">${flag != null ? flag.nickname : ''}</div>
+            <div class="mb-3 text-muted small">
+                ${flag != null ? flag.nickname : ''}
+
+                <c:if test="${not empty flag.city}">
+                    <span class="ms-2 badge bg-light text-dark border">
+                        ${flag.city} ${flag.district}
+                    </span>
+                </c:if>
+            </div>
+
             <p class="card-text">${flag != null ? flag.content : ''}</p>
 
             <%-- 파일 리스트 --%>
@@ -104,7 +113,7 @@
                     <!-- nickname input 삭제!! -->
                 </div>
                 <div class="mb-2">
-                    <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요" required></textarea>
+                    <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요"></textarea>
                 </div>
                 <div class="text-end">
                     <button type="submit" class="btn btn-primary" id="submitCommentBtn">댓글 등록</button>
@@ -146,10 +155,10 @@
             const content = $('#content').val();
             const post_id = $('#post_id').val();
 
-            if (!content || !post_id) {
-                alert("내용, 게시글 ID를 입력하세요");
-                return;
-            }
+                 if (!post_id || !content) {
+                                  alert("내용을 입력해주세요.");
+                          return;
+                  }
 
             $.ajax({
                 type: 'POST',
