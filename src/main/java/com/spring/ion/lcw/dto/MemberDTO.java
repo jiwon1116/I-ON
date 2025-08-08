@@ -13,7 +13,6 @@ public class MemberDTO implements Serializable {
     private String password;
     private String nickname;
     private String gender;
-    private String region;
     private String profile_img;
     private Boolean enrollment_verified;
     private Integer trust_score;
@@ -23,4 +22,6 @@ public class MemberDTO implements Serializable {
     private LocalDateTime infoUntil;
     private String provider;
     private List<String> authorities;
+    private String city;
+    private String district;
 }

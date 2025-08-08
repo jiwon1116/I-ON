@@ -13,11 +13,7 @@
             alert('${editError}');
         </script>
     </c:if>
-    <form action="/edit" method="post" onsubmit="return confirm('정말 회원 정보를 수정하시겠습니까?\n30일에 한 번씩만 수정이 가능합니다.');">
-                    <div>
-                        <label for="edit-password">비밀번호:</label>
-                        <input type="password" id="edit-password" name="password" placeholder="변경 시에만 입력해주세요." />
-                    </div>
+    <form action="/naver-edit" method="post" onsubmit="return confirm('정말 회원 정보를 수정하시겠습니까?\n30일에 한 번씩만 수정이 가능합니다.');">
                     <div>
                         <label for="edit-nickname">닉네임:</label>
                         <input type="text" id="edit-nickname" name="nickname" value="${member.nickname}"/>
