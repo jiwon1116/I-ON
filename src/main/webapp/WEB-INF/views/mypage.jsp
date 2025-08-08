@@ -10,210 +10,112 @@
     <meta charset="UTF-8">
     <title>마이페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            background: #F8F9FA;
-            margin: 0;
-            font-family: 'Pretendard', 'Apple SD Gothic Neo', Arial, sans-serif;
-        }
-        .mypage-layout {
-            display: flex;
-            min-height: 100vh;
-        }
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background: #fff;
-            border-right: 1.5px solid #eee;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-        }
-        .profile-img {
-            width: 76px;
-            height: 76px;
-            border-radius: 50%;
-            background: #ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/48px no-repeat;
-            margin-top: 50px;
-            margin-bottom: 10px;
-            object-fit: cover;
-            cursor: pointer;
-        }
-        .profile-name {
-            font-weight: 600;
-            font-size: 1.08rem;
-            color: #444;
-            margin-bottom: 8px;
-        }
-        .profile-edit-btn, .logout-btn {
-            border: none;
-            background: #f8f9fa;
-            color: #666;
-            font-size: 0.92rem;
-            border-radius: 7px;
-            padding: 5px 15px;
-            margin-top: 6px;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .profile-edit-btn:hover, .logout-btn:hover {
-            background: #f1f1f1;
-            color: #222;
-        }
-        .sidebar-bottom {
-            margin-top: auto;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 34px;
-        }
-        .main-header {
-            height: 64px;
-            background: #D9D9D9;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding: 0 40px;
-            border-bottom: 1.5px solid #eee;
-        }
-        .main-header .icon-btn {
-            background: transparent;
-            border: none;
-            outline: none;
-            font-size: 25px;
-            margin-left: 18px;
-            color: #333;
-            cursor: pointer;
-        }
-        .main-header .icon-btn:focus {
-            outline: none;
-        }
-        .mypage-main {
-            flex: 1 1 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow-x: auto;
-        }
-        .main-board {
-            flex: 1 1 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding: 38px 40px 30px 40px;
-        }
-        .dashboard-row {
-            display: flex;
-            gap: 25px;
-            margin-bottom: 18px;
-        }
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(20,30,58,0.06);
-            border: none;
-        }
-        .dashboard-row .card {
-            flex: 1;
-        }
-        /* 도넛차트 스타일 */
-        .donut-box canvas {
-            margin-top: 18px;
-            width: 220px !important;
-            height: 220px !important;
-            min-width: 50px !important;
-            min-height: 50px !important;
-        }
-        .donut-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 180px;
-        }
-        .donut-labels {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-top: 12px;
-            font-size: 15px;
-        }
-        .donut-label-dot {
-            display: inline-block;
-            width: 12px; height: 12px;
-            border-radius: 6px;
-            margin-right: 5px;
-        }
-        .donut-grade-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 7px;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
+        /* === (생략) 기존 스타일 복사 === */
+        body { background: #F8F9FA; margin: 0; font-family: 'Pretendard','Apple SD Gothic Neo',Arial,sans-serif; }
+        .mypage-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 220px; height: 100vh; background: #fff; border-right: 1.5px solid #eee; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; }
+        .profile-img { width: 76px; height: 76px; border-radius: 50%; background: #ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/48px no-repeat; margin-top: 50px; margin-bottom: 10px; object-fit: cover; cursor: pointer; }
+        .profile-name { font-weight: 600; font-size: 1.08rem; color: #444; margin-bottom: 8px; }
+        .profile-edit-btn, .logout-btn { border: none; background: #f8f9fa; color: #666; font-size: 0.92rem; border-radius: 7px; padding: 5px 15px; margin-top: 6px; cursor: pointer; transition: background 0.15s; }
+        .profile-edit-btn:hover, .logout-btn:hover { background: #f1f1f1; color: #222; }
+        .sidebar-bottom { margin-top: auto; width: 100%; display: flex; flex-direction: column; align-items: center; padding-bottom: 34px; }
+        .main-header { height: 64px; background: #D9D9D9; display: flex; align-items: center; justify-content: flex-end; padding: 0 40px; border-bottom: 1.5px solid #eee; }
+        .main-header .icon-btn { background: transparent; border: none; outline: none; font-size: 25px; margin-left: 18px; color: #333; cursor: pointer; }
+        .main-header .icon-btn:focus { outline: none; }
+        .mypage-main { flex: 1 1 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: auto; }
+        .main-board { flex: 1 1 0; display: flex; flex-direction: column; justify-content: flex-start; padding: 38px 40px 30px 40px; }
+        .dashboard-row { display: flex; gap: 25px; margin-bottom: 18px; }
+        .card { border-radius: 15px; box-shadow: 0 4px 12px rgba(20,30,58,0.06); border: none; }
+        .dashboard-row .card { flex: 1; }
+        /* 도넛차트 */
+        .donut-box canvas { margin-top: 18px; width: 220px !important; height: 220px !important; min-width: 50px !important; min-height: 50px !important; }
+        .donut-box { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; }
+        .donut-labels { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: 15px; }
+        .donut-label-dot { display: inline-block; width: 12px; height: 12px; border-radius: 6px; margin-right: 5px; }
+        .donut-grade-badge { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 16px; font-weight: 600; }
         /* 게이지바 */
         .trust-gauge-wrap { margin-top: 16px; }
         .trust-gauge-bar-bg { width: 100%; height: 18px; background: #eee; border-radius: 9px; position: relative; overflow: hidden; }
-        .trust-gauge-bar {
-            height: 100%;
-            background: #FFC112; /* 한 가지 색상으로! */
-            border-radius: 9px 0 0 9px;
-            width: 0;  /* JS에서 제어 */
-            transition: width 0.9s cubic-bezier(.23,1.01,.32,1);
-        }
-        .trust-gauge-label { font-size: 0.93rem; text-align: right; margin-top: 4px;}
-
-        @media (max-width: 1200px) {
-            .main-board { padding: 18px 10px 18px 10px; }
-        }
-        @media (max-width: 900px) {
-            .sidebar { display: none; }
-            .main-board { padding: 7px;}
-        }
+        .trust-gauge-bar { height: 100%; background: #FFC112; border-radius: 9px 0 0 9px; width: 0; transition: width 0.9s cubic-bezier(.23,1.01,.32,1); }
+        .trust-gauge-label { font-size: 0.93rem; text-align: right; margin-top: 4px; }
+        @media (max-width: 1200px) { .main-board { padding: 18px 10px 18px 10px; } }
+        @media (max-width: 900px) { .sidebar { display: none; } .main-board { padding: 7px; } }
     </style>
     <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <c:if test="${not empty editSuccess}">
-        <script>
-            alert('${editSuccess}');
-        </script>
-    </c:if>
-    <div class="mypage-layout">
-        <!-- 왼쪽 사이드바 -->
-        <aside class="sidebar">
-            <!-- 프로필 이미지 + 수정 -->
-            <form action="/profile/upload" method="post" enctype="multipart/form-data" style="display:flex; flex-direction:column; align-items:center; width:100%;">
-                <label for="profileImgInput" style="cursor:pointer;">
-                    <img src="https://img.icons8.com/ios-glyphs/60/000000/user.png" class="profile-img" id="profileImgPreview" alt="프로필 이미지">
-                </label>
-                <input type="file" name="profileImg" id="profileImgInput" accept="image/*" style="display:none;" onchange="previewProfileImg(event)">
-                <div class="profile-name">${member.nickname}</div>
-                <button type="button" class="profile-edit-btn mt-1" onclick="location.href='/edit'">회원 정보 수정하기</button>
-            </form>
-            <div class="sidebar-bottom">
-                <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
+<c:if test="${not empty editSuccess}">
+    <script>alert('${editSuccess}');</script>
+</c:if>
+<div class="mypage-layout">
+    <%-- 왼쪽 사이드바 --%>
+    <aside class="sidebar">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%;">
+            <img
+                id="profileImgPreview"
+                src="<c:choose>
+                        <c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when>
+                        <c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise>
+                     </c:choose>"
+                class="profile-img"
+                alt="프로필 이미지"
+                data-bs-toggle="modal" data-bs-target="#profileImgModal"
+                style="cursor:pointer;"
+            >
+            <div class="profile-name">${member.nickname}</div>
+            <button type="button" class="profile-edit-btn mt-1" data-bs-toggle="modal" data-bs-target="#profileImgModal">
+                이미지 수정하기
+            </button>
+        </div>
+        <div class="sidebar-bottom">
+            <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
+        </div>
+    </aside>
+    <%-- 프로필 이미지 업로드 모달 --%>
+    <div class="modal fade" id="profileImgModal" tabindex="-1" aria-labelledby="profileImgModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="profileImgForm" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="profileImgModalLabel">프로필 이미지 수정</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3 text-center">
+                            <img
+                                id="modalProfilePreview"
+                                src="<c:choose>
+                                        <c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when>
+                                        <c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise>
+                                     </c:choose>"
+                                class="profile-img"
+                                style="width:100px;height:100px;"
+                                alt="미리보기"
+                            >
+                        </div>
+                        <input type="file" name="profileImg" id="modalProfileImgInput" accept="image/*" class="form-control"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-warning">저장하기</button>
+                    </div>
+                </form>
             </div>
-        </aside>
-        <!-- 오른쪽 영역(헤더+내용) -->
-        <div class="mypage-main">
-            <!-- 헤더 -->
-            <div class="main-header">
-                <button class="icon-btn" title="알림">
-                    <i class="fas fa-bell"></i>
-                </button>
-                <button class="icon-btn" title="쪽지">
-                    <i class="fas fa-envelope"></i>
-                </button>
-            </div>
-            <!-- 메인 보드(카드 내용) -->
+        </div>
+    </div>
+
+    <%-- 오른쪽 메인 --%>
+    <div class="mypage-main">
+        <div class="main-header">
+            <button class="icon-btn" title="알림"><i class="fas fa-bell"></i></button>
+            <button class="icon-btn" title="쪽지"><i class="fas fa-envelope"></i></button>
+        </div>
+
+<%-- 메인 보드(카드 내용) --%>
             <div class="main-board">
                 <div class="dashboard-row">
                     <div class="card p-4 d-flex align-items-center position-relative">
@@ -239,7 +141,7 @@
                         <span>어린이 범죄 예방 지도</span>
                     </div>
                 </div>
-                <!-- 자녀 등록 -->
+                <%-- 자녀 등록 --%>
                 <div class="dashboard-row">
                     <div class="card p-4">
                         <span>자녀 등록</span>
@@ -260,27 +162,56 @@
                         <div class="text-center text-muted py-5">
                             <i class="fas fa-bell fa-2x mb-2"></i><br>
                            <div class="notification-list" id="notifyList">
-                                  <c:forEach var="notify" items="${notifyList}">
-                                      <div class="notification-item">
-                                          <div class="notify-header">
-                                              <span class="notify-icon">
-                                                  <c:choose>
-                                                      <c:when test="${notify.type == 'COMMENT'}">[댓글]</c:when>
-                                                      <c:when test="${notify.type == 'DANGER_ALERT'}">[위험]</c:when>
-                                                      <c:otherwise>[알림]</c:otherwise>
-                                                  </c:choose>
-                                              </span>
-                                          </div>
-                                          <div class="notify-content">${notify.content}</div>
-                                          <div class="notify-date">
-                                              <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
-                                          </div>
-                                      </div>
-                                  </c:forEach>
+                            <c:forEach var="notify" items="${notifyList}">
+                                <c:choose>
+                                    <c:when test="${notify.type == 'COMMENT'}">
+                                        <div class="notification-item">
+                                            <div class="notify-header">
+                                                <span class="notify-icon">[댓글]💬</span>
+                                            </div>
+                                            <div class="notify-content">${notify.content}</div>
+                                            <button onclick="deleteNotify(${notify.id})">❌</button>
+                                            <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
+                                            <div class="notify-date">
+                                                <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                                            </div>
+                                        </div>
+                                    </c:when>
+                                    <c:when test="${notify.type == 'DANGER_ALERT'}">
+                                        <%-- 자바스크립트 안 쓰고 hidden input으로 우회 저장 --%>
+                                        <input type="hidden" class="danger-alert" value="${notify.content}" />
+                                          <div class="notification-item">
+                                         <div class="notify-header">
+                                            <span class="notify-icon">[댓글]💬</span>
+                                         </div>
+                                             <div class="notify-content">${notify.content}</div>
+                                             <button onclick="deleteNotify(${notify.id})">❌</button>
+                                             <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
+                                        <div class="notify-date">
+                                            <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                                        </div>
+                                    </c:when>
+                                </c:choose>
+                            </c:forEach>
+                               </div>
+                               <div class="modal fade" id="dangerModal" tabindex="-1" role="dialog">
+                                 <div class="modal-dialog" role="document">
+                                   <div class="modal-content">
+                                     <div class="modal-header">
+                                       <h5 class="modal-title">📢 위험 알림</h5>
+                                     </div>
+                                     <div class="modal-body">
+                                       <%-- 여기에 메시지 들어감 --%>
+                                     </div>
+                                     <div class="modal-footer">
+                                       <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+                                     </div>
+                                   </div>
+                                 </div>
                                </div>
                         </div>
                     </div>
-                    <!-- 신뢰도 점수판(도넛차트) -->
+                    <%-- 신뢰도 점수판(도넛차트) --%>
                     <div class="card p-4" style="flex:1;">
                         <div class="d-flex align-items-center mb-2" style="gap: 10px;">
                             <span style="font-weight:600; font-size:1.08rem;">신뢰도 점수판</span>
@@ -293,7 +224,7 @@
                               (${trustScore.totalScore}점)
                             </span>
                         </div>
-                        <!-- 도넛차트 + 게이지바 -->
+                        <%-- 도넛차트 + 게이지바 --%>
                         <div class="donut-box">
                             <canvas id="trustDonut"></canvas>
                             <div class="donut-labels">
@@ -301,7 +232,7 @@
                                 <span><span class="donut-label-dot" style="background:#f6a623"></span>위탁 ${trustScore.entrustCount}</span>
                                 <span><span class="donut-label-dot" style="background:#63a4fa"></span>댓글 ${trustScore.commentCount}</span>
                             </div>
-                            <!-- 게이지바 영역 (차트 바로 아래) -->
+                            <%-- 게이지바 영역 (차트 바로 아래) --%>
                             <div class="trust-gauge-wrap mt-4 w-100" style="max-width:230px;">
                                 <div class="trust-gauge-bar-bg">
                                     <div class="trust-gauge-bar" id="trustGaugeBar"></div>
@@ -309,7 +240,7 @@
                                 <div class="trust-gauge-label small text-end mt-1" id="trustGaugeText" style="color:#666;"></div>
                             </div>
                         </div>
-                        <!-- 모달 트리거(원하면 버튼추가) -->
+                        <%-- 모달 트리거(원하면 버튼추가) --%>
                         <button type="button"
                                 class="btn btn-light rounded-circle"
                                 style="position:absolute; top:20px; right:22px; width:28px; height:28px; padding:0; border:1.5px solid #eee; color:#888;"
@@ -317,7 +248,7 @@
                             <i class="fas fa-question"></i>
                         </button>
                     </div>
-                    <!-- 모달은 기존대로 -->
+                    <%-- 모달은 기존대로 --%>
                     <div class="modal fade" id="trustScoreModal" tabindex="-1" aria-labelledby="trustScoreModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -349,11 +280,79 @@
                       </div>
                     </div>
                 </div>
-            </div><!-- main-board -->
-        </div><!-- mypage-main -->
-    </div><!-- mypage-layout -->
+            </div><%-- main-board --%>
+        </div><%-- mypage-main --%>
+    </div><%-- mypage-layout --%>
+<script>
+    // 1. 모달 이미지 미리보기
+    document.getElementById('modalProfileImgInput').addEventListener('change', function(event) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('modalProfilePreview').src = e.target.result;
+        };
+        if (event.target.files.length > 0) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    });
+    // 2. 업로드 AJAX
+    $('#profileImgForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        $.ajax({
+            url: '/profile/upload',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(result) {
+                // 좌측 사이드바 이미지 갱신
+                $('#profileImgPreview').attr('src', result.profileImgUrl || 'https://img.icons8.com/ios-glyphs/60/000000/user.png');
+                // 모달 닫기
+                var modal = bootstrap.Modal.getInstance(document.getElementById('profileImgModal'));
+                modal.hide();
+                alert('프로필 이미지가 변경되었습니다.');
+            },
+            error: function() {
+                alert('업로드 실패');
+            }
+        });
+    });
+</script>
+ <script>
+    function deleteNotify(id) {
+    $.ajax({
+        type: "POST",
+        url: "/myPage/delete",
+        data: { id: id },
+        success: function(response) {
+            alert("알림이 삭제되었습니다.");
+            location.reload();
+        },
+        error: function() {
+            alert("삭제 실패");
+        }
+    });
+}
+ </script>
+ <script>
+    // 지역 위험 알림 모달
+    document.addEventListener("DOMContentLoaded", function () {
+        let alerts = [];
+        document.querySelectorAll(".danger-alert").forEach(el => {
+            alerts.push(el.value);
+        });
 
-    <!-- 도넛차트 Chart.js 스크립트 + 게이지바 스크립트 -->
+         // 지역 위험 알림의 수
+        if (alerts.length > 0) {
+            let message = alerts.join("<br>");
+            document.querySelector("#dangerModal .modal-body").innerHTML = message;
+            let myModal = new bootstrap.Modal(document.getElementById('dangerModal'), {});
+            myModal.show();
+        }
+    });
+</script>
+
+    <%-- 도넛차트 Chart.js 스크립트 + 게이지바 스크립트 --%>
     <script>
         // JSP 변수 치환 (꼭 Number로!)
         const reportCount = Number('${trustScore.reportCount}');
@@ -385,29 +384,33 @@
                                 return context.label + ': ' + context.raw + '개';
                             }
                         }
-                                  }
-                                    }
-                                }
-                            }); // ← ← ← ← ← ← ← ← **반드시 닫아줘야 함!**
+                    }
+                }
+            }
+        });
 
-                            // 게이지바
-                            const totalScore = Number('${trustScore.totalScore}');
-                            let grade = '${fn:trim(trustScore.grade)}';
-                            const gaugeBar = document.getElementById('trustGaugeBar');
-                            const gaugeText = document.getElementById('trustGaugeText');
-                            const maxScore = 30;
-                            let percent = Math.min((totalScore / maxScore) * 100, 100);
-                            setTimeout(() => {
-                                gaugeBar.style.width = percent + '%';
-                            }, 300);
+        // 게이지바
+        const totalScore = Number('${trustScore.totalScore}');
+        let grade = '${fn:trim(trustScore.grade)}';
+        const gaugeBar = document.getElementById('trustGaugeBar');
+        const gaugeText = document.getElementById('trustGaugeText');
+        const maxScore = 30;
+        let percent = Math.min((totalScore / maxScore) * 100, 100);
+        setTimeout(() => {
+            gaugeBar.style.width = percent + '%';
+        }, 300);
 
-                            let text = '';
-                            if (grade === '캡숑맘') {
-                                text = '최고 등급 달성! 👑';
-                            } else if (grade === '도토리맘') {
-                                text = `캡숑맘까지 <b>${30-trustScore.totalScore}</b>점 남았어요!`;
-                                      } else if (grade === '새싹맘') {
-                                          text = `도토리맘까지 <b>${10-trustScore.totalScore}</b>점 남았어요!`;
-                                      }
-                                      gaugeText.innerHTML = text;
-                                  </script>
+
+        let text = '';
+        if (grade === '캡숑맘') {
+            text = '최고 등급 달성! 👑';
+        } else if (grade === '도토리맘') {
+            text = `캡숑맘까지 <b>${30-totalScore}</b>점 남았어요!`;
+        } else if (grade === '새싹맘') {
+            text = `도토리맘까지 <b>${10-totalScore}</b>점 남았어요!`;
+        }
+        gaugeText.innerHTML = text;
+
+    </script>
+</body>
+</html>

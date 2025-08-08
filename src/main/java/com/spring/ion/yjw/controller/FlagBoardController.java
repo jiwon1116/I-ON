@@ -1,6 +1,7 @@
 package com.spring.ion.yjw.controller;
 
 import com.spring.ion.lcw.security.CustomUserDetails;
+import com.spring.ion.psw.service.NotifyService;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPageDTO;
@@ -23,11 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -37,6 +35,7 @@ public class FlagBoardController {
     private final FlagService flagService;
     private final FlagCommentService flagCommentService;
     private final FlagLikeService flagLikeService;
+    private final NotifyService notifyService;
 
 //    @GetMapping
 //    public String flag() {
@@ -81,6 +80,16 @@ public class FlagBoardController {
         flagPostDTO.setUserId(userId); // 꼭 넣어줘야 함
 
         flagService.write(flagPostDTO, fileList);
+
+        String city = flagPostDTO.getCity(); // 제보글 시/도
+        String district = flagPostDTO.getDistrict(); // 구/군
+
+        System.out.println("제보글 시/도:"+city);
+        System.out.println("제보글 구/군:"+district);
+
+        // 알림 저장
+       notifyService.createDangerNotify(flagPostDTO.getNickname(),flagPostDTO.getNickname(),flagPostDTO.getId(),city,district,"flag");
+
         return "redirect:/flag";
     }
 
@@ -99,10 +108,10 @@ public class FlagBoardController {
         return "yjw/flag";
     }
 
-
     // 상세보기
     // FlagBoardController.java
 
+    // 상세보기
     @GetMapping("/{id}")
     public String detail(@PathVariable("id") int id, Model model, HttpServletRequest request) {
         HttpSession session = request.getSession();
@@ -120,11 +129,15 @@ public class FlagBoardController {
 
         // 로그인 유저 정보 구하기
         String loginUserId = null;
+        boolean isAdmin = false;
         org.springframework.security.core.Authentication authentication =
                 org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
             loginUserId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
+            // [여기!]
+            List<String> authorities = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getMemberDTO().getAuthorities();
+            isAdmin = authorities != null && authorities.contains("ROLE_ADMIN");
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
             loginUserId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
         } else if (principal instanceof String) {
@@ -133,13 +146,14 @@ public class FlagBoardController {
             }
         }
         model.addAttribute("loginUserId", loginUserId);
+        model.addAttribute("isAdmin", isAdmin); // 관리자 아이디 추출
 
         // 좋아요 정보
         boolean liked = false;
         if (loginUserId != null) {
             liked = flagLikeService.isLiked((long) id, loginUserId);
         }
-        flagPostDTO.setLiked(liked); // DTO에 liked 필드가 있어야 함
+        flagPostDTO.setLiked(liked);
         flagPostDTO.setLike_count(flagLikeService.getLikeCount((long) id));
 
         // 모델에 값 전달
@@ -153,16 +167,37 @@ public class FlagBoardController {
 
 
 
+
     // 수정 폼 이동 시 기존 파일 리스트도 함께 넘김
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable("id") int id, Model model) {
         FlagPostDTO flagPostDTO = flagService.findById(id);
-        List<FlagFileDTO> fileList = flagService.findFilesByBoardId(id);
+        // 로그인 유저와 권한
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = null;
+        boolean isAdmin = false;
 
+        if (principal instanceof CustomUserDetails) {
+            loginUserId = ((CustomUserDetails) principal).getUsername();
+            List<String> authorities = ((CustomUserDetails) principal).getMemberDTO().getAuthorities();
+            isAdmin = authorities != null && authorities.contains("ROLE_ADMIN");
+        }
+        // 권한 체크
+        if (flagPostDTO == null || (
+                !flagPostDTO.getUserId().equals(loginUserId)
+                        && !isAdmin
+        )) {
+            // 글 없거나 권한 없으면 목록으로
+            return "redirect:/flag";
+        }
+
+        List<FlagFileDTO> fileList = flagService.findFilesByBoardId(id);
         model.addAttribute("flag", flagPostDTO);
-        model.addAttribute("fileList", fileList); // 기존 첨부파일
+        model.addAttribute("fileList", fileList);
         return "yjw/flagUpdate";
     }
+
+
 
 
     // 실제 회원 정보 수정
@@ -182,23 +217,24 @@ public class FlagBoardController {
         FlagPostDTO post = flagService.findById(id);
         if (post == null) return "redirect:/flag"; // 글 없으면 목록으로
 
-        // 로그인한 유저 id
-        Object principal = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // 로그인한 유저 id + 권한
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String loginUserId = null;
-        if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
-            loginUserId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
-        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
-            loginUserId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
-        } else if (principal instanceof String && !"anonymousUser".equals(principal)) {
-            loginUserId = (String) principal;
+        boolean isAdmin = false;
+
+        if (principal instanceof CustomUserDetails) {
+            loginUserId = ((CustomUserDetails) principal).getUsername();
+            List<String> authorities = ((CustomUserDetails) principal).getMemberDTO().getAuthorities();
+            isAdmin = authorities != null && authorities.contains("ROLE_ADMIN");
         }
 
-        // 글쓴이와 로그인 유저가 같을 때만 삭제
-        if (loginUserId != null && loginUserId.equals(post.getUserId())) {
+        // "글쓴이거나, 또는 관리자면 삭제"
+        if ((loginUserId != null && loginUserId.equals(post.getUserId())) || isAdmin) {
             flagService.delete(id);
         }
         return "redirect:/flag/";
     }
+
 
 
 
@@ -252,18 +288,6 @@ public class FlagBoardController {
         model.addAttribute("postList", postList);
         return "yjw/flag"; // 위의 JSP가 위치한 경로
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

@@ -5,22 +5,29 @@
 <mapper namespace="Notify">
      <insert id="saveNotify" parameterType="notify" useGeneratedKeys="true" keyProperty="id">
             INSERT INTO notification (
-            nickname, type, content,
-            is_read, created_at,
-            related_post_id, related_comment_id
+            nickname, type, content, created_at,
+            related_post_id, related_comment_id, related_region, related_board
             ) VALUES (
-            #{nickname}, #{type}, #{content},
-            #{is_read}, #{created_at},
-            #{related_post_id}, #{related_comment_id}
+            #{nickname}, #{type}, #{content}, #{created_at},
+            #{related_post_id}, #{related_comment_id}, #{related_region}, #{related_board}
             )
-    </insert>
+     </insert>
 
     <select id="findAllByNotify" parameterType="string" resultType="notify">
-        SELECT n.*
-        FROM notification n
-        LEFT JOIN info_content c ON n.related_post_id = c.id
-        WHERE n.nickname = #{nickname}
-        AND (c.nickname IS NULL OR c.nickname != n.nickname)
+        SELECT *
+        FROM notification
+        WHERE nickname = #{nickname};
+    </select>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM notification WHERE id = #{id}
+    </delete>
+
+    <select id="countDangerAlertByRegion" resultType="int">
+        SELECT COUNT(*) FROM notification
+        WHERE related_region LIKE CONCAT(#{region}, '%')
+        AND type = 'DANGER_ALERT'
+        AND is_read = false
     </select>
 
 </mapper>

@@ -16,8 +16,18 @@ public class NotifyRepository {
     public void saveNotify(NotifyDTO notify) {
         sql.insert("Notify.saveNotify", notify);
     }
+
     //  해당 닉네임의 알림 가져오기
     public List<NotifyDTO> findAllByNotify(String nickname) {
         return sql.selectList("Notify.findAllByNotify",nickname);
+    }
+
+    public void deleteById(Long id) {
+        sql.delete("Notify.deleteById",id);
+    }
+
+    // 알림받은 수 확인
+    public int countDangerAlertByRegion(String userRegion) {
+        return sql.selectOne("Notify.countDangerAlertByRegion",userRegion);
     }
 }

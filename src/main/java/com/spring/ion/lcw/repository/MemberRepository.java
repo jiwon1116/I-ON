@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Repository
 @RequiredArgsConstructor
 public class MemberRepository {
@@ -34,7 +37,14 @@ public class MemberRepository {
         sql.update("Member.updateMember", memberDTO);
     }
 
-    public void unban(MemberDTO memberDTO){
+    public void unban(MemberDTO memberDTO) {
         sql.update("Member.unban", memberDTO);
+    }
+
+    public void updateProfileImg(String userId, String profileImg) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("userId", userId);
+        param.put("profileImg", profileImg);
+        sql.update("Member.updateProfileImg", param);
     }
 }

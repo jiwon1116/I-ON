@@ -1,9 +1,14 @@
 package com.spring.ion.yjw.controller;
 
+import com.spring.ion.jjh.dto.entrust.EntrustDTO;
+import com.spring.ion.jjh.service.entrust.EntrustService;
 import com.spring.ion.lcw.security.CustomUserDetails;
+import com.spring.ion.psw.service.NotifyService;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
+import com.spring.ion.yjw.dto.FlagPostDTO;
 import com.spring.ion.yjw.service.FlagCommentService;
 import com.spring.ion.lcw.dto.MemberDTO;
+import com.spring.ion.yjw.service.FlagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -18,6 +23,8 @@ import java.util.List;
 public class FlagCommentController {
 
     private final FlagCommentService flagCommentService;
+    private final FlagService flagService;
+    private final NotifyService notifyService;
 
     // 댓글 등록
     @PostMapping("/write")
@@ -30,11 +37,17 @@ public class FlagCommentController {
         dto.setUserId(user.getUsername()); // 실제로는 userId 값!
         dto.setContent(content);
         dto.setPost_id(post_id);
+
+        //게시글 정보 조회
+        FlagPostDTO post = flagService.findById(dto.getPost_id());
+
+
+        // 알림 생성 (서비스에서 nickname null 여부 처리)
+        notifyService.createCommentNotify(post.getNickname(),dto.getNickname(),post.getId(),dto.getId(),"flag");
+
         flagCommentService.write(dto);
         return flagCommentService.findAll(post_id);
     }
-
-
 
     // 댓글 삭제
     @GetMapping("/delete")
