@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,5 +95,17 @@ public class FlagRepository {
     // 내가 쓴 글 찾아보기 (마이페이지 연동)
     public List<FlagPostDTO> findAllByWriter(String userId) {
         return sql.selectList("Flag.findAllByWriter", userId);
+    }
+
+    public List<FlagPostDTO> findAllApproved() {
+        return sql.selectList("Flag.findAllApproved");
+    }
+
+    public List<FlagPostDTO> findAllForUser(String userId) {
+        // status가 APPROVED거나 본인이 쓴 글만 조회
+        Map<String, Object> param = new HashMap<>();
+        param.put("userId", userId);
+        return sql.selectList("Flag.findAllForUser", param);
+
     }
 }

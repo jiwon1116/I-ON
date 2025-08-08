@@ -246,67 +246,11 @@
                          <a href="/#" class="btn btn-warning btn-sm mt-2">바로가기</a>
                     </div>
                     <div class="card p-4">
-                        <span>내가 작성한 글</span>
+                        <span>신고 글 접수</span>
                         <a href="/myPost" class="btn btn-warning btn-sm mt-2">바로가기</a>
                     </div>
-                    <div class="card p-4">
-                        <span>내가 작성한 댓글</span>
-                        <a href="/myComment" class="btn btn-warning btn-sm mt-2">바로가기</a>
-                    </div>
-                </div>
-                <div class="dashboard-row">
-                    <div class="card p-4" style="flex:2">
-                        <span>내 소식</span>
-                        <div class="text-center text-muted py-5">
-                            <i class="fas fa-bell fa-2x mb-2"></i><br>
-                           <div class="notification-list" id="notifyList">
-                            <c:forEach var="notify" items="${notifyList}">
-                                <c:choose>
-                                    <c:when test="${notify.type == 'COMMENT'}">
-                                        <div class="notification-item">
-                                            <div class="notify-header">
-                                                <span class="notify-icon">[댓글]💬</span>
-                                            </div>
-                                            <div class="notify-content">${notify.content}</div>
-                                            <button onclick="deleteNotify(${notify.id})">❌</button>
-                                            <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
-                                            <div class="notify-date">
-                                                <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
-                                            </div>
-                                        </div>
-                                    </c:when>
-                                    <c:when test="${notify.type == 'DANGER_ALERT'}">
-                                        <%-- 자바스크립트 안 쓰고 hidden input으로 우회 저장 --%>
-                                        <input type="hidden" class="danger-alert" value="${notify.content}" />
-                                          <div class="notification-item">
-                                         <div class="notify-header">
-                                            <span class="notify-icon">[댓글]💬</span>
-                                         </div>
-                                             <div class="notify-content">${notify.content}</div>
-                                             <button onclick="deleteNotify(${notify.id})">❌</button>
-                                             <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
-                                        <div class="notify-date">
-                                            <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
-                                        </div>
-                                    </c:when>
-                                </c:choose>
-                            </c:forEach>
-                               </div>
-                               <div class="modal fade" id="dangerModal" tabindex="-1" role="dialog">
-                                 <div class="modal-dialog" role="document">
-                                   <div class="modal-content">
-                                     <div class="modal-header">
-                                       <h5 class="modal-title">📢 위험 알림</h5>
-                                     </div>
-                                     <div class="modal-body">
-                                       <%-- 여기에 메시지 들어감 --%>
-                                     </div>
-                                     <div class="modal-footer">
-                                       <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
-                                     </div>
-                                   </div>
-                                 </div>
 
+                </div>
 
                       <div class="dashboard-row">
                           <!-- 내 소식 -->
@@ -325,13 +269,9 @@
                               <div class="text-center text-muted py-5">
                                   <i class="fas fa-check-square fa-2x mb-2"></i><br>
                                   <span>승인/삭제할 게시물이 없습니다.</span>
-                              </div>
-                          </div>
-                      </div>
 
-            </div><%-- main-board --%>
-        </div><%-- mypage-main --%>
-    </div><%-- mypage-layout --%>
+                                  </div>
+                              </div>
 
  <script>
     function deleteNotify(id) {
