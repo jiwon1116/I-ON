@@ -156,5 +156,20 @@ public class FlagService {
     public List<FlagPostDTO> findMyPosts(String userId) {
         return flagRepository.findAllByWriter(userId);
     }
+
+    public List<FlagPostDTO> findAllApproved() {
+        return flagRepository.findAllApproved();
+    }
+
+    public List<FlagPostDTO> findAllForUser(String userId, boolean isAdmin) {
+        // 관리자는 전체 다 볼 수 있음
+        if (isAdmin) {
+            return flagRepository.findAll();
+        }
+        // 일반 유저는 'APPROVED' + 본인 글(PENDING 포함)
+        return flagRepository.findAllForUser(userId);
+    }
+
+
 }
 
