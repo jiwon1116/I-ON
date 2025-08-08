@@ -238,7 +238,7 @@
     function deleteNotify(id) {
         $.ajax({
             type: "POST",
-            url: "/myPage/delete",
+            url: "/mypage/delete",
             data: { id: id },
             success: function(response) {
                 alert("알림이 삭제되었습니다.");
