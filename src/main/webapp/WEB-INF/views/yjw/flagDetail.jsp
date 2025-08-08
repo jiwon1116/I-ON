@@ -9,6 +9,8 @@
     <title>게시글 상세보기</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap 5 모달 동작을 위한 JS! -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .like-btn .heart {
             font-size: 1.4em;
@@ -17,9 +19,6 @@
         }
         .like-btn.liked .heart {
             color: #f44336;
-        }
-            color: #fff;
-            text-shadow: 0 0 2px #d1d1d1;
         }
         .like-btn {
             border: 1.5px solid #f44336 !important;
@@ -72,12 +71,39 @@
                 <!-- 수정 버튼 추가 -->
                 <security:authentication property="principal.username" var="loginUserId"/>
                 <c:if test="${loginUserId eq flag.userId or isAdmin}">
-                    <a href="${pageContext.request.contextPath}/flag/update/${flag.id}" ...>수정</a>
+                    <a href="${pageContext.request.contextPath}/flag/update/${flag.id}">수정</a>
                     <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}"
                        onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
-
                 </c:if>
+                <!-- 신고 버튼(로그인한 사용자 && 본인 글이 아닌 경우) -->
+                <c:if test="${loginUserId ne flag.userId}">
+                    <button type="button" class="btn btn-outline-danger btn-sm ms-2" id="reportBtn">🚩 신고</button>
+                </c:if>
+            </div>
 
+            <!-- 신고 모달 -->
+            <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <form id="reportForm">
+                  <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                      <h5 class="modal-title" id="reportModalLabel">게시글 신고</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                    </div>
+                    <div class="modal-body">
+                      <input type="hidden" name="postId" value="${flag.id}" />
+                      <div class="mb-3">
+                        <label for="reportReason" class="form-label">신고 사유</label>
+                        <textarea class="form-control" name="reason" id="reportReason" required placeholder="신고 사유를 입력하세요"></textarea>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                      <button type="submit" class="btn btn-danger">신고하기</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
 
             <!-- 좋아요 버튼 (하트 토글) -->
@@ -86,7 +112,6 @@
                     <span class="heart">${flag.liked ? '❤️' : '🤍'}</span>
                     <span id="likeCount">${flag.like_count}</span>
                 </button>
-
             </div>
 
             <div class="text-muted mt-2">
@@ -124,7 +149,6 @@
         </div>
     </div>
 
-
     <!-- 댓글 출력 영역 -->
     <div id="commentList">
         <c:if test="${not empty flagCommentDTOList}">
@@ -133,14 +157,12 @@
                     <div class="card-body">
                         <p class="card-text">${comment.content}</p>
                         <footer class="blockquote-footer">
-                            ${comment.nickname} | ${dateText}
-                            <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
+                            ${comment.nickname} | <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
                             <!-- comment.userId == 로그인한 유저의 userId일 때만 삭제 버튼 노출 -->
                             <c:if test="${comment.userId eq loginUserId or isAdmin}">
                                 <button class="btn btn-sm btn-outline-danger float-end"
                                         onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
                             </c:if>
-
                         </footer>
                     </div>
                 </div>
@@ -157,10 +179,10 @@
             const content = $('#content').val();
             const post_id = $('#post_id').val();
 
-                 if (!post_id || !content) {
-                                  alert("내용을 입력해주세요.");
-                          return;
-                  }
+            if (!post_id || !content) {
+                alert("내용을 입력해주세요.");
+                return;
+            }
 
             $.ajax({
                 type: 'POST',
@@ -182,6 +204,44 @@
 
         });
 
+        // 🚩 신고 버튼 클릭 시 모달 열기
+        $('#reportBtn').click(function(){
+            var modal = new bootstrap.Modal(document.getElementById('reportModal'));
+            modal.show();
+        });
+
+        // 🚩 신고 폼 제출
+        $('#reportForm').submit(function(e){
+            e.preventDefault();
+
+            const postId = $('input[name="postId"]').val();
+            const reason = $('#reportReason').val();
+
+            if(!reason.trim()) {
+                alert("신고 사유를 입력해주세요.");
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/flag/report',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    targetId: postId,
+                    targetType: "POST",  // 또는 "COMMENT" 등
+                    type: "ABUSE",       // 예시, 실제 신고유형
+                    content: reason      // 신고사유
+                }),
+                success: function(data){
+                    // 모달 닫기, 알림 등
+                },
+                error: function(){
+                    alert("신고 접수에 실패했습니다.");
+                }
+            });
+
+
+        });
 
         // 좋아요 버튼
         $('#likeBtn').click(function(){
@@ -215,9 +275,6 @@
 
     // ↓↓↓ 아래 함수들은 document ready 블록 밖에서 선언!
     function deleteComment(id, post_id) {
-    console.log("삭제 클릭:", id, post_id); // 이거 추가해서 값 확인
-
-
         if (!confirm("정말 삭제하시겠습니까?")) return;
         if (!id || !post_id) {
             alert("잘못된 댓글/게시글 정보입니다.");
@@ -231,7 +288,6 @@
             success: function (data) {
                 renderCommentList(data);
                 location.reload();
-
             },
             error: function () {
                 alert("댓글 삭제 실패");
@@ -246,8 +302,8 @@
             return;
         }
 
-           $('#commentList').empty();
-                const flagId = $('#post_id').val();
+        $('#commentList').empty();
+        const flagId = $('#post_id').val();
 
         data.forEach(function (comment) {
             const dateText = comment.created_at ? new Date(comment.created_at).toLocaleString() : '날짜 없음';
