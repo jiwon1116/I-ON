@@ -5,6 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Repository
 @RequiredArgsConstructor
 public class MemberRepository {
@@ -38,4 +42,12 @@ public class MemberRepository {
         sql.update("Member.unban", memberDTO);
     }
 
+/*    // 작성자 제외한 같은 지역에 사는 회원 조회
+    public List<MemberDTO> findByRegionExceptWriter(String city, String writerNickname) {
+        Map<String, String> params = new HashMap<>();
+        params.put("city", city);
+        params.put("writerNickname", writerNickname);
+
+        return sql.selectList("Member.findByRegionExceptWriter", params);
+    }*/
 }

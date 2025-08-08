@@ -100,5 +100,11 @@
         WHERE userId = #{userId}
     </update>
 
+    <select id="findByRegionExceptWriter" parameterType="map" resultType="com.spring.ion.lcw.dto.MemberDTO">
+        SELECT *
+        FROM member
+        WHERE region LIKE CONCAT('%', #{city}, '%')
+        AND TRIM(nickname) != TRIM(#{writerNickname})
+    </select>
 </mapper>
 

@@ -144,11 +144,6 @@ public class MemberController {
             currentMember.setPassword(encodedPassword);
         }
 
-
-        if (memberDTO.getRegion() != null && !memberDTO.getRegion().isEmpty()) {
-            currentMember.setRegion(memberDTO.getRegion());
-        }
-
         if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
             currentMember.setNickname(memberDTO.getNickname());
         }

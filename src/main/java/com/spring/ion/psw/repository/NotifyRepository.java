@@ -12,7 +12,7 @@ import java.util.List;
 public class NotifyRepository {
     private final SqlSessionTemplate sql;
 
-    // 댓글 알림저장
+    // 알림저장
     public void saveNotify(NotifyDTO notify) {
         sql.insert("Notify.saveNotify", notify);
     }
@@ -26,8 +26,4 @@ public class NotifyRepository {
         sql.delete("Notify.deleteById",id);
     }
 
-    // 알림받은 수 확인
-    public int countDangerAlertByRegion(String userRegion) {
-        return sql.selectOne("Notify.countDangerAlertByRegion",userRegion);
-    }
 }
