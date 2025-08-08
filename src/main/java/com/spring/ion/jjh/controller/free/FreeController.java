@@ -110,6 +110,15 @@ public class FreeController {
         String loginUserId = user.getUsername();
         model.addAttribute("loginUserId", loginUserId);
 
+        // --- 관리자 권한 체크 추가! ---
+        boolean isAdmin = false;
+        List<String> authorities = user.getMemberDTO().getAuthorities();
+        if (authorities != null && authorities.contains("ROLE_ADMIN")) {
+            isAdmin = true;
+        }
+        model.addAttribute("isAdmin", isAdmin);
+        // 여기까지
+
         int likeCount = freeLikeService.getLikeCount(id);
         free.setLike_count(likeCount);
 
@@ -157,9 +166,21 @@ public class FreeController {
         long clickId = freeDTO.getId();
         FreeDTO free = freeService.findById(clickId);
 
-        if (free != null) {
+        // 로그인 유저
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = user.getUsername();
+
+        // 관리자 체크
+        boolean isAdmin = false;
+        List<String> authorities = user.getMemberDTO().getAuthorities();
+        if (authorities != null && authorities.contains("ROLE_ADMIN")) {
+            isAdmin = true;
+        }
+
+        if (free != null && (loginUserId.equals(free.getUserId()) || isAdmin)) {
             freeService.delete(clickId);
         }
+
         return "redirect:/free";
     }
 

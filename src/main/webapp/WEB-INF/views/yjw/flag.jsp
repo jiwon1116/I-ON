@@ -131,7 +131,12 @@
                 <div class="d-flex align-items-center">
                     <img src="https://www.w3schools.com/howto/img_avatar.png" alt="기본프로필">
                     <div class="ms-2">
-                        <div class="fw-semibold">${post.nickname}</div>
+                        <div class="fw-semibold">${post.nickname}
+                            <span class="badge bg-secondary ms-2" style="font-size:0.8rem;">
+                                ${post.status == 'PENDING' ? '승인대기' : (post.status == 'APPROVED' ? '승인됨' : post.status)}
+                            </span>
+                        </div>
+
                         <div class="text-muted" style="font-size: 0.9rem;">
                             조회수: ${post.view_count}, 좋아요: ${post.like_count}
                         </div>

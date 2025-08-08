@@ -50,9 +50,21 @@ public class EntrustCommentController {
         EntrustCommentDTO comment = entrustCommentService.findById(id);
         long postId = comment.getPost_id(); // 게시글 ID 추출
 
-        if (comment != null) {
+        // 로그인 유저 정보 + 권한
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = user.getUsername();
+
+        boolean isAdmin = false;
+        List<String> authorities = user.getMemberDTO().getAuthorities();
+        if (authorities != null && authorities.contains("ROLE_ADMIN")) {
+            isAdmin = true;
+        }
+
+        // 권한 체크: 작성자 or 관리자
+        if (comment != null && (loginUserId.equals(comment.getUserId()) || isAdmin)) {
             entrustCommentService.delete(id);
         }
         return "redirect:/entrust/" + postId;
     }
+
 }

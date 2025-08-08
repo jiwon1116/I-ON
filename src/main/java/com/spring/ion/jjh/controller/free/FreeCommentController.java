@@ -52,9 +52,22 @@ public class FreeCommentController {
         FreeCommentDTO comment = freeCommentService.findById(id);
         long postId = comment.getPost_id(); // 게시글 ID 추출
 
-        if (comment != null) {
+        // 로그인 유저 정보
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = user.getUsername();
+
+        // 관리자 체크
+        boolean isAdmin = false;
+        List<String> authorities = user.getMemberDTO().getAuthorities();
+        if (authorities != null && authorities.contains("ROLE_ADMIN")) {
+            isAdmin = true;
+        }
+
+        // 댓글 작성자거나, 관리자면 삭제 가능
+        if (comment != null && (loginUserId.equals(comment.getUserId()) || isAdmin)) {
             freeCommentService.delete(id);
         }
+
         return "redirect:/free/" + postId;
     }
 }

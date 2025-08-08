@@ -1,20 +1,53 @@
 window.toggledLayers = {
-  sexOffender: false,
-  emergency: false,   // ← 이 key를 아래 switch 문과 일치시켜야 함
-  safeHouse: false
+  offender: false,
+  emergencybell: false,
+  safehouse: false
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".main-menu").forEach(tab => {
-    tab.addEventListener("click", () => {
-      const type = tab.dataset.type;
-      console.log("클릭된 타입:", type);
+  const urlParams = new URLSearchParams(window.location.search);
+  // 범죄지역 api지도에서 기존 지도로 이동시 선택한 토글 on 하기 위한 타입받는 변수
+  const initType = urlParams.get("type");
+
+  // initType이 존재한다면(범죄지역 api 제외 다른 토글 버튼들 의미)
+  if (initType && toggledLayers.hasOwnProperty(initType)) {
+    toggledLayers[initType] = true; // 마커 켠 상태로 유지함
+
+    const targetTab = document.querySelector(`.main-menu[data-type="${initType}"]`); // jsp 파일에서 data-type 받아둠
+    if (targetTab) targetTab.classList.add("active"); // 클래스 active 추가함(토글 눌렀을 때 디자인 적용 위함)
+
+    const interval = setInterval(() => {
+      if (window.map) {
+        clearInterval(interval);
+
+        switch (initType) {
+          case "offender":
+            toggleOffenderMarkers(true);
+            break;
+          case "emergencybell":
+            toggleEmergencyMarkers(true);
+            break;
+          case "safehouse":
+            toggleSafehouseMarkers(true);
+            break;
+        }
+      }
+    }, 200);
+  }
+
+  // 초기 타입 받는 것 제외하고 map.jsp에서 바로 토글 눌렀을 때의 이벤트 처리
+  document.querySelectorAll('.main-menu[data-type]').forEach(link => {
+    const type = link.dataset.type;
+
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
 
       toggledLayers[type] = !toggledLayers[type];
+      link.classList.toggle("active", toggledLayers[type]);
 
       switch (type) {
-        case "sexoffender":
-          toggleSexOffenderMarkers(toggledLayers[type]);
+        case "offender":
+          toggleOffenderMarkers(toggledLayers[type]);
           break;
         case "emergencybell":
           toggleEmergencyMarkers(toggledLayers[type]);
@@ -23,97 +56,32 @@ document.addEventListener("DOMContentLoaded", () => {
           toggleSafehouseMarkers(toggledLayers[type]);
           break;
       }
-
-      // UI 강조
-      document.querySelectorAll(".main-menu").forEach(m => m.classList.remove("active"));
-      if (toggledLayers[type]) tab.classList.add("active");
     });
   });
 });
 
-function toggleEmergencyMarkers(checked) {
+// 토글 함수들 정의. on일 때 마커 표시/off일 때 마커 삭제
+window.toggleEmergencyMarkers = function (checked) {
   if (checked) {
-    window.loadEmergencyMarkersByBounds();
+    window.loadEmergencyMarkersByBounds?.();
   } else {
-    window.clearEmergencyMarkers();
+    window.clearEmergencyMarkers?.();
   }
-}
-
-let safehouseMarkers = [];
-
-window.clearSafehouseMarkers = function () {
-  if (window.clusterer) {
-    window.clusterer.removeMarkers(safehouseMarkers);
-  }
-  safehouseMarkers.forEach(mk => mk.setMap(null));
-  safehouseMarkers = [];
 };
 
-// 안전지킴이집
-window.loadSafehouseMarkersByBounds = function () {
-  if (!window.map) return;
-
-  const bounds = window.map.getBounds();
-  const sw = bounds.getSouthWest();
-  const ne = bounds.getNorthEast();
-
-  const url = `/map/safehouse?minX=${sw.getLng()}&minY=${sw.getLat()}&maxX=${ne.getLng()}&maxY=${ne.getLat()}`;
-
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      console.log("✅ 범위 기반 safehouse 응답:", data);
-
-      if (!data || !Array.isArray(data.list)) {
-        console.error("❌ 안전지킴이집 응답 오류", data);
-        return;
-      }
-
-      window.clearSafehouseMarkers();
-      const newMarkers = [];
-
-      data.list.forEach(item => {
-        const lat = parseFloat(item.lcinfoLa);
-        const lng = parseFloat(item.lcinfoLo);
-        if (!lat || !lng) return;
-
-        const mk = new kakao.maps.Marker({
-          position: new kakao.maps.LatLng(lat, lng),
-          map: window.map,
-          image: new kakao.maps.MarkerImage(
-            '/resources/img/safehouse-marker.png',
-            new kakao.maps.Size(32, 32)
-          ),
-          title: item.bsshNm
-        });
-
-        const content = `
-          <div class="custom-info-window">
-            <strong>${item.bsshNm}</strong><br/>
-            주소: ${item.adres} ${item.etcAdres || ""}<br/>
-            전화: ${item.telno || "정보 없음"}<br/>
-            분류: ${item.clNm}
-          </div>`;
-
-        const infoWindow = new kakao.maps.InfoWindow({ content });
-        kakao.maps.event.addListener(mk, 'click', () => infoWindow.open(window.map, mk));
-
-        safehouseMarkers.push(mk);
-        newMarkers.push(mk);
-      });
-
-      if (window.clusterer && newMarkers.length > 0) {
-        window.clusterer.addMarkers(newMarkers);
-      }
-    })
-    .catch(err => console.error("❗ 안전지킴이집 로딩 실패", err));
+window.toggleSafehouseMarkers = function (checked) {
+  if (checked) {
+    window.loadSafehouseMarkersByBounds?.();
+  } else {
+    window.clearSafehouseMarkers?.();
+  }
 };
 
-function toggleSafehouseMarkers(checked) {
+window.toggleOffenderMarkers = function (checked) {
   if (checked) {
-    window.loadSafehouseMarkersByBounds();
+    window.loadOffenderMarkersByBounds();
   } else {
-    window.clearSafehouseMarkers();
+    window.clearOffenderMarkers();
   }
-}
+};
 

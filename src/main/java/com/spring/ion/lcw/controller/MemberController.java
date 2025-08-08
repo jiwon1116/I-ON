@@ -144,13 +144,20 @@ public class MemberController {
             currentMember.setPassword(encodedPassword);
         }
 
+
+
         if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
             currentMember.setNickname(memberDTO.getNickname());
         }
 
-        if (memberDTO.getRegion() != null && !memberDTO.getRegion().isEmpty()) {
-            currentMember.setRegion(memberDTO.getRegion());
+        if (memberDTO.getCity() != null && !memberDTO.getCity().isEmpty()) {
+            currentMember.setCity(memberDTO.getCity());
         }
+
+        if (memberDTO.getDistrict() != null && !memberDTO.getDistrict().isEmpty()) {
+            currentMember.setDistrict(memberDTO.getDistrict());
+        }
+
         try {
             memberService.edit(currentMember, memberDTO);
             redirectAttributes.addFlashAttribute("editSuccess", "회원 정보가 수정되었습니다!");
@@ -170,6 +177,56 @@ public class MemberController {
             redirectAttributes.addFlashAttribute("editError", "회원정보 수정 중 알 수 없는 오류가 발생했습니다.");
             redirectAttributes.addFlashAttribute("member", currentMember);
             return "redirect:/edit";
+        }
+
+    }
+    @GetMapping("/naver-edit")
+    public String showNaverEditForm(Model model) {
+
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO memberDTO = user.getMemberDTO();
+        model.addAttribute("member", memberDTO);
+
+        return "naver-edit";
+    }
+
+    @PatchMapping("/naver-edit")
+    public String naverEdit(@ModelAttribute MemberDTO memberDTO, RedirectAttributes redirectAttributes) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO currentMember = userDetails.getMemberDTO();
+        String tmpNickname = currentMember.getNickname();
+
+        if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
+            currentMember.setNickname(memberDTO.getNickname());
+        }
+
+        if (memberDTO.getCity() != null && !memberDTO.getCity().isEmpty()) {
+            currentMember.setCity(memberDTO.getCity());
+        }
+
+        if (memberDTO.getDistrict() != null && !memberDTO.getDistrict().isEmpty()) {
+            currentMember.setDistrict(memberDTO.getDistrict());
+        }
+
+        try {
+            memberService.edit(currentMember, memberDTO);
+            redirectAttributes.addFlashAttribute("editSuccess", "회원 정보가 수정되었습니다!");
+            return "redirect:/myPage/";
+        } catch (DataIntegrityViolationException e) {
+            currentMember.setNickname(tmpNickname);
+            redirectAttributes.addFlashAttribute("editError", "이미 사용 중인 닉네임입니다.");
+            redirectAttributes.addFlashAttribute("member", currentMember);
+            return "redirect:/naver-edit";
+        } catch (InfoChangeRestrictionException e) {
+            currentMember.setNickname(tmpNickname);
+            redirectAttributes.addFlashAttribute("editError", e.getMessage());
+            redirectAttributes.addFlashAttribute("member", currentMember);
+            return "redirect:/naver-edit";
+        } catch (Exception e) {
+            currentMember.setNickname(tmpNickname);
+            redirectAttributes.addFlashAttribute("editError", "회원정보 수정 중 알 수 없는 오류가 발생했습니다.");
+            redirectAttributes.addFlashAttribute("member", currentMember);
+            return "redirect:/naver-edit";
         }
     }
 

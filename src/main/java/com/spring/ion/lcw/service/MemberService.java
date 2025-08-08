@@ -45,12 +45,23 @@ public class MemberService {
             currentMember.setNickname(memberDTO.getNickname());
         }
 
-        if (memberDTO.getRegion() != null && !memberDTO.getRegion().isEmpty()) {
-            currentMember.setRegion(memberDTO.getRegion());
+        if (memberDTO.getCity() != null && !memberDTO.getCity().isEmpty()) {
+            currentMember.setCity(memberDTO.getCity());
+        }
+
+        if (memberDTO.getDistrict() != null && !memberDTO.getDistrict().isEmpty()) {
+            currentMember.setDistrict(memberDTO.getDistrict());
         }
 
         currentMember.setInfoUntil(LocalDateTime.now().plusDays(30));
 
         memberRepository.edit(currentMember);
     }
+
+        // 회원 이미지 수정
+        public void updateProfileImg(String userId, String profileImg) {
+            memberRepository.updateProfileImg(userId, profileImg);
+        }
+
+
 }

@@ -79,22 +79,12 @@ public class NaverLoginController {
         MemberDTO memberDTO = memberService.findByUserId(naverId);
 
         if (memberDTO == null) {
-            memberDTO = new MemberDTO();
-            memberDTO.setUserId(naverId);
-            memberDTO.setPassword(UUID.randomUUID().toString());
-            memberDTO.setNickname("네이버_" + UUID.randomUUID().toString().substring(0, 8));
-            memberDTO.setProvider("NAVER");
-            memberDTO.setGender("M");
-            memberDTO.setEnabled(true);
-            memberService.save(memberDTO);
+            session.setAttribute("naverId", naverId);
+            return "redirect:/naver-register";
         }
 
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-
         CustomUserDetails customUserDetails = new CustomUserDetails(memberDTO);
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetails, null, authorities);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return "redirect:/";

@@ -14,208 +14,110 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            background: #F8F9FA;
-            margin: 0;
-            font-family: 'Pretendard', 'Apple SD Gothic Neo', Arial, sans-serif;
-        }
-        .mypage-layout {
-            display: flex;
-            min-height: 100vh;
-        }
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background: #fff;
-            border-right: 1.5px solid #eee;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-        }
-        .profile-img {
-            width: 76px;
-            height: 76px;
-            border-radius: 50%;
-            background: #ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/48px no-repeat;
-            margin-top: 50px;
-            margin-bottom: 10px;
-            object-fit: cover;
-            cursor: pointer;
-        }
-        .profile-name {
-            font-weight: 600;
-            font-size: 1.08rem;
-            color: #444;
-            margin-bottom: 8px;
-        }
-        .profile-edit-btn, .logout-btn {
-            border: none;
-            background: #f8f9fa;
-            color: #666;
-            font-size: 0.92rem;
-            border-radius: 7px;
-            padding: 5px 15px;
-            margin-top: 6px;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .profile-edit-btn:hover, .logout-btn:hover {
-            background: #f1f1f1;
-            color: #222;
-        }
-        .sidebar-bottom {
-            margin-top: auto;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 34px;
-        }
-        .main-header {
-            height: 64px;
-            background: #D9D9D9;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding: 0 40px;
-            border-bottom: 1.5px solid #eee;
-        }
-        .main-header .icon-btn {
-            background: transparent;
-            border: none;
-            outline: none;
-            font-size: 25px;
-            margin-left: 18px;
-            color: #333;
-            cursor: pointer;
-        }
-        .main-header .icon-btn:focus {
-            outline: none;
-        }
-        .mypage-main {
-            flex: 1 1 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow-x: auto;
-        }
-        .main-board {
-            flex: 1 1 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            padding: 38px 40px 30px 40px;
-        }
-        .dashboard-row {
-            display: flex;
-            gap: 25px;
-            margin-bottom: 18px;
-        }
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(20,30,58,0.06);
-            border: none;
-        }
-        .dashboard-row .card {
-            flex: 1;
-        }
-        /* 도넛차트 스타일 */
-        .donut-box canvas {
-            margin-top: 18px;
-            width: 220px !important;
-            height: 220px !important;
-            min-width: 50px !important;
-            min-height: 50px !important;
-        }
-        .donut-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 180px;
-        }
-        .donut-labels {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-top: 12px;
-            font-size: 15px;
-        }
-        .donut-label-dot {
-            display: inline-block;
-            width: 12px; height: 12px;
-            border-radius: 6px;
-            margin-right: 5px;
-        }
-        .donut-grade-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 7px;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
+        /* === (생략) 기존 스타일 복사 === */
+        body { background: #F8F9FA; margin: 0; font-family: 'Pretendard','Apple SD Gothic Neo',Arial,sans-serif; }
+        .mypage-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 220px; height: 100vh; background: #fff; border-right: 1.5px solid #eee; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; }
+        .profile-img { width: 76px; height: 76px; border-radius: 50%; background: #ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/48px no-repeat; margin-top: 50px; margin-bottom: 10px; object-fit: cover; cursor: pointer; }
+        .profile-name { font-weight: 600; font-size: 1.08rem; color: #444; margin-bottom: 8px; }
+        .profile-edit-btn, .logout-btn { border: none; background: #f8f9fa; color: #666; font-size: 0.92rem; border-radius: 7px; padding: 5px 15px; margin-top: 6px; cursor: pointer; transition: background 0.15s; }
+        .profile-edit-btn:hover, .logout-btn:hover { background: #f1f1f1; color: #222; }
+        .sidebar-bottom { margin-top: auto; width: 100%; display: flex; flex-direction: column; align-items: center; padding-bottom: 34px; }
+        .main-header { height: 64px; background: #D9D9D9; display: flex; align-items: center; justify-content: flex-end; padding: 0 40px; border-bottom: 1.5px solid #eee; }
+        .main-header .icon-btn { background: transparent; border: none; outline: none; font-size: 25px; margin-left: 18px; color: #333; cursor: pointer; }
+        .main-header .icon-btn:focus { outline: none; }
+        .mypage-main { flex: 1 1 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: auto; }
+        .main-board { flex: 1 1 0; display: flex; flex-direction: column; justify-content: flex-start; padding: 38px 40px 30px 40px; }
+        .dashboard-row { display: flex; gap: 25px; margin-bottom: 18px; }
+        .card { border-radius: 15px; box-shadow: 0 4px 12px rgba(20,30,58,0.06); border: none; }
+        .dashboard-row .card { flex: 1; }
+        /* 도넛차트 */
+        .donut-box canvas { margin-top: 18px; width: 220px !important; height: 220px !important; min-width: 50px !important; min-height: 50px !important; }
+        .donut-box { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; }
+        .donut-labels { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: 15px; }
+        .donut-label-dot { display: inline-block; width: 12px; height: 12px; border-radius: 6px; margin-right: 5px; }
+        .donut-grade-badge { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 16px; font-weight: 600; }
         /* 게이지바 */
         .trust-gauge-wrap { margin-top: 16px; }
         .trust-gauge-bar-bg { width: 100%; height: 18px; background: #eee; border-radius: 9px; position: relative; overflow: hidden; }
-        .trust-gauge-bar {
-            height: 100%;
-            background: #FFC112; /* 한 가지 색상으로! */
-            border-radius: 9px 0 0 9px;
-            width: 0;  /* JS에서 제어 */
-            transition: width 0.9s cubic-bezier(.23,1.01,.32,1);
-        }
-        .trust-gauge-label { font-size: 0.93rem; text-align: right; margin-top: 4px;}
-
-        @media (max-width: 1200px) {
-            .main-board { padding: 18px 10px 18px 10px; }
-        }
-        @media (max-width: 900px) {
-            .sidebar { display: none; }
-            .main-board { padding: 7px;}
-        }
+        .trust-gauge-bar { height: 100%; background: #FFC112; border-radius: 9px 0 0 9px; width: 0; transition: width 0.9s cubic-bezier(.23,1.01,.32,1); }
+        .trust-gauge-label { font-size: 0.93rem; text-align: right; margin-top: 4px; }
+        @media (max-width: 1200px) { .main-board { padding: 18px 10px 18px 10px; } }
+        @media (max-width: 900px) { .sidebar { display: none; } .main-board { padding: 7px; } }
     </style>
     <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <%--jQuery CDN 추가 --%>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <c:if test="${not empty editSuccess}">
-        <script>
-            alert('${editSuccess}');
-        </script>
-    </c:if>
-    <div class="mypage-layout">
-        <%-- 왼쪽 사이드바 --%>
-        <aside class="sidebar">
-            <%-- 프로필 이미지 + 수정 --%>
-            <form action="/profile/upload" method="post" enctype="multipart/form-data" style="display:flex; flex-direction:column; align-items:center; width:100%;">
-                <label for="profileImgInput" style="cursor:pointer;">
-                    <img src="https://img.icons8.com/ios-glyphs/60/000000/user.png" class="profile-img" id="profileImgPreview" alt="프로필 이미지">
-                </label>
-                <input type="file" name="profileImg" id="profileImgInput" accept="image/*" style="display:none;" onchange="previewProfileImg(event)">
-                <div class="profile-name">${member.nickname}</div>
-                <button type="button" class="profile-edit-btn mt-1" onclick="location.href='/edit'">회원 정보 수정하기</button>
-            </form>
-            <div class="sidebar-bottom">
-                <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
+<c:if test="${not empty editSuccess}">
+    <script>alert('${editSuccess}');</script>
+</c:if>
+<div class="mypage-layout">
+    <%-- 왼쪽 사이드바 --%>
+    <aside class="sidebar">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%;">
+            <img
+                id="profileImgPreview"
+                src="<c:choose>
+                        <c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when>
+                        <c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise>
+                     </c:choose>"
+                class="profile-img"
+                alt="프로필 이미지"
+                data-bs-toggle="modal" data-bs-target="#profileImgModal"
+                style="cursor:pointer;"
+            >
+            <div class="profile-name">${member.nickname}</div>
+            <button type="button" class="profile-edit-btn mt-1" data-bs-toggle="modal" data-bs-target="#profileImgModal">
+                이미지 수정하기
+            </button>
+        </div>
+        <div class="sidebar-bottom">
+            <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
+        </div>
+    </aside>
+    <%-- 프로필 이미지 업로드 모달 --%>
+    <div class="modal fade" id="profileImgModal" tabindex="-1" aria-labelledby="profileImgModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="profileImgForm" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="profileImgModalLabel">프로필 이미지 수정</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3 text-center">
+                            <img
+                                id="modalProfilePreview"
+                                src="<c:choose>
+                                        <c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when>
+                                        <c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise>
+                                     </c:choose>"
+                                class="profile-img"
+                                style="width:100px;height:100px;"
+                                alt="미리보기"
+                            >
+                        </div>
+                        <input type="file" name="profileImg" id="modalProfileImgInput" accept="image/*" class="form-control"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-warning">저장하기</button>
+                    </div>
+                </form>
             </div>
-        </aside>
-        <%-- 오른쪽 영역(헤더+내용) --%>
-        <div class="mypage-main">
-            <div class="main-header">
-                <button class="icon-btn" title="알림">
-                    <i class="fas fa-bell"></i>
-                </button>
-                <button class="icon-btn" title="쪽지">
-                    <i class="fas fa-envelope"></i>
-                </button>
-            </div>
-            <%-- 메인 보드(카드 내용) --%>
+        </div>
+    </div>
+
+    <%-- 오른쪽 메인 --%>
+    <div class="mypage-main">
+        <div class="main-header">
+            <button class="icon-btn" title="알림"><i class="fas fa-bell"></i></button>
+            <button class="icon-btn" title="쪽지"><i class="fas fa-envelope"></i></button>
+        </div>
+
+<%-- 메인 보드(카드 내용) --%>
             <div class="main-board">
                 <div class="dashboard-row">
                     <div class="card p-4 d-flex align-items-center position-relative">
@@ -236,7 +138,7 @@
                         <span>아동 범죄 예방 게시판</span>
                     </div>
                     <div class="card p-4 d-flex align-items-center position-relative">
-                        <a href="/map" class="stretched-link"></a>
+                        <a href="/map/" class="stretched-link"></a>
                         <img src="https://img.icons8.com/color/48/worldwide-location.png" class="me-3" width="34">
                         <span>어린이 범죄 예방 지도</span>
                     </div>
@@ -383,7 +285,41 @@
             </div><%-- main-board --%>
         </div><%-- mypage-main --%>
     </div><%-- mypage-layout --%>
-
+<script>
+    // 1. 모달 이미지 미리보기
+    document.getElementById('modalProfileImgInput').addEventListener('change', function(event) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('modalProfilePreview').src = e.target.result;
+        };
+        if (event.target.files.length > 0) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    });
+    // 2. 업로드 AJAX
+    $('#profileImgForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        $.ajax({
+            url: '/profile/upload',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(result) {
+                // 좌측 사이드바 이미지 갱신
+                $('#profileImgPreview').attr('src', result.profileImgUrl || 'https://img.icons8.com/ios-glyphs/60/000000/user.png');
+                // 모달 닫기
+                var modal = bootstrap.Modal.getInstance(document.getElementById('profileImgModal'));
+                modal.hide();
+                alert('프로필 이미지가 변경되었습니다.');
+            },
+            error: function() {
+                alert('업로드 실패');
+            }
+        });
+    });
+</script>
  <script>
     function deleteNotify(id) {
     $.ajax({

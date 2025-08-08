@@ -110,6 +110,15 @@ public class EntrustController {
         String loginUserId = user.getUsername();
         model.addAttribute("loginUserId", loginUserId);
 
+        // --- 관리자 권한 체크 추가! ---
+        boolean isAdmin = false;
+        List<String> authorities = user.getMemberDTO().getAuthorities();
+        if (authorities != null && authorities.contains("ROLE_ADMIN")) {
+            isAdmin = true;
+        }
+        model.addAttribute("isAdmin", isAdmin);
+        // 여기까지
+
         int likeCount = entrustLikeService.getLikeCount(id);
         entrust.setLike_count(likeCount);
 
@@ -157,7 +166,19 @@ public class EntrustController {
         long clickId = entrustDTO.getId();
         EntrustDTO entrust = entrustService.findById(clickId);
 
-        if (entrust != null) {
+        // 로그인 유저
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String loginUserId = user.getUsername();
+
+        // 관리자 체크
+        boolean isAdmin = false;
+        List<String> authorities = user.getMemberDTO().getAuthorities();
+        if (authorities != null && authorities.contains("ROLE_ADMIN")) {
+            isAdmin = true;
+        }
+
+        // 권한 체크: 작성자이거나 관리자일 때만 삭제!
+        if (entrust != null && (loginUserId.equals(entrust.getUserId()) || isAdmin)) {
             entrustService.delete(clickId);
         }
         return "redirect:/entrust";

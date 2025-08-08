@@ -1,13 +1,17 @@
 (function () {
+  // 위치 못 잡았을 때 사용할 위치 좌표 선언
   const fallbackLat = 37.489996;
   const fallbackLon = 126.927081;
 
+  // 초기 지도 그리는 함수
   function initMap(lat, lon) {
     const locPosition = new kakao.maps.LatLng(lat, lon);
     const mapContainer = document.getElementById("map");
     const mapOption = {
       center: locPosition,
-      level: 2
+      level: 2,
+      maxLevel: 5,
+      minLevel: 1
     };
 
     window.map = new kakao.maps.Map(mapContainer, mapOption);
@@ -15,23 +19,26 @@
     window.clusterer = new kakao.maps.MarkerClusterer({
       map: window.map,
       averageCenter: true,
-      minLevel: 10
+      minLevel: 4,
+      maxLevel: 5
     });
 
-    // 지도 idle 시 마커 자동 로드
     kakao.maps.event.addListener(window.map, 'idle', () => {
-      if (window.toggledLayers?.emergencybell === true) {
+      if (window.toggledLayers?.emergencybell) {
         window.loadEmergencyMarkersByBounds();
       }
 
-      if (toggledLayers.safehouse) {
-          window.loadSafehouseMarkersByBounds();
-        }
-    });
+      if (window.toggledLayers?.safehouse) {
+        window.loadSafehouseMarkersByBounds();
+      }
 
-    console.log("✅ 지도 및 클러스터러 초기화 완료");
+      if (window.toggledLayers?.offender) {
+        window.loadOffenderMarkersByBounds();
+      }
+    });
   }
 
+  // 위치 기반 지도 초기화
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {

@@ -6,6 +6,9 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +45,12 @@ public class MemberRepository {
         sql.update("Member.unban", memberDTO);
     }
 
+    public void updateProfileImg(String userId, String profileImg) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("userId", userId);
+        param.put("profileImg", profileImg);
+        sql.update("Member.updateProfileImg", param);
+    }
 /*    // 작성자 제외한 같은 지역에 사는 회원 조회
     public List<MemberDTO> findByRegionExceptWriter(String city, String writerNickname) {
         Map<String, String> params = new HashMap<>();

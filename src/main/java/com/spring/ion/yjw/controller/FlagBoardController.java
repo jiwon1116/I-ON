@@ -24,7 +24,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Controller
@@ -97,18 +100,40 @@ public class FlagBoardController {
     // 게시글 목록 조회
     @GetMapping
     public String findAll(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        // DB 에서 모든 회원 리스트 조회
-        List<FlagPostDTO> pagingList = flagService.pagingList(page);
-        FlagPageDTO pageDTO = flagService.pagingParam(page);
+        // 1. 로그인 유저 구하기
+        String loginUserId = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof CustomUserDetails) {
+            loginUserId = ((CustomUserDetails) principal).getUsername();
+        } else if (principal instanceof org.springframework.security.core.userdetails.User) {
+            loginUserId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+        } else if (principal instanceof String) {
+            loginUserId = (String) principal;
+        }
 
-        model.addAttribute("postList", pagingList);
-        model.addAttribute("postList",flagService.findAll());
+        // 2. 승인된 글 + 내 글 목록 받아오기
+        List<FlagPostDTO> approvedList = flagService.findAllApproved();
+        List<FlagPostDTO> myList = flagService.findMyPosts(loginUserId);
+
+        // 3. 두 리스트 합치고 중복 제거 (id 기준으로)
+        Map<Long, FlagPostDTO> postMap = new LinkedHashMap<>();
+        for (FlagPostDTO post : approvedList) {
+            postMap.put(post.getId(), post);
+        }
+        for (FlagPostDTO post : myList) {
+            postMap.put(post.getId(), post);
+        }
+
+        List<FlagPostDTO> finalList = new ArrayList<>(postMap.values());
+
+        // 4. 페이징 (원하면 finalList를 페이지 단위로 자르기. 지금은 전체 전달)
+        FlagPageDTO pageDTO = flagService.pagingParam(page);
+        model.addAttribute("postList", finalList);
         model.addAttribute("paging", pageDTO);
         return "yjw/flag";
     }
 
-    // 상세보기
-    // FlagBoardController.java
+
 
     // 상세보기
     @GetMapping("/{id}")
@@ -118,7 +143,7 @@ public class FlagBoardController {
 
         if (session.getAttribute(viewKey) == null) {
             flagService.increaseViewCount(id);
-            session.setAttribute(viewKey, true); // 조회수 중복 방지
+            session.setAttribute(viewKey, true);
         }
 
         // 게시글/댓글/첨부파일 조회
@@ -134,7 +159,6 @@ public class FlagBoardController {
         Object principal = authentication.getPrincipal();
         if (principal instanceof com.spring.ion.lcw.security.CustomUserDetails) {
             loginUserId = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getUsername();
-            // [여기!]
             List<String> authorities = ((com.spring.ion.lcw.security.CustomUserDetails) principal).getMemberDTO().getAuthorities();
             isAdmin = authorities != null && authorities.contains("ROLE_ADMIN");
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
@@ -145,7 +169,17 @@ public class FlagBoardController {
             }
         }
         model.addAttribute("loginUserId", loginUserId);
-        model.addAttribute("isAdmin", isAdmin); // 관리자 아이디 추출
+        model.addAttribute("isAdmin", isAdmin);
+
+        // ======= [이 부분 추가!] =======
+        // 승인 대기 상태면 글쓴이/관리자만 접근 허용
+        if ("PENDING".equals(flagPostDTO.getStatus())) {
+            if (!isAdmin && !flagPostDTO.getUserId().equals(loginUserId)) {
+                // 권한 없으면 에러페이지/404/메인 등으로 리턴 (원하는 대로)
+                return "error/403"; // 403.jsp, 404.jsp 등 원하는 JSP로
+            }
+        }
+        // ============================
 
         // 좋아요 정보
         boolean liked = false;

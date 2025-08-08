@@ -24,7 +24,7 @@
 
     <a href="/myPage/">마이페이지</a>
 
-    <a href="/map">지도</a>
+    <a href="/map/">지도</a>
     <a href="/info">정보공유게시판</a>
 
     <security:authorize access="isAnonymous()">
@@ -38,9 +38,15 @@
         </form>
     </security:authorize>
 
-    <security:authorize access="isAuthenticated()">
-        <a href="/edit">회원 정보 수정</a>
+    <security:authorize access="isAuthenticated() and principal.memberDTO.provider == 'LOCAL'">
+            <a href="/edit">회원 정보 수정</a>
+     </security:authorize>
+
+    <security:authorize access="isAuthenticated() and principal.memberDTO.provider == 'NAVER'">
+        <a href="/naver-edit">회원 정보 수정</a>
     </security:authorize>
+
+
 
     <security:authorize access="isAuthenticated()">
         <form action="/withdraw" method="post" onsubmit="return confirm('정말 회원을 탈퇴하시겠습니까?');">

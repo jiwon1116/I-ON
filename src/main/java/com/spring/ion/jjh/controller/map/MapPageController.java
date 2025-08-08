@@ -7,8 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/map")
 public class MapPageController {
+
+    @GetMapping("/")
+    public String mainMap() {
+        return "jjh/map/map";
+    }
+
     @GetMapping("/crime")
     public String crimeMap() {
-        return "jjh/crimeMap";
+        return "jjh/map/crimeMap";
     }
 }
