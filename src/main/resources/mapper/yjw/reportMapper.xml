@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Report">
+    <insert id="insertReport" parameterType="Report">
+        INSERT INTO report
+        (reporter_id, target_id, target_type, type, status, content, created_at, updated_at)
+        VALUES
+        (#{reporterId}, #{targetId}, #{targetType}, #{type}, #{status}, #{content}, NOW(), NOW())
+    </insert>
+</mapper>
