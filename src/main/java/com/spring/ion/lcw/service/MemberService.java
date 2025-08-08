@@ -45,8 +45,12 @@ public class MemberService {
             currentMember.setNickname(memberDTO.getNickname());
         }
 
-        if (memberDTO.getRegion() != null && !memberDTO.getRegion().isEmpty()) {
-            currentMember.setRegion(memberDTO.getRegion());
+        if (memberDTO.getCity() != null && !memberDTO.getCity().isEmpty()) {
+            currentMember.setCity(memberDTO.getCity());
+        }
+
+        if (memberDTO.getDistrict() != null && !memberDTO.getDistrict().isEmpty()) {
+            currentMember.setDistrict(memberDTO.getDistrict());
         }
 
         currentMember.setInfoUntil(LocalDateTime.now().plusDays(30));

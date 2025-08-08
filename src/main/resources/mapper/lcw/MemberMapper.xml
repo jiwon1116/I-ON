@@ -8,12 +8,13 @@
         <result property="password" column="password" />
         <result property="nickname" column="nickname" />
         <result property="gender" column="gender" />
-        <result property="region" column="region" />
         <result property="enabled" column="enabled" />
         <result property="created_at" column="created_at" />
         <result property="banUntil" column="ban_until" />
         <result property="infoUntil" column="info_until" />
         <result property="provider" column="provider" />
+        <result property="city" column="city" />
+        <result property="district" column="district" />
         <collection property="authorities" ofType="java.lang.String">
             <result column="authority" />
         </collection>
@@ -21,9 +22,9 @@
 
     <insert id="insertMember" parameterType="com.spring.ion.lcw.dto.MemberDTO">
         INSERT INTO member (
-        userId, password, nickname, gender, region, enabled, created_at, provider
+        userId, password, nickname, gender, enabled, created_at, provider, city, district
         ) VALUES (
-        #{userId}, #{password}, #{nickname}, #{gender}, #{region}, #{enabled}, NOW(), #{provider}
+        #{userId}, #{password}, #{nickname}, #{gender}, #{enabled}, NOW(), #{provider}, #{city}, #{district}
         )
     </insert>
 
@@ -56,7 +57,7 @@
     </select>
 
     <select id="findByUserIdWithAuthorities" parameterType="String" resultMap="memberWithAuthoritiesResultMap">
-        SELECT m.userId, m.provider, m.password, m.nickname, m.gender, m.region, m.enabled, m.created_at, m.ban_until, m.info_until, ma.authority
+        SELECT m.userId, m.provider, m.password, m.nickname, m.gender, m.enabled, m.created_at, m.ban_until, m.info_until, ma.authority, m.city, m.district
         FROM member m
         LEFT JOIN member_authority ma ON m.userId = ma.userId
         WHERE m.userId = #{userId}
@@ -71,7 +72,8 @@
             <if test="nickname != null and !nickname.isEmpty()">
                 nickname = #{nickname},
             </if>
-            region = #{region},
+            city = #{city},
+            district = #{district},
             info_until = #{infoUntil}
         </set>
         WHERE userId = #{userId}
@@ -83,7 +85,9 @@
             <if test="nickname != null and !nickname.isEmpty()">
                 nickname = #{nickname},
             </if>
-            region = #{region}
+            city = #{city},
+            district = #{district},
+            info_until = #{infoUntil}
         </set>
         WHERE userId = #{userId}
     </update>
