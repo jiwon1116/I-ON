@@ -1,7 +1,9 @@
 (function () {
+  // 위치 못 잡았을 때 사용할 위치 좌표 선언
   const fallbackLat = 37.489996;
   const fallbackLon = 126.927081;
 
+  // 초기 지도 그리는 함수
   function initMap(lat, lon) {
     const locPosition = new kakao.maps.LatLng(lat, lon);
     const mapContainer = document.getElementById("map");
