@@ -118,5 +118,14 @@
         AND district = #{district}
         AND nickname != #{writerNickname}
     </select>
+
+    <!-- 재학 증명서 관련 yjw-->
+    <update id="markVerified" parameterType="string">
+        UPDATE member
+        SET enrollment_verified = 1
+        WHERE userId = #{userId}
+    </update>
+
+
 </mapper>
 

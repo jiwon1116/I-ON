@@ -60,4 +60,11 @@ public class MemberRepository {
 
         return sql.selectList("Member.findByRegionExceptWriter", params);
     }
+
+
+    // 재학증명서 -yjw
+    public int markVerified(String userId){
+        return sql.update("Member.markVerified", userId); // ← namespace.id 맞추기
+    }
+
 }
