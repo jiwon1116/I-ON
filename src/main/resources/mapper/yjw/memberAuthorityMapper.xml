@@ -5,12 +5,11 @@
     <delete id="deleteRoleMember">
         DELETE FROM member_authority
         WHERE userId = #{userId} AND authority = 'ROLE_MEMBER'
-        <!-- 만약 컬럼명이 user_id 라면: WHERE user_id = #{userId} AND authority = 'ROLE_MEMBER' -->
     </delete>
 
     <insert id="insertRoleAuthMember">
         INSERT INTO member_authority (userId, authority)
         VALUES (#{userId}, 'ROLE_AUTH_MEMBER')
-        <!-- 컬럼명이 user_id 라면: (user_id, authority) -->
+
     </insert>
 </mapper>

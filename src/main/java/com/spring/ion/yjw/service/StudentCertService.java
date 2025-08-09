@@ -50,7 +50,7 @@ public class StudentCertService {
 
             dto.setFilePath(path.toString());
             dto.setStatus("PENDING");
-            // reviewer/rejectReason는 기본 null 유지
+
 
             certRepo.insert(dto);
 

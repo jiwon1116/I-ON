@@ -17,18 +17,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller                                            // ★ 뷰 렌더링 가능
-@RequiredArgsConstructor                               // ★ service 주입
+@Controller
+@RequiredArgsConstructor
 @RequestMapping("/cert")
 public class StudentCertController {
 
-    private final StudentCertService service;          // ★ 누락되었던 필드
+    private final StudentCertService service;
 
     // 폼 화면: /WEB-INF/views/yjw/certUpload.jsp 렌더링
     @GetMapping("/upload")
     public String uploadForm(org.springframework.ui.Model model) {
         String userId = resolveUserId();
-        if (userId == null) return "redirect:/login"; // 로그인 필요하면 추가
+        if (userId == null) return "redirect:/login";
         return "yjw/certUpload";
     }
 
@@ -40,12 +40,12 @@ public class StudentCertController {
         String userId = resolveUserId();
         if (userId == null) return "redirect:/login"; // 로그인 필요
         model.addAttribute("items", service.findByUser(userId));
-        return "yjw/certMyList"; // /WEB-INF/views/yjw/certMyList.jsp
+        return "yjw/certMyList";
     }
 
 
 
-    // 업로드(사용자) - JSON 응답
+    // 업로드(사용자)
     @PostMapping("/upload")
     @ResponseBody
     public Map<String, Object> upload(@RequestParam("file") MultipartFile file,
@@ -61,7 +61,7 @@ public class StudentCertController {
             return res;
         }
 
-        // 서버에서도 나이 재계산(신뢰성)
+        // 서버에서도 나이 재계산
         int calcAge = (childAge != null) ? childAge :
                 LocalDate.now().getYear() - childBirth.getYear()
                         - (LocalDate.now().getDayOfYear() < childBirth.withYear(LocalDate.now().getYear()).getDayOfYear() ? 1 : 0);
@@ -75,7 +75,7 @@ public class StudentCertController {
         dto.setChildSchool(childSchool);
         dto.setChildGrade(childGrade);
 
-        service.upload(file, dto); // ← 서비스 시그니처를 이렇게 변경 권장
+        service.upload(file, dto); // 서비스 시그니처 변경
 
         res.put("message", "재학증명서가 접수되었습니다.");
         return res;
