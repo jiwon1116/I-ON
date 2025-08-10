@@ -206,7 +206,8 @@
 
 <div class="post-container">
     <div class="post-title">${free.title}</div>
-    <div class="post-meta">${free.nickname}</div>
+
+    <div class="post-meta"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${free.nickname}">${free.nickname}</a></div>
     <div class="post-content">${free.content}</div>
 
     <c:forEach items="${fileList}" var="file">
@@ -245,7 +246,7 @@
           </div>
           <div class="comment-body">
             <div class="comment-header">
-              <span class="comment-nickname">${comment.nickname}</span>
+              <span class="comment-nickname"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></span>
               <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
               <c:if test="${loginUserId eq comment.userId || isAdmin}">
                 <span class="comment-delete" onclick="commentDelete('${comment.id}')">삭제</span>
