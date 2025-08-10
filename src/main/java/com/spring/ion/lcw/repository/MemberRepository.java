@@ -60,4 +60,8 @@ public class MemberRepository {
 
         return sql.selectList("Member.findByRegionExceptWriter", params);
     }
+
+    public MemberDTO findByNickname(String nickname) {
+       return sql.selectOne("Member.findByNickname", nickname);
+    }
 }

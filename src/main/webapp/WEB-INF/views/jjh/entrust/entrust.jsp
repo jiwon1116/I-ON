@@ -127,7 +127,8 @@
                 <div class="card-content">
                     <div class="quote">${entrust.title}</div>
                     <div class="content">${entrust.content}</div>
-                    <div class="desc">${entrust.nickname} ·
+                    <div class="desc">
+                    <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${entrust.nickname}">${entrust.nickname} ·</a>
                         <fmt:formatDate value="${entrust.created_at}" pattern="yyyy-MM-dd" /> ·
                         좋아요 ${entrust.like_count} · 조회수 ${entrust.view_count}
                     </div>

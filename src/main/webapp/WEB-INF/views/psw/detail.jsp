@@ -255,7 +255,7 @@
                 <div id = "comment-list">
                 <c:forEach items="${commentList}" var="comment">
                     <div class="comment-box">
-                        <div class="comment-writer">${comment.nickname}</div>
+                        <div class="comment-writer"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></div>
                         <div>${comment.content}</div>
                         <div class="comment-date">
                             <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
@@ -341,7 +341,8 @@
                   },
                   dataType : "json",
                   success : function(commentList) {
-                   location.reload(); // 페이지 전체 새로고침 (위 리스트에 새로운 댓글 반영)
+                  alert("댓글 작성이 완료되었습니다🙂");
+                  location.reload(); // 페이지 전체 새로고침 (위 리스트에 새로운 댓글 반영)
                   },
                   error : function() {
                       console.log("실패");
@@ -354,6 +355,7 @@
              const confirmed = confirm("정말 삭제하시겠습니까?");
              if (!confirmed) return;
 
+             alert("댓글이 삭제되었습니다🙂");
              $.ajax({
                  type: "post",
                  url: "/infocomment/delete",
@@ -363,8 +365,8 @@
                  },
                  dataType: "json",
                  success: function (commentList) {
-                     console.log("댓글 삭제 성공");
-                     location.reload();
+                    console.log("댓글 삭제 성공");
+                    location.reload();
                  },
                  error: function () {
                      console.log("댓글 삭제 실패");

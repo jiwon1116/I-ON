@@ -35,7 +35,7 @@
         <div class="card-body">
             <h4 class="card-title">${flag != null ? flag.title : ''}</h4>
             <div class="mb-3 text-muted small">
-                ${flag != null ? flag.nickname : ''}
+             <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${flag.nickname}"> ${flag != null ? flag.nickname : ''}</a>
 
                 <c:if test="${not empty flag.city}">
                     <span class="ms-2 badge bg-light text-dark border">
@@ -157,7 +157,7 @@
                     <div class="card-body">
                         <p class="card-text">${comment.content}</p>
                         <footer class="blockquote-footer">
-                            ${comment.nickname} | <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
+                          <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a> | <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
                             <!-- comment.userId == 로그인한 유저의 userId일 때만 삭제 버튼 노출 -->
                             <c:if test="${comment.userId eq loginUserId or isAdmin}">
                                 <button class="btn btn-sm btn-outline-danger float-end"
