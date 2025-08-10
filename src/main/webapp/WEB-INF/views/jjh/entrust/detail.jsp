@@ -228,8 +228,35 @@
             <span onclick="updateFn()">수정</span>
             <span onclick="deleteFn()">삭제</span>
         </c:if>
+        <c:if test="${loginUserUd ne entrust.userId}">
+            <button type="button" id="reportBtn">🚩 신고</button>
+        </c:if>
     </div>
 
+    <!-- 신고 모달 -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="reportForm">
+          <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+              <h5 class="modal-title" id="reportModalLabel">게시글 신고</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" name="postId" value="${entrust.id}" />
+              <div class="mb-3">
+                <label for="reportReason" class="form-label">신고 사유</label>
+                <textarea class="form-control" name="reason" id="reportReason" required placeholder="신고 사유를 입력하세요"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+              <button type="submit" class="btn btn-danger">신고하기</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
     <div class="comment-input-wrapper">
       <input type="hidden" id="nickname" value="${member.nickname}" />
       <textarea id="content" placeholder="댓글을 작성해주세요"></textarea>
@@ -339,7 +366,42 @@
                 }
             });
         });
+        // 🚩 신고 버튼 클릭 시 모달 열기
+        $('#reportBtn').click(function(){
+            var modal = new bootstrap.Modal(document.getElementById('reportModal'));
+            modal.show();
+        });
 
+        // 🚩 신고 폼 제출
+        $('#reportForm').submit(function(e){
+            e.preventDefault();
+
+            const postId = $('input[name="postId"]').val();
+            const reason = $('#reportReason').val();
+
+            if(!reason.trim()) {
+                alert("신고 사유를 입력해주세요.");
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/entrust/report',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    targetId: postId,
+                    targetType: "POST",  // 또는 "COMMENT" 등
+                    type: "ABUSE",       // 예시, 실제 신고유형
+                    content: reason      // 신고사유
+                }),
+                success: function(data){
+                    // 모달 닫기, 알림 등
+                },
+                error: function(){
+                    alert("신고 접수에 실패했습니다.");
+                }
+            });
+        });
     });
 </script>
 </body>

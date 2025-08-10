@@ -32,15 +32,15 @@ public class FlagRepository {
     }
 
     public FlagPostDTO findById(long id) {
-        return sql.selectOne("Flag.findById",id);
+        return sql.selectOne("Flag.findById", id);
     }
 
     public int update(FlagPostDTO flagPostDTO) {
-        return sql.update("Flag.update",flagPostDTO);
+        return sql.update("Flag.update", flagPostDTO);
     }
 
     public void delete(int id) {
-         sql.delete("Flag.delete",id);
+        sql.delete("Flag.delete", id);
     }
 
     public List<FlagPostDTO> pagingList(Map<String, Integer> pagingParams) {
@@ -108,4 +108,18 @@ public class FlagRepository {
         return sql.selectList("Flag.findAllForUser", param);
 
     }
+
+    public List<FlagPostDTO> findAllPending() {
+        return sql.selectList("Flag.findAllPending");
+    }
+
+    public void updateStatus(long id, String status) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("id", id);
+        param.put("status", status);
+        sql.update("Flag.updateStatus", param);
+    }
+
+
 }
+

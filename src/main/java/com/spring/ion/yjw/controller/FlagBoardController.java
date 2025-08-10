@@ -84,19 +84,8 @@ public class FlagBoardController {
 
         flagService.write(flagPostDTO, fileList);
 
-        String city = flagPostDTO.getCity(); // 제보글 시/도
-        String district = flagPostDTO.getDistrict(); // 구/군
-
-        System.out.println("제보글 시/도:"+city);
-        System.out.println("제보글 구/군:"+district);
-
-        // 알림 저장
-       notifyService.createDangerNotify(flagPostDTO.getNickname(),flagPostDTO.getNickname(),flagPostDTO.getId(),city,district,"flag");
-
         return "redirect:/flag";
     }
-
-
 
     // 게시글 목록 조회
     @GetMapping
@@ -240,6 +229,11 @@ public class FlagBoardController {
                          @RequestParam(value = "deleteFile", required = false) List<Long> deleteFileIds,
                          @RequestParam(value = "boardFile", required = false) MultipartFile boardFile) throws IOException {
 
+        // 반려 상태면 수정 시 무조건 상태를 'PENDING'으로 변경
+        if ("REJECTED".equals(flagPostDTO.getStatus())) {
+            flagPostDTO.setStatus("PENDING");
+        }
+
         boolean result = flagService.update(flagPostDTO, deleteFileIds, boardFile);
         return result ? "redirect:/flag/" + flagPostDTO.getId() : "yjw/flagUpdate";
     }
@@ -322,6 +316,7 @@ public class FlagBoardController {
         model.addAttribute("postList", postList);
         return "yjw/flag"; // 위의 JSP가 위치한 경로
     }
+
 
 
 }

@@ -57,19 +57,23 @@ public class FlagService {
     }
 
     public boolean update(FlagPostDTO flagPostDTO, List<Long> deleteFileIds, MultipartFile newFile) throws IOException {
+        // 1. DB에서 원래 글 상태를 가져옴
+        FlagPostDTO origin = flagRepository.findById(flagPostDTO.getId());
+        // 2. 반려글이면, 무조건 PENDING으로 변경
+        if ("REJECTED".equals(origin.getStatus())) {
+            flagPostDTO.setStatus("PENDING");
+        }
         int updated = flagRepository.update(flagPostDTO);
 
-        // 파일 삭제 처리
+        // 이하 파일 처리 로직은 동일...
         if (deleteFileIds != null) {
             for (Long fileId : deleteFileIds) {
                 flagRepository.deleteFileById(fileId);
             }
         }
-
-        // 새 파일 추가
         if (newFile != null && !newFile.isEmpty()) {
             String originalFileName = newFile.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
+            String uuid = java.util.UUID.randomUUID().toString();
             String storedFileName = uuid + "_" + originalFileName;
             String savePath = "C:/upload/" + storedFileName;
 
@@ -85,6 +89,8 @@ public class FlagService {
 
         return updated > 0;
     }
+
+
 
 
     public void delete(int id) {
@@ -170,6 +176,17 @@ public class FlagService {
         return flagRepository.findAllForUser(userId);
     }
 
+
+    public List<FlagPostDTO> findAllPending() {
+        return flagRepository.findAllPending();
+    }
+
+    public void approvePost(long id) {
+        flagRepository.updateStatus(id, "APPROVED");
+    }
+    public void rejectPost(long id) {
+        flagRepository.updateStatus(id, "REJECTED");
+    }
 
 }
 

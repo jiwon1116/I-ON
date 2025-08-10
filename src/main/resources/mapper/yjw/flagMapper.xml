@@ -22,9 +22,12 @@
     </select>
 
     <update id="update" parameterType="FlagPost">
-        UPDATE flag_post SET title = #{title}, content = #{content}
+        UPDATE flag_post
+        SET title = #{title}, content = #{content}, status = 'PENDING'
         WHERE id = #{id}
     </update>
+
+
 
     <select id="delete" parameterType="int">
         DELETE FROM flag_post WHERE id = #{id}
@@ -114,11 +117,17 @@
         ORDER BY created_at DESC
     </select>
 
+    <!-- 관리자 기능 -->
+    <select id="findAllPending" resultType="FlagPost">
+        SELECT * FROM flag_post WHERE status = 'PENDING' ORDER BY created_at ASC
+    </select>
 
 
-
-
-
+    <update id="updateStatus" parameterType="map">
+        UPDATE flag_post
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
 
 
 </mapper>

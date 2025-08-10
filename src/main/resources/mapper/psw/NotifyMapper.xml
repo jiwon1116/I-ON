@@ -23,11 +23,4 @@
         DELETE FROM notification WHERE id = #{id}
     </delete>
 
-    <select id="countDangerAlertByRegion" resultType="int">
-        SELECT COUNT(*) FROM notification
-        WHERE related_region LIKE CONCAT(#{region}, '%')
-        AND type = 'DANGER_ALERT'
-        AND is_read = false
-    </select>
-
 </mapper>

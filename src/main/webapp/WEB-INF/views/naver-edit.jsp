@@ -31,7 +31,7 @@
                     <input type="hidden" name="_method" value="patch" />
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <button type="submit">수정하기</button>
-                    <a href="/myPage/">마이페이지</a>
+                    <a href="/mypage/">마이페이지</a>
                 </form>
                 <script>
                         const districtMap = {
