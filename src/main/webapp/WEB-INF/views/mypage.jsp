@@ -338,13 +338,12 @@
     });
 }
  </script>
-
-// 지역 사건 알림
-// sessionScope.dangerAlertShown: JSP의 세션 객체에 저장된 dangerAlertShown 속성을 참조
-// sessionScope는 JSP Expression Language(EL)에서 세션 범위를 나타내는 내장 객체
-// c태그로 아래의 2가지를 확인
-// 1. notifyList에 알림이 있는지 (not empty notifyList).
-// 2. 서버 세션에 dangerAlertShown이라는 속성이 없는지 (empty sessionScope.dangerAlertShown).
+<%-- 지역 사건 알림
+     sessionScope.dangerAlertShown: JSP의 세션 객체에 저장된 dangerAlertShown 속성을 참조
+     sessionScope는 JSP Expression Language(EL)에서 세션 범위를 나타내는 내장 객체
+     c태그로 아래의 2가지를 확인
+     1. notifyList에 알림이 있는지 (not empty notifyList).
+     2. 서버 세션에 dangerAlertShown이라는 속성이 없는지 (empty sessionScope.dangerAlertShown) --%>
 
 <c:if test="${not empty notifyList and empty sessionScope.dangerAlertShown}">
     <script>

@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <!-- 지역경보 모달을 위한 세션가져오기 -->
     <meta name="session-id" content="${pageContext.session.id}">
-    <title>마이페이지</title>
+    <title>회원페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -71,7 +71,7 @@
             <div class="profile-name">${target.nickname}님의 프로필</div>
         </div>
         <div class="sidebar-bottom">
-            <button class="logout-btn" onclick="location.href='#'">뒤로가기</button>
+            <button class="logout-btn" onclick="history.back()">뒤로가기</button>
         </div>
     </aside>
 
@@ -242,11 +242,11 @@
 
         let text = '';
         if (grade === '캡숑맘') {
-            text = '최고 등급 달성! 👑';
+            text = `${target.nickname}님은 최고 등급 달성! 👑`;
         } else if (grade === '도토리맘') {
-            text = `캡숑맘까지 <b>${30-totalScore}</b>점 남았어요!`;
+            text = `${target.nickname}님은 캡숑맘까지 <b>${30-totalScore}</b>점 남았어요!`;
         } else if (grade === '새싹맘') {
-            text = `도토리맘까지 <b>${10-totalScore}</b>점 남았어요!`;
+            text = `${target.nickname}님은 도토리맘까지 <b>${10-totalScore}</b>점 남았어요!`;
         }
         gaugeText.innerHTML = text;
 

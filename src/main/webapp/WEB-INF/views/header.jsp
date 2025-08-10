@@ -153,17 +153,24 @@ document.addEventListener('click', function(e){
   }
 });
 
-// 알림 삭제 함수: 서버에만 삭제 요청을 보냅니다.
-function deleteNotify(id) {
+// 알림 삭제 함수
+function deleteNotify(id, buttonElement) {
   if (!confirm("이 알림을 삭제할까요?")) return;
 
-  fetch("/notify/delete/" + id, {
-    method: "POST",
+  const base = "${pageContext.request.contextPath}" || "";
+
+  fetch(base + "/notify/delete/" + id, {
+    method: "DELETE",
     credentials: "same-origin"
   })
   .then(res => {
     if (!res.ok) throw new Error("삭제 실패: " + res.status);
-    console.log("알림 ID " + id + " 삭제 완료");
+    return res.text(); // 서버 응답 텍스트를 받음
+  })
+  .then(responseText => {
+    console.log(responseText); // "삭제 성공" 메시지가 출력
+    // 서버 응답 성공 시, 페이지를 새로고침하여 캐시 문제를 해결
+    window.location.reload();
   })
   .catch(err => {
     console.error(err);

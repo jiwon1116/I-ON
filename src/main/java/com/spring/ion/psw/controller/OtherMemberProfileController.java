@@ -35,10 +35,12 @@ public class OtherMemberProfileController {
     private final MissService missService;
     private final EntrustService entrustService;
 
+
     private final FreeCommentService freeCommentService;
     private final FlagCommentService flagCommentService;
     private final MissCommentService missCommentService;
     private final EntrustCommentService entrustCommentService;
+    private final TrustScoreService trustScoreService;
 
     // 타 회원 마이페이지 조회
     @GetMapping("/checkprofile")
@@ -64,6 +66,8 @@ public class OtherMemberProfileController {
             return "redirect:/";
         }
         model.addAttribute("target", target);
+        TrustScoreDTO trustScoreDTO = trustScoreService.getTrustScore(nickname);
+        model.addAttribute("trustScore",trustScoreDTO);
         return "otherMemberProfile";
     }
 

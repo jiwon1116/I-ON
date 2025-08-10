@@ -27,21 +27,16 @@ public class NotifyController {
         MemberDTO memberDTO = user.getMemberDTO();
 
         String memberNickname =  memberDTO.getNickname();
-        System.out.println("알림 컨드롤러 로그인 이름 반환:"+ memberNickname);
         if (memberNickname == null) return Collections.emptyList(); // 비로그인: 빈 배열
-        List<NotifyDTO> notifyDTO = notifyService.findAllByNotify(memberNickname);
-        System.out.println("반환된 알림 리스트:"+notifyDTO);
         return notifyService.findAllByNotify(memberNickname);
     }
 
-    // 알림 삭제
-    @PostMapping("/delete")
+    // 알림 삭제 - RESTful 원칙에 맞게 DELETE 메서드와 URL 경로 변수 사용
+    @DeleteMapping("/delete/{id}")
     @ResponseBody
-    public ResponseEntity<String> deleteNotification(@RequestParam("id") Long id) {
+    public ResponseEntity<String> deleteNotification(@PathVariable("id") Long id) {
         notifyService.deleteById(id);
         return ResponseEntity.ok().body("삭제 성공");
     }
-
-
 }
 

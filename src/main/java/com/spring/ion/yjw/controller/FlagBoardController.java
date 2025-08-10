@@ -261,8 +261,6 @@ public class FlagBoardController {
     }
 
 
-
-
     // 페이징
     @GetMapping("/paging")
     public String paging(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
