@@ -8,7 +8,13 @@
 <head>
     <meta charset="UTF-8">
     <title>글 상세보기</title>
-      <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <!-- 뱃지 사용 -->
+    <meta name="ctx" content="${pageContext.request.contextPath}"/>
+
+     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+     <!-- 전역 배지 스크립트 -->
+         <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
     <style>
         body {
             margin: 0;
@@ -205,10 +211,16 @@
                 <div class="meta-info">
                     <div>🕒 작성일: <fmt:formatDate value="${findDto.created_at}" pattern="yyyy-MM-dd" /></div>
                     <div>👁️‍ 조회수: ${findDto.view_count}</div>
+                    <c:if test="${not empty findDto.nickname}">
+                        <div>✍ 작성자:
+                            <!-- ✅ 배지 대상 -->
+                            <span class="js-user" data-nickname="${findDto.nickname}">${findDto.nickname}</span>
+                        </div>
+                    </c:if>
                 </div>
 
                 <div class="form-group">
-                  <!-- 게시물에 첨부된 사진 넣기(두 번째 이미지 출력)-->
+                    <!-- 게시물에 첨부된 사진 넣기(두 번째 이미지 출력) -->
                     <c:if test="${not empty findFileDto}">
                         <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;" />
                     </c:if>
@@ -220,22 +232,21 @@
 
                 <input type="hidden" name="id" value="${findDto.id}" />
 
-            <!-- 좋아요 버튼 (하트 토글) -->
-            <div class="mb-2">
-                <button type="button" class="btn like-btn ${findDto != null && findDto.liked ? 'liked' : ''}" id="likeBtn">
-                            <span class="heart">${findDto.liked ? '❤️' : '🤍'}</span>
-                           <span id="likeCount">${findDto.like_count}</span>
-                </button>
-            </div>
+                <!-- 좋아요 버튼 (하트 토글) -->
+                <div class="mb-2">
+                    <button type="button" class="btn like-btn ${findDto != null && findDto.liked ? 'liked' : ''}" id="likeBtn">
+                        <span class="heart">${findDto.liked ? '❤️' : '🤍'}</span>
+                        <span id="likeCount">${findDto.like_count}</span>
+                    </button>
+                </div>
+                좋아요: <span id="likeCountDisplay">${findDto != null ? findDto.like_count : 0}</span>
 
-            좋아요: <span id="likeCountDisplay">${findDto != null ? findDto.like_count : 0}</span>
-
-         <security:authorize access="hasRole('ROLE_ADMIN')">
-            <div class="form-actions">
-               <button type="button" onclick="updatefn()">수정</button>
-               <button type="button" onclick="deletefn()">삭제</button>
-            </div>
-         </security:authorize>
+                <security:authorize access="hasRole('ROLE_ADMIN')">
+                    <div class="form-actions">
+                        <button type="button" onclick="updatefn()">수정</button>
+                        <button type="button" onclick="deletefn()">삭제</button>
+                    </div>
+                </security:authorize>
                 <div class="form-actions">
                     <button type="button" onclick="infoForm()">목록</button>
                 </div>
@@ -245,133 +256,101 @@
             <div class="comment-section">
                 <h3>댓글</h3>
 
-            <!-- 댓글 작성 폼 -->
-              <input type = "text" id = "commentContents" placeholder = "내용"  />
-               <div class="form-actions">
-                 <button type="button" onclick="commentWrite()">댓글 작성</button>
-               </div>
+                <!-- 댓글 작성 폼 -->
+                <input type="text" id="commentContents" placeholder="내용"  />
+                <div class="form-actions">
+                    <button type="button" onclick="commentWrite()">댓글 작성</button>
+                </div>
 
-               <!-- 댓글 목록 -->
-                <div id = "comment-list">
-                <c:forEach items="${commentList}" var="comment">
-                    <div class="comment-box">
-                        <div class="comment-writer">${comment.nickname}</div>
-                        <div>${comment.content}</div>
-                        <div class="comment-date">
-                            <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                <!-- 댓글 목록 -->
+                <div id="comment-list">
+                    <c:forEach items="${commentList}" var="comment">
+                        <div class="comment-box">
+                            <div class="comment-writer">
+                                <!-- ✅ 배지 대상 -->
+                                <span class="js-user" data-nickname="${comment.nickname}">${comment.nickname}</span>
+                            </div>
+                            <div>${comment.content}</div>
+                            <div class="comment-date">
+                                <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                            </div>
+                            <div>
+                                <c:if test="${comment.nickname == member.nickname}">
+                                    <button type="button" onclick="commentDelete('${comment.nickname}', ${comment.id})">삭제</button>
+                                </c:if>
+                            </div>
                         </div>
-                        <div>
-                        <c:if test="${comment.nickname == member.nickname}">
-                           <!-- 댓글 안에 버튼에 인자로 넘겨줘야 함 -->
-                           <button type="button" onclick="commentDelete('${comment.nickname}', ${comment.id})">삭제</button>
-                        </c:if>
-
-                        </div>
-                    </div>
-                </c:forEach>
-                 </div>
+                    </c:forEach>
+                </div>
             </div>
     </main>
 </div>
 
 <script>
-    const updatefn = () => {
-        document.infoupdateForm.submit();
-        }
+    const updatefn = () => { document.infoupdateForm.submit(); }
+    const infoForm  = () => { location.href = "/info"; }
 
-    const infoForm = () => {
-        location.href = "/info";
-    }
-
-      // 좋아요 버튼
-        $('#likeBtn').click(function(){
-            event.preventDefault();
-            const findId = '${findDto.id}';
-            $.ajax({
-                type: 'POST',
-                url: '${pageContext.request.contextPath}/infoLike/like/' + findId,
-                success: function(data){
-                    if(data.error){
-                        alert(data.error);
-                        return;
-                    }
-                    $('#likeCount').text(data.likeCount);
-                    $('#likeCountDisplay').text(data.likeCount);
-                    if(data.liked){
-                        $('#likeBtn').addClass('liked');
-                        $('#likeBtn .heart').text('❤️');
-                    } else {
-                        $('#likeBtn').removeClass('liked');
-                        $('#likeBtn .heart').text('🤍');
-                    }
-                },
-                error: function(){
-                    alert('좋아요 처리 실패!');
+    // 좋아요 버튼
+    $('#likeBtn').click(function(e){
+        e.preventDefault();
+        const findId = '${findDto.id}';
+        $.ajax({
+            type: 'POST',
+            url: '${pageContext.request.contextPath}/infoLike/like/' + findId,
+            success: function(data){
+                if(data.error){ alert(data.error); return; }
+                $('#likeCount').text(data.likeCount);
+                $('#likeCountDisplay').text(data.likeCount);
+                if(data.liked){
+                    $('#likeBtn').addClass('liked');
+                    $('#likeBtn .heart').text('❤️');
+                } else {
+                    $('#likeBtn').removeClass('liked');
+                    $('#likeBtn .heart').text('🤍');
                 }
-            });
+            },
+            error: function(){ alert('좋아요 처리 실패!'); }
         });
-       // 삭제 버튼
+    });
+
+    // 삭제 버튼
     const deletefn = () => {
         const id = "${findDto.id}";
-        const confirmed = confirm("정말 삭제하시겠습니까?");
-           if (confirmed) {
-                  location.href = "/info/delete?id=" + id;
-                  }
-      }
+        if (confirm("정말 삭제하시겠습니까?")) {
+            location.href = "/info/delete?id=" + id;
+        }
+    }
 
-      const commentWrite = () => {
-              // 게시물 작성자 닉네임이 없으면 관리자임
-             const rawNickname = "${member.nickname}";
-             const nickname = (rawNickname && rawNickname !== "null" && rawNickname !== "") ? rawNickname : "admin";
+    const commentWrite = () => {
+        const rawNickname = "${member.nickname}";
+        const nickname = (rawNickname && rawNickname !== "null" && rawNickname !== "") ? rawNickname : "admin";
+        const content = document.getElementById("commentContents").value.trim();
+        const post_id = "${findDto.id}";
 
-              const content = document.getElementById("commentContents").value.trim();
-              const post_id = "${findDto.id}";
+        if (!nickname || !content) { alert("내용을 입력해주세요."); return; }
 
-              if (!nickname || !content) {
-                      alert("내용을 입력해주세요.");
-                      return;
-               }
-              $.ajax({
-                  type: "post",
-                  url: "/infocomment/save",
-                  data: {
-                      nickname : nickname,
-                      content : content,
-                      post_id : post_id
-                  },
-                  dataType : "json",
-                  success : function(commentList) {
-                   location.reload(); // 페이지 전체 새로고침 (위 리스트에 새로운 댓글 반영)
-                  },
-                  error : function() {
-                      console.log("실패");
-                  }
-              });
-          }
+        $.ajax({
+            type: "post",
+            url: "/infocomment/save",
+            data: { nickname, content, post_id },
+            dataType: "json",
+            success: function() { location.reload(); },
+            error: function() { console.log("실패"); }
+        });
+    }
 
-         // JS 함수는 인자로 받아야 정확하게 타겟팅 가능
-         const commentDelete = (nickname, commentId) => {
-             const confirmed = confirm("정말 삭제하시겠습니까?");
-             if (!confirmed) return;
-
-             $.ajax({
-                 type: "post",
-                 url: "/infocomment/delete",
-                 data: {
-                     nickname: nickname,
-                     id: commentId
-                 },
-                 dataType: "json",
-                 success: function (commentList) {
-                     console.log("댓글 삭제 성공");
-                     location.reload();
-                 },
-                 error: function () {
-                     console.log("댓글 삭제 실패");
-                 }
-             });
-         };
-
+    // 댓글 삭제
+    const commentDelete = (nickname, commentId) => {
+        if (!confirm("정말 삭제하시겠습니까?")) return;
+        $.ajax({
+            type: "post",
+            url: "/infocomment/delete",
+            data: { nickname: nickname, id: commentId },
+            dataType: "json",
+            success: function () { location.reload(); },
+            error: function () { console.log("댓글 삭제 실패"); }
+        });
+    };
 </script>
 </body>
 </html>

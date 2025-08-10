@@ -9,7 +9,13 @@
 <head>
   <meta charset="UTF-8">
   <title>위탁 게시판</title>
-  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <!-- badge.js가 API 호출할 때 쓸 컨텍스트 -->
+    <meta name="ctx" content="${pageContext.request.contextPath}"/>
+
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -206,13 +212,20 @@
 
 <div class="post-container">
     <div class="post-title">${entrust.title}</div>
-    <div class="post-meta">${entrust.nickname}</div>
+
+    <!-- 작성자 닉네임 + 배지 -->
+    <div class="post-meta">
+      <c:if test="${not empty entrust.nickname}">
+        <span class="js-user" data-nickname="${entrust.nickname}">${entrust.nickname}</span>
+      </c:if>
+    </div>
+
     <div class="post-content">${entrust.content}</div>
 
     <c:forEach items="${fileList}" var="file">
-    <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
-      <img class="preview-img" src="/entrust/preview?fileName=${file.storedFileName}" />
-    </c:if>
+      <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
+        <img class="preview-img" src="/entrust/preview?fileName=${file.storedFileName}" />
+      </c:if>
     </c:forEach>
 
     <div class="mb-2">
@@ -221,13 +234,16 @@
             <span id="likeCount">${entrust != null ? entrust.like_count : 0}</span>
         </button>
     </div>
+    <!-- 스크립트에서 갱신하는 표시 -->
+    좋아요: <span id="likeCountDisplay">${entrust != null ? entrust.like_count : 0}</span>
 
     <div class="post-actions">
-    <sec:authentication property="principal" var="loginUser" />
-        <c:if test="${loginUserId eq entrust.userId || isAdmin}">
-            <span onclick="updateFn()">수정</span>
-            <span onclick="deleteFn()">삭제</span>
-        </c:if>
+      <!-- 로그인 유저아이디 확보(헤더에서 이미 했다면 중복되어도 OK) -->
+      <security:authentication property="principal.username" var="loginUserId"/>
+      <c:if test="${loginUserId eq entrust.userId || isAdmin}">
+        <span onclick="updateFn()">수정</span>
+        <span onclick="deleteFn()">삭제</span>
+      </c:if>
     </div>
 
     <div class="comment-input-wrapper">
@@ -237,7 +253,6 @@
     </div>
 
     <div class="comment-list">
-    <sec:authentication property="principal" var="loginUser" />
       <c:forEach items="${commentList}" var="comment">
         <div class="comment-card">
           <div class="comment-avatar">
@@ -245,7 +260,10 @@
           </div>
           <div class="comment-body">
             <div class="comment-header">
-              <span class="comment-nickname">${comment.nickname}</span>
+              <!-- 댓글 닉네임 + 배지 -->
+              <span class="comment-nickname">
+                <span class="js-user" data-nickname="${comment.nickname}">${comment.nickname}</span>
+              </span>
               <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
               <c:if test="${loginUserId eq comment.userId || isAdmin}">
                 <span class="comment-delete" onclick="commentDelete('${comment.id}')">삭제</span>
@@ -270,77 +288,61 @@
     }
   }
 
-
   const commentDelete = (commentId) => {
     const confirmed = confirm("댓글을 삭제하시겠습니까?");
     if (confirmed) {
       location.href = "/entrustComment/delete?id=" + commentId;
     }
   }
+
   const commentWrite = () => {
     const nickname = document.getElementById("nickname").value;
-    const content = document.getElementById("content").value;
+    const content = document.getElementById("content").value.trim();
     const postId = "${entrust.id}";
 
-       if (!postId || !content) {
-                               alert("내용을 입력해주세요.");
-                               return;
-                        }
+    if (!postId || !content) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
 
     $.ajax({
       type: "post",
       url: "/entrustComment/save",
-      data: {
-        content: content,
-        post_id: postId,
-        nickname: nickname
-      },
+      data: { content, post_id: postId, nickname },
       dataType: "json",
-      success: function(commentList) {
-        location.reload();
-      },
-      error: function() {
-        alert("댓글 등록 실패");
-      }
+      success: function() { location.reload(); },
+      error: function() { alert("댓글 등록 실패"); }
     });
   }
 </script>
-<script>
-    $(document).ready(function () {
-    // 좋아요 버튼
-        $('#likeBtn').click(function(){
-            const entrustId = '${entrust.id}';
-            $.ajax({
-                type: 'POST',
-                url: '${pageContext.request.contextPath}/entrustLike/like/' + entrustId,
-                success: function(data){
-                    if(data.error){
-                        alert(data.error);
-                        return;
-                    }
-                    $('#likeCount').text(data.likeCount);
-                    $('#likeCountDisplay').text(data.likeCount);
-                    // 하트 토글
-                    if(data.liked){
-                        $('#likeBtn').addClass('liked');
-                        $('#likeBtn .heart').text('❤️');
-                    } else {
-                        $('#likeBtn').removeClass('liked');
-                        $('#likeBtn .heart').text('🤍');
-                    }
-                },
-                error: function(xhr) {
-                    try {
-                        const data = JSON.parse(xhr.responseText);
-                        alert(data.error || "좋아요 처리 실패!");
-                    } catch (e) {
-                        alert("좋아요 처리 실패!");
-                    }
-                }
-            });
-        });
 
+<script>
+  $(function () {
+    // 좋아요 버튼
+    $('#likeBtn').click(function(){
+      const entrustId = '${entrust.id}';
+      $.ajax({
+        type: 'POST',
+        url: '${pageContext.request.contextPath}/entrustLike/like/' + entrustId,
+        success: function(data){
+          if(data.error){ alert(data.error); return; }
+          $('#likeCount').text(data.likeCount);
+          $('#likeCountDisplay').text(data.likeCount);
+          if(data.liked){
+            $('#likeBtn').addClass('liked');
+            $('#likeBtn .heart').text('❤️');
+          } else {
+            $('#likeBtn').removeClass('liked');
+            $('#likeBtn .heart').text('🤍');
+          }
+        },
+        error: function(xhr){
+          try { const d = JSON.parse(xhr.responseText); alert(d.error || "좋아요 처리 실패!"); }
+          catch(e){ alert("좋아요 처리 실패!"); }
+        }
+      });
     });
+  });
 </script>
 </body>
 </html>

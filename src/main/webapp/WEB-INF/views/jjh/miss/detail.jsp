@@ -9,7 +9,12 @@
 <head>
   <meta charset="UTF-8">
   <title>실종 게시판</title>
-  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <!-- badge.js가 API 호출할 때 쓸 컨텍스트 -->
+      <meta name="ctx" content="${pageContext.request.contextPath}"/>
+
+      <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+      <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
   <style>
     body {
       margin: 0;
@@ -205,8 +210,14 @@
 <body>
 
 <div class="post-container">
-    <div class="post-title">${miss.title}</div>
-    <div class="post-meta">${miss.nickname}</div>
+    <div class="post-title">${entrust.title}</div>
+
+    <!-- 작성자 닉네임 + 배지 -->
+    <div class="post-meta">
+      <c:if test="${not empty miss.nickname}">
+        <span class="js-user" data-nickname="${miss.nickname}">${miss.nickname}</span>
+      </c:if>
+    </div>
     <div class="post-content">${miss.content}</div>
 
     <c:forEach items="${fileList}" var="file">
@@ -245,7 +256,10 @@
           </div>
           <div class="comment-body">
             <div class="comment-header">
-              <span class="comment-nickname">${comment.nickname}</span>
+            <!-- 댓글 닉네임 + 배지 -->
+             <span class="comment-nickname">
+                <span class="js-user" data-nickname="${comment.nickname}">${comment.nickname}</span>
+             </span>
               <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
               <c:if test="${loginUserId eq comment.userId || isAdmin}">
                 <span class="comment-delete" onclick="commentDelete('${comment.id}')">삭제</span>

@@ -126,6 +126,37 @@
         WHERE userId = #{userId}
     </update>
 
+    <!-- 닉네임 뱃지 yjw -->
+    <select id="findBadgeMetaByNicknames" parameterType="list" resultType="map">
+        SELECT
+        m.nickname,
+        m.trust_level AS level,
+        CASE
+        WHEN EXISTS (
+        SELECT 1 FROM member_authority ma
+        WHERE ma.userId = m.userId AND ma.authority = 'ROLE_ADMIN'
+        ) THEN 1 ELSE 0
+        END AS is_admin
+        FROM member m
+        WHERE m.nickname IN
+        <foreach collection="list" item="n" open="(" separator="," close=")">
+            #{n}
+        </foreach>
+    </select>
 
-</mapper>
+
+    <!-- 단건 -->
+    <select id="isAdminByNickname" parameterType="string" resultType="int">
+        SELECT CASE WHEN EXISTS (
+        SELECT 1
+        FROM member_authority ma
+        JOIN member m ON m.userId = ma.userId
+        WHERE m.nickname = #{nickname}
+        AND ma.authority = 'ROLE_ADMIN'
+        ) THEN 1 ELSE 0 END
+    </select>
+
+    </mapper>
+
+
 
