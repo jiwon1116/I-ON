@@ -181,7 +181,7 @@
                                         </div>
                                     </c:when>
 
-                                    <c:when test="${notify.type == 'DANGER_ALERT' and member.enrollment_verified}">
+                                    <c:when test="${notify.type == 'DANGER_ALERT'}">
                                         <%-- 자바스크립트 안 쓰고 hidden input으로 우회 저장 (지역 위험 알림) --%>
                                         <input type="hidden" class="danger-alert" value="${notify.content}" />
                                           <div class="notification-item">
@@ -356,17 +356,13 @@
                                 .map(e => e.value) // 각 요소의 value 값을 가져옴
                                 .filter(Boolean);  // 값이 비어있지 않은 요소만 남김
 
-            // 만약 alerts 배열에 내용이 하나라도 있다면, 모달을 표시
-            Boolean enrollment_verified = '${member.enrollment_verified}'; // 재학 증명 여부
-            if(!enrollment_verified){
-                return;
-            }else{
+
               if (alerts.length > 0) {
                             document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
                         // 부트스트랩 모달을 생성하고 보여줌
                             new bootstrap.Modal(document.getElementById('dangerModal')).show();
                         }
-            }
+
         });
     </script>
     <c:set var="dangerAlertShown" value="true" scope="session"/>
