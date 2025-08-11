@@ -166,6 +166,7 @@
         AND ma.authority = 'ROLE_ADMIN'
         ) THEN 1 ELSE 0 END
     </select>
+
 </mapper>
 
 

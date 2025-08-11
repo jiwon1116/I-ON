@@ -111,5 +111,6 @@ public class MemberRepository {
         Integer v = sql.selectOne("Member.isAdminByNickname", nickname);
         return v != null && v == 1;
     }
+
 }
 
