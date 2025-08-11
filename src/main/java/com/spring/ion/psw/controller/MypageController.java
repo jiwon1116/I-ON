@@ -5,8 +5,8 @@ import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.lcw.service.MemberService;
 import com.spring.ion.psw.dto.NotifyDTO;
 import com.spring.ion.psw.service.NotifyService;
-import com.spring.ion.yjw.service.TrustScoreService;
 import com.spring.ion.yjw.dto.TrustScoreDTO;
+import com.spring.ion.yjw.service.TrustScoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,16 +43,16 @@ public class MypageController {
 
          // 신뢰도 점수판 정보 추가
         TrustScoreDTO trustScoreDTO = trustScoreService.getTrustScore(nickname);
-        model.addAttribute("trustScore",trustScoreDTO);
+        model.addAttribute("trustScore", trustScoreDTO);
         return "mypage";
 
     }
-         // 알림 삭제
-         @PostMapping("/delete")
-        @ResponseBody
+
+    // 알림 삭제
+    @PostMapping("/delete")
+    @ResponseBody
     public ResponseEntity<String> deleteNotification(@RequestParam("id") Long id) {
         notifyService.deleteById(id);
         return ResponseEntity.ok().body("삭제 성공");
     }
-
-    }
+}

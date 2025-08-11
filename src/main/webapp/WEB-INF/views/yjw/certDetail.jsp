@@ -169,32 +169,73 @@
 </div>
 
 <script>
-  const msg = document.getElementById('msg');
+  const LIST_URL = '<c:url value="/cert"/>' + '?totalUnreadCount=0';
+
+  const approveBtn = document.querySelector('#approveForm button');
+  const rejectBtn  = document.querySelector('#rejectForm button');
+
+  // 페이지 들어왔을 때 상태가 PENDING 아니면 버튼 잠금
+  (function initLock(){
+    const status = '${d.status}';
+    if (status !== 'PENDING') {
+      approveBtn.disabled = true;
+      rejectBtn.disabled  = true;
+    }
+  })();
+
+  function lockActions(lock){
+    approveBtn.disabled = lock;
+    rejectBtn.disabled  = lock;
+  }
 
   async function post(url, form){
     const fd = new FormData(form);
-    const res = await fetch(url, { method:'POST', body:fd });
+    const res = await fetch(url, { method:'POST', body: fd });
     const data = await res.json().catch(()=>({}));
     return { ok: res.ok, data };
   }
 
+  // 승인
   document.getElementById('approveForm').addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const {ok, data} = await post('<c:url value="/cert/admin/${d.id}/approve"/>', e.target);
-    msg.className = 'alert-n ' + (ok && data.ok ? 'alert-success-n' : 'alert-danger-n');
-    msg.textContent = ok && data.ok ? '승인되었습니다.' : (data.error || '승인 실패');
-    msg.classList.remove('d-none');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    lockActions(true);
+    try{
+      const {ok, data} = await post('<c:url value="/cert/admin/${d.id}/approve"/>', e.target);
+      if (ok && (data?.ok || data?.message)) {
+        alert('승인되었습니다.');
+        location.href = LIST_URL;
+      } else {
+        alert(data?.error || '승인 실패');
+        lockActions(false);
+      }
+    }catch{
+      alert('승인 중 오류가 발생했습니다.');
+      lockActions(false);
+    }
   });
 
+  // 반려
   document.getElementById('rejectForm').addEventListener('submit', async (e)=>{
     e.preventDefault();
-    const {ok, data} = await post('<c:url value="/cert/admin/${d.id}/reject"/>', e.target);
-    msg.className = 'alert-n ' + (ok && data.ok ? 'alert-success-n' : 'alert-danger-n');
-    msg.textContent = ok && data.ok ? '반려되었습니다.' : (data.error || '반려 실패');
-    msg.classList.remove('d-none');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const reason = e.target.reason?.value?.trim();
+    if (!reason) { alert('반려 사유를 입력하세요.'); return; }
+
+    lockActions(true);
+    try{
+      const {ok, data} = await post('<c:url value="/cert/admin/${d.id}/reject"/>', e.target);
+      if (ok && (data?.ok || data?.message)) {
+        alert('반려되었습니다.');
+        location.href = LIST_URL;
+      } else {
+        alert(data?.error || '반려 실패');
+        lockActions(false);
+      }
+    }catch{
+      alert('반려 처리 중 오류가 발생했습니다.');
+      lockActions(false);
+    }
   });
 </script>
+
 </body>
 </html>

@@ -4,10 +4,11 @@ import com.spring.ion.lcw.dto.MemberDTO;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -26,20 +27,24 @@ public class MemberRepository {
         sql.delete("Member.deleteMember", username);
 
     }
+
     public MemberDTO findById(Long id) {
         return sql.selectOne("Member.findById", id);
     }
+
     public MemberDTO findByUserId(String username) {
         return sql.selectOne("Member.findByUserId", username);
     }
-    public MemberDTO findByNickname(String nickname){
+
+    public MemberDTO findByNickname(String nickname) {
         return sql.selectOne("Member.findByNickname", nickname);
     }
+
     public MemberDTO findByUserIdWithAuthorities(String username) {
         return sql.selectOne("Member.findByUserIdWithAuthorities", username);
     }
 
-    public void edit(MemberDTO memberDTO){
+    public void edit(MemberDTO memberDTO) {
         sql.update("Member.updateMember", memberDTO);
     }
 
@@ -53,8 +58,9 @@ public class MemberRepository {
         param.put("profileImg", profileImg);
         sql.update("Member.updateProfileImg", param);
     }
+
     // 작성자 제외한 같은 지역에 사는 회원 조회
-    public List<MemberDTO> findByRegionExceptWriter(String city,String district, String writerNickname) {
+    public List<MemberDTO> findByRegionExceptWriter(String city, String district, String writerNickname) {
         Map<String, String> params = new HashMap<>();
         params.put("city", city);
         params.put("district", district);
@@ -63,11 +69,11 @@ public class MemberRepository {
         return sql.selectList("Member.findByRegionExceptWriter", params);
     }
 
-
-
     // 재학증명서 -yjw
     public int markVerified(String userId){
-        return sql.update("Member.markVerified", userId); // ← namespace.id 맞추기
+        Map<String,Object> p = new HashMap<>();
+        p.put("userId", userId);
+        return sql.update("Member.markVerified", p);
     }
 
     // 뱃지 기능 추가 yjw
@@ -83,13 +89,17 @@ public class MemberRepository {
         return out;
     }
 
-    /** 단건 레벨 */
+    /**
+     * 단건 레벨
+     */
     public Integer findLevelByNickname(String nickname) {
         if (nickname == null || nickname.isBlank()) return null;
         return sql.selectOne("Member.findLevelByNickname", nickname);
     }
 
-    /** 닉네임 → {level, admin} */
+    /**
+     * 닉네임 → {level, admin}
+     */
     public Map<String, Map<String, Object>> findBadgeMetaByNicknames(List<String> names) {
         if (names == null || names.isEmpty()) return Collections.emptyMap();
         List<Map<String, Object>> rows = sql.selectList("Member.findBadgeMetaByNicknames", names);
@@ -106,12 +116,17 @@ public class MemberRepository {
         return out;
     }
 
-    /** 단건: 관리자 여부 */
+    /**
+     * 단건: 관리자 여부
+     */
     public boolean isAdminByNickname(String nickname) {
         Integer v = sql.selectOne("Member.isAdminByNickname", nickname);
         return v != null && v == 1;
     }
 
-
+    @Transactional
+    public void updateMemberBan(MemberDTO member) {
+        sql.update("Member.updateMemberBan", member);
+    }
 }
 

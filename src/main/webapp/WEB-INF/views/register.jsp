@@ -153,7 +153,7 @@ pageEncoding="UTF-8"%>
   <div class="card">
     <form action="/register" method="post" onsubmit="return confirm('회원가입을 진행하시겠습니까?');">
       <div class="field">
-        <label for="reg-userId">이름</label>
+        <label for="reg-userId">아이디</label>
         <input class="input" type="text" id="reg-userId" name="userId" placeholder="Value" required />
       </div>
 
