@@ -73,11 +73,12 @@
             <div class="text-end mb-2">
                 <!-- 수정/삭제 버튼 -->
                 <security:authentication property="principal.username" var="loginUserId"/>
-                <c:if test="{$loginUserId eq flag.userId or isAdmin}">
+                <c:if test="${loginUserId eq flag.userId or isAdmin}">
                     <a href="${pageContext.request.contextPath}/flag/update/${flag.id}">수정</a>
                     <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}"
                        onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
                 </c:if>
+
 
                 <!-- 신고 버튼(로그인 && 본인 글 아님) -->
                 <c:if test="${loginUserId ne flag.userId}">
