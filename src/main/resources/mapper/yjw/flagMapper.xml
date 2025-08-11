@@ -128,14 +128,21 @@
         WHERE id = #{id}
     </update>
 
-    <!--  공개 + 내 글 페이징 -->
+    <!-- 공개 + 내 글 페이징 -->
     <select id="pagingListPublicOrMine" parameterType="map" resultType="FlagPost">
-        SELECT *
-        FROM flag_post
-        WHERE status = 'APPROVED' OR userId = #{userId}
-        ORDER BY id DESC
+        SELECT p.*
+        FROM flag_post p
+        WHERE p.status = 'APPROVED' OR p.userId = #{userId}
+        ORDER BY
+        CASE WHEN EXISTS (
+        SELECT 1 FROM member_authority ma
+        WHERE ma.userId = p.userId
+        AND ma.authority = 'ROLE_ADMIN'
+        ) THEN 0 ELSE 1 END,
+        p.id DESC
         LIMIT #{start}, #{limit}
     </select>
+
 
     <!-- 공개 + 내 글 총 개수 -->
     <select id="flagCountPublicOrMine" parameterType="string" resultType="int">
