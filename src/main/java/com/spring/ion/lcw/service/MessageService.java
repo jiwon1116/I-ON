@@ -15,7 +15,7 @@ public class MessageService {
 
     public MessageDTO saveMessage(MessageDTO messageDTO) {
         messageRepository.saveMessage(messageDTO);
-        return messageDTO;
+        return messageRepository.findMessageById(messageDTO.getId());
     }
 
     public List<MessageDTO> findMessagesByRoomid(Long roomId){

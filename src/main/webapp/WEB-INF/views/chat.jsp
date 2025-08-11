@@ -50,7 +50,7 @@
                     <a href="/chat/room/${room.id}" class="chat-room-link">
                         <div class="chat-room-info">
                             <p><strong>상대방: ${room.partnerNickname}</strong></p>
-                            <p class="last-message">마지막 메시지: ${room.lastMessage}</p>
+                            <p class="last-message">최근 메시지: ${room.lastMessage}</p>
                         </div>
 
                         <c:choose>
