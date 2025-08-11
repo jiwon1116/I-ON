@@ -139,40 +139,28 @@
     </update>
 
     <!-- 닉네임 뱃지 yjw -->
-    <select id="findBadgeMetaByNicknames" parameterType="list" resultType="map">
-        SELECT
-        m.nickname,
-        m.trust_level AS level,
-        CASE
-        WHEN EXISTS (
-        SELECT 1 FROM member_authority ma
-        WHERE ma.userId = m.userId AND ma.authority = 'ROLE_ADMIN'
-        ) THEN 1 ELSE 0
-        END AS is_admin
-        FROM member m
-        WHERE m.nickname IN
-        <foreach collection="list" item="n" open="(" separator="," close=")">
-            #{n}
-        </foreach>
-    </select>
-
-
-    <!-- 단건 -->
-    <select id="isAdminByNickname" parameterType="string" resultType="int">
+    <select id="isAdminByNickname" parameterType="string" resultType="boolean">
         SELECT CASE WHEN EXISTS (
         SELECT 1
         FROM member_authority ma
         JOIN member m ON m.userId = ma.userId
         WHERE m.nickname = #{nickname}
-        AND ma.authority = 'ROLE_ADMIN'
-        ) THEN 1 ELSE 0 END
+        AND ma.authority IN ('ROLE_ADMIN','ROLE_SUPER')
+        ) THEN TRUE ELSE FALSE END
     </select>
 
+
     <!-- 리스트 닉네임 trust_level -->
-    <select id="findLevelsByNicknames" parameterType="list" resultType="map">
+    <select id="findBadgeMetaByNicknames" parameterType="list" resultType="map">
         SELECT
-        m.nickname,
-        COALESCE(m.trust_level, 0) AS level
+        m.nickname                       AS nickname,
+        COALESCE(m.trust_level, 0)       AS level,
+        CASE WHEN EXISTS (
+        SELECT 1
+        FROM member_authority ma
+        WHERE ma.userId = m.userId
+        AND ma.authority IN ('ROLE_ADMIN','ROLE_SUPER')
+        ) THEN 1 ELSE 0 END              AS is_admin
         FROM member m
         WHERE m.nickname IN
         <foreach collection="list" item="n" open="(" separator="," close=")">
@@ -185,6 +173,15 @@
         SELECT COALESCE(m.trust_level, 0)
         FROM member
         WHERE nickname = #{value}
+    </select>
+
+    <select id="findLevelsByNicknames" parameterType="list" resultType="map">
+        SELECT m.nickname AS 'KEY', m.level AS 'VALUE'
+        FROM member m
+        WHERE m.nickname IN
+        <foreach collection="list" item="n" open="(" separator="," close=")">
+            #{n}
+        </foreach>
     </select>
 
     <update id="updateMemberBan" parameterType="com.spring.ion.lcw.dto.MemberDTO">

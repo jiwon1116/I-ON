@@ -82,8 +82,8 @@ public class MemberRepository {
         List<Map<String, Object>> rows = sql.selectList("Member.findLevelsByNicknames", names);
         Map<String, Integer> out = new HashMap<>();
         for (Map<String, Object> r : rows) {
-            String nickname = (String) r.get("nickname");
-            Object lvl = r.get("level");
+            String nickname = (String) r.get("KEY");
+            Object lvl = r.get("VALUE");
             if (nickname != null && lvl != null) out.put(nickname, ((Number) lvl).intValue());
         }
         return out;
@@ -106,8 +106,11 @@ public class MemberRepository {
         Map<String, Map<String, Object>> out = new HashMap<>();
         for (Map<String, Object> r : rows) {
             String nick = (String) r.get("nickname");
-            int level = ((Number) r.get("level")).intValue();
-            boolean admin = ((Number) r.get("is_admin")).intValue() == 1;
+            Object levelObj = r.get("level");
+            Object adminFlag = r.get("is_admin"); // 1/0
+            if (nick == null) continue;
+            int level = (levelObj instanceof Number) ? ((Number) levelObj).intValue() : 1;
+            boolean admin = (adminFlag instanceof Number) && ((Number) adminFlag).intValue() == 1;
             Map<String, Object> meta = new HashMap<>();
             meta.put("level", level);
             meta.put("admin", admin);
@@ -119,10 +122,11 @@ public class MemberRepository {
     /**
      * 단건: 관리자 여부
      */
-    public boolean isAdminByNickname(String nickname) {
-        Integer v = sql.selectOne("Member.isAdminByNickname", nickname);
-        return v != null && v == 1;
+    public Boolean isAdminByNickname(String nickname) {
+        Boolean v = sql.selectOne("Member.isAdminByNickname", nickname);
+        return Boolean.TRUE.equals(v);
     }
+
 
     @Transactional
     public void updateMemberBan(MemberDTO member) {
