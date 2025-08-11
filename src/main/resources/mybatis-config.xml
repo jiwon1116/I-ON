@@ -35,6 +35,8 @@
         <typeAlias type="com.spring.ion.yjw.dto.TrustScoreDTO" alias="trust"></typeAlias>
 
         <typeAlias type="com.spring.ion.lcw.dto.MemberDTO" alias="member"></typeAlias>
+        <typeAlias type="com.spring.ion.lcw.dto.MessageDTO" alias="message"></typeAlias>
+        <typeAlias type="com.spring.ion.lcw.dto.ChatRoomDTO" alias="chatRoom"></typeAlias>
 
         <typeAlias type="com.spring.ion.psw.dto.NotifyDTO" alias="notify"></typeAlias>
 
@@ -61,7 +63,9 @@
         <mapper resource="mapper/yjw/flagLikeMapper.xml"/>
         <mapper resource="mapper/yjw/TrustScoreMapper.xml"/>
 
+        <mapper resource="mapper/lcw/ChatRoomMapper.xml"/>
         <mapper resource="mapper/lcw/MemberMapper.xml"/>
+        <mapper resource="mapper/lcw/MessageMapper.xml"/>
 
     </mappers>
 </configuration>

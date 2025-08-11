@@ -24,11 +24,15 @@ public class MemberRepository {
         sql.delete("Member.deleteMember", username);
 
     }
-
+    public MemberDTO findById(Long id) {
+        return sql.selectOne("Member.findById", id);
+    }
     public MemberDTO findByUserId(String username) {
         return sql.selectOne("Member.findByUserId", username);
     }
-
+    public MemberDTO findByNickname(String nickname){
+        return sql.selectOne("Member.findByNickname", nickname);
+    }
     public MemberDTO findByUserIdWithAuthorities(String username) {
         return sql.selectOne("Member.findByUserIdWithAuthorities", username);
     }

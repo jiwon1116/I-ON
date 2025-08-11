@@ -6,8 +6,10 @@ import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.security.InfoChangeRestrictionException;
 import com.spring.ion.lcw.service.MemberService;
 import com.spring.ion.lcw.service.ReCaptchaService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,22 +24,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@RequiredArgsConstructor
 @Controller
 public class MemberController {
-    @Autowired
-    private MemberService memberService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private ReCaptchaService reCaptchaService;
+    private final MemberService memberService;
+    private final PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
+    private final ReCaptchaService reCaptchaService;
 
     @GetMapping("/login")
     public String showLoginPage() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated() &&
+                !(authentication instanceof AnonymousAuthenticationToken)) {
+            return "redirect:/";
+        }
         return "login";
     }
 
@@ -145,10 +147,6 @@ public class MemberController {
         }
 
 
-        if (memberDTO.getRegion() != null && !memberDTO.getRegion().isEmpty()) {
-            currentMember.setRegion(memberDTO.getRegion());
-        }
-
         if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
             currentMember.setNickname(memberDTO.getNickname());
         }
@@ -183,14 +181,14 @@ public class MemberController {
         }
 
     }
-    @GetMapping("/naver-edit")
+    @GetMapping("/naverEdit")
     public String showNaverEditForm(Model model) {
 
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MemberDTO memberDTO = user.getMemberDTO();
         model.addAttribute("member", memberDTO);
 
-        return "naver-edit";
+        return "naverEdit";
     }
 
     @PatchMapping("/naver-edit")

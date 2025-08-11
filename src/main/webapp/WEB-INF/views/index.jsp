@@ -62,6 +62,10 @@
         <a href="/admin">관리자 페이지</a>
     </security:authorize>
 
+    <security:authorize access="isAuthenticated()">
+            <a href="/chat">채팅방 페이지</a>
+    </security:authorize>
+
 
 </body>
 </html>

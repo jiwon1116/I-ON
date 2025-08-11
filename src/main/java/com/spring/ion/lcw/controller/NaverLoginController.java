@@ -5,6 +5,7 @@ import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.lcw.service.MemberService;
 import com.spring.ion.lcw.service.NaverLoginService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,13 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Controller
 public class NaverLoginController {
 
-    @Autowired
-    private NaverLoginService naverLoginService;
-    @Autowired
-    private MemberService memberService;
+    private final NaverLoginService naverLoginService;
+    private final MemberService memberService;
 
     @GetMapping("/naverLogin")
     public void naverLogin(HttpServletResponse response, HttpSession session) throws IOException {

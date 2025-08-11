@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -64,5 +65,16 @@ public class CustomUserDetails implements UserDetails, Serializable {
     public boolean isEnabled() {
         Boolean enabled = memberDTO.getEnabled();
         return enabled != null && enabled;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomUserDetails that = (CustomUserDetails) o;
+        return getUsername().equals(that.getUsername());
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUsername());
     }
 }

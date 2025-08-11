@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ChatRoom">
+
+    <select id="findChatRoomById" parameterType="Long" resultType="com.spring.ion.lcw.dto.ChatRoomDTO">
+        SELECT id, user1_id AS user1Id, user2_id AS user2Id, last_message AS lastMessage, user1_unread_count AS user1UnreadCount, user2_unread_count AS user2UnreadCount, created_at AS createdAt, updated_at AS updatedAt
+        FROM chat_room
+        WHERE id = #{id}
+    </select>
+
+    <select id="findChatRoomsById" resultType="com.spring.ion.lcw.dto.ChatRoomDTO">
+        SELECT c.id, c.user1_id AS user1Id, c.user2_id AS user2Id, c.last_message AS lastMessage, c.user1_unread_count AS user1UnreadCount, c.user2_unread_count AS user2UnreadCount, c.updated_at AS updatedAt,
+        CASE
+        WHEN c.user1_id = #{id}
+        THEN COALESCE(m2.nickname, '존재하지 않는 회원')
+        ELSE COALESCE(m1.nickname, '존재하지 않는 회원')
+        END AS partnerNickname
+        FROM chat_room c
+        LEFT JOIN member m1 ON c.user1_id = m1.id
+        LEFT JOIN member m2 ON c.user2_id = m2.id
+        WHERE c.user1_id = #{id} OR c.user2_id = #{id}
+        ORDER BY c.updated_at DESC
+    </select>
+
+    <select id="findChatRoomByIds" resultType="com.spring.ion.lcw.dto.ChatRoomDTO">
+        SELECT *
+        FROM chat_room
+        WHERE (user1_id = #{user1Id} AND user2_id = #{user2Id})
+        OR (user1_id = #{user2Id} AND user2_id = #{user1Id})
+    </select>
+
+    <insert id="insertChatRoom" parameterType="com.spring.ion.lcw.dto.ChatRoomDTO">
+        INSERT INTO chat_room (user1_id, user2_id, created_at)
+        VALUES (#{user1Id}, #{user2Id}, NOW())
+    </insert>
+
+    <update id="setZeroUnreadCount" parameterType="java.util.Map">
+        UPDATE chat_room
+        SET
+        user1_unread_count = CASE
+        WHEN user1_id = #{currentUserId} THEN 0
+        ELSE user1_unread_count
+        END,
+        user2_unread_count = CASE
+        WHEN user2_id = #{currentUserId} THEN 0
+        ELSE user2_unread_count
+        END
+        WHERE id = #{roomId}
+    </update>
+
+    <update id="incrementUnreadCount" parameterType="java.util.Map">
+        UPDATE chat_room
+        SET
+        user1_unread_count = CASE
+        WHEN user1_id != #{senderId}
+        THEN user1_unread_count + 1
+        ELSE user1_unread_count
+        END,
+        user2_unread_count = CASE
+        WHEN user2_id != #{senderId}
+        THEN user2_unread_count + 1
+        ELSE user2_unread_count
+        END
+        WHERE id = #{roomId}
+    </update>
+
+    <update id="updateLastMessage" parameterType="java.util.Map">
+        UPDATE chat_room
+        SET
+        last_message = #{lastMessage},
+        updated_at = NOW()
+        WHERE id = #{roomId}
+    </update>
+</mapper>
