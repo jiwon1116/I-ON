@@ -121,5 +121,19 @@ public class FlagRepository {
     }
 
 
+    // 공개 + 내글 페이징 목록
+    public List<FlagPostDTO> pagingListPublicOrMine(Map<String, Object> params) {
+        return sql.selectList("Flag.pagingListPublicOrMine", params);
+    }
+
+    // 공개 + 내글 총 개수
+    public int flagCountPublicOrMine(String loginUserId) {
+        return sql.selectOne("Flag.flagCountPublicOrMine", loginUserId);
+    }
+
+    // 공개 + 내글 검색 (서비스에서 호출 중이니 함께 추가)
+    public List<FlagPostDTO> searchPublicOrMine(Map<String, Object> params) {
+        return sql.selectList("Flag.searchPublicOrMine", params);
+    }
 }
 

@@ -5,11 +5,11 @@
 
 <mapper namespace="Flag">
 
-
-    <insert id="write" parameterType="FlagPost"
-            useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO flag_post (title, nickname, content, userId, city, district)
-        VALUES (#{title}, #{nickname}, #{content}, #{userId}, #{city}, #{district})
+    <!-- 글쓰기: 관리자면 컨트롤러에서 #{status}='APPROVED' 세팅, 일반은 NULL -> DB 기본값 PENDING -->
+    <insert id="write" parameterType="FlagPost" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO flag_post (title, nickname, content, userId, city, district, status)
+        VALUES (#{title}, #{nickname}, #{content}, #{userId}, #{city}, #{district},
+        COALESCE(#{status}, 'PENDING'))
     </insert>
 
     <select id="findAll" resultType="FlagPost">
@@ -17,7 +17,7 @@
     </select>
 
     <select id="findById" parameterType="long" resultType="FlagPost">
-        SELECT * FROM flag_post WHERE id=#{id}
+        SELECT * FROM flag_post WHERE id = #{id}
     </select>
 
     <update id="update" parameterType="FlagPost">
@@ -26,12 +26,12 @@
         WHERE id = #{id}
     </update>
 
-
-
-    <select id="delete" parameterType="int">
+    <!-- ❗ 기존에 select 로 되어 있던 delete를 delete 태그로 교체 -->
+    <delete id="delete" parameterType="int">
         DELETE FROM flag_post WHERE id = #{id}
-    </select>
+    </delete>
 
+    <!-- (구) 전체 페이징 - 공개화면에선 사용 지양 -->
     <select id="pagingList" parameterType="java.util.HashMap" resultType="FlagPost">
         SELECT * FROM flag_post ORDER BY id DESC LIMIT #{start}, #{limit}
     </select>
@@ -40,10 +40,11 @@
         SELECT COUNT(id) FROM flag_post
     </select>
 
+    <!-- 단일 문자열 파라미터는 #{value} 로 받아야 함 -->
     <select id="search" parameterType="string" resultType="com.spring.ion.yjw.dto.FlagPostDTO">
         SELECT * FROM flag_post
-        WHERE title LIKE CONCAT('%', #{keyword}, '%')
-        OR content LIKE CONCAT('%', #{keyword}, '%')
+        WHERE title LIKE CONCAT('%', #{value}, '%')
+        OR content LIKE CONCAT('%', #{value}, '%')
         ORDER BY id DESC
     </select>
 
@@ -89,10 +90,10 @@
         WHERE id = #{postId}
     </update>
 
-    <select id="findAllByWriter" parameterType="String" resultType="FlagPost">
-        SELECT * FROM flag_post WHERE userId = #{userId} ORDER BY created_at DESC
+    <!-- ❗ 단일 문자열은 #{value} 로 -->
+    <select id="findAllByWriter" parameterType="string" resultType="FlagPost">
+        SELECT * FROM flag_post WHERE userId = #{value} ORDER BY created_at DESC
     </select>
-
 
     <insert id="insertFlagPost" parameterType="FlagPost">
         INSERT INTO flag_post
@@ -101,18 +102,18 @@
         (#{nickname}, #{title}, #{content}, #{likeCount}, #{viewCount}, #{createdAt}, #{userId}, #{city}, #{district})
     </insert>
 
+    <!-- 공개글만 -->
     <select id="findAllApproved" resultType="FlagPost">
-        SELECT *
-        FROM flag_post
+        SELECT * FROM flag_post
         WHERE status = 'APPROVED'
         ORDER BY id DESC
     </select>
 
+    <!-- 공개글 + 내 글 (컬럼명 userId 로 수정) -->
     <select id="findAllForUser" parameterType="map" resultType="FlagPost">
         SELECT *
         FROM flag_post
-        WHERE status = 'APPROVED'
-        OR user_id = #{userId}
+        WHERE status = 'APPROVED' OR userId = #{userId}
         ORDER BY created_at DESC
     </select>
 
@@ -121,12 +122,36 @@
         SELECT * FROM flag_post WHERE status = 'PENDING' ORDER BY created_at ASC
     </select>
 
-
     <update id="updateStatus" parameterType="map">
         UPDATE flag_post
         SET status = #{status}
         WHERE id = #{id}
     </update>
 
+    <!--  공개 + 내 글 페이징 -->
+    <select id="pagingListPublicOrMine" parameterType="map" resultType="FlagPost">
+        SELECT *
+        FROM flag_post
+        WHERE status = 'APPROVED' OR userId = #{userId}
+        ORDER BY id DESC
+        LIMIT #{start}, #{limit}
+    </select>
+
+    <!-- 공개 + 내 글 총 개수 -->
+    <select id="flagCountPublicOrMine" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM flag_post
+        WHERE status = 'APPROVED' OR userId = #{value}
+    </select>
+
+    <!-- 공개 + 내 글 검색 -->
+    <select id="searchPublicOrMine" parameterType="map" resultType="FlagPost">
+        SELECT *
+        FROM flag_post
+        WHERE (status = 'APPROVED' OR userId = #{userId})
+        AND (title   LIKE CONCAT('%', #{keyword}, '%')
+        OR content LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY id DESC
+    </select>
 
 </mapper>
