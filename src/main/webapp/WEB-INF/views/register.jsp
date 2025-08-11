@@ -47,6 +47,8 @@ pageEncoding="UTF-8"%>
             </select>
         </div>
 
+        <!-- <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div> -->
+
         <div>
             <input type="submit" value="회원가입"/>
         </div>

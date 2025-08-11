@@ -73,4 +73,19 @@
         updated_at = NOW()
         WHERE id = #{roomId}
     </update>
+
+    <select id="calculateTotalUnreadCount" parameterType="Long" resultType="int">
+        SELECT
+        COALESCE(SUM(
+        CASE
+        WHEN user1_id = #{currentUserId}
+        THEN user1_unread_count
+        WHEN user2_id = #{currentUserId}
+        THEN user2_unread_count
+        ELSE 0
+        END
+        ), 0)
+        FROM chat_room
+        WHERE user1_id = #{currentUserId} OR user2_id = #{currentUserId}
+    </select>
 </mapper>

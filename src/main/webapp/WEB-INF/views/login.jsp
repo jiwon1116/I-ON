@@ -34,7 +34,7 @@
 	<hr/>
 	<a href="/register">회원가입</a>
 	<hr/>
-    <a href="/naverLogin">네이버 로그인(작동은 하나 누르지 말 것)</a>
+    <a href="/naverLogin">네이버 로그인</a>
 
 
 

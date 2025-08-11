@@ -112,8 +112,6 @@ public class MemberRepository {
         return v != null && v == 1;
     }
 }
-    public MemberDTO findByNickname(String nickname) {
-       return sql.selectOne("Member.findByNickname", nickname);
-    }
-}
+
+
 

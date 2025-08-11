@@ -1,13 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!-- 공통 헤더: 상단 네비게이션 바만 -->
-<!-- 필요하면 css 링크, 아이콘 CDN 추가 가능 -->
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <header>
-<!-- Bootstrap CSS & JS (팝오버) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-
 
 
 <style>
@@ -27,6 +24,25 @@
   .popover {
     z-index: 2000 !important;
     max-width: 320px; /* 내용 잘림 방지(선택) */
+  }
+
+  /* 편지 아이콘과 배지를 감싸는 링크 스타일 */
+  .icon-link {
+    position: relative; /* 배지 위치를 잡기 위해 필요 */
+    display: inline-block; /* 팝오버 버튼과 나란히 표시 */
+    margin-right: 15px; /* 버튼과 간격 주기 */
+  }
+
+  /* 총 읽지 않은 메시지 수를 표시하는 배지 스타일 */
+  .unread-count-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    font-size: 0.75rem; /* 글씨 크기 조절 */
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
   }
 </style>
 
@@ -55,7 +71,17 @@
     <div id="popover-content" class="d-none"></div>
       <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
     <div id="popover-content" class="d-none"></div>
-      <span class="icon">✉️</span>
+
+      <%-- 편지 아이콘에 총 읽지 않은 메시지 수 추가 --%>
+      <a href="/chat" class="icon-link">
+          <span class="icon">✉️</span>
+          <c:if test="${totalUnreadCount > 0}">
+              <span id="total-unread-count" class="badge unread-count-badge">
+                  ${totalUnreadCount}
+              </span>
+          </c:if>
+      </a>
+
     </div>
   </nav>
 
@@ -179,6 +205,3 @@ function deleteNotify(id, buttonElement) {
 }
 </script>
 </header>
-
-
-
