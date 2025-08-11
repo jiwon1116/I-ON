@@ -1,11 +1,12 @@
 package com.spring.ion.psw.controller;
+
 import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.security.CustomUserDetails;
 import com.spring.ion.lcw.service.MemberService;
 import com.spring.ion.psw.dto.NotifyDTO;
 import com.spring.ion.psw.service.NotifyService;
-import com.spring.ion.yjw.service.TrustScoreService;
 import com.spring.ion.yjw.dto.TrustScoreDTO;
+import com.spring.ion.yjw.service.TrustScoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,12 +41,12 @@ public class MypageController {
         model.addAttribute("member", latestMember); // 최신 값으로 넘기기
         System.out.println("알림 객체: " + notifyList);
 
-         model.addAttribute("notifyList", notifyList);
-         model.addAttribute("member", latestMember);
+        model.addAttribute("notifyList", notifyList);
+        model.addAttribute("member", latestMember);
 
-         // 신뢰도 점수판 정보 추가
+        // 신뢰도 점수판 정보 추가
         TrustScoreDTO trustScoreDTO = trustScoreService.getTrustScore(nickname);
-        model.addAttribute("trustScore",trustScoreDTO);
+        model.addAttribute("trustScore", trustScoreDTO);
         return "mypage";
 
     }
@@ -59,4 +60,12 @@ public class MypageController {
 
 
 
+
+    // 알림 삭제
+    @PostMapping("/delete")
+    @ResponseBody
+    public ResponseEntity<String> deleteNotification(@RequestParam("id") Long id) {
+        notifyService.deleteById(id);
+        return ResponseEntity.ok().body("삭제 성공");
     }
+}

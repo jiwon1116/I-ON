@@ -59,8 +59,13 @@ public class StudentCertService {
         }
     }
 
-    public List<StudentCertDTO> pending() { return certRepo.findPending(); }
-    public StudentCertDTO detail(Long id) { return certRepo.findDetail(id); }
+    public List<StudentCertDTO> pending() {
+        return certRepo.findPending();
+    }
+
+    public StudentCertDTO detail(Long id) {
+        return certRepo.findDetail(id);
+    }
 
     @Transactional
     public void approve(Long id, String reviewer) {
@@ -81,5 +86,17 @@ public class StudentCertService {
     public List<StudentCertDTO> findByUser(String userId) {
         return certRepo.findByUser(userId);
     }
+
+    public List<StudentCertDTO> findAll() {
+        return certRepo.findAll();
+    }
+    public List<StudentCertDTO> findAllByStatus(String status) {
+        if (status == null || "ALL".equalsIgnoreCase(status)) return certRepo.findAll();
+        return certRepo.findAllByStatus(status);
+    }
+
+
+
+
 }
 

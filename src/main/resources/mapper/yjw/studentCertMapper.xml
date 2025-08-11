@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="StudentCert">
 
-    <!-- INSERT: created_at은 DB default 사용 -->
-    <insert id="insert" parameterType="StudentCert"
+    <!-- INSERT -->
+    <insert id="insert" parameterType="com.spring.ion.yjw.dto.StudentCertDTO"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO student_cert
         (user_id, child_name, child_birth, child_age, child_school, child_grade, file_path, status, reviewer, reject_reason)
@@ -12,11 +12,12 @@
         (#{userId}, #{childName}, #{childBirth}, #{childAge}, #{childSchool}, #{childGrade}, #{filePath}, #{status}, #{reviewer}, #{rejectReason})
     </insert>
 
-    <!-- PENDING 목록 -->
-    <select id="findPending" resultType="StudentCert">
+    <!-- 대기 목록 -->
+    <select id="findPending" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
         SELECT
         sc.id,
         sc.user_id              AS userId,
+        m.nickname              AS nickname,
         sc.child_name           AS childName,
         sc.child_birth          AS childBirth,
         sc.child_age            AS childAge,
@@ -26,8 +27,7 @@
         sc.status,
         sc.reviewer,
         sc.reject_reason        AS rejectReason,
-        sc.created_at           AS createdAt,
-        m.nickname              AS nickname
+        sc.created_at           AS createdAt
         FROM student_cert sc
         LEFT JOIN member m ON m.userId = sc.user_id
         WHERE sc.status = 'PENDING'
@@ -35,10 +35,11 @@
     </select>
 
     <!-- 상세 -->
-    <select id="findDetail" parameterType="long" resultType="StudentCert">
+    <select id="findDetail" parameterType="long" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
         SELECT
         sc.id,
         sc.user_id              AS userId,
+        m.nickname              AS nickname,
         sc.child_name           AS childName,
         sc.child_birth          AS childBirth,
         sc.child_age            AS childAge,
@@ -48,44 +49,86 @@
         sc.status,
         sc.reviewer,
         sc.reject_reason        AS rejectReason,
-        sc.created_at           AS createdAt,
-        m.nickname              AS nickname
+        sc.created_at           AS createdAt
         FROM student_cert sc
         LEFT JOIN member m ON m.userId = sc.user_id
         WHERE sc.id = #{id}
     </select>
 
-    <!-- 승인/반려 -->
-    <update id="approve">
+    <!-- 승인 -->
+    <update id="approve" parameterType="map">
         UPDATE student_cert
         SET status='APPROVED', reviewer=#{reviewer}
         WHERE id=#{id}
     </update>
 
-    <update id="reject">
+    <!-- 반려 -->
+    <update id="reject" parameterType="map">
         UPDATE student_cert
         SET status='REJECTED', reject_reason=#{reason}, reviewer=#{reviewer}
         WHERE id=#{id}
     </update>
 
-    <select id="findByUser" parameterType="string" resultType="StudentCert">
+    <!-- 사용자별 목록 -->
+    <select id="findByUser" parameterType="string" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
         SELECT
-        id,
-        user_id        AS userId,
-        child_name     AS childName,
-        child_birth    AS childBirth,
-        child_age      AS childAge,
-        child_school   AS childSchool,
-        child_grade    AS childGrade,
-        file_path      AS filePath,
-        status,
-        reviewer,
-        reject_reason  AS rejectReason,
-        created_at     AS createdAt
-        FROM student_cert
-        WHERE user_id = #{userId}
-        ORDER BY created_at DESC
+        sc.id,
+        sc.user_id          AS userId,
+        sc.child_name       AS childName,
+        sc.child_birth      AS childBirth,
+        sc.child_age        AS childAge,
+        sc.child_school     AS childSchool,
+        sc.child_grade      AS childGrade,
+        sc.file_path        AS filePath,
+        sc.status,
+        sc.reviewer,
+        sc.reject_reason    AS rejectReason,
+        sc.created_at       AS createdAt
+        FROM student_cert sc
+        WHERE sc.user_id = #{userId}
+        ORDER BY sc.created_at DESC
     </select>
 
+    <!-- 전체 목록 -->
+    <select id="findAll" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
+        SELECT
+        sc.id,
+        sc.user_id          AS userId,
+        m.nickname          AS nickname,
+        sc.child_name       AS childName,
+        sc.child_birth      AS childBirth,
+        sc.child_age        AS childAge,
+        sc.child_school     AS childSchool,
+        sc.child_grade      AS childGrade,
+        sc.file_path        AS filePath,
+        sc.status,
+        sc.reviewer,
+        sc.created_at       AS createdAt,
+        sc.reject_reason    AS rejectReason
+        FROM student_cert sc
+        LEFT JOIN member m ON m.userId = sc.user_id
+        ORDER BY sc.created_at DESC
+    </select>
 
+    <!-- 상태별 목록 -->
+    <select id="findAllByStatus" parameterType="string" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
+        SELECT
+        sc.id,
+        sc.user_id          AS userId,
+        m.nickname          AS nickname,
+        sc.child_name       AS childName,
+        sc.child_birth      AS childBirth,
+        sc.child_age        AS childAge,
+        sc.child_school     AS childSchool,
+        sc.child_grade      AS childGrade,
+        sc.file_path        AS filePath,
+        sc.status,
+        sc.reviewer,
+        sc.created_at       AS createdAt,
+        sc.reject_reason    AS rejectReason
+        FROM student_cert sc
+        LEFT JOIN member m ON m.userId = sc.user_id
+        WHERE sc.status = #{status}
+        ORDER BY sc.created_at DESC
+    </select>
 </mapper>

@@ -112,5 +112,6 @@ public class MemberRepository {
         return v != null && v == 1;
     }
 
+
 }
 

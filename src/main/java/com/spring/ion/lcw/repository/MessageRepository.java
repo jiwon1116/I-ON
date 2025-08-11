@@ -15,6 +15,10 @@ public class MessageRepository {
     public void saveMessage(MessageDTO messageDTO){
         sql.insert("Message.insertMessage", messageDTO);
     }
+
+    public MessageDTO findMessageById(Long id){
+        return sql.selectOne("Message.findMessageById", id);
+    }
     public List<MessageDTO> findMessagesByRoomId(Long roomId) {
         return sql.selectList("Message.findMessagesByRoomId", roomId);
     }

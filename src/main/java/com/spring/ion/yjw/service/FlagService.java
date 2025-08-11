@@ -20,14 +20,17 @@ import java.util.UUID;
 public class FlagService {
     private final FlagRepository flagRepository;
 
+    // 페이징 상수 추가
+    private static final int PAGE_LIMIT = 5;
+    private static final int BLOCK_LIMIT = 5;
+
     public int write(FlagPostDTO flagPostDTO, List<MultipartFile> fileList) throws IOException {
-        flagRepository.write(flagPostDTO); // 이 시점에 flagPostDTO.getId()에 게시글 id가 들어옴
+        flagRepository.write(flagPostDTO);
+        long postId = flagPostDTO.getId();
 
-        long postId = flagPostDTO.getId(); // 바로 사용 가능
-
-        if (!fileList.isEmpty()) {
+        if (fileList != null && !fileList.isEmpty()) {
             for (MultipartFile file : fileList) {
-                if (!file.isEmpty()) {
+                if (file != null && !file.isEmpty()) {
                     String originalFileName = file.getOriginalFilename();
                     String uuid = UUID.randomUUID().toString();
                     String storedFileName = uuid + "_" + originalFileName;
@@ -36,7 +39,7 @@ public class FlagService {
                     file.transferTo(new File(savePath));
 
                     FlagFileDTO flagFileDTO = new FlagFileDTO();
-                    flagFileDTO.setBoard_id(postId); // 정확한 게시글 ID로 설정
+                    flagFileDTO.setBoard_id(postId);
                     flagFileDTO.setOriginalFileName(originalFileName);
                     flagFileDTO.setStoredFileName(storedFileName);
 
@@ -44,147 +47,120 @@ public class FlagService {
                 }
             }
         }
-
         return (int) postId;
     }
 
-    public List<FlagPostDTO> findAll() {
-        return flagRepository.findAll();
-    }
-
-    public FlagPostDTO findById(long id) {
-        return flagRepository.findById(id);
-    }
+    public List<FlagPostDTO> findAll() { return flagRepository.findAll(); }
+    public FlagPostDTO findById(long id) { return flagRepository.findById(id); }
 
     public boolean update(FlagPostDTO flagPostDTO, List<Long> deleteFileIds, MultipartFile newFile) throws IOException {
-        // 1. DB에서 원래 글 상태를 가져옴
         FlagPostDTO origin = flagRepository.findById(flagPostDTO.getId());
-        // 2. 반려글이면, 무조건 PENDING으로 변경
-        if ("REJECTED".equals(origin.getStatus())) {
+        if (origin != null && "REJECTED".equals(origin.getStatus())) {
             flagPostDTO.setStatus("PENDING");
         }
         int updated = flagRepository.update(flagPostDTO);
 
-
         if (deleteFileIds != null) {
-            for (Long fileId : deleteFileIds) {
-                flagRepository.deleteFileById(fileId);
-            }
+            for (Long fileId : deleteFileIds) flagRepository.deleteFileById(fileId);
         }
         if (newFile != null && !newFile.isEmpty()) {
             String originalFileName = newFile.getOriginalFilename();
-            String uuid = java.util.UUID.randomUUID().toString();
+            String uuid = UUID.randomUUID().toString();
             String storedFileName = uuid + "_" + originalFileName;
             String savePath = "C:/upload/" + storedFileName;
-
             newFile.transferTo(new File(savePath));
 
             FlagFileDTO flagFileDTO = new FlagFileDTO();
             flagFileDTO.setBoard_id(flagPostDTO.getId());
             flagFileDTO.setOriginalFileName(originalFileName);
             flagFileDTO.setStoredFileName(storedFileName);
-
             flagRepository.saveFile(flagFileDTO);
         }
-
         return updated > 0;
     }
-
 
     public void delete(long id) {
         flagRepository.delete(id);
     }
 
+
     public List<FlagPostDTO> pagingList(int page) {
-        int pageLimit = 5; // 1페이지 당 5개
-        int blockLimit = 5; // 하단에 보여줄 페이지 번호 갯수
-
-        int pagingStart = (page - 1) * pageLimit;
-
+        int pagingStart = (page - 1) * PAGE_LIMIT;
         Map<String, Integer> pagingParams = new HashMap<>();
         pagingParams.put("start", pagingStart);
-        pagingParams.put("limit", pageLimit);
-
-        List<FlagPostDTO> pagingList = flagRepository.pagingList(pagingParams);
-        return pagingList;
+        pagingParams.put("limit", PAGE_LIMIT);
+        return flagRepository.pagingList(pagingParams);
     }
 
     public FlagPageDTO pagingParam(int page) {
-        int flagCount = flagRepository.flagCount(); // 전체 글 개수
-        int pageLimit = 5; // 한 페이지에 보여줄 글 수
-        int blockLimit = 5; // 하단에 보여줄 페이지 수
+        int flagCount = flagRepository.flagCount();
+        int maxPage = (int) Math.ceil((double) flagCount / PAGE_LIMIT);
+        int currentBlock = (int) Math.ceil((double) page / BLOCK_LIMIT);
+        int startPage = (currentBlock - 1) * BLOCK_LIMIT + 1;
+        int endPage = Math.min(startPage + BLOCK_LIMIT - 1, maxPage);
 
-        int maxPage = (int) Math.ceil((double) flagCount / pageLimit);
-        int currentBlock = (int) Math.ceil((double) page / blockLimit);
-        int startPage = (currentBlock - 1) * blockLimit + 1;
-        int endPage = startPage + blockLimit - 1;
-
-        if (endPage > maxPage) {
-            endPage = maxPage;
-        }
-
-        FlagPageDTO flagPageDTO = new FlagPageDTO();
-        flagPageDTO.setPage(page);
-        flagPageDTO.setStartPage(startPage);
-        flagPageDTO.setEndPage(endPage);
-        flagPageDTO.setMaxPage(maxPage);
-
-        return flagPageDTO;
+        FlagPageDTO dto = new FlagPageDTO();
+        dto.setPage(page);
+        dto.setStartPage(startPage);
+        dto.setEndPage(endPage);
+        dto.setMaxPage(maxPage);
+        return dto;
     }
 
-
-    public List<FlagPostDTO> search(String keyword) {
-        return flagRepository.search(keyword);
-    }
-
-    public void increaseViewCount(int id) {
-        flagRepository.increaseViewCount(id);
-    }
-
+    public List<FlagPostDTO> search(String keyword) { return flagRepository.search(keyword); }
+    public void increaseViewCount(int id) { flagRepository.increaseViewCount(id); }
 
     public boolean like(Long postId, Long memberId) {
-        if (flagRepository.hasLiked(postId, memberId)) {
-            return false; // 이미 좋아요 눌렀음
-        }
-
+        if (flagRepository.hasLiked(postId, memberId)) return false;
         flagRepository.insertLike(postId, memberId);
         flagRepository.increaseLikeCount(postId.intValue());
         return true;
     }
 
-    public List<FlagFileDTO> findFilesByBoardId(int id) {
-        return flagRepository.findFilesByBoardId(id);
-    }
+    public List<FlagFileDTO> findFilesByBoardId(int id) { return flagRepository.findFilesByBoardId(id); }
 
-    // 내가 쓴 글 찾아보기 (마이페이지 연동)
-    public List<FlagPostDTO> findMyPosts(String userId) {
-        return flagRepository.findAllByWriter(userId);
-    }
-
-    public List<FlagPostDTO> findAllApproved() {
-        return flagRepository.findAllApproved();
-    }
+    public List<FlagPostDTO> findMyPosts(String userId) { return flagRepository.findAllByWriter(userId); }
+    public List<FlagPostDTO> findAllApproved() { return flagRepository.findAllApproved(); }
 
     public List<FlagPostDTO> findAllForUser(String userId, boolean isAdmin) {
-        // 관리자는 전체 다 볼 수 있음
-        if (isAdmin) {
-            return flagRepository.findAll();
-        }
-        // 일반 유저는 'APPROVED' + 본인 글(PENDING 포함)
-        return flagRepository.findAllForUser(userId);
+        return isAdmin ? flagRepository.findAll() : flagRepository.findAllForUser(userId);
     }
 
+    public List<FlagPostDTO> findAllPending() { return flagRepository.findAllPending(); }
+    public void approvePost(long id) { flagRepository.updateStatus(id, "APPROVED"); }
+    public void rejectPost(long id) { flagRepository.updateStatus(id, "REJECTED"); }
 
-    public List<FlagPostDTO> findAllPending() {
-        return flagRepository.findAllPending();
+    // 공개글 + 내가 쓴 글만 검색
+    public List<FlagPostDTO> searchPublicOrMine(String keyword, String loginUserId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("keyword", keyword == null ? "" : keyword.trim());
+        params.put("userId", loginUserId);
+        return flagRepository.searchPublicOrMine(params);
     }
 
-    public void approvePost(long id) {
-        flagRepository.updateStatus(id, "APPROVED");
-    }
-    public void rejectPost(long id) {
-        flagRepository.updateStatus(id, "REJECTED");
+    // 공개글 + 내가 쓴 글만 페이징
+    public List<FlagPostDTO> pagingListPublicOrMine(int page, String loginUserId) {
+        int start = (page - 1) * PAGE_LIMIT;         // ← 변수명/상수 해결
+        Map<String, Object> params = new HashMap<>();
+        params.put("start", start);
+        params.put("limit", PAGE_LIMIT);
+        params.put("userId", loginUserId);
+        return flagRepository.pagingListPublicOrMine(params);
     }
 
+    //  공개+내글 기준의 페이징 계산 편의 메서드
+    public FlagPageDTO pagingParamPublicOrMine(int page, String loginUserId) {
+        int total = flagRepository.flagCountPublicOrMine(loginUserId);
+        int maxPage = (int) Math.ceil((double) total / PAGE_LIMIT);
+        int currentBlock = (int) Math.ceil((double) page / BLOCK_LIMIT);
+        int startPage = (currentBlock - 1) * BLOCK_LIMIT + 1;
+        int endPage = Math.min(startPage + BLOCK_LIMIT - 1, maxPage);
+
+        FlagPageDTO dto = new FlagPageDTO();
+        dto.setPage(page);
+        dto.setStartPage(startPage);
+        dto.setEndPage(endPage);
+        dto.setMaxPage(maxPage);
+        return dto;
+    }
 }
-

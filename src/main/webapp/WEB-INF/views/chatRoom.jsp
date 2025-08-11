@@ -37,7 +37,7 @@
             border-top: 1px solid #eee;
         }
         .message-input input {
-            flex-grow = 1;
+            flex-grow: 1;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -51,33 +51,37 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        /* 메시지 스타일 */
         .message {
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 8px;
-            max-width: 70%;
-        }
-        .my-message {
-            background-color: #dcf8c6;
-            margin-left: auto;
-        }
-        .other-message {
-            background-color: #ffffff;
-        }
-        .message-info {
-            font-size: 0.8em;
-            color: #999;
-            margin-top: 4px;
-            text-align: right;
-        }
+                margin-bottom: 25px;
+                padding: 8px;
+                border-radius: 8px;
+                max-width: 50%;
+                position: relative;
+            }
+            .my-message {
+                background-color: #dcf8c6;
+                margin-left: auto;
+            }
+            .other-message {
+                background-color: #d3d3d3;
+            }
+            .message-info {
+                font-size: 0.8em;
+                color: #999;
+                margin-top: 4px;
+                text-align: right;
+                position: absolute;
+                right: 8px;
+                bottom: -20px;
+            }
     </style>
 </head>
 <body>
 
 <div class="chat-container">
     <div class="chat-header">
-        <h2>상대방: ${partnerNickname}</h2> </div>
+        <h2>상대방: ${partnerNickname}</h2>
+    </div>
 
     <div class="chat-messages" id="chat-messages">
         <security:authentication property="principal.memberDTO.id" var="currentUserId"/>
@@ -86,62 +90,59 @@
                 <c:when test="${message.senderId eq currentUserId}">
                     <div class="message my-message">
                         <p>${message.content}</p>
-                        <div class="message-info">나 - ${message.createdAt}</div>
+                        <div class="message-info"><span>${message.createdAt}</span></div>
                     </div>
                 </c:when>
                 <c:otherwise>
                     <div class="message other-message">
                         <p>${message.content}</p>
-                        <div class="message-info">${partnerNickname} - ${message.createdAt}</div>
+                        <div class="message-info"><span>${message.createdAt}</span></div>
                     </div>
                 </c:otherwise>
             </c:choose>
         </c:forEach>
     </div>
 
-    <div class="message-input">
+    <form class="message-input" id="message-form">
         <input type="text" id="message-input" placeholder="메시지를 입력하세요...">
-        <button id="send-button">전송</button>
-    </div>
+        <button type="submit">전송</button>
+    </form>
 </div>
-
 
 <script>
     let stompClient = null;
     let isConnected = false;
     const chatRoomId = '${chatRoom.id}';
     const currentUserId = '${currentUserId}';
+    const partnerNickname = '${partnerNickname}';
 
     function connect() {
         if (stompClient && stompClient.connected) {
-            console.log("WebSocket is already connected.");
             return;
         }
-
-        console.log("Attempting to connect WebSocket...");
 
         const socket = new SockJS('/chat');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, function (frame) {
-            console.log('Connected: ' + frame);
-
-            stompClient.subscribe('/sub/chat/room/' + chatRoomId, function (message) {
-                console.log('Received message:', message.body);
-                const receivedMessage = JSON.parse(message.body);
-                showMessage(receivedMessage);
+            const subscribeTopic = '/sub/chat/room/' + chatRoomId;
+            stompClient.subscribe(subscribeTopic, function (message) {
+                try {
+                    const receivedMessage = JSON.parse(message.body);
+                    showMessage(receivedMessage);
+                } catch (e) {
+                }
             });
             isConnected = true;
         }, function(error) {
-            console.log('Connection error: ' + error);
             isConnected = false;
         });
     }
 
     function disconnect() {
         if (stompClient !== null && stompClient.connected) {
-            stompClient.disconnect();
-            console.log("Disconnected from WebSocket.");
+            stompClient.disconnect(function() {
+            });
         }
         stompClient = null;
         isConnected = false;
@@ -160,12 +161,15 @@
             stompClient.send("/pub/chat/send", {}, JSON.stringify(message));
             messageInput.value = '';
         } else {
-             console.log("Cannot send message: WebSocket not connected.");
         }
     }
 
     function showMessage(message) {
         const chatMessages = document.getElementById('chat-messages');
+        if (!chatMessages) {
+            return;
+        }
+
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message');
 
@@ -176,40 +180,58 @@
             messageDiv.classList.add('other-message');
         }
 
-        const senderInfo = isMyMessage ? '나' : '${partnerNickname}';
+        const contentP = document.createElement('p');
+        contentP.textContent = message.content || '';
 
-        const date = new Date(message.createdAt);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const infoDiv = document.createElement('div');
+        infoDiv.classList.add('message-info');
+        const infoSpan = document.createElement('span');
+        infoSpan.textContent = message.createdAt;
+        infoDiv.appendChild(infoSpan);
 
-        const formattedDate = `${year}/${month}/${day} ${hours}:${minutes}`;
-
-        messageDiv.innerHTML = `<p>${message.content}</p><div class="message-info">${senderInfo} - ${formattedDate}</div>`;
+        messageDiv.appendChild(contentP);
+        messageDiv.appendChild(infoDiv);
         chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        scrollToBottom();
     }
 
-    window.addEventListener('pageshow', function(event) {
+    function scrollToBottom() {
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    }
+
+    document.getElementById('message-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        sendMessage();
+    });
+
+    scrollToBottom();
+
+    window.addEventListener('load', function() {
         connect();
     });
 
     window.addEventListener('beforeunload', function() {
         disconnect();
-    });
+        const roomId = '${chatRoom.id}';
+            const currentUserId = '${currentUserId}';
 
-    document.getElementById('send-button').addEventListener('click', function() {
-        sendMessage();
+            fetch('/chat/room/' + roomId + '/read/' + currentUserId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                keepalive: true
+            })
+            .then(response => {
+                if (!response.ok) {
+                }
+            })
+            .catch(error => {
+            });
     });
-
-    document.getElementById('message-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-
 </script>
 </body>
 </html>

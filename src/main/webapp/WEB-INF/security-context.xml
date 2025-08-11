@@ -3,16 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
        xsi:schemaLocation="
            http://www.springframework.org/schema/security
            http://www.springframework.org/schema/security/spring-security.xsd
            http://www.springframework.org/schema/beans
            https://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context.xsd
-           http://www.springframework.org/schema/security/oauth2
-           http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
+           http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="com.spring.ion"/>
 
@@ -37,27 +34,14 @@
         <security:intercept-url pattern="/register" access="isAnonymous()"/>
         <security:intercept-url pattern="/login" access="permitAll"/>
 
-        <security:form-login
-                login-page="/login"
-                default-target-url="/"
-                authentication-failure-handler-ref="customLoginFailHandler"
-        />
+        <security:form-login login-page="/login" default-target-url="/" authentication-failure-handler-ref="customLoginFailHandler"/>
 
-        <security:logout
-                logout-url="/logout"
-                logout-success-url="/"
-                invalidate-session="true"
-                delete-cookies="JSESSIONID"/>
+        <security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true" delete-cookies="JSESSIONID"/>
 
         <security:access-denied-handler ref="customAccessDeniedHandler"/>
 
         <security:session-management invalid-session-url="/login">
-            <security:concurrency-control
-                    max-sessions="1"
-                    expired-url="/login"
-                    session-registry-ref="sessionRegistry"
-                    error-if-maximum-exceeded="false"
-            />
+            <security:concurrency-control max-sessions="1" expired-url="/login" session-registry-ref="sessionRegistry" error-if-maximum-exceeded="false"/>
         </security:session-management>
 
         <security:csrf disabled="true" />
@@ -67,6 +51,12 @@
         </security:headers>
 
     </security:http>
+
+    <security:websocket-message-broker>
+        <security:intercept-message pattern="/chat/**" access="permitAll"/>
+        <security:intercept-message pattern="/sub/chat/room/**" access="isAuthenticated()"/>
+        <security:intercept-message pattern="/pub/chat/send" access="isAuthenticated()"/>
+    </security:websocket-message-broker>
 
     <security:authentication-manager>
         <security:authentication-provider user-service-ref="customUserDetailsService">

@@ -5,12 +5,15 @@
 <mapper namespace="Message">
 
     <insert id="insertMessage" parameterType="com.spring.ion.lcw.dto.MessageDTO" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO messages (
-        room_id, sender_id, content, is_read
-        ) VALUES (
-        #{roomId}, #{senderId}, #{content},  #{isRead}
-        )
+        INSERT INTO messages (room_id, sender_id, content, is_read)
+        VALUES (#{roomId}, #{senderId}, #{content}, #{isRead})
     </insert>
+
+    <select id="findMessageById" resultType="com.spring.ion.lcw.dto.MessageDTO">
+        SELECT id, room_id AS roomId, sender_id AS senderId, content, created_at AS createdAt, is_read AS isRead
+        FROM messages
+        WHERE id = #{id}
+    </select>
 
     <select id="findMessagesByRoomId" resultType="com.spring.ion.lcw.dto.MessageDTO">
         SELECT id, room_id AS roomId, sender_id AS senderId, content, created_at AS createdAt, is_read AS isRead
