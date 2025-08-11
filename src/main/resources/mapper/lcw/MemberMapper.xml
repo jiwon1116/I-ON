@@ -4,19 +4,20 @@
 <mapper namespace="Member">
 
     <resultMap id="memberWithAuthoritiesResultMap" type="com.spring.ion.lcw.dto.MemberDTO">
-        <id property="id" column="id" /> <result property="userId" column="userId" />
-        <result property="password" column="password" />
-        <result property="nickname" column="nickname" />
-        <result property="gender" column="gender" />
-        <result property="enabled" column="enabled" />
-        <result property="created_at" column="created_at" />
-        <result property="banUntil" column="ban_until" />
-        <result property="infoUntil" column="info_until" />
-        <result property="provider" column="provider" />
-        <result property="city" column="city" />
-        <result property="district" column="district" />
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="password" column="password"/>
+        <result property="nickname" column="nickname"/>
+        <result property="gender" column="gender"/>
+        <result property="enabled" column="enabled"/>
+        <result property="created_at" column="created_at"/>
+        <result property="banUntil" column="ban_until"/>
+        <result property="infoUntil" column="info_until"/>
+        <result property="provider" column="provider"/>
+        <result property="city" column="city"/>
+        <result property="district" column="district"/>
         <collection property="authorities" ofType="java.lang.String">
-            <result column="authority" />
+            <result column="authority"/>
         </collection>
     </resultMap>
 
@@ -35,7 +36,6 @@
         #{userId}, 'ROLE_MEMBER'
         )
     </insert>
-
 
 
     <delete id="deleteMember" parameterType="String">
@@ -67,7 +67,8 @@
     </select>
 
     <select id="findByUserIdWithAuthorities" parameterType="String" resultMap="memberWithAuthoritiesResultMap">
-        SELECT m.id, m.userId, m.provider, m.password, m.nickname, m.gender, m.enabled, m.created_at, m.ban_until, m.info_until, ma.authority, m.city, m.district
+        SELECT m.id, m.userId, m.provider, m.password, m.nickname, m.gender, m.enabled, m.created_at, m.ban_until,
+        m.info_until, ma.authority, m.city, m.district
         FROM member m
         LEFT JOIN member_authority ma ON m.userId = ma.userId
         WHERE m.userId = #{userId}
@@ -185,7 +186,17 @@
         FROM member
         WHERE nickname = #{value}
     </select>
+
+    <update id="updateMemberBan" parameterType="com.spring.ion.lcw.dto.MemberDTO">
+        UPDATE member
+        <set>
+            <if test="enabled != null">
+                enabled = #{enabled},
+            </if>
+            <if test="banUntil != null">
+                ban_until = #{banUntil},
+            </if>
+        </set>
+        WHERE userId = #{userId}
+    </update>
 </mapper>
-
-
-
