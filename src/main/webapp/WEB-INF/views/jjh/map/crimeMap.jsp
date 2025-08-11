@@ -46,8 +46,6 @@
           <li class="main-menu"><a href="${pageContext.request.contextPath}/map/?type=safehouse">안전 지킴이집</a></li>
         </ul>
         <div class="icons">
-          <span class="icon">🔔</span>
-          <span class="icon">✉️</span>
         </div>
   </nav>
 </header>

@@ -8,13 +8,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;                 // ★ RestController 아님
+import org.springframework.stereotype.Controller; // ★ RestController 아님
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -24,28 +29,41 @@ public class StudentCertController {
 
     private final StudentCertService service;
 
-    // 폼 화면: /WEB-INF/views/yjw/certUpload.jsp 렌더링
+    /** 관리자 목록 뷰 */
+    @GetMapping
+    public String list(Model model) {
+        model.addAttribute("all",      service.findAll());
+        model.addAttribute("pending",  service.findAllByStatus("PENDING"));
+        model.addAttribute("approved", service.findAllByStatus("APPROVED"));
+        model.addAttribute("rejected", service.findAllByStatus("REJECTED"));
+        return "yjw/certList";   // 목록 JSP
+    }
+
+    /** 관리자 상세 뷰 */
+    @GetMapping("/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        model.addAttribute("detail", service.detail(id));
+        return "yjw/certDetail"; // 상세 JSP
+    }
+
+    /** 업로드 폼 (사용자) */
     @GetMapping("/upload")
-    public String uploadForm(org.springframework.ui.Model model) {
+    public String uploadForm(Model model) {
         String userId = resolveUserId();
         if (userId == null) return "redirect:/login";
         return "yjw/certUpload";
     }
 
-
-    // StudentCertController
-
+    /** 내 신청 내역 (사용자) */
     @GetMapping("/my")
-    public String myList(org.springframework.ui.Model model){
+    public String myList(Model model) {
         String userId = resolveUserId();
-        if (userId == null) return "redirect:/login"; // 로그인 필요
+        if (userId == null) return "redirect:/login";
         model.addAttribute("items", service.findByUser(userId));
         return "yjw/certMyList";
     }
 
-
-
-    // 업로드(사용자)
+    /** 업로드(사용자) - AJAX */
     @PostMapping("/upload")
     @ResponseBody
     public Map<String, Object> upload(@RequestParam("file") MultipartFile file,
@@ -61,12 +79,11 @@ public class StudentCertController {
             return res;
         }
 
-        // 서버에서도 나이 재계산
         int calcAge = (childAge != null) ? childAge :
                 LocalDate.now().getYear() - childBirth.getYear()
-                        - (LocalDate.now().getDayOfYear() < childBirth.withYear(LocalDate.now().getYear()).getDayOfYear() ? 1 : 0);
+                        - (LocalDate.now().getDayOfYear()
+                        < childBirth.withYear(LocalDate.now().getYear()).getDayOfYear() ? 1 : 0);
 
-        // 서비스에 전달할 DTO 구성
         StudentCertDTO dto = new StudentCertDTO();
         dto.setUserId(userId);
         dto.setChildName(childName);
@@ -75,30 +92,37 @@ public class StudentCertController {
         dto.setChildSchool(childSchool);
         dto.setChildGrade(childGrade);
 
-        service.upload(file, dto); // 서비스 시그니처 변경
-
+        service.upload(file, dto);
         res.put("message", "재학증명서가 접수되었습니다.");
         return res;
     }
 
+    /* -------------------- 레거시 호환 엔드포인트(무한루프 방지) -------------------- */
+
+    /** 예전 링크: /cert/admin/list  -> 새 목록 주소로 리다이렉트 */
     @GetMapping("/admin/list")
-    public String legacyListForward() {
-        return "forward:/admin/certs";
+    public String legacyListRedirect() {
+        return "redirect:/cert";   // ★ 자기 자신(/cert/admin/list)로 가지 않도록!
     }
 
+    /** 예전 링크: /cert/admin/{id}/page -> 새 상세 주소로 리다이렉트 */
     @GetMapping("/admin/{id}/page")
-    public String legacyDetailForward(@PathVariable Long id) {
-        return "forward:/admin/certs/" + id;
+    public String legacyDetailRedirect(@PathVariable Long id) {
+        return "redirect:/cert/" + id;   // ★ forward 금지 (루프 원인)
     }
 
-    @GetMapping("/admin/{id}") @ResponseBody
-    public Map<String, Object> detail(@PathVariable Long id) {
+    /** (필요 시) 관리자 상세 JSON */
+    @GetMapping("/admin/{id}")
+    @ResponseBody
+    public Map<String, Object> detailJson(@PathVariable Long id) {
         Map<String, Object> res = new HashMap<>();
         res.put("detail", service.detail(id));
         return res;
     }
 
-    @PostMapping("/admin/{id}/approve") @ResponseBody
+    /** 관리자 승인 */
+    @PostMapping("/admin/{id}/approve")
+    @ResponseBody
     public Map<String, Object> approve(@PathVariable Long id,
                                        @RequestParam("reviewer") String reviewer) {
         Map<String, Object> res = new HashMap<>();
@@ -107,7 +131,9 @@ public class StudentCertController {
         return res;
     }
 
-    @PostMapping("/admin/{id}/reject") @ResponseBody
+    /** 관리자 반려 */
+    @PostMapping("/admin/{id}/reject")
+    @ResponseBody
     public Map<String, Object> reject(@PathVariable Long id,
                                       @RequestParam("reviewer") String reviewer,
                                       @RequestParam("reason") String reason) {
@@ -117,6 +143,30 @@ public class StudentCertController {
         return res;
     }
 
+    /** 파일 미리보기(이미지 스트리밍) */
+    @GetMapping("/preview/{id}")
+    public void preview(@PathVariable long id, HttpServletResponse response) throws IOException {
+        StudentCertDTO detail = service.detail(id);
+        if (detail == null || detail.getFilePath() == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        File file = new File(detail.getFilePath());
+        if (!file.exists()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        String mime = Files.probeContentType(file.toPath());
+        response.setContentType(mime != null ? mime : "application/octet-stream");
+
+        try (FileInputStream in = new FileInputStream(file)) {
+            org.springframework.util.FileCopyUtils.copy(in, response.getOutputStream());
+        }
+    }
+
+    /** 로그인 사용자 ID 해석 */
     private String resolveUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = (authentication != null) ? authentication.getPrincipal() : null;

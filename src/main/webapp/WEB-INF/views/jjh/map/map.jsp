@@ -50,8 +50,6 @@
       <li class="main-menu" data-type="safehouse">안전 지킴이집</li>
     </ul>
     <div class="icons">
-      <span class="icon">🔔</span>
-      <span class="icon">✉️</span>
     </div>
   </nav>
 </header>

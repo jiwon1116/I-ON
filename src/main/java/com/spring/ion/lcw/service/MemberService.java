@@ -67,5 +67,4 @@ public class MemberService {
             memberRepository.updateProfileImg(userId, profileImg);
         }
 
-
 }

@@ -70,7 +70,7 @@ public class FlagBoardController {
     @PostMapping("/write")
     public String write(@ModelAttribute FlagPostDTO flagPostDTO,
                         @RequestParam("boardFile") List<MultipartFile> fileList) throws IOException {
-        // 로그인 유저
+
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = null;
         if (principal instanceof CustomUserDetails) {
@@ -80,17 +80,28 @@ public class FlagBoardController {
         } else if (principal instanceof String) {
             userId = (String) principal;
         }
-        flagPostDTO.setUserId(userId); // 꼭 넣어줘야 함
+        flagPostDTO.setUserId(userId);
+
+        // ★ 관리자면 즉시 공개, 일반은 null -> DB 기본값 PENDING 저장
+        boolean isAdmin = false;
+        if (principal instanceof CustomUserDetails) {
+            var authorities = ((CustomUserDetails) principal).getMemberDTO().getAuthorities();
+            isAdmin = authorities != null && authorities.contains("ROLE_ADMIN");
+        }
+        if (isAdmin) {
+            flagPostDTO.setStatus("APPROVED");
+        }
 
         flagService.write(flagPostDTO, fileList);
-
         return "redirect:/flag";
     }
 
-    // 게시글 목록 조회
+
+    // 목록 (page 파라미터 받음)
     @GetMapping
-    public String findAll(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        // 1. 로그인 유저 구하기
+    public String findAll(Model model,
+                          @RequestParam(value = "page", defaultValue = "1") int page) {
+
         String loginUserId = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof CustomUserDetails) {
@@ -101,27 +112,22 @@ public class FlagBoardController {
             loginUserId = (String) principal;
         }
 
-        // 2. 승인된 글 + 내 글 목록 받아오기
-        List<FlagPostDTO> approvedList = flagService.findAllApproved();
-        List<FlagPostDTO> myList = flagService.findMyPosts(loginUserId);
+        // ★ 공개 목록 기준으로 바로 페이징
+        List<FlagPostDTO> list = flagService.pagingListPublicOrMine(page, loginUserId);
+        FlagPageDTO pageDTO = flagService.pagingParamPublicOrMine(page, loginUserId);
 
-        // 3. 두 리스트 합치고 중복 제거 (id 기준으로)
-        Map<Long, FlagPostDTO> postMap = new LinkedHashMap<>();
-        for (FlagPostDTO post : approvedList) {
-            postMap.put(post.getId(), post);
-        }
-        for (FlagPostDTO post : myList) {
-            postMap.put(post.getId(), post);
-        }
-
-        List<FlagPostDTO> finalList = new ArrayList<>(postMap.values());
-
-        // 4. 페이징 (원하면 finalList를 페이지 단위로 자르기. 지금은 전체 전달)
-        FlagPageDTO pageDTO = flagService.pagingParam(page);
-        model.addAttribute("postList", finalList);
+        model.addAttribute("postList", list);
         model.addAttribute("paging", pageDTO);
         return "yjw/flag";
     }
+
+    // 페이지 링크가 /flag/paging 를 타고 있으면 아래처럼 동일 로직으로 위임
+    @GetMapping("/paging")
+    public String paging(Model model,
+                         @RequestParam(value = "page", defaultValue = "1") int page) {
+        return findAll(model, page);
+    }
+
 
 
 
@@ -138,6 +144,8 @@ public class FlagBoardController {
 
         // 게시글/댓글/첨부파일 조회
         FlagPostDTO flagPostDTO = flagService.findById(id);
+        if (flagPostDTO == null) return "redirect:/flag";
+
         List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(id);
         List<FlagFileDTO> fileList = flagService.findFilesByBoardId(id);
 
@@ -261,23 +269,6 @@ public class FlagBoardController {
     }
 
 
-    // 페이징
-    @GetMapping("/paging")
-    public String paging(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        System.out.println("page = " + page);
-
-        // 현재 페이지에 해당하는 게시글 목록 가져오기
-        List<FlagPostDTO> pagingList = flagService.pagingList(page);
-        System.out.println("pagingList = " + pagingList);
-
-        // 페이징에 필요한 정보 계산
-        FlagPageDTO pageDTO = flagService.pagingParam(page);
-
-        model.addAttribute("postList", pagingList);
-        model.addAttribute("paging", pageDTO);
-
-        return "yjw/flag";
-    }
 
     @GetMapping("/preview")
     public void preview(@RequestParam("fileName") String fileName, HttpServletResponse response) throws IOException {
@@ -299,18 +290,26 @@ public class FlagBoardController {
 
     // 검색기능
     @GetMapping("/search")
-    public String flag(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
-        List<FlagPostDTO> postList;
-
-        if (keyword != null && !keyword.isEmpty()) {
-            postList = flagService.search(keyword); // 검색
-        } else {
-            postList = flagService.findAll(); // 전체 목록
+    public String search(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
+        String loginUserId = null;
+        Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (p instanceof CustomUserDetails) {
+            loginUserId = ((CustomUserDetails) p).getUsername();
+        } else if (p instanceof org.springframework.security.core.userdetails.User) {
+            loginUserId = ((org.springframework.security.core.userdetails.User) p).getUsername();
+        } else if (p instanceof String && !"anonymousUser".equals(p)) {
+            loginUserId = (String) p;
         }
 
+        List<FlagPostDTO> postList = (keyword != null && !keyword.isEmpty())
+                ? flagService.searchPublicOrMine(keyword, loginUserId)
+                : flagService.pagingListPublicOrMine(1, loginUserId); // 키워드 없으면 첫 페이지
+
         model.addAttribute("postList", postList);
-        return "yjw/flag"; // 위의 JSP가 위치한 경로
+        model.addAttribute("paging", flagService.pagingParamPublicOrMine(1, loginUserId));
+        return "yjw/flag";
     }
+
 
 
 
