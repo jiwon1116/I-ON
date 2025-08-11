@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -23,9 +24,7 @@
     .container{width:100%; max-width:1000px; margin:0 auto}
 
     /* 헤더 */
-    .page-head{
-      display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px;
-    }
+    .page-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
     .page-title{margin:0; font-weight:800; font-size:22px}
     .sub{color:var(--muted); font-size:14px; margin:4px 0 0}
 
@@ -39,48 +38,52 @@
       background:var(--brand); color:#111;
     }
     .btn:active{transform:translateY(1px)}
-    .btn.outline{
-      background:#fff; color:#111; border:1px solid var(--line); box-shadow:none;
-    }
+    .btn.outline{ background:#fff; color:#111; border:1px solid var(--line); box-shadow:none; }
+    .btn.sm{ height:36px; padding:0 12px; font-size:13px; box-shadow:none; }
 
     /* 카드 & 테이블 */
-    .card{
-      background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
-      padding:20px; overflow:hidden;
-    }
+    .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; overflow:hidden; }
     .table-wrap{overflow-x:auto}
-    table{
-      width:100%; border-collapse:separate; border-spacing:0; min-width:720px;
-    }
+    table{ width:100%; border-collapse:separate; border-spacing:0; min-width:720px; }
     thead th{
       text-align:left; font-size:13px; color:#666; font-weight:700;
-      padding:12px 14px; border-bottom:1px solid var(--line);
-      background:#fafafa;
+      padding:12px 14px; border-bottom:1px solid var(--line); background:#fafafa;
     }
-    tbody td{
-      padding:14px; border-bottom:1px solid var(--line); vertical-align:middle;
-      font-size:14px;
-    }
+    tbody td{ padding:14px; border-bottom:1px solid var(--line); vertical-align:middle; font-size:14px; }
     tbody tr:hover{background:#fcfcfc}
 
     /* 상태칩 */
-    .chip{
-      display:inline-flex; align-items:center; gap:6px;
-      padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px;
-      border:1px solid;
-    }
+    .chip{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; border:1px solid; }
     .chip.ok{ color:var(--ok);  border-color:#bbf7d0; background:#ecfdf5;}
     .chip.bad{color:var(--bad); border-color:#fecdd3; background:#fff1f2;}
     .chip.wait{color:var(--wait); border-color:#e5e7eb; background:#f9fafb;}
 
-    /* 비고(반려사유) */
-    .note{color:#991b1b; font-size:13px}
-
     /* Empty */
-    .empty{
-      display:flex; align-items:center; justify-content:center; text-align:center;
-      color:var(--muted); padding:40px 10px;
+    .empty{ display:flex; align-items:center; justify-content:center; text-align:center; color:var(--muted); padding:40px 10px; }
+
+    /* ---------- 재제출 모달 ---------- */
+    .modal-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; z-index:50;
     }
+    .modal{ width:100%; max-width:640px; background:#fff; border-radius:16px; box-shadow:var(--shadow); padding:20px; }
+    .modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .modal-title{ margin:0; font-weight:800; font-size:18px; }
+    .close-x{ border:none; background:transparent; font-size:22px; line-height:1; cursor:pointer; }
+    .field{ margin-bottom:12px; }
+    .field label{ display:block; font-size:14px; font-weight:700; margin-bottom:6px; }
+    .input{
+      width:100%; height:44px; border:1px solid var(--line); border-radius:10px; background:#fff;
+      padding:0 12px; font-size:14px; outline:none; transition:border .15s, box-shadow .15s;
+    }
+    .input:focus{ border-color:var(--brand); box-shadow:0 0 0 4px rgba(242,172,40,.15); }
+    .row{ display:flex; gap:12px; }
+    .col{ flex:1; }
+    .drop{ border:1.5px dashed #d9d9d9; border-radius:10px; padding:10px; display:flex; align-items:center; justify-content:space-between; gap:10px; background:#fff; cursor:pointer; }
+    .thumb{ display:none; max-width:100%; border:1px solid var(--line); border-radius:10px; margin-top:10px; }
+    .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
+    .alert{ border-radius:10px; padding:10px 12px; margin-top:8px; display:none; }
+    .alert.err{ background:#fff1f2; color:#991b1b; border:1px solid #fecdd3; }
+    .show{ display:flex !important; }
   </style>
 </head>
 <body>
@@ -98,7 +101,8 @@
     <c:choose>
       <c:when test="${empty items}">
         <div class="card empty">
-          아직 등록된 내역이 없습니다. <a class="btn outline" style="margin-left:12px" href="<c:url value='/cert/upload'/>">지금 등록</a>
+          아직 등록된 내역이 없습니다.
+          <a class="btn outline" style="margin-left:12px" href="<c:url value='/cert/upload'/>">지금 등록</a>
         </div>
       </c:when>
       <c:otherwise>
@@ -132,8 +136,17 @@
                 </td>
                 <td>${it.createdAt}</td>
                 <td>
-                  <c:if test="${it.status == 'REJECTED' && not empty it.rejectReason}">
-                    <span class="note">반려 사유: ${it.rejectReason}</span>
+                  <c:if test="${it.status == 'REJECTED'}">
+                    <button class="btn sm outline"
+                            data-id="${it.id}"
+                            data-name="${fn:escapeXml(it.childName)}"
+                            data-birth="${it.childBirth}"
+                            data-school="${fn:escapeXml(it.childSchool)}"
+                            data-grade="${fn:escapeXml(it.childGrade)}"
+                            onclick="handleOpenResubmit(this)">
+                      수정 후 재제출
+                    </button>
+                    <div class="text-danger small mt-1">반려사유: ${it.rejectReason}</div>
                   </c:if>
                 </td>
               </tr>
@@ -143,8 +156,147 @@
         </div>
       </c:otherwise>
     </c:choose>
-
   </div>
 </div>
+
+<!-- 재제출 모달 -->
+<div id="resubmitBackdrop" class="modal-backdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h3 id="modalTitle" class="modal-title">재제출</h3>
+      <button class="close-x" type="button" onclick="closeResubmit()">×</button>
+    </div>
+
+    <form id="resubmitForm" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+      <div class="row">
+        <div class="field col">
+          <label for="rsName">자녀 이름</label>
+          <input class="input" id="rsName" name="childName" type="text" required>
+        </div>
+        <div class="field col">
+          <label for="rsBirth">생년월일</label>
+          <input class="input" id="rsBirth" name="childBirth" type="date" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field col">
+          <label for="rsSchool">학교명</label>
+          <input class="input" id="rsSchool" name="childSchool" type="text">
+        </div>
+        <div class="field col">
+          <label for="rsGrade">학년</label>
+          <input class="input" id="rsGrade" name="childGrade" type="text">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>증빙 이미지 (선택)</label>
+        <div class="drop" onclick="document.getElementById('rsFile').click()">
+          <span>파일을 선택하거나 클릭</span>
+          <button class="btn sm outline" type="button">파일 선택</button>
+        </div>
+        <input id="rsFile" name="file" type="file" accept="image/*" style="display:none" onchange="previewThumb(event)">
+        <img id="rsThumb" class="thumb" alt="미리보기">
+      </div>
+
+      <div id="rsMsg" class="alert err"></div>
+
+      <div class="actions">
+        <button type="button" class="btn outline" onclick="closeResubmit()">취소</button>
+        <button id="rsSubmit" type="submit" class="btn">재제출</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const LIST_URL = '<c:url value="/cert/my"/>';
+  let currentId = null;
+
+  function handleOpenResubmit(btn){
+    openResubmit({
+      id: btn.dataset.id,
+      name: btn.dataset.name || '',
+      birth: btn.dataset.birth || '',
+      school: btn.dataset.school || '',
+      grade: btn.dataset.grade || ''
+    });
+  }
+
+  function openResubmit(data){
+    currentId = data.id;
+    const form = document.getElementById('resubmitForm');
+
+    // 액션 URL 세팅
+    form.action = '<c:url value="/cert/"/>' + currentId + '/resubmit';
+
+    // 값 채우기
+    document.getElementById('rsName').value   = data.name;
+    document.getElementById('rsBirth').value  = data.birth;
+    document.getElementById('rsSchool').value = data.school;
+    document.getElementById('rsGrade').value  = data.grade;
+
+    // 파일/미리보기 초기화
+    document.getElementById('rsFile').value = '';
+    const th = document.getElementById('rsThumb');
+    th.src = ''; th.style.display='none';
+
+    // 메시지 초기화
+    const msg = document.getElementById('rsMsg');
+    msg.style.display='none'; msg.textContent='';
+
+    // 모달 오픈
+    document.getElementById('resubmitBackdrop').classList.add('show');
+  }
+
+  function closeResubmit(){
+    document.getElementById('resubmitBackdrop').classList.remove('show');
+  }
+
+  function previewThumb(e){
+    const img = document.getElementById('rsThumb');
+    const f = e.target.files && e.target.files[0];
+    if(!f){ img.style.display='none'; img.src=''; return; }
+    img.src = URL.createObjectURL(f);
+    img.style.display = 'block';
+  }
+
+  // ESC로 닫기
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeResubmit(); });
+  // 배경 클릭 닫기
+  document.getElementById('resubmitBackdrop').addEventListener('click', (e)=>{
+    if(e.target.id === 'resubmitBackdrop') closeResubmit();
+  });
+
+  // 재제출 전송(AJAX)
+  document.getElementById('resubmitForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const submitBtn = document.getElementById('rsSubmit');
+    const msg = document.getElementById('rsMsg');
+    submitBtn.disabled = true; msg.style.display='none'; msg.textContent='';
+
+    try{
+      const fd = new FormData(e.target);
+      const res = await fetch(e.target.action, { method:'POST', body: fd });
+      const data = await res.json().catch(()=> ({}));
+
+      if(res.ok && (data.ok || data.message)){
+        alert(data.message || '재제출되었습니다.');
+        location.href = LIST_URL;
+      }else{
+        msg.textContent = data.error || data.message || `재제출 실패 (HTTP ${res.status})`;
+        msg.style.display='block';
+      }
+    }catch(err){
+      msg.textContent = '네트워크 오류가 발생했습니다.';
+      msg.style.display='block';
+    }finally{
+      submitBtn.disabled = false;
+    }
+  });
+</script>
 </body>
 </html>

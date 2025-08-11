@@ -67,7 +67,9 @@ public class MemberRepository {
 
     // 재학증명서 -yjw
     public int markVerified(String userId){
-        return sql.update("Member.markVerified", userId); // ← namespace.id 맞추기
+        Map<String,Object> p = new HashMap<>();
+        p.put("userId", userId);
+        return sql.update("Member.markVerified", p);
     }
 
     // 뱃지 기능 추가 yjw

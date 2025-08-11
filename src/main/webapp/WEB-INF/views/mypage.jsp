@@ -117,8 +117,8 @@
     <%-- 오른쪽 메인 --%>
     <div class="mypage-main">
         <div class="main-header">
-            <button class="icon-btn" title="알림">🔔<i class="fas fa-bell"></i></button>
-            <button class="icon-btn" title="쪽지">💌<i class="fas fa-envelope"></i></button>
+            <button class="icon-btn" title="알림"><i class="fas fa-bell"></i></button>
+            <button class="icon-btn" title="쪽지"><i class="fas fa-envelope"></i></button>
         </div>
 
 <%-- 메인 보드(카드 내용) --%>
