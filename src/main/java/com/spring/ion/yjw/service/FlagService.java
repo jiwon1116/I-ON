@@ -21,7 +21,7 @@ public class FlagService {
     private final FlagRepository flagRepository;
 
     public int write(FlagPostDTO flagPostDTO, List<MultipartFile> fileList) throws IOException {
-        flagRepository.write(flagPostDTO); // 이 시점에 flagPostDTO.getId()에 게시글 id가 들어옴!
+        flagRepository.write(flagPostDTO); // 이 시점에 flagPostDTO.getId()에 게시글 id가 들어옴
 
         long postId = flagPostDTO.getId(); // 바로 사용 가능
 
@@ -57,19 +57,23 @@ public class FlagService {
     }
 
     public boolean update(FlagPostDTO flagPostDTO, List<Long> deleteFileIds, MultipartFile newFile) throws IOException {
+        // 1. DB에서 원래 글 상태를 가져옴
+        FlagPostDTO origin = flagRepository.findById(flagPostDTO.getId());
+        // 2. 반려글이면, 무조건 PENDING으로 변경
+        if ("REJECTED".equals(origin.getStatus())) {
+            flagPostDTO.setStatus("PENDING");
+        }
         int updated = flagRepository.update(flagPostDTO);
 
-        // 파일 삭제 처리
+
         if (deleteFileIds != null) {
             for (Long fileId : deleteFileIds) {
                 flagRepository.deleteFileById(fileId);
             }
         }
-
-        // 새 파일 추가
         if (newFile != null && !newFile.isEmpty()) {
             String originalFileName = newFile.getOriginalFilename();
-            String uuid = UUID.randomUUID().toString();
+            String uuid = java.util.UUID.randomUUID().toString();
             String storedFileName = uuid + "_" + originalFileName;
             String savePath = "C:/upload/" + storedFileName;
 
@@ -85,6 +89,8 @@ public class FlagService {
 
         return updated > 0;
     }
+
+
 
 
     public void delete(int id) {
@@ -156,5 +162,31 @@ public class FlagService {
     public List<FlagPostDTO> findMyPosts(String userId) {
         return flagRepository.findAllByWriter(userId);
     }
+
+    public List<FlagPostDTO> findAllApproved() {
+        return flagRepository.findAllApproved();
+    }
+
+    public List<FlagPostDTO> findAllForUser(String userId, boolean isAdmin) {
+        // 관리자는 전체 다 볼 수 있음
+        if (isAdmin) {
+            return flagRepository.findAll();
+        }
+        // 일반 유저는 'APPROVED' + 본인 글(PENDING 포함)
+        return flagRepository.findAllForUser(userId);
+    }
+
+
+    public List<FlagPostDTO> findAllPending() {
+        return flagRepository.findAllPending();
+    }
+
+    public void approvePost(long id) {
+        flagRepository.updateStatus(id, "APPROVED");
+    }
+    public void rejectPost(long id) {
+        flagRepository.updateStatus(id, "REJECTED");
+    }
+
 }
 

@@ -34,7 +34,7 @@ public class FlagCommentController {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         FlagCommentDTO dto = new FlagCommentDTO();
         dto.setNickname(user.getMemberDTO().getNickname());
-        dto.setUserId(user.getUsername()); // 실제로는 userId 값!
+        dto.setUserId(user.getUsername());
         dto.setContent(content);
         dto.setPost_id(post_id);
 

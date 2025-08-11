@@ -125,7 +125,7 @@
                 <div class="card-content">
                     <div class="quote">${free.title}</div>
                     <div class="content">${free.content}</div>
-                    <div class="desc">${free.nickname} ·
+                    <div class="desc"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${free.nickname}">${free.nickname} ·</a>
                         <fmt:formatDate value="${free.created_at}" pattern="yyyy-MM-dd" /> ·
                         좋아요 ${free.like_count} · 조회수 ${free.view_count}
                     </div>

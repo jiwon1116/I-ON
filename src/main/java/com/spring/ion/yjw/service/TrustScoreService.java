@@ -12,14 +12,14 @@ public class TrustScoreService {
 
     public TrustScoreDTO getTrustScore(String nickname) {
         int commentCount = trustScoreRepository.countAllCommentsByNickname(nickname);
-        int reportCount = trustScoreRepository.countAllReportsByNickname(nickname);
+        int reportCount  = trustScoreRepository.countAllReportsByNickname(nickname);
         int entrustCount = trustScoreRepository.countAllEntrustsByNickname(nickname);
 
         int total = commentCount + reportCount + entrustCount;
-        String grade;
-        if (total >= 30) grade = "캡숑맘";
-        else if (total >= 10) grade = "도토리맘";
-        else grade = "새싹맘";
+        String grade = total >= 30 ? "캡숑맘" : (total >= 10 ? "도토리맘" : "새싹맘");
+
+        // 계산 직후 DB에 저장
+        trustScoreRepository.updateMemberTrust(nickname, total);
 
         TrustScoreDTO dto = new TrustScoreDTO();
         dto.setNickname(nickname);
@@ -31,3 +31,4 @@ public class TrustScoreService {
         return dto;
     }
 }
+

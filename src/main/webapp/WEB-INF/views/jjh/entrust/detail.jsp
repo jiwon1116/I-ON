@@ -9,7 +9,13 @@
 <head>
   <meta charset="UTF-8">
   <title>위탁 게시판</title>
-  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <!-- badge.js가 API 호출할 때 쓸 컨텍스트 -->
+    <meta name="ctx" content="${pageContext.request.contextPath}"/>
+
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
+
   <style>
     body {
       margin: 0;
@@ -206,13 +212,22 @@
 
 <div class="post-container">
     <div class="post-title">${entrust.title}</div>
-    <div class="post-meta">${entrust.nickname}</div>
+
+
+    <!-- 작성자 닉네임 + 배지 -->
+    <div class="post-meta">
+      <c:if test="${not empty entrust.nickname}">
+        <span class="js-user" data-nickname="${entrust.nickname}">${entrust.nickname}</span>
+      </c:if>
+    </div>
+
+
     <div class="post-content">${entrust.content}</div>
 
     <c:forEach items="${fileList}" var="file">
-    <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
-      <img class="preview-img" src="/entrust/preview?fileName=${file.storedFileName}" />
-    </c:if>
+      <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
+        <img class="preview-img" src="/entrust/preview?fileName=${file.storedFileName}" />
+      </c:if>
     </c:forEach>
 
     <div class="mb-2">
@@ -221,15 +236,46 @@
             <span id="likeCount">${entrust != null ? entrust.like_count : 0}</span>
         </button>
     </div>
+    <!-- 스크립트에서 갱신하는 표시 -->
+    좋아요: <span id="likeCountDisplay">${entrust != null ? entrust.like_count : 0}</span>
 
     <div class="post-actions">
+
     <sec:authentication property="principal" var="loginUser" />
         <c:if test="${loginUserId eq entrust.userId || isAdmin}">
             <span onclick="updateFn()">수정</span>
             <span onclick="deleteFn()">삭제</span>
         </c:if>
+        <c:if test="${loginUserUd ne entrust.userId}">
+            <button type="button" id="reportBtn">🚩 신고</button>
+        </c:if>
+
     </div>
 
+    <!-- 신고 모달 -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="reportForm">
+          <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+              <h5 class="modal-title" id="reportModalLabel">게시글 신고</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" name="postId" value="${entrust.id}" />
+              <div class="mb-3">
+                <label for="reportReason" class="form-label">신고 사유</label>
+                <textarea class="form-control" name="reason" id="reportReason" required placeholder="신고 사유를 입력하세요"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+              <button type="submit" class="btn btn-danger">신고하기</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
     <div class="comment-input-wrapper">
       <input type="hidden" id="nickname" value="${member.nickname}" />
       <textarea id="content" placeholder="댓글을 작성해주세요"></textarea>
@@ -237,7 +283,6 @@
     </div>
 
     <div class="comment-list">
-    <sec:authentication property="principal" var="loginUser" />
       <c:forEach items="${commentList}" var="comment">
         <div class="comment-card">
           <div class="comment-avatar">
@@ -245,7 +290,12 @@
           </div>
           <div class="comment-body">
             <div class="comment-header">
-              <span class="comment-nickname">${comment.nickname}</span>
+
+              <!-- 댓글 닉네임 + 배지 -->
+              <span class="comment-nickname">
+                <span class="js-user" data-nickname="${comment.nickname}"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></span>
+              </span>
+
               <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
               <c:if test="${loginUserId eq comment.userId || isAdmin}">
                 <span class="comment-delete" onclick="commentDelete('${comment.id}')">삭제</span>
@@ -270,44 +320,38 @@
     }
   }
 
-
   const commentDelete = (commentId) => {
     const confirmed = confirm("댓글을 삭제하시겠습니까?");
     if (confirmed) {
       location.href = "/entrustComment/delete?id=" + commentId;
     }
   }
+
   const commentWrite = () => {
     const nickname = document.getElementById("nickname").value;
-    const content = document.getElementById("content").value;
+    const content = document.getElementById("content").value.trim();
     const postId = "${entrust.id}";
 
-       if (!postId || !content) {
-                               alert("내용을 입력해주세요.");
-                               return;
-                        }
+    if (!postId || !content) {
+      alert("내용을 입력해주세요.");
+      return;
+    }
 
     $.ajax({
       type: "post",
       url: "/entrustComment/save",
-      data: {
-        content: content,
-        post_id: postId,
-        nickname: nickname
-      },
+      data: { content, post_id: postId, nickname },
       dataType: "json",
-      success: function(commentList) {
-        location.reload();
-      },
-      error: function() {
-        alert("댓글 등록 실패");
-      }
+      success: function() { location.reload(); },
+      error: function() { alert("댓글 등록 실패"); }
     });
   }
 </script>
+
 <script>
-    $(document).ready(function () {
+  $(function () {
     // 좋아요 버튼
+
         $('#likeBtn').click(function(){
             const entrustId = '${entrust.id}';
             $.ajax({
@@ -339,8 +383,45 @@
                 }
             });
         });
+        // 🚩 신고 버튼 클릭 시 모달 열기
+        $('#reportBtn').click(function(){
+            var modal = new bootstrap.Modal(document.getElementById('reportModal'));
+            modal.show();
+        });
+
+        // 🚩 신고 폼 제출
+        $('#reportForm').submit(function(e){
+            e.preventDefault();
+
+            const postId = $('input[name="postId"]').val();
+            const reason = $('#reportReason').val();
+
+            if(!reason.trim()) {
+                alert("신고 사유를 입력해주세요.");
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/entrust/report',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    targetId: postId,
+                    targetType: "POST",  // 또는 "COMMENT" 등
+                    type: "ABUSE",       // 예시, 실제 신고유형
+                    content: reason      // 신고사유
+                }),
+                success: function(data){
+                    // 모달 닫기, 알림 등
+                },
+                error: function(){
+                    alert("신고 접수에 실패했습니다.");
+                }
+            });
+        });
 
     });
+  });
 </script>
 </body>
 </html>

@@ -33,6 +33,10 @@
         <typeAlias type="com.spring.ion.yjw.dto.FlagFileDTO" alias="FlagFile"></typeAlias>
         <typeAlias type="com.spring.ion.yjw.dto.FlagLikeDTO" alias="FlagLike"></typeAlias>
         <typeAlias type="com.spring.ion.yjw.dto.TrustScoreDTO" alias="trust"></typeAlias>
+        <typeAlias type="com.spring.ion.yjw.dto.ReportDTO" alias="Report"></typeAlias>
+        <typeAlias type="com.spring.ion.yjw.dto.StudentCertDTO" alias="StudentCert"></typeAlias>
+
+
 
         <typeAlias type="com.spring.ion.lcw.dto.MemberDTO" alias="member"></typeAlias>
         <typeAlias type="com.spring.ion.lcw.dto.MessageDTO" alias="message"></typeAlias>
@@ -62,6 +66,10 @@
         <mapper resource="mapper/yjw/flagCommentMapper.xml"/>
         <mapper resource="mapper/yjw/flagLikeMapper.xml"/>
         <mapper resource="mapper/yjw/TrustScoreMapper.xml"/>
+        <mapper resource="mapper/yjw/reportMapper.xml"/>
+        <mapper resource="mapper/yjw/studentCertMapper.xml"/>
+        <mapper resource="mapper/yjw/memberAuthorityMapper.xml"/>
+
 
         <mapper resource="mapper/lcw/ChatRoomMapper.xml"/>
         <mapper resource="mapper/lcw/MemberMapper.xml"/>

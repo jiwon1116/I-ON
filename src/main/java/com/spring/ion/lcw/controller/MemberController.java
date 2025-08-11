@@ -147,6 +147,7 @@ public class MemberController {
         }
 
 
+
         if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
             currentMember.setNickname(memberDTO.getNickname());
         }
@@ -162,7 +163,7 @@ public class MemberController {
         try {
             memberService.edit(currentMember, memberDTO);
             redirectAttributes.addFlashAttribute("editSuccess", "회원 정보가 수정되었습니다!");
-            return "redirect:/myPage/";
+            return "redirect:/mypage/";
         } catch (DataIntegrityViolationException e) {
             currentMember.setNickname(tmpNickname);
             redirectAttributes.addFlashAttribute("editError", "이미 사용 중인 닉네임입니다.");
@@ -212,7 +213,7 @@ public class MemberController {
         try {
             memberService.edit(currentMember, memberDTO);
             redirectAttributes.addFlashAttribute("editSuccess", "회원 정보가 수정되었습니다!");
-            return "redirect:/myPage/";
+            return "redirect:/mypage/";
         } catch (DataIntegrityViolationException e) {
             currentMember.setNickname(tmpNickname);
             redirectAttributes.addFlashAttribute("editError", "이미 사용 중인 닉네임입니다.");

@@ -13,11 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
-@RequestMapping("/myPage")
+@RequestMapping("/mypage")
 @RequiredArgsConstructor
 public class MypageController {
     private final NotifyService notifyService;
@@ -39,19 +38,16 @@ public class MypageController {
 
         model.addAttribute("notifyList", notifyList);
         model.addAttribute("member", latestMember); // 최신 값으로 넘기기
+        System.out.println("알림 객체: " + notifyList);
 
+         model.addAttribute("notifyList", notifyList);
+         model.addAttribute("member", latestMember);
+
+         // 신뢰도 점수판 정보 추가
         TrustScoreDTO trustScoreDTO = trustScoreService.getTrustScore(nickname);
         model.addAttribute("trustScore",trustScoreDTO);
-
         return "mypage";
+
     }
 
-    // 알림 삭제
-    @PostMapping("/delete")
-    @ResponseBody
-    public ResponseEntity<String> deleteNotification(@RequestParam("id") Long id) {
-        notifyService.deleteById(id);
-        return ResponseEntity.ok().body("삭제 성공");
     }
-
-}

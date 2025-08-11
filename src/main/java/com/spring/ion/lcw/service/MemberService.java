@@ -68,4 +68,7 @@ public class MemberService {
         }
 
 
+    public MemberDTO findByNickname(String nickname) {
+        return memberRepository.findByNickname(nickname);
+    }
 }

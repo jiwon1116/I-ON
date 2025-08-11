@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,15 +32,15 @@ public class FlagRepository {
     }
 
     public FlagPostDTO findById(long id) {
-        return sql.selectOne("Flag.findById",id);
+        return sql.selectOne("Flag.findById", id);
     }
 
     public int update(FlagPostDTO flagPostDTO) {
-        return sql.update("Flag.update",flagPostDTO);
+        return sql.update("Flag.update", flagPostDTO);
     }
 
     public void delete(int id) {
-         sql.delete("Flag.delete",id);
+        sql.delete("Flag.delete", id);
     }
 
     public List<FlagPostDTO> pagingList(Map<String, Integer> pagingParams) {
@@ -95,4 +96,30 @@ public class FlagRepository {
     public List<FlagPostDTO> findAllByWriter(String userId) {
         return sql.selectList("Flag.findAllByWriter", userId);
     }
+
+    public List<FlagPostDTO> findAllApproved() {
+        return sql.selectList("Flag.findAllApproved");
+    }
+
+    public List<FlagPostDTO> findAllForUser(String userId) {
+        // status가 APPROVED거나 본인이 쓴 글만 조회
+        Map<String, Object> param = new HashMap<>();
+        param.put("userId", userId);
+        return sql.selectList("Flag.findAllForUser", param);
+
+    }
+
+    public List<FlagPostDTO> findAllPending() {
+        return sql.selectList("Flag.findAllPending");
+    }
+
+    public void updateStatus(long id, String status) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("id", id);
+        param.put("status", status);
+        sql.update("Flag.updateStatus", param);
+    }
+
+
 }
+

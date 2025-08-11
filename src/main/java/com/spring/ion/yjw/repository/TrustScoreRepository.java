@@ -25,4 +25,15 @@ public class TrustScoreRepository {
     public int countAllEntrustsByNickname(String nickname) {
         return sql.selectOne("trust.countAllEntrustsByNickname", nickname);
     }
+
+    public void updateMemberTrust(String nickname, int total) {
+        var param = new java.util.HashMap<String,Object>();
+        param.put("nickname", nickname);
+        param.put("total", total);
+
+        sql.update("trust.updateMemberTrustScoreOnly", param);
+
+    }
+
+
 }

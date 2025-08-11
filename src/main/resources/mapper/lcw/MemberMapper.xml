@@ -121,8 +121,63 @@
     </update>
 
 
+    <select id="findByRegionExceptWriter" parameterType="map" resultType="com.spring.ion.lcw.dto.MemberDTO">
+        SELECT *
+        FROM member
+        WHERE city = #{city}
+        AND district = #{district}
+        AND nickname != #{writerNickname}
+    </select>
 
+
+    <!-- 재학 증명서 관련 yjw-->
+    <update id="markVerified" parameterType="string">
+        UPDATE member
+        SET enrollment_verified = 1
+        WHERE userId = #{userId}
+    </update>
+
+    <!-- 닉네임 뱃지 yjw -->
+    <select id="findBadgeMetaByNicknames" parameterType="list" resultType="map">
+        SELECT
+        m.nickname,
+        m.trust_level AS level,
+        CASE
+        WHEN EXISTS (
+        SELECT 1 FROM member_authority ma
+        WHERE ma.userId = m.userId AND ma.authority = 'ROLE_ADMIN'
+        ) THEN 1 ELSE 0
+        END AS is_admin
+        FROM member m
+        WHERE m.nickname IN
+        <foreach collection="list" item="n" open="(" separator="," close=")">
+            #{n}
+        </foreach>
+    </select>
+
+
+    <!-- 단건 -->
+    <select id="isAdminByNickname" parameterType="string" resultType="int">
+        SELECT CASE WHEN EXISTS (
+        SELECT 1
+        FROM member_authority ma
+        JOIN member m ON m.userId = ma.userId
+        WHERE m.nickname = #{nickname}
+        AND ma.authority = 'ROLE_ADMIN'
+        ) THEN 1 ELSE 0 END
+    </select>
+
+    </mapper>
+
+
+
+    <select id="findByNickname" parameterType="String" resultType="com.spring.ion.lcw.dto.MemberDTO">
+        SELECT *
+        FROM member
+        WHERE nickname = #{nickname}
+    </select>
 
 
 </mapper>
+
 
