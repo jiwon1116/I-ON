@@ -26,4 +26,8 @@ public class NotifyRepository {
         sql.delete("Notify.deleteById",id);
     }
 
+    // 게시물 아이디로 알림 지우기
+    public void deleteByPostId(long id) {
+        sql.delete("Notify.deleteByPostId",id);
+    }
 }

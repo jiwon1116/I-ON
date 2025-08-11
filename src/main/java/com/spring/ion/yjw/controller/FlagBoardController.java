@@ -246,7 +246,7 @@ public class FlagBoardController {
 
     // 게시글 삭제
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") int id, HttpServletRequest request) {
+    public String delete(@PathVariable("id") long id, HttpServletRequest request) {
         FlagPostDTO post = flagService.findById(id);
         if (post == null) return "redirect:/flag"; // 글 없으면 목록으로
 
@@ -264,6 +264,7 @@ public class FlagBoardController {
         // "글쓴이거나, 또는 관리자면 삭제"
         if ((loginUserId != null && loginUserId.equals(post.getUserId())) || isAdmin) {
             flagService.delete(id);
+            notifyService.deleteByPostId(id);
         }
         return "redirect:/flag/";
     }

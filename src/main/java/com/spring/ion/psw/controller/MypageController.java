@@ -50,6 +50,15 @@ public class MypageController {
         return "mypage";
 
     }
+         // 알림 삭제
+         @PostMapping("/delete")
+        @ResponseBody
+    public ResponseEntity<String> deleteNotification(@RequestParam("id") Long id) {
+        notifyService.deleteById(id);
+        return ResponseEntity.ok().body("삭제 성공");
+    }
+
+
 
 
     // 알림 삭제

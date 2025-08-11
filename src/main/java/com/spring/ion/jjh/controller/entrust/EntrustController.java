@@ -9,6 +9,7 @@ import com.spring.ion.jjh.service.entrust.EntrustLikeService;
 import com.spring.ion.jjh.service.entrust.EntrustService;
 import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.security.CustomUserDetails;
+import com.spring.ion.psw.service.NotifyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,7 @@ public class EntrustController {
     private final EntrustService entrustService;
     private final EntrustCommentService entrustCommentService;
     private final EntrustLikeService entrustLikeService;
+    private final NotifyService notifyService;
 
     @GetMapping
     public String paging(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
@@ -174,6 +176,7 @@ public class EntrustController {
         // 권한 체크: 작성자이거나 관리자일 때만 삭제!
         if (entrust != null && (loginUserId.equals(entrust.getUserId()) || isAdmin)) {
             entrustService.delete(clickId);
+            notifyService.deleteByPostId(clickId);
         }
         return "redirect:/entrust";
     }

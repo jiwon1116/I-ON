@@ -117,8 +117,8 @@
     <%-- 오른쪽 메인 --%>
     <div class="mypage-main">
         <div class="main-header">
-            <button class="icon-btn" title="알림"><i class="fas fa-bell"></i></button>
-            <button class="icon-btn" title="쪽지"><i class="fas fa-envelope"></i></button>
+            <button class="icon-btn" title="알림">🔔<i class="fas fa-bell"></i></button>
+            <button class="icon-btn" title="쪽지">💌<i class="fas fa-envelope"></i></button>
         </div>
 
 <%-- 메인 보드(카드 내용) --%>
@@ -184,7 +184,8 @@
                                             </div>
                                         </div>
                                     </c:when>
-                                    <c:when test="${notify.type == 'DANGER_ALERT'}">
+
+                                    <c:when test="${notify.type == 'DANGER_ALERT' and member.enrollment_verified}">
                                         <%-- 자바스크립트 안 쓰고 hidden input으로 우회 저장 (지역 위험 알림) --%>
                                         <input type="hidden" class="danger-alert" value="${notify.content}" />
                                           <div class="notification-item">
@@ -198,6 +199,7 @@
                                             <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
                                         </div>
                                     </c:when>
+
                                 </c:choose>
                             </c:forEach>
                                </div>
@@ -357,10 +359,15 @@
                                 .filter(Boolean);  // 값이 비어있지 않은 요소만 남김
 
             // 만약 alerts 배열에 내용이 하나라도 있다면, 모달을 표시
-            if (alerts.length > 0) {
-                document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
-            // 부트스트랩 모달을 생성하고 보여줌
-                new bootstrap.Modal(document.getElementById('dangerModal')).show();
+            Boolean enrollment_verified = '${member.enrollment_verified}'; // 재학 증명 여부
+            if(!enrollment_verified){
+                return;
+            }else{
+              if (alerts.length > 0) {
+                            document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
+                        // 부트스트랩 모달을 생성하고 보여줌
+                            new bootstrap.Modal(document.getElementById('dangerModal')).show();
+                        }
             }
         });
     </script>

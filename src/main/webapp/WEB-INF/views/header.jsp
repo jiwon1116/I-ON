@@ -98,6 +98,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   try {
     // 3) 알림 목록 가져오기 (JSON)
     var res = await fetch(base + "/notify/list", { credentials: "same-origin" });
+
     if (!res.ok) throw new Error("HTTP " + res.status);
     var items = await res.json(); // ← 여기서부터 items 사용
 
@@ -115,6 +116,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       for (var i = 0; i < items.length; i++) {
         var n = items[i];
        // 한 줄 출력: 내용 전체를 클릭하면 게시물로 이동, 옆에 삭제 버튼
+
     // 내용
     var text = (n && n.content) ? n.content : '';
 
@@ -136,7 +138,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       // 7) 알림이 없을 때
       html += '<li style="padding:10px;">알림이 없습니다🙂</li>';
     }
-
     // 8) HTML 마무리
     html +=   '</ul>'
            + '</div>';
@@ -149,7 +150,7 @@ document.addEventListener("DOMContentLoaded", async function () {
      trigger: 'click',
      title: '알림',
      content: html,
-     sanitize: false   // 이거 추가!
+     sanitize: false
    });
 
   } catch (e) {
@@ -204,4 +205,6 @@ function deleteNotify(id, buttonElement) {
   });
 }
 </script>
+
 </header>
+

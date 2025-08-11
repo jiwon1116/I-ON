@@ -79,9 +79,11 @@ public class FlagService {
         return updated > 0;
     }
 
-    public void delete(int id) { flagRepository.delete(id); }
+    public void delete(long id) {
+        flagRepository.delete(id);
+    }
 
-    // (기존 전체 페이징 – 공개용으로는 사용 안 권장)
+
     public List<FlagPostDTO> pagingList(int page) {
         int pagingStart = (page - 1) * PAGE_LIMIT;
         Map<String, Integer> pagingParams = new HashMap<>();

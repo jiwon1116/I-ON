@@ -26,8 +26,10 @@
         WHERE id = #{id}
     </update>
 
-    <!-- ❗ 기존에 select 로 되어 있던 delete를 delete 태그로 교체 -->
-    <delete id="delete" parameterType="int">
+
+
+    <select id="delete" parameterType="long">
+
         DELETE FROM flag_post WHERE id = #{id}
     </delete>
 

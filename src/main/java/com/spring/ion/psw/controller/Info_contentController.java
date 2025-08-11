@@ -9,6 +9,7 @@ import com.spring.ion.psw.dto.Info_contentDTO;
 import com.spring.ion.psw.service.Info_LikeService;
 import com.spring.ion.psw.service.Info_commentService;
 import com.spring.ion.psw.service.Info_contentService;
+import com.spring.ion.psw.service.NotifyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +35,7 @@ public class Info_contentController{
     private final Info_contentService infoContentService;
     private final Info_commentService infoCommentService;
     private final Info_LikeService infoLikeService;
+    private final NotifyService notifyService;
 
 
     //게시물 불러오는 리스트
@@ -199,6 +201,7 @@ public class Info_contentController{
         List<Info_FileDTO> existingFiles = infoContentService.findFiles(id);
         infoContentService.deleteFilesFromServer(existingFiles); // 서버에서 삭제
         infoContentService.delete(id);
+        notifyService.deleteByPostId(id);
         return "redirect:/info/";
     }
 

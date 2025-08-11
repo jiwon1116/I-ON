@@ -14,7 +14,7 @@ public class MemberDTO implements Serializable {
     private String nickname;
     private String gender;
     private String profile_img;
-    private Boolean enrollment_verified;
+    private boolean  enrollment_verified;
     private Integer trust_score;
     private LocalDateTime created_at;
     private Boolean enabled;
