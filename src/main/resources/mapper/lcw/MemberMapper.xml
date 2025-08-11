@@ -167,8 +167,6 @@
         ) THEN 1 ELSE 0 END
     </select>
 
-    </mapper>
-
 
 
     <select id="findByNickname" parameterType="String" resultType="com.spring.ion.lcw.dto.MemberDTO">
