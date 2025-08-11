@@ -13,6 +13,10 @@
     <title>마이페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         /* === (생략) 기존 스타일 복사 === */
         body { background: #F8F9FA; margin: 0; font-family: 'Pretendard','Apple SD Gothic Neo',Arial,sans-serif; }
@@ -45,9 +49,9 @@
         @media (max-width: 1200px) { .main-board { padding: 18px 10px 18px 10px; } }
         @media (max-width: 900px) { .sidebar { display: none; } .main-board { padding: 7px; } }
     </style>
-    <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
 </head>
 <body>
 <c:if test="${not empty editSuccess}">
@@ -267,8 +271,6 @@
                               <li><b>제보 횟수</b> : 신고/제보 게시판에 올린 게시글 수를 의미합니다.</li>
                               <li><b>위탁 횟수</b> : 위탁 게시판에 작성한 게시글 수를 의미합니다.</li>
                               <li><b>댓글</b> : 내가 단 댓글의 총 개수를 의미합니다.</li>
-                              <li><b>총점</b> : 제보+위탁+댓글의 합산 점수입니다.</li>
-                              <li><b>등급</b> : 총점에 따라 등급이 올라갑니다! <br>
                                   <span style="color:#40a048; font-weight:500;">새싹맘 (0~9점)</span>,
                                   <span style="color:#a8743d; font-weight:500;">도토리맘 (10~29점)</span>,
                                   <span style="color:#f6a623; font-weight:500;">캡숑맘 (30점 이상)</span>

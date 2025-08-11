@@ -44,4 +44,9 @@ public class ChatRoomRepository {
     public void updateLastMessage(Long roomId, String lastMessage) {
         sql.update("ChatRoom.updateLastMessage", Map.of("roomId", roomId, "lastMessage", lastMessage));
     }
+
+    public int calculateTotalUnreadCount(Long currentUserId) {
+        Integer totalCount = sql.selectOne("ChatRoom.calculateTotalUnreadCount", currentUserId);
+        return totalCount != null ? totalCount : 0;
+    }
 }

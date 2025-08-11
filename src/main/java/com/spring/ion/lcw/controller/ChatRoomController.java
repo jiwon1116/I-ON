@@ -48,8 +48,11 @@ public class ChatRoomController {
         Long user1Id = currentMember.getId();
 
         MemberDTO user2 = memberService.findByNickname(nickname);
-
-        if (user2 == null) {
+        if(currentMember.getNickname().equals(nickname)){
+            redirectAttributes.addFlashAttribute("findFail", "본인입니다.");
+            return "redirect:/chat/";
+        }
+        else if (user2 == null) {
             redirectAttributes.addFlashAttribute("findFail", "존재하지 않는 사용자입니다.");
             return "redirect:/chat/";
         }
@@ -90,5 +93,15 @@ public class ChatRoomController {
         model.addAttribute("messages", messages);
         model.addAttribute("partnerNickname", partnerMember.getNickname());
         return "chatRoom";
+    }
+
+    @PostMapping("/room/{roomId}/read/{currentUserId}")
+    public String setZeroUnreadCount(@PathVariable("roomId") Long roomId, @PathVariable("currentUserId") Long currentUserId) {
+        try {
+            chatRoomService.setZeroUnreadCount(roomId, currentUserId);
+            return "Unread count updated successfully.";
+        } catch (Exception e) {
+            return "Failed to update unread count: " + e.getMessage();
+        }
     }
 }

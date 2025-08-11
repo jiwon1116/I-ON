@@ -66,4 +66,5 @@ public class MemberService {
         public void updateProfileImg(String userId, String profileImg) {
             memberRepository.updateProfileImg(userId, profileImg);
         }
+
 }

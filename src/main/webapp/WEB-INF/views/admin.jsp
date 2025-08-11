@@ -180,7 +180,7 @@
                 </div>
                 <div class="card p-4">
                     <span>신고 글 접수</span>
-                    <a href="/myPost" class="btn btn-warning btn-sm mt-2">바로가기</a>
+                    <a href="/report/list" class="btn btn-danger btn-sm mt-2">바로가기</a>
                 </div>
             </div>
             <div class="dashboard-row">

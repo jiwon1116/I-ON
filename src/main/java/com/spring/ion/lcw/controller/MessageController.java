@@ -20,9 +20,10 @@ public class MessageController {
     public void sendMessage(MessageDTO message) {
         message.setIsRead(false);
         chatRoomService.updateLastMessage(message.getRoomId(), message.getContent());
-        messageService.saveMessage(message);
+        MessageDTO sentMessage = messageService.saveMessage(message);
+        System.out.println(sentMessage);
         chatRoomService.incrementUnreadCount(message.getRoomId(), message.getSenderId());
-        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
-        messagingTemplate.convertAndSend("/sub/chat/roomList", message);
+        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), sentMessage);
+        messagingTemplate.convertAndSend("/sub/chat/roomList", sentMessage);
     }
 }

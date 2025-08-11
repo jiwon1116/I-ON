@@ -41,4 +41,8 @@ public class ChatRoomService {
     public void updateLastMessage(Long roomId, String lastMessage) {
         chatRoomRepository.updateLastMessage(roomId, lastMessage);
     }
+
+    public int calculateTotalUnreadCount(Long currentUserId) {
+       return chatRoomRepository.calculateTotalUnreadCount(currentUserId);
+    }
 }

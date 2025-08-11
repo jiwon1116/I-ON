@@ -81,6 +81,7 @@ public class MemberController {
 //        String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
 //        memberDTO.setPassword(encodedPassword);
 //        memberDTO.setEnabled(true);
+//        memberDTO.setProvider("LOCAL");
 //
 //        try {
 //            memberService.save(memberDTO);
