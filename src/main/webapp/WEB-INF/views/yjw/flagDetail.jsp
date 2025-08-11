@@ -7,22 +7,20 @@
 <head>
     <meta charset="UTF-8">
     <title>게시글 상세보기</title>
+    <meta name="ctx" content="${pageContext.request.contextPath}"/>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bootstrap 5 모달 동작을 위한 JS! -->
+    <!-- Bootstrap 5 모달 동작 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 전역 배지 스크립트 (※ header.jsp에서 이미 포함되어 있으면 이 줄은 제거하세요) -->
+    <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
+
     <style>
-        .like-btn .heart {
-            font-size: 1.4em;
-            vertical-align: middle;
-            transition: color 0.15s;
-        }
-        .like-btn.liked .heart {
-            color: #f44336;
-        }
-        .like-btn {
-            border: 1.5px solid #f44336 !important;
-        }
+        .like-btn .heart { font-size: 1.4em; vertical-align: middle; transition: color 0.15s; }
+        .like-btn.liked .heart { color: #f44336; }
+        .like-btn { border: 1.5px solid #f44336 !important; }
     </style>
 </head>
 <body>
@@ -34,8 +32,13 @@
         <div class="card-header bg-warning text-white fw-bold">게시글 상세</div>
         <div class="card-body">
             <h4 class="card-title">${flag != null ? flag.title : ''}</h4>
+
             <div class="mb-3 text-muted small">
-             <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${flag.nickname}"> ${flag != null ? flag.nickname : ''}</a>
+
+                <c:if test="${flag != null}">
+                    <!-- 닉네임 + 배지 -->
+                    <span class="js-user" data-nickname="${flag.nickname}"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${flag.nickname}"> ${flag != null ? flag.nickname : ''}</a></span>
+                </c:if>
 
                 <c:if test="${not empty flag.city}">
                     <span class="ms-2 badge bg-light text-dark border">
@@ -68,14 +71,15 @@
             </c:if>
 
             <div class="text-end mb-2">
-                <!-- 수정 버튼 추가 -->
+                <!-- 수정/삭제 버튼 -->
                 <security:authentication property="principal.username" var="loginUserId"/>
                 <c:if test="{$loginUserId eq flag.userId or isAdmin}">
                     <a href="${pageContext.request.contextPath}/flag/update/${flag.id}">수정</a>
                     <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}"
                        onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
                 </c:if>
-                <!-- 신고 버튼(로그인한 사용자 && 본인 글이 아닌 경우) -->
+
+                <!-- 신고 버튼(로그인 && 본인 글 아님) -->
                 <c:if test="${loginUserId ne flag.userId}">
                     <button type="button" class="btn btn-outline-danger btn-sm ms-2" id="reportBtn">🚩 신고</button>
                 </c:if>
@@ -106,7 +110,7 @@
               </div>
             </div>
 
-            <!-- 좋아요 버튼 (하트 토글) -->
+            <!-- 좋아요 버튼 -->
             <div class="mb-2">
                 <button type="button" class="btn like-btn ${flag.liked ? 'liked' : ''}" id="likeBtn">
                     <span class="heart">${flag.liked ? '❤️' : '🤍'}</span>
@@ -136,9 +140,7 @@
         <div class="card-body">
             <form id="commentForm">
                 <input type="hidden" name="post_id" id="post_id" value="${flag != null ? flag.id : ''}"/>
-                <div class="mb-2">
-                    <!-- nickname input 삭제!! -->
-                </div>
+                <div class="mb-2"></div>
                 <div class="mb-2">
                     <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요"></textarea>
                 </div>
@@ -149,7 +151,7 @@
         </div>
     </div>
 
-    <!-- 댓글 출력 영역 -->
+    <!-- 댓글 출력 영역 (서버 렌더링) -->
     <div id="commentList">
         <c:if test="${not empty flagCommentDTOList}">
             <c:forEach var="comment" items="${flagCommentDTOList}">
@@ -157,8 +159,8 @@
                     <div class="card-body">
                         <p class="card-text">${comment.content}</p>
                         <footer class="blockquote-footer">
-                          <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a> | <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
-                            <!-- comment.userId == 로그인한 유저의 userId일 때만 삭제 버튼 노출 -->
+                            <span class="js-user" data-nickname="${comment.nickname}"> <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></span>
+                            | <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
                             <c:if test="${comment.userId eq loginUserId or isAdmin}">
                                 <button class="btn btn-sm btn-outline-danger float-end"
                                         onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
@@ -173,77 +175,59 @@
 
 <script>
     $(document).ready(function () {
-        // 댓글 등록
+        // 댓글 등록 → 성공 시 전체 새로고침
         $('#commentForm').submit(function (e) {
             e.preventDefault();
             const content = $('#content').val();
             const post_id = $('#post_id').val();
 
-            if (!post_id || !content) {
-                alert("내용을 입력해주세요.");
-                return;
-            }
+            if (!post_id || !content) return alert("내용을 입력해주세요.");
 
             $.ajax({
                 type: 'POST',
                 url: '${pageContext.request.contextPath}/FlagComment/write',
-                data: {
-                    content: $('#content').val(),
-                    post_id: $('#post_id').val()
-                },
+                data: { content: content, post_id: post_id },
                 dataType: 'json',
-                success: function(data) {
-                    renderCommentList(data);
-                    $('#content').val('');
-                    location.reload();
+                success: function() {
+                    window.location.reload();
                 },
                 error: function() {
                     alert("댓글 등록 실패");
                 }
             });
-
         });
 
-        // 🚩 신고 버튼 클릭 시 모달 열기
+        // 신고 버튼
         $('#reportBtn').click(function(){
             var modal = new bootstrap.Modal(document.getElementById('reportModal'));
             modal.show();
         });
 
-        // 🚩 신고 폼 제출
+        // 신고 폼 제출
         $('#reportForm').submit(function(e){
             e.preventDefault();
 
             const postId = $('input[name="postId"]').val();
             const reason = $('#reportReason').val();
-
-            if(!reason.trim()) {
-                alert("신고 사유를 입력해주세요.");
-                return;
-            }
+            if(!reason.trim()) return alert("신고 사유를 입력해주세요.");
 
             $.ajax({
                 type: 'POST',
-                url: '/flag/report',
+                url: '${pageContext.request.contextPath}/flag/report',
                 contentType: 'application/json',
-                data: JSON.stringify({
-                    targetId: postId,
-                    targetType: "POST",  // 또는 "COMMENT" 등
-                    type: "ABUSE",       // 예시, 실제 신고유형
-                    content: reason      // 신고사유
-                }),
-                success: function(data){
-                    // 모달 닫기, 알림 등
+                data: JSON.stringify({ targetId: postId, targetType: "POST", type: "ABUSE", content: reason }),
+                success: function(){
+                    alert('신고가 접수되었습니다.');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
+                    modal && modal.hide();
                 },
                 error: function(){
                     alert("신고 접수에 실패했습니다.");
                 }
             });
-
-
         });
 
-        // 좋아요 버튼
+        // 좋아요 버튼 (비동기 토글 유지)
         $('#likeBtn').click(function(){
             const flagId = '${flag.id}';
             $.ajax({
@@ -256,7 +240,6 @@
                     }
                     $('#likeCount').text(data.likeCount);
                     $('#likeCountDisplay').text(data.likeCount);
-                    // 하트 토글
                     if(data.liked){
                         $('#likeBtn').addClass('liked');
                         $('#likeBtn .heart').text('❤️');
@@ -270,55 +253,23 @@
                 }
             });
         });
-
     });
 
-    // ↓↓↓ 아래 함수들은 document ready 블록 밖에서 선언!
+    // 댓글 삭제 → 성공 시 전체 새로고침
     function deleteComment(id, post_id) {
         if (!confirm("정말 삭제하시겠습니까?")) return;
-        if (!id || !post_id) {
-            alert("잘못된 댓글/게시글 정보입니다.");
-            return;
-        }
+        if (!id || !post_id) return alert("잘못된 댓글/게시글 정보입니다.");
 
         $.ajax({
             type: 'get',
-            url: '/FlagComment/delete?id=' + id + '&post_id=' + post_id,
+            url: '${pageContext.request.contextPath}/FlagComment/delete?id=' + id + '&post_id=' + post_id,
             dataType: 'json',
-            success: function (data) {
-                renderCommentList(data);
-                location.reload();
+            success: function () {
+                window.location.reload();
             },
             error: function () {
                 alert("댓글 삭제 실패");
             }
-        });
-    }
-
-    function renderCommentList(data) {
-
-        if (!data || data.length === 0) {
-            $('#commentList').append('<div class="text-center text-muted">댓글이 없습니다.</div>');
-            return;
-        }
-
-        $('#commentList').empty();
-        const flagId = $('#post_id').val();
-
-        data.forEach(function (comment) {
-            const dateText = comment.created_at ? new Date(comment.created_at).toLocaleString() : '날짜 없음';
-            const html = `
-                <div class="card mb-2">
-                    <div class="card-body">
-                        <p class="card-text">${comment.content}</p>
-                        <footer class="blockquote-footer">
-                            ${comment.nickname} | ${dateText}
-                            <button class="btn btn-sm btn-outline-danger float-end"
-                                    onclick="deleteComment(${comment.id}, ${flagId})">삭제</button>
-                        </footer>
-                    </div>
-                </div>`;
-            $('#commentList').append(html);
         });
     }
 </script>

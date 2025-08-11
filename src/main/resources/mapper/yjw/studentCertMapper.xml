@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StudentCert">
+
+    <!-- INSERT: created_at은 DB default 사용 -->
+    <insert id="insert" parameterType="StudentCert"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO student_cert
+        (user_id, child_name, child_birth, child_age, child_school, child_grade, file_path, status, reviewer, reject_reason)
+        VALUES
+        (#{userId}, #{childName}, #{childBirth}, #{childAge}, #{childSchool}, #{childGrade}, #{filePath}, #{status}, #{reviewer}, #{rejectReason})
+    </insert>
+
+    <!-- PENDING 목록 -->
+    <select id="findPending" resultType="StudentCert">
+        SELECT
+        sc.id,
+        sc.user_id              AS userId,
+        sc.child_name           AS childName,
+        sc.child_birth          AS childBirth,
+        sc.child_age            AS childAge,
+        sc.child_school         AS childSchool,
+        sc.child_grade          AS childGrade,
+        sc.file_path            AS filePath,
+        sc.status,
+        sc.reviewer,
+        sc.reject_reason        AS rejectReason,
+        sc.created_at           AS createdAt,
+        m.nickname              AS nickname
+        FROM student_cert sc
+        LEFT JOIN member m ON m.userId = sc.user_id
+        WHERE sc.status = 'PENDING'
+        ORDER BY sc.created_at DESC
+    </select>
+
+    <!-- 상세 -->
+    <select id="findDetail" parameterType="long" resultType="StudentCert">
+        SELECT
+        sc.id,
+        sc.user_id              AS userId,
+        sc.child_name           AS childName,
+        sc.child_birth          AS childBirth,
+        sc.child_age            AS childAge,
+        sc.child_school         AS childSchool,
+        sc.child_grade          AS childGrade,
+        sc.file_path            AS filePath,
+        sc.status,
+        sc.reviewer,
+        sc.reject_reason        AS rejectReason,
+        sc.created_at           AS createdAt,
+        m.nickname              AS nickname
+        FROM student_cert sc
+        LEFT JOIN member m ON m.userId = sc.user_id
+        WHERE sc.id = #{id}
+    </select>
+
+    <!-- 승인/반려 -->
+    <update id="approve">
+        UPDATE student_cert
+        SET status='APPROVED', reviewer=#{reviewer}
+        WHERE id=#{id}
+    </update>
+
+    <update id="reject">
+        UPDATE student_cert
+        SET status='REJECTED', reject_reason=#{reason}, reviewer=#{reviewer}
+        WHERE id=#{id}
+    </update>
+
+    <select id="findByUser" parameterType="string" resultType="StudentCert">
+        SELECT
+        id,
+        user_id        AS userId,
+        child_name     AS childName,
+        child_birth    AS childBirth,
+        child_age      AS childAge,
+        child_school   AS childSchool,
+        child_grade    AS childGrade,
+        file_path      AS filePath,
+        status,
+        reviewer,
+        reject_reason  AS rejectReason,
+        created_at     AS createdAt
+        FROM student_cert
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+
+
+</mapper>
