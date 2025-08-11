@@ -202,7 +202,7 @@ public class Info_contentController{
         infoContentService.deleteFilesFromServer(existingFiles); // 서버에서 삭제
         infoContentService.delete(id);
         notifyService.deleteByPostId(id);
-        return "redirect:/info/";
+        return "redirect:/info";
     }
 
     // 페이징
