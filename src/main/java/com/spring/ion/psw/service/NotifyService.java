@@ -41,16 +41,11 @@ public class NotifyService {
         System.out.println("[NotifyService] 대상 회원 수=" + members.size());
         String fullRegion = city + " " + district;
 
-        // 재학생 인증 회원에게만 알림 생성 (람다식 사용)
-        List<MemberDTO> verifiedMembers = new ArrayList<>();
-        for (MemberDTO member : members) {
-                        if (member.isEnrollment_verified()) {
-                verifiedMembers.add(member);
-            }
-        }
 
-        for (MemberDTO m : verifiedMembers) {
-            if (m.getUserId().equals("admin")) {
+        for (MemberDTO m : members) {
+            System.out.println("조회된 회원 수: " + members.size());
+
+            if (m.getUserId().equals("admin")){
                 continue;
             }
             NotifyDTO notify = new NotifyDTO();
@@ -63,18 +58,6 @@ public class NotifyService {
             notify.setCreated_at(new Date());
             notifyRepository.saveNotify(notify);
         }
-    }
-
-    // 알림 목록 가져오기 (재학생 인증 여부 포함)
-    public List<NotifyDTO> findAllByNotify(String nickname, boolean isEnrollmentVerified) {
-        List<NotifyDTO> allNotifications = notifyRepository.findAllByNotify(nickname);
-
-        // 재학생 인증 회원이 아닌 경우, 위험 알림을 목록에서 제거
-        if (!isEnrollmentVerified) {
-            // for를 사용해 위험 알림만 제거
-            allNotifications.removeIf(n -> n.getType() == NotifyDTO.NotificationType.DANGER_ALERT);
-        }
-        return allNotifications;
     }
 
     public List<NotifyDTO> findAllByNotify(String nickname) {
