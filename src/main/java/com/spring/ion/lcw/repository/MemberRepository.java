@@ -107,7 +107,7 @@ public class MemberRepository {
         Integer v = sql.selectOne("Member.isAdminByNickname", nickname);
         return v != null && v == 1;
     }
-}
+
     public MemberDTO findByNickname(String nickname) {
        return sql.selectOne("Member.findByNickname", nickname);
     }
