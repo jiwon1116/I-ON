@@ -4,36 +4,42 @@ import com.spring.ion.yjw.dto.ReportDTO;
 import com.spring.ion.yjw.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 @RestController
-@RequestMapping("/flag")
+@RequestMapping
 @RequiredArgsConstructor
 public class ReportController {
 
     private final ReportService reportService;
 
-    @PostMapping("/report")
-    public ResponseEntity<String> report(@RequestBody ReportDTO dto) {
+    // 프론트는 각 게시판에서 /flag/report, /free/report ... 로 그대로 POST
+    @PostMapping(value = {"/flag/report", "/free/report", "/entrust/report", "/miss/report"},
+            produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> report(@RequestBody ReportDTO dto, HttpServletRequest request) {
+        // 로그인 사용자
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var cud  = (com.spring.ion.lcw.security.CustomUserDetails) auth.getPrincipal();
+        String userId = cud.getMemberDTO().getUserId();
+        dto.setReporterId(userId);
 
-        if (dto.getTargetId() == null) {
-            return ResponseEntity.badRequest().body("대상 ID가 필요합니다.");
+        // URI에서 게시판명 추출 -> FLAG/FREE/ENTRUST/MISS
+        String uri = request.getRequestURI();           // 예) /flag/report
+        String board = uri.replaceFirst("^/+", "").split("/")[0].toUpperCase();
+        Set<String> allowed = Set.of("FLAG", "FREE", "ENTRUST", "MISS");
+        if (!allowed.contains(board)) {
+            return ResponseEntity.badRequest().body("Invalid board");
         }
-        if (!StringUtils.hasText(dto.getType())) {
-            return ResponseEntity.badRequest().body("신고 유형을 선택해주세요.");
-        }
-        if (!StringUtils.hasText(dto.getContent())) {
-            return ResponseEntity.badRequest().body("신고 사유를 입력해주세요.");
-        }
+        dto.setTargetBoard(board);
 
-        dto.setStatus("PENDING"); // 접수 대기 상태
+        // 기본 상태
+        dto.setStatus("PENDING");
 
         reportService.saveReport(dto);
-
         return ResponseEntity.ok("OK");
     }
 }

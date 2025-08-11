@@ -205,41 +205,46 @@
             });
         });
 
-        // 신고 버튼
-        $('#reportBtn').click(function(){
-        <!-- 폼 초기화 부분. 필요시 주석 해제하기
-            const $form = $('#reportForm');
-            $form[0].reset();
-            $('#reportReason').attr('placeholder', '신고 사유를 입력하세요');
-        -->
-            var modal = new bootstrap.Modal(document.getElementById('reportModal'));
-            modal.show();
-        });
+      // 신고 버튼
+      $('#reportBtn').click(function(){
+          // 폼 초기화 부분. 필요시 주석 해제하기
+          // const $form = $('#reportForm');
+          // $form[0].reset();
+          // $('#reportReason').attr('placeholder', '신고 사유를 입력하세요');
 
-        // 신고 폼 제출
-        $('#reportForm').submit(function(e){
-            e.preventDefault();
+          var modal = new bootstrap.Modal(document.getElementById('reportModal'));
+          modal.show();
+      });
 
-            const postId = $('input[name="postId"]').val();
-            const type   = $('#reportType').val();
-            const reason = $('#reportReason').val();
-            if(!reason.trim()) return alert("신고 사유를 입력해주세요.");
+      // 신고 폼 제출
+      $('#reportForm').submit(function(e){
+          e.preventDefault();
 
-            $.ajax({
-                type: 'POST',
-                url: '${pageContext.request.contextPath}/flag/report',
-                contentType: 'application/json',
-                data: JSON.stringify({ targetId: postId, type: type, content: reason }),
-                success: function(){
-                    alert('신고가 접수되었습니다.');
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
-                    modal && modal.hide();
-                },
-                error: function(){
-                    alert("신고 접수에 실패했습니다.");
-                }
-            });
-        });
+          const postId = $('input[name="postId"]').val();
+          const type   = $('#reportType').val();
+          const reason = $('#reportReason').val();
+          const board = 'FLAG';
+
+          if(!reason.trim()) return alert("신고 사유를 입력해주세요.");
+
+          const payload = { targetBoard: board, targetContentId: postId, type, description: reason };
+
+          $.ajax({
+              type: 'POST',
+              url: '${pageContext.request.contextPath}/report',
+              contentType: 'application/json; charset=UTF-8',
+              dataType: 'text',
+              data: JSON.stringify(payload),
+              success: function(){
+                  alert('신고가 접수되었습니다.');
+                  const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
+                  modal && modal.hide();
+              },
+              error: function(){
+                  alert("신고 접수에 실패했습니다.");
+              }
+          });
+      });
 
         // 좋아요 버튼 (비동기 토글 유지)
         $('#likeBtn').click(function(){

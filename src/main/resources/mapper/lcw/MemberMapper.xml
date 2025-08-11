@@ -167,6 +167,24 @@
         ) THEN 1 ELSE 0 END
     </select>
 
+    <!-- 리스트 닉네임 trust_level -->
+    <select id="findLevelsByNicknames" parameterType="list" resultType="map">
+        SELECT
+        m.nickname,
+        COALESCE(m.trust_level, 0) AS level
+        FROM member m
+        WHERE m.nickname IN
+        <foreach collection="list" item="n" open="(" separator="," close=")">
+            #{n}
+        </foreach>
+    </select>
+
+    <!-- 단건 닉네임 → trust_level -->
+    <select id="findLevelByNickname" parameterType="string" resultType="int">
+        SELECT COALESCE(m.trust_level, 0)
+        FROM member
+        WHERE nickname = #{value}
+    </select>
 </mapper>
 
 
