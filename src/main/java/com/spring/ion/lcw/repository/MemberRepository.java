@@ -5,11 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -28,11 +26,15 @@ public class MemberRepository {
         sql.delete("Member.deleteMember", username);
 
     }
-
+    public MemberDTO findById(Long id) {
+        return sql.selectOne("Member.findById", id);
+    }
     public MemberDTO findByUserId(String username) {
         return sql.selectOne("Member.findByUserId", username);
     }
-
+    public MemberDTO findByNickname(String nickname){
+        return sql.selectOne("Member.findByNickname", nickname);
+    }
     public MemberDTO findByUserIdWithAuthorities(String username) {
         return sql.selectOne("Member.findByUserIdWithAuthorities", username);
     }
@@ -60,4 +62,58 @@ public class MemberRepository {
 
         return sql.selectList("Member.findByRegionExceptWriter", params);
     }
+
+
+
+    // 재학증명서 -yjw
+    public int markVerified(String userId){
+        return sql.update("Member.markVerified", userId); // ← namespace.id 맞추기
+    }
+
+    // 뱃지 기능 추가 yjw
+    public Map<String, Integer> findLevelsByNicknames(List<String> names) {
+        if (names == null || names.isEmpty()) return Collections.emptyMap();
+        List<Map<String, Object>> rows = sql.selectList("Member.findLevelsByNicknames", names);
+        Map<String, Integer> out = new HashMap<>();
+        for (Map<String, Object> r : rows) {
+            String nickname = (String) r.get("nickname");
+            Object lvl = r.get("level");
+            if (nickname != null && lvl != null) out.put(nickname, ((Number) lvl).intValue());
+        }
+        return out;
+    }
+
+    /** 단건 레벨 */
+    public Integer findLevelByNickname(String nickname) {
+        if (nickname == null || nickname.isBlank()) return null;
+        return sql.selectOne("Member.findLevelByNickname", nickname);
+    }
+
+    /** 닉네임 → {level, admin} */
+    public Map<String, Map<String, Object>> findBadgeMetaByNicknames(List<String> names) {
+        if (names == null || names.isEmpty()) return Collections.emptyMap();
+        List<Map<String, Object>> rows = sql.selectList("Member.findBadgeMetaByNicknames", names);
+        Map<String, Map<String, Object>> out = new HashMap<>();
+        for (Map<String, Object> r : rows) {
+            String nick = (String) r.get("nickname");
+            int level = ((Number) r.get("level")).intValue();
+            boolean admin = ((Number) r.get("is_admin")).intValue() == 1;
+            Map<String, Object> meta = new HashMap<>();
+            meta.put("level", level);
+            meta.put("admin", admin);
+            out.put(nick, meta);
+        }
+        return out;
+    }
+
+    /** 단건: 관리자 여부 */
+    public boolean isAdminByNickname(String nickname) {
+        Integer v = sql.selectOne("Member.isAdminByNickname", nickname);
+        return v != null && v == 1;
+    }
 }
+    public MemberDTO findByNickname(String nickname) {
+       return sql.selectOne("Member.findByNickname", nickname);
+    }
+}
+

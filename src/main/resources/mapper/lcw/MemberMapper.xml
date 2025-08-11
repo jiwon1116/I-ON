@@ -4,7 +4,7 @@
 <mapper namespace="Member">
 
     <resultMap id="memberWithAuthoritiesResultMap" type="com.spring.ion.lcw.dto.MemberDTO">
-        <id property="userId" column="userId" />
+        <id property="id" column="id" /> <result property="userId" column="userId" />
         <result property="password" column="password" />
         <result property="nickname" column="nickname" />
         <result property="gender" column="gender" />
@@ -50,14 +50,24 @@
         WHERE userId = #{userId}
     </delete>
 
+    <select id="findById" parameterType="Long" resultType="com.spring.ion.lcw.dto.MemberDTO">
+        SELECT *
+        FROM member
+        WHERE id = #{id}
+    </select>
     <select id="findByUserId" parameterType="String" resultType="com.spring.ion.lcw.dto.MemberDTO">
         SELECT *
         FROM member
         WHERE userId = #{userId}
     </select>
+    <select id="findByNickname" parameterType="String" resultType="com.spring.ion.lcw.dto.MemberDTO">
+        SELECT *
+        FROM member
+        WHERE nickname = #{nickname}
+    </select>
 
     <select id="findByUserIdWithAuthorities" parameterType="String" resultMap="memberWithAuthoritiesResultMap">
-        SELECT m.userId, m.provider, m.password, m.nickname, m.gender, m.enabled, m.created_at, m.ban_until, m.info_until, ma.authority, m.city, m.district
+        SELECT m.id, m.userId, m.provider, m.password, m.nickname, m.gender, m.enabled, m.created_at, m.ban_until, m.info_until, ma.authority, m.city, m.district
         FROM member m
         LEFT JOIN member_authority ma ON m.userId = ma.userId
         WHERE m.userId = #{userId}
@@ -118,5 +128,56 @@
         AND district = #{district}
         AND nickname != #{writerNickname}
     </select>
+
+
+    <!-- 재학 증명서 관련 yjw-->
+    <update id="markVerified" parameterType="string">
+        UPDATE member
+        SET enrollment_verified = 1
+        WHERE userId = #{userId}
+    </update>
+
+    <!-- 닉네임 뱃지 yjw -->
+    <select id="findBadgeMetaByNicknames" parameterType="list" resultType="map">
+        SELECT
+        m.nickname,
+        m.trust_level AS level,
+        CASE
+        WHEN EXISTS (
+        SELECT 1 FROM member_authority ma
+        WHERE ma.userId = m.userId AND ma.authority = 'ROLE_ADMIN'
+        ) THEN 1 ELSE 0
+        END AS is_admin
+        FROM member m
+        WHERE m.nickname IN
+        <foreach collection="list" item="n" open="(" separator="," close=")">
+            #{n}
+        </foreach>
+    </select>
+
+
+    <!-- 단건 -->
+    <select id="isAdminByNickname" parameterType="string" resultType="int">
+        SELECT CASE WHEN EXISTS (
+        SELECT 1
+        FROM member_authority ma
+        JOIN member m ON m.userId = ma.userId
+        WHERE m.nickname = #{nickname}
+        AND ma.authority = 'ROLE_ADMIN'
+        ) THEN 1 ELSE 0 END
+    </select>
+
+    </mapper>
+
+
+
+    <select id="findByNickname" parameterType="String" resultType="com.spring.ion.lcw.dto.MemberDTO">
+        SELECT *
+        FROM member
+        WHERE nickname = #{nickname}
+    </select>
+
+
 </mapper>
+
 

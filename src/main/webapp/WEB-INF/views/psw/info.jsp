@@ -216,7 +216,7 @@
 </div>
 <script>
     function writeFn() {
-                       location.href = "/info/save";
+                 location.href = "/info/save";
          }
 </script>
 </body>

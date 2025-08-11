@@ -21,7 +21,7 @@ public class FlagService {
     private final FlagRepository flagRepository;
 
     public int write(FlagPostDTO flagPostDTO, List<MultipartFile> fileList) throws IOException {
-        flagRepository.write(flagPostDTO); // 이 시점에 flagPostDTO.getId()에 게시글 id가 들어옴!
+        flagRepository.write(flagPostDTO); // 이 시점에 flagPostDTO.getId()에 게시글 id가 들어옴
 
         long postId = flagPostDTO.getId(); // 바로 사용 가능
 
@@ -65,7 +65,7 @@ public class FlagService {
         }
         int updated = flagRepository.update(flagPostDTO);
 
-        // 이하 파일 처리 로직은 동일...
+
         if (deleteFileIds != null) {
             for (Long fileId : deleteFileIds) {
                 flagRepository.deleteFileById(fileId);

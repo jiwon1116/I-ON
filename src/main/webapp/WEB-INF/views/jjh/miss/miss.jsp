@@ -126,7 +126,7 @@
                 <div class="card-content">
                     <div class="quote">${miss.title}</div>
                     <div class="content">${miss.content}</div>
-                    <div class="desc">${miss.nickname} ·
+                    <div class="desc"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${miss.nickname}">${miss.nickname} ·</a>
                         <fmt:formatDate value="${miss.created_at}" pattern="yyyy-MM-dd" /> ·
                         좋아요 ${miss.like_count} · 조회수 ${miss.view_count}
                     </div>

@@ -147,7 +147,7 @@
                 <div class="dashboard-row">
                     <div class="card p-4">
                         <span>자녀 등록</span>
-                         <a href="/#" class="btn btn-warning btn-sm mt-2">바로가기</a>
+                         <a href="/cert/my" class="btn btn-warning btn-sm mt-2">바로가기</a>
                     </div>
                     <div class="card p-4">
                         <span>내가 작성한 글</span>
@@ -163,6 +163,7 @@
                         <span>내 소식</span>
                         <div class="text-center text-muted py-5">
                             <i class="fas fa-bell fa-2x mb-2"></i><br>
+                            <%-- 알림 목록 --%>
                            <div class="notification-list" id="notifyList">
                             <c:forEach var="notify" items="${notifyList}">
                                 <c:choose>
@@ -180,7 +181,7 @@
                                         </div>
                                     </c:when>
                                     <c:when test="${notify.type == 'DANGER_ALERT'}">
-                                        <%-- 자바스크립트 안 쓰고 hidden input으로 우회 저장 --%>
+                                        <%-- 자바스크립트 안 쓰고 hidden input으로 우회 저장 (지역 위험 알림) --%>
                                         <input type="hidden" class="danger-alert" value="${notify.content}" />
                                           <div class="notification-item">
                                          <div class="notify-header">
@@ -196,6 +197,7 @@
                                 </c:choose>
                             </c:forEach>
                                </div>
+                               <%-- 지역 위험 알림 모달 --%>
                                <div class="modal fade" id="dangerModal" tabindex="-1" role="dialog">
                                  <div class="modal-dialog" role="document">
                                    <div class="modal-content">
@@ -336,89 +338,90 @@
     });
 }
  </script>
+<%-- 지역 사건 알림
+     sessionScope.dangerAlertShown: JSP의 세션 객체에 저장된 dangerAlertShown 속성을 참조
+     sessionScope는 JSP Expression Language(EL)에서 세션 범위를 나타내는 내장 객체
+     c태그로 아래의 2가지를 확인
+     1. notifyList에 알림이 있는지 (not empty notifyList).
+     2. 서버 세션에 dangerAlertShown이라는 속성이 없는지 (empty sessionScope.dangerAlertShown) --%>
 
-<script>
-    // 지역 사건 알림 모달
-    document.addEventListener("DOMContentLoaded", function () {  //HTML 문서의 DOM 요소가 전부 로드된 뒤에 안의 코드를 실행하겠다는 뜻
-
-    const sessionId = document.querySelector('meta[name="session-id"]').content;
-    const shownKey = `dangerModalShown_${sessionId}`; // 세션별로 다른 키
-
-    // 이미 이 세션에서 띄웠으면 종료
-    if (sessionStorage.getItem(shownKey) === "1") return;
-
-    const alerts = Array.from(document.querySelectorAll(".danger-alert"))
-                        .map(e => e.value)
-                        .filter(Boolean);
-
-    if (alerts.length > 0) {
-        document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
-        new bootstrap.Modal(document.getElementById('dangerModal')).show();
-
-        // 이 세션에서는 다시 안 뜨게 저장
-        sessionStorage.setItem(shownKey, "1");
-    }
-});
-</script>
-
-    <%-- 도넛차트 Chart.js 스크립트 + 게이지바 스크립트 --%>
+<c:if test="${not empty notifyList and empty sessionScope.dangerAlertShown}">
     <script>
-        // JSP 변수 치환 (꼭 Number로!)
-        const reportCount = Number('${trustScore.reportCount}');
-        const entrustCount = Number('${trustScore.entrustCount}');
-        const commentCount = Number('${trustScore.commentCount}');
-        // Chart.js 도넛 그리기
-        const ctx = document.getElementById('trustDonut').getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['제보', '위탁', '댓글'],
-                datasets: [{
-                    data: [reportCount, entrustCount, commentCount],
-                    backgroundColor: [
-                        '#4bc0c0', // 제보
-                        '#f6a623', // 위탁
-                        '#63a4fa'  // 댓글
-                    ],
-                    borderWidth: 0,
-                }]
-            },
-            options: {
-                cutout: '65%',
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.raw + '개';
-                            }
-                        }
-                    }
-                }
+         // HTML 문서가 모두 로드된 후 스크립트를 실행합니다.
+        document.addEventListener("DOMContentLoaded", function () {
+           // 모든 .danger-alert 클래스를 가진 요소를 찾아 배열로 만듦
+            const alerts = Array.from(document.querySelectorAll(".danger-alert"))
+                                .map(e => e.value) // 각 요소의 value 값을 가져옴
+                                .filter(Boolean);  // 값이 비어있지 않은 요소만 남김
+
+            // 만약 alerts 배열에 내용이 하나라도 있다면, 모달을 표시
+            if (alerts.length > 0) {
+                document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
+            // 부트스트랩 모달을 생성하고 보여줌
+                new bootstrap.Modal(document.getElementById('dangerModal')).show();
             }
         });
-        // 게이지바
-        const totalScore = Number('${trustScore.totalScore}');
-        let grade = '${fn:trim(trustScore.grade)}';
-        const gaugeBar = document.getElementById('trustGaugeBar');
-        const gaugeText = document.getElementById('trustGaugeText');
-        const maxScore = 30;
-        let percent = Math.min((totalScore / maxScore) * 100, 100);
-        setTimeout(() => {
-            gaugeBar.style.width = percent + '%';
-        }, 300);
-
-
-        let text = '';
-        if (grade === '캡숑맘') {
-            text = '최고 등급 달성! 👑';
-        } else if (grade === '도토리맘') {
-            text = `캡숑맘까지 <b>${30-totalScore}</b>점 남았어요!`;
-        } else if (grade === '새싹맘') {
-            text = `도토리맘까지 <b>${10-totalScore}</b>점 남았어요!`;
-        }
-        gaugeText.innerHTML = text;
-
     </script>
+    <c:set var="dangerAlertShown" value="true" scope="session"/>
+</c:if>
+
+  <script>
+      // 도넛차트 Chart.js 스크립트 + 게이지바 스크립트
+      // JSP 변수 치환 (꼭 Number로!)
+      const reportCount = Number('${trustScore.reportCount}');
+      const entrustCount = Number('${trustScore.entrustCount}');
+      const commentCount = Number('${trustScore.commentCount}');
+      // Chart.js 도넛 그리기
+      const ctx = document.getElementById('trustDonut').getContext('2d');
+      new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+              labels: ['제보', '위탁', '댓글'],
+              datasets: [{
+                  data: [reportCount, entrustCount, commentCount],
+                  backgroundColor: [
+                      '#4bc0c0', // 제보
+                      '#f6a623', // 위탁
+                      '#63a4fa'  // 댓글
+                  ],
+                  borderWidth: 0,
+              }]
+          },
+          options: {
+              cutout: '65%',
+              plugins: {
+                  legend: { display: false },
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              return context.label + ': ' + context.raw + '개';
+                          }
+                      }
+                  }
+              }
+          }
+      });
+      // 게이지바
+      const totalScore = Number('${trustScore.totalScore}');
+      let grade = '${fn:trim(trustScore.grade)}';
+      const gaugeBar = document.getElementById('trustGaugeBar');
+      const gaugeText = document.getElementById('trustGaugeText');
+      const maxScore = 30;
+      let percent = Math.min((totalScore / maxScore) * 100, 100);
+      setTimeout(() => {
+          gaugeBar.style.width = percent + '%';
+      }, 300);
+
+      let text = '';
+      if (grade === '캡숑맘') {
+          text = '최고 등급 달성! 👑';
+      } else if (grade === '도토리맘') {
+          text = '캡숑맘까지 <b>' + (30-totalScore) + '</b>점 남았어요!'; // 수정된 부분
+      } else if (grade === '새싹맘') {
+          text = '도토리맘까지 <b>' + (10-totalScore) + '</b>점 남았어요!'; // 수정된 부분
+      }
+      gaugeText.innerHTML = text;
+
+  </script>
 </body>
 </html>

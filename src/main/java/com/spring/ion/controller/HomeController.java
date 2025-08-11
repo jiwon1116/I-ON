@@ -17,10 +17,6 @@ public class HomeController {
         System.out.println("로그인 멤버 정보: " + memberDTO);
         return "index";
     }
-    @GetMapping("/chat")
-    public String chat(){
-        return "chat";
-    }
 
 
 

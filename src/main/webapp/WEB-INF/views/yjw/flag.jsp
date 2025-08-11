@@ -117,7 +117,7 @@
                         <img src="https://www.w3schools.com/howto/img_avatar.png" alt="기본프로필">
                         <div class="ms-2">
                             <div class="fw-semibold">
-                                ${post.nickname}
+                               <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${post.nickname}">${post.nickname}</a>
                                 <span class="badge
                                     <c:choose>
                                         <c:when test="${post.status == 'PENDING'}">bg-warning text-dark</c:when>

@@ -138,7 +138,7 @@
         <div class="form-container">
             <h2>글쓰기</h2>
              <!-- 파일 업로드를 위한 설정 multipart/form-data -->
-            <form action="${pageContext.request.contextPath}/info/save" method="post"  enctype="multipart/form-data">
+            <form id="writeForm" action="${pageContext.request.contextPath}/info/save" method="post"  enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="title">제목</label>
                     <input type="text" id="title" name="title" placeholder="제목을 입력해주세요" required />
@@ -152,21 +152,41 @@
               <div class="form-group">
 
                  <label for="file" class="form-label">게시물 이미지(필수)</label>
-                 <input type="file" class="form-control" id="file" name="file" required>
+                 <input type="file" class="form-control" id="file" name="file">
 
               </div>
 
                 <div class="form-group">
                     <label for="content">내용</label>
-                    <textarea id="content" name="content" placeholder="내용을 입력해주세요" required></textarea>
+                    <textarea id="content" name="content" placeholder="내용을 입력해주세요"></textarea>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit">등록하기</button>
+                    <button type="button" onClick="writeFinish()">등록하기</button>
                 </div>
             </form>
         </div>
     </main>
 </div>
+<script>
+function writeFinish() {
+    // form 안의 필수 입력 요소들 찾기 (required 속성 기준)
+    const form = document.getElementById("writeForm");
+    const requiredFields = form.querySelectorAll("input[required], textarea[required]");
+
+    for (let field of requiredFields) {
+        if (!field.value.trim()) { // 공백만 입력된 경우도 막기
+            alert("모든 항목을 작성해주세요!");
+            field.focus();
+            return; // 함수 종료
+        }
+    }
+
+    // 모든 값이 채워져 있으면 알림 후 전송
+    alert("글 작성이 완료되었습니다🙂");
+    form.submit();
+}
+</script>
+
 </body>
 </html>

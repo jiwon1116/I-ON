@@ -176,7 +176,7 @@
             <div class="dashboard-row">
                 <div class="card p-4">
                     <span>재학증명서 처리</span>
-                    <a href="/#" class="btn btn-warning btn-sm mt-2">바로가기</a>
+                    <a href="/cert/admin/list" class="btn btn-warning btn-sm mt-2">바로가기</a>
                 </div>
                 <div class="card p-4">
                     <span>신고 글 접수</span>

@@ -9,7 +9,11 @@
 <head>
   <meta charset="UTF-8">
   <title>자유 게시판</title>
-  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <meta name="ctx" content="${pageContext.request.contextPath}"/>
+
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+        <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
   <style>
     body {
       margin: 0;
@@ -206,7 +210,14 @@
 
 <div class="post-container">
     <div class="post-title">${free.title}</div>
-    <div class="post-meta">${free.nickname}</div>
+
+    <!-- 작성자 닉네임 + 배지 -->
+        <div class="post-meta">
+          <c:if test="${not empty free.nickname}">
+            <span class="js-user" data-nickname="${free.nickname}"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${free.nickname}">${free.nickname}</a></span>
+          </c:if>
+        </div>
+
     <div class="post-content">${free.content}</div>
 
     <c:forEach items="${fileList}" var="file">
@@ -273,7 +284,12 @@
           </div>
           <div class="comment-body">
             <div class="comment-header">
-              <span class="comment-nickname">${comment.nickname}</span>
+
+              <!-- 댓글 닉네임 + 배지 -->
+             <span class="comment-nickname">
+                   <span class="js-user" data-nickname="${comment.nickname}"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></span>
+              </span>
+
               <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
               <c:if test="${loginUserId eq comment.userId || isAdmin}">
                 <span class="comment-delete" onclick="commentDelete('${comment.id}')">삭제</span>

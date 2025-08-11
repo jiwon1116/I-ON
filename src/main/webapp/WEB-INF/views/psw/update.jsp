@@ -108,11 +108,11 @@
     <main class="content">
         <div class="form-container">
             <h2>정보 공유 글쓰기</h2>
-            <form action="/info/update" method="post" enctype="multipart/form-data">
+            <form id= "updateForm" action="/info/update" method="post" enctype="multipart/form-data">
 
                 <div class="form-group">
                     <label for="title">제목</label>
-                    <input type="text" id="title" name="title" value="${findDto.title}" required />
+                    <input type="text" id="title" name="title" value="${findDto.title}" required/>
                 </div>
 
                 <div class="form-group">
@@ -122,12 +122,12 @@
 
                 <div class="form-group">
                     <label for="file">썸네일 이미지(필수)</label>
-                    <input type="file" id="file" name="file" required multiple/>
+                    <input type="file" id="file" name="file" multiple/>
                 </div>
 
                <div class="form-group">
                  <label for="file" class="form-label">게시물 이미지</label>
-                 <input type="file" class="form-control" id="file" name="file" required multiple>
+                 <input type="file" class="form-control" id="file" name="file" multiple>
               </div>
 
                 <input type="hidden" name="id" value="${findDto.id}" readonly/>
@@ -142,9 +142,22 @@
 
 <script>
 const updatefinish = () => {
-if(confirm("정말 수정하시겠습니까?")){
-            document.updateForm.submit();
-             }
-}
+    if (confirm("정말 수정하시겠습니까?")) {
+        const form = document.getElementById("updateForm");
+        const requiredFields = form.querySelectorAll("input[required], textarea[required]");
+
+        for (let field of requiredFields) {
+            if (!field.value.trim()) { // 공백만 입력된 경우도 막기
+                alert("모든 항목을 작성해주세요!");
+                field.focus();
+                return; // 함수 종료
+            }
+        }
+        // 모든 값이 채워져 있으면 알림 후 제출
+        alert("글 수정이 완료되었습니다🙂");
+        form.submit();
+    }
+};
+
 </script>
 </html>

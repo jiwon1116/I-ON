@@ -16,10 +16,15 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public MemberDTO findById(Long id){
+        return memberRepository.findById(id);
+    }
     public MemberDTO findByUserId(String userId){
         return memberRepository.findByUserId(userId);
     }
-
+    public MemberDTO findByNickname(String nickname){
+        return memberRepository.findByNickname(nickname);
+    }
     public void save(MemberDTO memberDTO) {
         memberRepository.save(memberDTO);
     }
@@ -58,10 +63,12 @@ public class MemberService {
         memberRepository.edit(currentMember);
     }
 
-        // 회원 이미지 수정
         public void updateProfileImg(String userId, String profileImg) {
             memberRepository.updateProfileImg(userId, profileImg);
         }
 
 
+    public MemberDTO findByNickname(String nickname) {
+        return memberRepository.findByNickname(nickname);
+    }
 }

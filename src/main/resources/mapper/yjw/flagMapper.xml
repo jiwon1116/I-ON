@@ -6,7 +6,6 @@
 <mapper namespace="Flag">
 
 
-    <!-- SELECT에도 city, district 추가 -->
     <insert id="write" parameterType="FlagPost"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO flag_post (title, nickname, content, userId, city, district)
@@ -94,7 +93,7 @@
         SELECT * FROM flag_post WHERE userId = #{userId} ORDER BY created_at DESC
     </select>
 
-    <!-- INSERT 구문에 city, district 추가 -->
+
     <insert id="insertFlagPost" parameterType="FlagPost">
         INSERT INTO flag_post
         (nickname, title, content, like_count, view_count, created_at, userId, city, district)
