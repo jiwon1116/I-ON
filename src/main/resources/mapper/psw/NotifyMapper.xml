@@ -23,4 +23,8 @@
         DELETE FROM notification WHERE id = #{id}
     </delete>
 
+    <delete id="deleteByPostId" parameterType="long">
+        DELETE FROM notification WHERE related_post_id = #{id}
+    </delete>
+
 </mapper>

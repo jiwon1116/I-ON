@@ -377,20 +377,6 @@
                  }
              });
          };
-
-
-    // 댓글 삭제
-    const commentDelete = (nickname, commentId) => {
-        if (!confirm("정말 삭제하시겠습니까?")) return;
-        $.ajax({
-            type: "post",
-            url: "/infocomment/delete",
-            data: { nickname: nickname, id: commentId },
-            dataType: "json",
-            success: function () { location.reload(); },
-            error: function () { console.log("댓글 삭제 실패"); }
-        });
-    };
 </script>
 </body>
 </html>

@@ -9,6 +9,7 @@ import com.spring.ion.jjh.service.free.FreeLikeService;
 import com.spring.ion.jjh.service.free.FreeService;
 import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.security.CustomUserDetails;
+import com.spring.ion.psw.service.NotifyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,7 @@ public class FreeController {
     private final FreeService freeService;
     private final FreeCommentService commentService;
     private final FreeLikeService freeLikeService;
+    private final NotifyService notifyService;
 
     @GetMapping
     public String paging(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
@@ -173,6 +175,7 @@ public class FreeController {
 
         if (free != null && (loginUserId.equals(free.getUserId()) || isAdmin)) {
             freeService.delete(clickId);
+            notifyService.deleteByPostId(clickId);
         }
 
         return "redirect:/free";

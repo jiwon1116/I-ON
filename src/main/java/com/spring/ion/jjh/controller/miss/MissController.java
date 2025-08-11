@@ -9,6 +9,7 @@ import com.spring.ion.jjh.service.miss.MissLikeService;
 import com.spring.ion.jjh.service.miss.MissService;
 import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.security.CustomUserDetails;
+import com.spring.ion.psw.service.NotifyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,7 @@ public class MissController {
     private final MissService missService;
     private final MissCommentService missCommentService;
     private final MissLikeService missLikeService;
+    private final NotifyService notifyService;
 
     @GetMapping
     public String paging(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
@@ -173,6 +175,7 @@ public class MissController {
 
         if (miss != null && (loginUserId.equals(miss.getUserId()) || isAdmin)) {
             missService.delete(clickId);
+            notifyService.deleteByPostId(clickId);
         }
         return "redirect:/miss";
     }

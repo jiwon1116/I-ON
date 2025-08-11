@@ -28,7 +28,7 @@
 
 
 
-    <select id="delete" parameterType="int">
+    <select id="delete" parameterType="long">
         DELETE FROM flag_post WHERE id = #{id}
     </select>
 

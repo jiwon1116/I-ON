@@ -39,7 +39,7 @@ public class FlagRepository {
         return sql.update("Flag.update", flagPostDTO);
     }
 
-    public void delete(int id) {
+    public void delete(long id) {
         sql.delete("Flag.delete", id);
     }
 

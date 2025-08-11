@@ -91,9 +91,7 @@ public class FlagService {
     }
 
 
-
-
-    public void delete(int id) {
+    public void delete(long id) {
         flagRepository.delete(id);
     }
 
