@@ -1,28 +1,8 @@
-// badge.js
-document.addEventListener('DOMContentLoaded', async () => {
-  const nodes = Array.from(document.querySelectorAll('.js-user[data-nickname]'));
-  const names = [...new Set(nodes.map(n => n.dataset.nickname).filter(Boolean))];
-  if (names.length === 0) return;
-
-  const res = await fetch('/api/member/levels?nicknames=' + encodeURIComponent(names.join(',')));
-  const map = await res.json(); // { nickname: level }
-
-  nodes.forEach(n => {
-    const lv = map[n.dataset.nickname] ?? 1;
-    const emoji = lv === 3 ? '👑' : (lv === 2 ? '🥜' : '🌱');
-    const badge = document.createElement('span');
-    badge.className = 'trust-badge badge-l' + lv;
-    badge.textContent = emoji;
-    n.insertAdjacentElement('afterend', badge);
-  });
-});
 // /resources/js/badge.js
 (() => {
-  // 중복 로드 가드
   if (window.__TRUST_BADGE_JS_LOADED__) return;
   window.__TRUST_BADGE_JS_LOADED__ = true;
 
-  // --- 1) 한번만 주입할 CSS ---
   const STYLE_ID = 'trust-badge-style';
   function injectStyleOnce() {
     if (document.getElementById(STYLE_ID)) return;
@@ -33,40 +13,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 .badge-l1{background:#e9f7ec}
 .badge-l2{background:#f9efe2}
 .badge-l3{background:#fff3cd}
-
-/* 관리자 강조(닉네임 파란색) */
-.is-admin{font-weight:700;color:#2563eb}
-
-/* 관리자 칩 */
+/* 관리자 강조: 링크까지 확실히 파랗게 */
+.is-admin, .is-admin a{font-weight:700;color:#2563eb !important}
 .admin-chip{
   display:inline-block;margin-left:6px;padding:2px 6px;
   font-size:11px;font-weight:600;border-radius:9999px;
   background:rgba(37,99,235,.12);color:#1e40af;border:1px solid rgba(37,99,235,.25)
 }
-
-/* 다크 모드(선택) */
 @media (prefers-color-scheme: dark){
-  .is-admin{color:#93c5fd}
+  .is-admin, .is-admin a{color:#93c5fd !important}
   .admin-chip{background:rgba(147,197,253,.18);color:#bfdbfe;border-color:rgba(147,197,253,.35)}
 }
     `;
     document.head.appendChild(style);
   }
 
-  // --- 2) 유틸 ---
   const isBadge = el => el?.classList?.contains('trust-badge');
   const isAdminChip = el => el?.classList?.contains('admin-chip');
   const alreadyHasBadge = el => isBadge(el?.nextElementSibling);
   const alreadyHasAdminChip = el => isAdminChip(el?.nextElementSibling);
 
-  // .js-user 엘리먼트에서 닉네임 추출: data-nickname 우선, 없으면 텍스트
   function pickNickname(el) {
     const d = (el.dataset.nickname || '').trim();
     if (d) return d;
     return (el.textContent || '').trim();
   }
 
-  // el 다음에 연속된 배지/칩 중복 제거(첫 것만 유지)
   function dedupeAround(el) {
     let cur = el.nextElementSibling;
     let seenBadge = false, seenChip = false;
@@ -81,16 +53,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (seenBadge || seenChip) el.dataset.badgeAttached = '1';
   }
 
-  // --- 3) API 호출 ---
   async function fetchBadgeMeta(names) {
     const ctx = document.querySelector('meta[name="ctx"]')?.content || '';
     const qs = encodeURIComponent(names.join(','));
-    // /badges (level + admin)
     try {
       const r = await fetch(`${ctx}/api/member/badges?nicknames=${qs}`, { credentials: 'same-origin' });
       if (r.ok) return await r.json(); // { nick: {level, admin} }
     } catch {}
-    // 실패 시 /levels (level만)
+    // 백업: level만 (관리자 미표시)
     try {
       const r2 = await fetch(`${ctx}/api/member/levels?nicknames=${qs}`, { credentials: 'same-origin' });
       if (!r2.ok) return {};
@@ -101,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch { return {}; }
   }
 
-  // --- 4) 메인 ---
   let inflight = false;
   async function attachBadges() {
     if (inflight) return;
@@ -112,18 +81,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       const all = Array.from(document.querySelectorAll('.js-user'))
         .filter(n => pickNickname(n).length > 0);
 
-      // 기존 붙은 것/중복 정리
       all.forEach(dedupeAround);
 
-      // 아직 안 붙은 대상
       const targets = all.filter(n => n.dataset.badgeAttached !== '1' && !alreadyHasBadge(n) && !alreadyHasAdminChip(n));
       const names = [...new Set(targets.map(pickNickname))];
       if (names.length === 0) return;
 
-      const metaMap = await fetchBadgeMeta(names); // { nick: {level, admin} }
+      const metaMap = await fetchBadgeMeta(names);
 
       targets.forEach(n => {
-        // 직전 재검사
         if (n.dataset.badgeAttached === '1' || alreadyHasBadge(n) || alreadyHasAdminChip(n)) {
           dedupeAround(n);
           return;
@@ -132,8 +98,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const nick = pickNickname(n);
         const meta = metaMap[nick] || { level: 1, admin: false };
 
+        // 관리자면 칩 + 파란색, 이모지 배지는 제거
         if (meta.admin === true || meta.admin === 1 || meta.admin === '1' || meta.admin === 'Y') {
-          // 관리자: 배지 제거, 닉네임 파란색 + '관리자' 칩
           if (isBadge(n.nextElementSibling)) n.nextElementSibling.remove();
           n.classList.add('is-admin');
           if (!alreadyHasAdminChip(n)) {
@@ -147,8 +113,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           return;
         }
 
-        // 일반 회원
-        if (isAdminChip(n.nextElementSibling)) n.nextElementSibling.remove(); // 권한 변경 대응
+        // 일반 회원: 이모지 배지
+        if (isAdminChip(n.nextElementSibling)) n.nextElementSibling.remove();
         const lv = Number(meta.level ?? 1);
         const emoji = lv === 3 ? '👑' : (lv === 2 ? '🥜' : '🌱');
 
@@ -168,7 +134,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   document.addEventListener('DOMContentLoaded', attachBadges);
-
-  // (옵션) SPA나 동적 렌더 대응용 공개 함수
   window.attachBadges = attachBadges;
 })();

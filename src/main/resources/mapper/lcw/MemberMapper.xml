@@ -175,14 +175,18 @@
         WHERE nickname = #{value}
     </select>
 
+    <!-- 리스트: 닉네임 → 레벨 맵 -->
     <select id="findLevelsByNicknames" parameterType="list" resultType="map">
-        SELECT m.nickname AS 'KEY', m.level AS 'VALUE'
+        SELECT
+        m.nickname                  AS 'KEY',
+        COALESCE(m.trust_level, 1)  AS 'VALUE'
         FROM member m
         WHERE m.nickname IN
         <foreach collection="list" item="n" open="(" separator="," close=")">
             #{n}
         </foreach>
     </select>
+
 
     <update id="updateMemberBan" parameterType="com.spring.ion.lcw.dto.MemberDTO">
         UPDATE member
