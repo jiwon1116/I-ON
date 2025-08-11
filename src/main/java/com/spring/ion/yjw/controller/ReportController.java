@@ -3,9 +3,12 @@ package com.spring.ion.yjw.controller;
 import com.spring.ion.yjw.dto.ReportDTO;
 import com.spring.ion.yjw.service.ReportService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/flag")
@@ -15,19 +18,22 @@ public class ReportController {
     private final ReportService reportService;
 
     @PostMapping("/report")
-    public String report(@RequestBody ReportDTO dto, HttpSession session) {
-        Long userId = (Long) session.getAttribute("loginId");
-        if (userId == null) {
-            throw new RuntimeException("로그인이 필요합니다.");
+    public ResponseEntity<String> report(@RequestBody ReportDTO dto) {
+
+        if (dto.getTargetId() == null) {
+            return ResponseEntity.badRequest().body("대상 ID가 필요합니다.");
         }
-        dto.setReporterId(userId);
-        dto.setStatus("PENDING");
-        dto.setType("ABUSE");
+        if (!StringUtils.hasText(dto.getType())) {
+            return ResponseEntity.badRequest().body("신고 유형을 선택해주세요.");
+        }
+        if (!StringUtils.hasText(dto.getContent())) {
+            return ResponseEntity.badRequest().body("신고 사유를 입력해주세요.");
+        }
+
+        dto.setStatus("PENDING"); // 접수 대기 상태
 
         reportService.saveReport(dto);
-        return "OK";
+
+        return ResponseEntity.ok("OK");
     }
 }
-
-
-
