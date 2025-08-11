@@ -138,6 +138,8 @@ public class FlagBoardController {
 
         // 게시글/댓글/첨부파일 조회
         FlagPostDTO flagPostDTO = flagService.findById(id);
+        if (flagPostDTO == null) return "redirect:/flag";
+
         List<FlagCommentDTO> flagCommentDTOList = flagCommentService.findAll(id);
         List<FlagFileDTO> fileList = flagService.findFilesByBoardId(id);
 
