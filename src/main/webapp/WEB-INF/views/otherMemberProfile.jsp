@@ -68,7 +68,31 @@
                 data-bs-toggle="modal" data-bs-target="#profileImgModal"
                 style="cursor:pointer;"
             >
-            <div class="profile-name">${target.nickname}님의 프로필</div>
+            <div class="profile-name">
+                ${target.nickname}님의 프로필
+                <security:authorize access="hasRole('ADMIN')">
+                  <a class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#banModal">계정 정지</a>
+                </security:authorize>
+                <div class="modal fade" id="banModal" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <form method="post" action="${pageContext.request.contextPath}/admin/ban/${target.userId}" class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">회원 정지</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <label class="form-label">정지 종료일시</label>
+                        <input type="datetime-local" name="banUntil" class="form-control" required>
+                      </div>
+                      <div class="modal-footer">
+                        <security:csrfInput/>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-danger">정지</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+            </div>
         </div>
         <div class="sidebar-bottom">
             <button class="logout-btn" onclick="history.back()">뒤로가기</button>
