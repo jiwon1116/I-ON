@@ -97,6 +97,13 @@
                     <div class="modal-body">
                       <input type="hidden" name="postId" value="${flag.id}" />
                       <div class="mb-3">
+                      <label for="reportType" class="form-label">신고 유형</label>
+                        <select class="form-select" name="type" id="reportType" required>
+                          <option value="">-- 신고 유형 선택 --</option>
+                          <option value="CURSE">욕설/비방</option>
+                          <option value="SPAM">스팸/광고</option>
+                          <option value="IMPROPER">부적절한 콘텐츠</option>
+                        </select>
                         <label for="reportReason" class="form-label">신고 사유</label>
                         <textarea class="form-control" name="reason" id="reportReason" required placeholder="신고 사유를 입력하세요"></textarea>
                       </div>
@@ -199,6 +206,11 @@
 
         // 신고 버튼
         $('#reportBtn').click(function(){
+        <!-- 폼 초기화 부분. 필요시 주석 해제하기
+            const $form = $('#reportForm');
+            $form[0].reset();
+            $('#reportReason').attr('placeholder', '신고 사유를 입력하세요');
+        -->
             var modal = new bootstrap.Modal(document.getElementById('reportModal'));
             modal.show();
         });
@@ -208,6 +220,7 @@
             e.preventDefault();
 
             const postId = $('input[name="postId"]').val();
+            const type   = $('#reportType').val();
             const reason = $('#reportReason').val();
             if(!reason.trim()) return alert("신고 사유를 입력해주세요.");
 
@@ -215,7 +228,7 @@
                 type: 'POST',
                 url: '${pageContext.request.contextPath}/flag/report',
                 contentType: 'application/json',
-                data: JSON.stringify({ targetId: postId, targetType: "POST", type: "ABUSE", content: reason }),
+                data: JSON.stringify({ targetId: postId, type: type, content: reason }),
                 success: function(){
                     alert('신고가 접수되었습니다.');
                     const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
