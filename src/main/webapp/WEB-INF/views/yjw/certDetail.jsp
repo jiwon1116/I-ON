@@ -18,7 +18,15 @@
     <div><b>학교/학년:</b> ${d.childSchool} / ${d.childGrade}</div>
     <div><b>상태:</b> ${d.status}</div>
     <div><b>등록일:</b> ${d.createdAt}</div>
-    <div class="mt-3"><b>파일 경로:</b> ${d.filePath}</div>
+    <div class="mt-3">
+      <img
+        src="<c:url value='/cert/preview/${d.id}'/>"
+        alt="재학증명서 미리보기"
+        class="img-fluid border rounded mt-2"
+        style="max-width:720px"
+      >
+    </div>
+
   </div>
 
   <div id="msg" class="alert d-none"></div>
