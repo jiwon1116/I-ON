@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <!-- 지역경보 모달을 위한 세션가져오기 -->
     <meta name="session-id" content="${pageContext.session.id}">
-    <title>마이페이지</title>
+    <title>회원페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -68,47 +68,12 @@
                 data-bs-toggle="modal" data-bs-target="#profileImgModal"
                 style="cursor:pointer;"
             >
-            <div class="profile-name">${member.nickname}</div>
-            <button type="button" class="profile-edit-btn mt-1" data-bs-toggle="modal" data-bs-target="#profileImgModal">
-                이미지 수정하기
-            </button>
+            <div class="profile-name">${target.nickname}님의 프로필</div>
         </div>
         <div class="sidebar-bottom">
-            <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
+            <button class="logout-btn" onclick="history.back()">뒤로가기</button>
         </div>
     </aside>
-    <%-- 프로필 이미지 업로드 모달 --%>
-    <div class="modal fade" id="profileImgModal" tabindex="-1" aria-labelledby="profileImgModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="profileImgForm" enctype="multipart/form-data">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="profileImgModalLabel">프로필 이미지 수정</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3 text-center">
-                            <img
-                                id="modalProfilePreview"
-                                src="<c:choose>
-                                        <c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when>
-                                        <c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise>
-                                     </c:choose>"
-                                class="profile-img"
-                                style="width:100px;height:100px;"
-                                alt="미리보기"
-                            >
-                        </div>
-                        <input type="file" name="profileImg" id="modalProfileImgInput" accept="image/*" class="form-control"/>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                        <button type="submit" class="btn btn-warning">저장하기</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <%-- 오른쪽 메인 --%>
     <div class="mypage-main">
@@ -143,82 +108,21 @@
                         <span>어린이 범죄 예방 지도</span>
                     </div>
                 </div>
-                <%-- 자녀 등록 --%>
                 <div class="dashboard-row">
-                    <div class="card p-4">
-                        <span>자녀 등록</span>
-                         <a href="/cert/my" class="btn btn-warning btn-sm mt-2">바로가기</a>
+                      <div class="card p-4">
+                        <span>${target.nickname}님이 작성한 글</span>
+                        <a href="${pageContext.request.contextPath}/othermemberprofile/otherPost?userId=${target.userId}" class="btn btn-warning btn-sm mt-2">바로가기</a>
                     </div>
                     <div class="card p-4">
-                        <span>내가 작성한 글</span>
-                        <a href="/myPost" class="btn btn-warning btn-sm mt-2">바로가기</a>
-                    </div>
-                    <div class="card p-4">
-                        <span>내가 작성한 댓글</span>
-                        <a href="/myComment" class="btn btn-warning btn-sm mt-2">바로가기</a>
+                        <span>${target.nickname}님이 작성한 댓글</span>
+                       <a href="${pageContext.request.contextPath}/othermemberprofile/otherComment?userId=${target.userId}" class="btn btn-warning btn-sm mt-2">바로가기</a>
                     </div>
                 </div>
-                <div class="dashboard-row">
-                    <div class="card p-4" style="flex:2">
-                        <span>내 소식</span>
-                        <div class="text-center text-muted py-5">
-                            <i class="fas fa-bell fa-2x mb-2"></i><br>
-                            <%-- 알림 목록 --%>
-                           <div class="notification-list" id="notifyList">
-                            <c:forEach var="notify" items="${notifyList}">
-                                <c:choose>
-                                    <c:when test="${notify.type == 'COMMENT'}">
-                                        <div class="notification-item">
-                                            <div class="notify-header">
-                                                <span class="notify-icon">[댓글]💬</span>
-                                            </div>
-                                            <div class="notify-content">${notify.content}</div>
-                                            <button onclick="deleteNotify(${notify.id})">❌</button>
-                                            <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
-                                            <div class="notify-date">
-                                                <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
-                                            </div>
-                                        </div>
-                                    </c:when>
-                                    <c:when test="${notify.type == 'DANGER_ALERT'}">
-                                        <%-- 자바스크립트 안 쓰고 hidden input으로 우회 저장 (지역 위험 알림) --%>
-                                        <input type="hidden" class="danger-alert" value="${notify.content}" />
-                                          <div class="notification-item">
-                                         <div class="notify-header">
-                                            <span class="notify-icon">[위험]🚨</span>
-                                         </div>
-                                             <div class="notify-content">${notify.content}</div>
-                                             <button onclick="deleteNotify(${notify.id})">❌</button>
-                                             <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
-                                        <div class="notify-date">
-                                            <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
-                                        </div>
-                                    </c:when>
-                                </c:choose>
-                            </c:forEach>
-                               </div>
-                               <%-- 지역 위험 알림 모달 --%>
-                               <div class="modal fade" id="dangerModal" tabindex="-1" role="dialog">
-                                 <div class="modal-dialog" role="document">
-                                   <div class="modal-content">
-                                     <div class="modal-header">
-                                       <h5 class="modal-title">📢 위험 알림</h5>
-                                     </div>
-                                     <div class="modal-body">
-                                       <%-- 여기에 메시지 들어감 --%>
-                                     </div>
-                                     <div class="modal-footer">
-                                       <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
-                                     </div>
-                                   </div>
-                                 </div>
-                               </div>
-                        </div>
-                    </div>
+
                     <%-- 신뢰도 점수판(도넛차트) --%>
                     <div class="card p-4" style="flex:1;">
                         <div class="d-flex align-items-center mb-2" style="gap: 10px;">
-                            <span style="font-weight:600; font-size:1.08rem;">신뢰도 점수판</span>
+                            <span style="font-weight:600; font-size:1.08rem;">${target.nickname}님의 신뢰도 점수판</span>
                             <span class="donut-grade-badge">
                               <c:choose>
                                 <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">🌱 새싹맘</c:when>
@@ -287,141 +191,65 @@
             </div><%-- main-board --%>
         </div><%-- mypage-main --%>
     </div><%-- mypage-layout --%>
-<script>
-    // 1. 모달 이미지 미리보기
-    document.getElementById('modalProfileImgInput').addEventListener('change', function(event) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('modalProfilePreview').src = e.target.result;
-        };
-        if (event.target.files.length > 0) {
-            reader.readAsDataURL(event.target.files[0]);
-        }
-    });
-    // 2. 업로드 AJAX
-    $('#profileImgForm').on('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        $.ajax({
-            url: '/profile/upload',
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(result) {
-                // 좌측 사이드바 이미지 갱신
-                $('#profileImgPreview').attr('src', result.profileImgUrl || 'https://img.icons8.com/ios-glyphs/60/000000/user.png');
-                // 모달 닫기
-                var modal = bootstrap.Modal.getInstance(document.getElementById('profileImgModal'));
-                modal.hide();
-                alert('프로필 이미지가 변경되었습니다.');
-            },
-            error: function() {
-                alert('업로드 실패');
-            }
-        });
-    });
-</script>
- <script>
-    function deleteNotify(id) {
-    $.ajax({
-        type: "POST",
-        url: "/mypage/delete",
-        data: { id: id },
-        success: function(response) {
-            alert("알림이 삭제되었습니다.");
-            location.reload();
-        },
-        error: function() {
-            alert("삭제 실패");
-        }
-    });
-}
- </script>
-<%-- 지역 사건 알림
-     sessionScope.dangerAlertShown: JSP의 세션 객체에 저장된 dangerAlertShown 속성을 참조
-     sessionScope는 JSP Expression Language(EL)에서 세션 범위를 나타내는 내장 객체
-     c태그로 아래의 2가지를 확인
-     1. notifyList에 알림이 있는지 (not empty notifyList).
-     2. 서버 세션에 dangerAlertShown이라는 속성이 없는지 (empty sessionScope.dangerAlertShown) --%>
 
-<c:if test="${not empty notifyList and empty sessionScope.dangerAlertShown}">
+    <%-- 도넛차트 Chart.js 스크립트 + 게이지바 스크립트 --%>
     <script>
-         // HTML 문서가 모두 로드된 후 스크립트를 실행합니다.
-        document.addEventListener("DOMContentLoaded", function () {
-           // 모든 .danger-alert 클래스를 가진 요소를 찾아 배열로 만듦
-            const alerts = Array.from(document.querySelectorAll(".danger-alert"))
-                                .map(e => e.value) // 각 요소의 value 값을 가져옴
-                                .filter(Boolean);  // 값이 비어있지 않은 요소만 남김
-
-            // 만약 alerts 배열에 내용이 하나라도 있다면, 모달을 표시
-            if (alerts.length > 0) {
-                document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
-            // 부트스트랩 모달을 생성하고 보여줌
-                new bootstrap.Modal(document.getElementById('dangerModal')).show();
+        // JSP 변수 치환 (꼭 Number로!)
+        const reportCount = Number('${trustScore.reportCount}');
+        const entrustCount = Number('${trustScore.entrustCount}');
+        const commentCount = Number('${trustScore.commentCount}');
+        // Chart.js 도넛 그리기
+        const ctx = document.getElementById('trustDonut').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['제보', '위탁', '댓글'],
+                datasets: [{
+                    data: [reportCount, entrustCount, commentCount],
+                    backgroundColor: [
+                        '#4bc0c0', // 제보
+                        '#f6a623', // 위탁
+                        '#63a4fa'  // 댓글
+                    ],
+                    borderWidth: 0,
+                }]
+            },
+            options: {
+                cutout: '65%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw + '개';
+                            }
+                        }
+                    }
+                }
             }
         });
+        // 게이지바
+        const totalScore = Number('${trustScore.totalScore}');
+        let grade = '${fn:trim(trustScore.grade)}';
+        const gaugeBar = document.getElementById('trustGaugeBar');
+        const gaugeText = document.getElementById('trustGaugeText');
+        const maxScore = 30;
+        let percent = Math.min((totalScore / maxScore) * 100, 100);
+        setTimeout(() => {
+            gaugeBar.style.width = percent + '%';
+        }, 300);
+
+
+        let text = '';
+        if (grade === '캡숑맘') {
+            text = `${target.nickname}님은 최고 등급 달성! 👑`;
+        } else if (grade === '도토리맘') {
+            text = `${target.nickname}님은 캡숑맘까지 <b>${30-totalScore}</b>점 남았어요!`;
+        } else if (grade === '새싹맘') {
+            text = `${target.nickname}님은 도토리맘까지 <b>${10-totalScore}</b>점 남았어요!`;
+        }
+        gaugeText.innerHTML = text;
+
     </script>
-    <c:set var="dangerAlertShown" value="true" scope="session"/>
-</c:if>
-
-  <script>
-      // 도넛차트 Chart.js 스크립트 + 게이지바 스크립트
-      // JSP 변수 치환 (꼭 Number로!)
-      const reportCount = Number('${trustScore.reportCount}');
-      const entrustCount = Number('${trustScore.entrustCount}');
-      const commentCount = Number('${trustScore.commentCount}');
-      // Chart.js 도넛 그리기
-      const ctx = document.getElementById('trustDonut').getContext('2d');
-      new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-              labels: ['제보', '위탁', '댓글'],
-              datasets: [{
-                  data: [reportCount, entrustCount, commentCount],
-                  backgroundColor: [
-                      '#4bc0c0', // 제보
-                      '#f6a623', // 위탁
-                      '#63a4fa'  // 댓글
-                  ],
-                  borderWidth: 0,
-              }]
-          },
-          options: {
-              cutout: '65%',
-              plugins: {
-                  legend: { display: false },
-                  tooltip: {
-                      callbacks: {
-                          label: function(context) {
-                              return context.label + ': ' + context.raw + '개';
-                          }
-                      }
-                  }
-              }
-          }
-      });
-      // 게이지바
-      const totalScore = Number('${trustScore.totalScore}');
-      let grade = '${fn:trim(trustScore.grade)}';
-      const gaugeBar = document.getElementById('trustGaugeBar');
-      const gaugeText = document.getElementById('trustGaugeText');
-      const maxScore = 30;
-      let percent = Math.min((totalScore / maxScore) * 100, 100);
-      setTimeout(() => {
-          gaugeBar.style.width = percent + '%';
-      }, 300);
-
-      let text = '';
-      if (grade === '캡숑맘') {
-          text = '최고 등급 달성! 👑';
-      } else if (grade === '도토리맘') {
-          text = '캡숑맘까지 <b>' + (30-totalScore) + '</b>점 남았어요!'; // 수정된 부분
-      } else if (grade === '새싹맘') {
-          text = '도토리맘까지 <b>' + (10-totalScore) + '</b>점 남았어요!'; // 수정된 부분
-      }
-      gaugeText.innerHTML = text;
-
-  </script>
 </body>
 </html>

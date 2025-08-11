@@ -119,6 +119,7 @@
         AND nickname != #{writerNickname}
     </select>
 
+
     <!-- 재학 증명서 관련 yjw-->
     <update id="markVerified" parameterType="string">
         UPDATE member
@@ -158,5 +159,15 @@
 
     </mapper>
 
+
+
+    <select id="findByNickname" parameterType="String" resultType="com.spring.ion.lcw.dto.MemberDTO">
+        SELECT *
+        FROM member
+        WHERE nickname = #{nickname}
+    </select>
+
+
+</mapper>
 
 

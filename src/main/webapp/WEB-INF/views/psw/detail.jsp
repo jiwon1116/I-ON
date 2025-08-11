@@ -256,11 +256,11 @@
             <div class="comment-section">
                 <h3>댓글</h3>
 
-                <!-- 댓글 작성 폼 -->
-                <input type="text" id="commentContents" placeholder="내용"  />
-                <div class="form-actions">
-                    <button type="button" onclick="commentWrite()">댓글 작성</button>
-                </div>
+            <!-- 댓글 작성 폼 -->
+              <input type = "text" id = "commentContents" placeholder = "내용"  />
+               <div class="form-actions">
+                 <button type="button" onclick="commentWrite()">댓글 작성</button>
+               </div>
 
                 <!-- 댓글 목록 -->
                 <div id="comment-list">
@@ -268,7 +268,7 @@
                         <div class="comment-box">
                             <div class="comment-writer">
                                 <!-- ✅ 배지 대상 -->
-                                <span class="js-user" data-nickname="${comment.nickname}">${comment.nickname}</span>
+                                <span class="js-user" data-nickname="${comment.nickname}"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></span>
                             </div>
                             <div>${comment.content}</div>
                             <div class="comment-date">
@@ -316,28 +316,68 @@
     // 삭제 버튼
     const deletefn = () => {
         const id = "${findDto.id}";
-        if (confirm("정말 삭제하시겠습니까?")) {
-            location.href = "/info/delete?id=" + id;
-        }
-    }
 
-    const commentWrite = () => {
-        const rawNickname = "${member.nickname}";
-        const nickname = (rawNickname && rawNickname !== "null" && rawNickname !== "") ? rawNickname : "admin";
-        const content = document.getElementById("commentContents").value.trim();
-        const post_id = "${findDto.id}";
+        const confirmed = confirm("정말 삭제하시겠습니까?");
+           if (confirmed) {
+                  location.href = "/info/delete?id=" + id;
+                  }
+      }
 
-        if (!nickname || !content) { alert("내용을 입력해주세요."); return; }
+      const commentWrite = () => {
+              // 게시물 작성자 닉네임이 없으면 관리자임
+             const rawNickname = "${member.nickname}";
+             const nickname = (rawNickname && rawNickname !== "null" && rawNickname !== "") ? rawNickname : "admin";
 
-        $.ajax({
-            type: "post",
-            url: "/infocomment/save",
-            data: { nickname, content, post_id },
-            dataType: "json",
-            success: function() { location.reload(); },
-            error: function() { console.log("실패"); }
-        });
-    }
+              const content = document.getElementById("commentContents").value.trim();
+              const post_id = "${findDto.id}";
+
+              if (!nickname || !content) {
+                      alert("내용을 입력해주세요.");
+                      return;
+               }
+              $.ajax({
+                  type: "post",
+                  url: "/infocomment/save",
+                  data: {
+                      nickname : nickname,
+                      content : content,
+                      post_id : post_id
+                  },
+                  dataType : "json",
+                  success : function(commentList) {
+                  alert("댓글 작성이 완료되었습니다🙂");
+                  location.reload(); // 페이지 전체 새로고침 (위 리스트에 새로운 댓글 반영)
+                  },
+                  error : function() {
+                      console.log("실패");
+                  }
+              });
+          }
+
+         // JS 함수는 인자로 받아야 정확하게 타겟팅 가능
+         const commentDelete = (nickname, commentId) => {
+             const confirmed = confirm("정말 삭제하시겠습니까?");
+             if (!confirmed) return;
+
+             alert("댓글이 삭제되었습니다🙂");
+             $.ajax({
+                 type: "post",
+                 url: "/infocomment/delete",
+                 data: {
+                     nickname: nickname,
+                     id: commentId
+                 },
+                 dataType: "json",
+                 success: function (commentList) {
+                    console.log("댓글 삭제 성공");
+                    location.reload();
+                 },
+                 error: function () {
+                     console.log("댓글 삭제 실패");
+                 }
+             });
+         };
+
 
     // 댓글 삭제
     const commentDelete = (nickname, commentId) => {

@@ -60,6 +60,7 @@ public class MemberRepository {
     }
 
 
+
     // 재학증명서 -yjw
     public int markVerified(String userId){
         return sql.update("Member.markVerified", userId); // ← namespace.id 맞추기
@@ -107,3 +108,8 @@ public class MemberRepository {
         return v != null && v == 1;
     }
 }
+    public MemberDTO findByNickname(String nickname) {
+       return sql.selectOne("Member.findByNickname", nickname);
+    }
+}
+

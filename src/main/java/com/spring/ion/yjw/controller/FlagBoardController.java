@@ -188,9 +188,6 @@ public class FlagBoardController {
     }
 
 
-
-
-
     // 수정 폼 이동 시 기존 파일 리스트도 함께 넘김
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable("id") int id, Model model) {
@@ -262,8 +259,6 @@ public class FlagBoardController {
         }
         return "redirect:/flag/";
     }
-
-
 
 
     // 페이징

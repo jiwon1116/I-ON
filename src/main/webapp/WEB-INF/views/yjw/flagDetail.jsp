@@ -34,9 +34,10 @@
             <h4 class="card-title">${flag != null ? flag.title : ''}</h4>
 
             <div class="mb-3 text-muted small">
+
                 <c:if test="${flag != null}">
                     <!-- 닉네임 + 배지 -->
-                    <span class="js-user" data-nickname="${flag.nickname}">${flag.nickname}</span>
+                    <span class="js-user" data-nickname="${flag.nickname}"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${flag.nickname}"> ${flag != null ? flag.nickname : ''}</a></span>
                 </c:if>
 
                 <c:if test="${not empty flag.city}">
@@ -72,7 +73,7 @@
             <div class="text-end mb-2">
                 <!-- 수정/삭제 버튼 -->
                 <security:authentication property="principal.username" var="loginUserId"/>
-                <c:if test="${loginUserId eq flag.userId or isAdmin}">
+                <c:if test="{$loginUserId eq flag.userId or isAdmin}">
                     <a href="${pageContext.request.contextPath}/flag/update/${flag.id}">수정</a>
                     <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}"
                        onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
@@ -158,7 +159,7 @@
                     <div class="card-body">
                         <p class="card-text">${comment.content}</p>
                         <footer class="blockquote-footer">
-                            <span class="js-user" data-nickname="${comment.nickname}">${comment.nickname}</span>
+                            <span class="js-user" data-nickname="${comment.nickname}"> <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></span>
                             | <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
                             <c:if test="${comment.userId eq loginUserId or isAdmin}">
                                 <button class="btn btn-sm btn-outline-danger float-end"
