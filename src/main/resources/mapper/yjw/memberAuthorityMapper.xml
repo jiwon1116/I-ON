@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="MemberAuthorityMapper">
-    <delete id="deleteRoleMember">
+<mapper namespace="MemberAuthority">
+
+    <!-- ROLE_MEMBER → ROLE_AUTH_MEMBER 로 업데이트 -->
+    <update id="promoteToAuthMember" parameterType="map">
+        UPDATE member_authority
+        SET authority = 'ROLE_AUTH_MEMBER'
+        WHERE userId = #{userId} AND authority = 'ROLE_MEMBER'
+    </update>
+
+    <!-- 혹시 없으면 추가 (중복 무시) -->
+    <insert id="insertRoleAuthMember" parameterType="map">
+        INSERT IGNORE INTO member_authority (userId, authority)
+        VALUES (#{userId}, 'ROLE_AUTH_MEMBER')
+    </insert>
+
+    <!-- 필요시 직접 삭제용 -->
+    <delete id="deleteRoleMember" parameterType="map">
         DELETE FROM member_authority
         WHERE userId = #{userId} AND authority = 'ROLE_MEMBER'
     </delete>
-
-    <insert id="insertRoleAuthMember">
-        INSERT INTO member_authority (userId, authority)
-        VALUES (#{userId}, 'ROLE_AUTH_MEMBER')
-
-    </insert>
 </mapper>
+

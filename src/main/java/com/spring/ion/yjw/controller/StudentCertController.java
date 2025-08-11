@@ -123,11 +123,16 @@ public class StudentCertController {
     /** 관리자 승인 */
     @PostMapping("/admin/{id}/approve")
     @ResponseBody
-    public Map<String, Object> approve(@PathVariable Long id,
-                                       @RequestParam("reviewer") String reviewer) {
-        Map<String, Object> res = new HashMap<>();
-        service.approve(id, reviewer);
-        res.put("ok", true);
+    public Map<String,Object> approve(@PathVariable Long id,
+                                      @RequestParam("reviewer") String reviewer) {
+        Map<String,Object> res = new HashMap<>();
+        try {
+            service.approve(id, reviewer);
+            res.put("ok", true);
+        } catch (Exception e) {
+            res.put("ok", false);
+            res.put("error", e.getMessage());
+        }
         return res;
     }
 
@@ -142,6 +147,38 @@ public class StudentCertController {
         res.put("ok", true);
         return res;
     }
+
+    // 반려건 재제출
+    @PostMapping("/{id}/resubmit")
+    @ResponseBody
+    public Map<String,Object> resubmit(@PathVariable Long id,
+                                       @RequestParam(value="file", required=false) MultipartFile file,
+                                       @RequestParam("childName") String childName,
+                                       @RequestParam("childBirth") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate childBirth,
+                                       @RequestParam(value="childSchool", required=false) String childSchool,
+                                       @RequestParam(value="childGrade", required=false) String childGrade) {
+        String userId = resolveUserId();
+        Map<String,Object> res = new HashMap<>();
+        if (userId == null) { res.put("error","로그인이 필요합니다."); return res; }
+
+        int calcAge = LocalDate.now().getYear() - childBirth.getYear()
+                - (LocalDate.now().getDayOfYear() < childBirth.withYear(LocalDate.now().getYear()).getDayOfYear() ? 1 : 0);
+
+        StudentCertDTO dto = new StudentCertDTO();
+        dto.setId(id);
+        dto.setUserId(userId);
+        dto.setChildName(childName);
+        dto.setChildBirth(childBirth);
+        dto.setChildAge(calcAge);
+        dto.setChildSchool(childSchool);
+        dto.setChildGrade(childGrade);
+
+        service.resubmit(file, dto);
+        res.put("ok", true);
+        res.put("message", "재제출되었습니다. 승인 대기(PENDING)로 변경되었습니다.");
+        return res;
+    }
+
 
     /** 파일 미리보기(이미지 스트리밍) */
     @GetMapping("/preview/{id}")

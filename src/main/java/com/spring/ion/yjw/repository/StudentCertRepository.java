@@ -28,20 +28,20 @@ public class StudentCertRepository {
         return sql.selectOne("StudentCert.findDetail", id);
     }
 
-    public void approve(Long id, String reviewer) {
+    public int approveIfPending(Long id, String reviewer) {
         Map<String,Object> p = new HashMap<>();
-        p.put("id", id);
-        p.put("reviewer", reviewer);
-        sql.update("StudentCert.approve", p);
+        p.put("id", id); p.put("reviewer", reviewer);
+        return sql.update("StudentCert.approve", p);
+    }
+    public int rejectIfPending(Long id, String reason, String reviewer) {
+        Map<String,Object> p = new HashMap<>();
+        p.put("id", id); p.put("reason", reason); p.put("reviewer", reviewer);
+        return sql.update("StudentCert.reject", p);
+    }
+    public int resubmit(StudentCertDTO dto) {
+        return sql.update("StudentCert.resubmit", dto);
     }
 
-    public void reject(Long id, String reason, String reviewer) {
-        Map<String,Object> p = new HashMap<>();
-        p.put("id", id);
-        p.put("reason", reason);
-        p.put("reviewer", reviewer);
-        sql.update("StudentCert.reject", p);
-    }
 
     public List<StudentCertDTO> findByUser(String userId) {
         return sql.selectList("StudentCert.findByUser", userId);
