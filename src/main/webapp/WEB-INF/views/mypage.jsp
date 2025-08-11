@@ -117,9 +117,23 @@
     <%-- 오른쪽 메인 --%>
     <div class="mypage-main">
         <div class="main-header">
-            <button class="icon-btn" title="알림"><i class="fas fa-bell"></i></button>
+            <button id="alertBtn" type="button" class="icon-btn" data-bs-html="true" data-bs-container="body" title="알림">
+            <i class="fas fa-bell"></i>
+            </button>
+             <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
             <button class="icon-btn" title="쪽지"><i class="fas fa-envelope"></i></button>
         </div>
+        <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
+            <div id="popover-content" class="d-none"></div>
+ <%-- 편지 아이콘에 총 읽지 않은 메시지 수 추가 --%>
+      <a href="/chat" class="icon-link">
+          <span class="icon">✉️</span>
+          <c:if test="${totalUnreadCount > 0}">
+              <span id="total-unread-count" class="badge unread-count-badge">
+                  ${totalUnreadCount}
+              </span>
+          </c:if>
+      </a>
 
 <%-- 메인 보드(카드 내용) --%>
             <div class="main-board">
@@ -185,20 +199,20 @@
                                         </div>
                                     </c:when>
 
-                                    <c:when test="${notify.type == 'DANGER_ALERT'}">
-                                        <%-- 자바스크립트 안 쓰고 hidden input으로 우회 저장 (지역 위험 알림) --%>
-                                        <input type="hidden" class="danger-alert" value="${notify.content}" />
-                                          <div class="notification-item">
-                                         <div class="notify-header">
-                                            <span class="notify-icon">[위험]🚨</span>
-                                         </div>
-                                             <div class="notify-content">${notify.content}</div>
-                                             <button onclick="deleteNotify(${notify.id})">❌</button>
-                                             <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
-                                        <div class="notify-date">
-                                            <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
-                                        </div>
-                                    </c:when>
+                                   <c:when test="${notify.type == 'DANGER_ALERT'}">
+                                       <input type="hidden" class="danger-alert" value="${notify.content}" />
+                                       <div class="notification-item">
+                                           <div class="notify-header">
+                                               <span class="notify-icon">[위험]🚨</span>
+                                           </div>
+                                           <div class="notify-content">${notify.content}</div>
+                                           <button onclick="deleteNotify(${notify.id})">❌</button>
+                                           <a href="/${notify.related_board}/${notify.related_post_id}">👉🏻해당 게시물로 이동</a>
+                                           <div class="notify-date">
+                                               <fmt:formatDate value="${notify.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                                           </div>
+                                       </div> <!-- 닫는 div 추가 -->
+                                   </c:when>
 
                                 </c:choose>
                             </c:forEach>
@@ -342,32 +356,33 @@
     });
 }
  </script>
-<%-- 지역 사건 알림
-     sessionScope.dangerAlertShown: JSP의 세션 객체에 저장된 dangerAlertShown 속성을 참조
-     sessionScope는 JSP Expression Language(EL)에서 세션 범위를 나타내는 내장 객체
-     c태그로 아래의 2가지를 확인
-     1. notifyList에 알림이 있는지 (not empty notifyList).
-     2. 서버 세션에 dangerAlertShown이라는 속성이 없는지 (empty sessionScope.dangerAlertShown) --%>
+<%-- 위험 알림 존재 여부를 서버에서 먼저 판별 --%>
+<c:set var="hasDanger" value="false" />
+<c:forEach var="n" items="${notifyList}">
+  <c:if test="${n.type == 'DANGER_ALERT'}">
+    <c:set var="hasDanger" value="true" />
+  </c:if>
+</c:forEach>
 
-<c:if test="${not empty notifyList and empty sessionScope.dangerAlertShown}">
-    <script>
-         // HTML 문서가 모두 로드된 후 스크립트를 실행합니다.
-        document.addEventListener("DOMContentLoaded", function () {
-           // 모든 .danger-alert 클래스를 가진 요소를 찾아 배열로 만듦
-            const alerts = Array.from(document.querySelectorAll(".danger-alert"))
-                                .map(e => e.value) // 각 요소의 value 값을 가져옴
-                                .filter(Boolean);  // 값이 비어있지 않은 요소만 남김
+<%-- 위험 알림이 있고, 아직 세션에 표시 이력이 없을 때만 스크립트/플래그 세팅 --%>
+<c:if test="${hasDanger and empty sessionScope.dangerAlertShown}">
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const alerts = Array.from(document.querySelectorAll(".danger-alert"))
+      .map(el => el.value || el.textContent || "")
+      .filter(Boolean);
 
-            // 만약 alerts 배열에 내용이 하나라도 있다면, 모달을 표시
-                       if (alerts.length > 0) {
-                           document.querySelector("#dangerModal .modal-body").innerHTML = alerts.join("<br>");
-                       // 부트스트랩 모달을 생성하고 보여줌
-                           new bootstrap.Modal(document.getElementById('dangerModal')).show();
-                        }
-            }
-        });
-    </script>
-    <c:set var="dangerAlertShown" value="true" scope="session"/>
+    if (alerts.length > 0) {
+      const bodyEl = document.querySelector("#dangerModal .modal-body");
+      if (bodyEl) bodyEl.innerHTML = alerts.join("<br>");
+      const modalEl = document.getElementById("dangerModal");
+      if (modalEl) new bootstrap.Modal(modalEl).show();
+    }
+  });
+  </script>
+
+  <%-- 여기서 ‘정말 뜰 수 있는 상황’일 때만 1회표시 플래그 설정 --%>
+  <c:set var="dangerAlertShown" value="true" scope="session" />
 </c:if>
 
   <script>
@@ -428,5 +443,140 @@
       gaugeText.innerHTML = text;
 
   </script>
+
+  <%-- 알림 팝오버 스크립트 --%>
+  <script>
+  document.addEventListener("DOMContentLoaded", async function () {
+    // 1) 버튼 찾기
+    var btn = document.getElementById("alertBtn");
+    if (!btn) return;
+
+    // 2) 컨텍스트 경로 (루트가 아닐 때 대비)
+    var base = "${pageContext.request.contextPath}" || "";
+
+    try {
+      // 3) 알림 목록 가져오기 (JSON)
+      var res = await fetch(base + "/notify/list", { credentials: "same-origin" });
+
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      var items = await res.json(); // ← 여기서부터 items 사용
+
+  // 읽지 않은 알림 수 계산해서 배지 업데이트
+  var unreadCount = items.filter(n => !n.isRead).length;
+  var badge = document.getElementById("notify-unread-count");
+  if (badge) {
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount;
+      badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
+    }
+  }
+
+  // 4) 최신이 위로 오게 정렬
+  items.sort(function (a, b) {
+    return (b.created_at || 0) - (a.created_at || 0);
+  });
+
+      // 5) HTML 시작 (5개 높이 정도로 보이게 → 스크롤)
+      var html = '<div style="max-height:220px; overflow-y:auto;">'
+               +   '<ul class="list-unstyled mb-0">';
+
+      if (items.length) {
+        // 6) 알림을 한 줄씩 <li>로 쌓기 (링크 포함)
+        for (var i = 0; i < items.length; i++) {
+          var n = items[i];
+         // 한 줄 출력: 내용 전체를 클릭하면 게시물로 이동, 옆에 삭제 버튼
+
+      // 내용
+      var text = (n && n.content) ? n.content : '';
+
+      // 링크: /{board}/{postId}  (컨텍스트 경로 포함)
+      var board = (n && n.related_board) ? n.related_board : "";
+      var pid   = (n && n.related_post_id) ? n.related_post_id : "";
+      var link  = base + "/" + board + "/" + pid;
+
+      // 한 줄 출력: 내용 전체를 클릭하면 게시물로 이동, 옆에 삭제 버튼
+    // 루프 안: 버튼을 onclick 대신 data-id로
+    html += '<li style="padding:6px 0; border-bottom:1px solid #f0f0f0;">'
+         +   '<a href="' + link + '" style="text-decoration:none; color:inherit;">' + text + '</a>'
+         +   '<button type="button" class="notify-delete" data-id="' + n.id + '"'
+         +           ' style="margin-left:8px;background:none;border:none;cursor:pointer;">❌</button>'
+         + '</li>';
+
+        }
+      } else {
+        // 7) 알림이 없을 때
+        html += '<li style="padding:10px;">알림이 없습니다🙂</li>';
+      }
+      // 8) HTML 마무리
+      html +=   '</ul>'
+             + '</div>';
+
+      // 9) 팝오버 생성 (content 옵션으로 주입)  sanitize 끄기
+     const pop = new bootstrap.Popover(btn, {
+       html: true,
+       container: 'body',
+       placement: 'bottom',
+       trigger: 'click',
+       title: '알림',
+       content: html,
+       sanitize: false
+     });
+
+    } catch (e) {
+      console.error("notify popover error:", e);
+      // 실패시 기본 문구
+      var fallback = '<div style="max-height:220px; overflow-y:auto;">'
+                   +   '<ul class="list-unstyled mb-0"><li>알림을 불러오지 못했습니다</li></ul>'
+                   + '</div>';
+      new bootstrap.Popover(btn, {
+        html: true, container: 'body', placement: 'bottom', trigger: 'click',
+        title: '알림', content: fallback
+      });
+    }
+  });
+
+  // 문서 위임으로 삭제 클릭 처리 (onclick 필요 없음)
+  document.addEventListener('click', function(e){
+    // 'notify-delete' 클래스를 가진 버튼을 클릭했는지 확인
+    if (e.target && e.target.classList.contains('notify-delete')) {
+      const id = e.target.getAttribute('data-id');
+
+      // 알림 삭제 함수 호출 (id만 전달)
+      deleteNotify(id);
+
+      // 삭제 성공 시, UI에서 즉시 해당 목록 항목 제거
+      e.target.closest('li')?.remove();
+    }
+  });
+
+  // 알림 삭제 함수
+  function deleteNotify(id, buttonElement) {
+    if (!confirm("이 알림을 삭제할까요?")) return;
+
+    const base = "${pageContext.request.contextPath}" || "";
+
+    fetch(base + "/notify/delete/" + id, {
+      method: "DELETE",
+      credentials: "same-origin"
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("삭제 실패: " + res.status);
+      return res.text(); // 서버 응답 텍스트를 받음
+    })
+    .then(responseText => {
+      console.log(responseText); // "삭제 성공" 메시지가 출력
+      // 서버 응답 성공 시, 페이지를 새로고침하여 캐시 문제를 해결
+      window.location.reload();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("삭제 중 오류가 발생했습니다.");
+    });
+  }
+  </script>
+
+
 </body>
 </html>

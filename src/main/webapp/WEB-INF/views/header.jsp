@@ -65,10 +65,14 @@
       <li class="main-menu"><a href="/info">정보 공유</a></li>
     </ul>
     <div class="icons">
-      <%-- 알림 팝오버 버튼 --%>
-    <button id="alertBtn" type="button" class="btn btn-secondary"
-            data-bs-html="true" data-bs-container="body" title="알림">🔔</button>
-    <div id="popover-content" class="d-none"></div>
+     <%-- 알림 팝오버 버튼 --%>
+     <div class="icon-link">
+       <button id="alertBtn" type="button" class="btn btn-secondary"
+               data-bs-html="true" data-bs-container="body" title="알림">🔔</button>
+
+       <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
+     </div>
+
       <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
     <div id="popover-content" class="d-none"></div>
 
@@ -102,10 +106,22 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!res.ok) throw new Error("HTTP " + res.status);
     var items = await res.json(); // ← 여기서부터 items 사용
 
-    // 4) 최신이 위로 오게 정렬
-    items.sort(function (a, b) {
-      return (b.created_at || 0) - (a.created_at || 0);
-    });
+// 읽지 않은 알림 수 계산해서 배지 업데이트
+var unreadCount = items.filter(n => !n.isRead).length;
+var badge = document.getElementById("notify-unread-count");
+if (badge) {
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount;
+    badge.style.display = "inline-block";
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+// 4) 최신이 위로 오게 정렬
+items.sort(function (a, b) {
+  return (b.created_at || 0) - (a.created_at || 0);
+});
 
     // 5) HTML 시작 (5개 높이 정도로 보이게 → 스크롤)
     var html = '<div style="max-height:220px; overflow-y:auto;">'
