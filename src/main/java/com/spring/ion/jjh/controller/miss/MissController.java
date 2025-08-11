@@ -105,6 +105,7 @@ public class MissController {
         }
 
         MissDTO miss = missService.findById(id);
+        if (miss == null) return "redirect:/miss";
 
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String loginUserId = user.getUsername();
@@ -121,13 +122,6 @@ public class MissController {
 
         int likeCount = missLikeService.getLikeCount(id);
         miss.setLike_count(likeCount);
-
-        // 로그인 사용자 좋아요 여부
-//        String memberId = (String) session.getAttribute("loginId");
-//        if (memberId != null) {
-//            boolean liked = missLikeService.isLiked(id, memberId);
-//            miss.setLiked(liked);
-//        }
 
         model.addAttribute("miss", miss);
 

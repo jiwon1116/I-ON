@@ -105,6 +105,7 @@ public class FreeController {
         }
 
         FreeDTO free = freeService.findById(id);
+        if (free == null) return "redirect:/free";
 
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String loginUserId = user.getUsername();
@@ -121,13 +122,6 @@ public class FreeController {
 
         int likeCount = freeLikeService.getLikeCount(id);
         free.setLike_count(likeCount);
-
-        // 로그인 사용자 좋아요 여부
-//        String memberId = (String) session.getAttribute("loginId");
-//        if (memberId != null) {
-//            boolean liked = freeLikeService.isLiked(id, memberId);
-//            free.setLiked(liked);
-//        }
 
         model.addAttribute("free", free);
 

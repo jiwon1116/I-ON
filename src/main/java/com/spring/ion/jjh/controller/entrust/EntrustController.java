@@ -105,6 +105,7 @@ public class EntrustController {
         }
 
         EntrustDTO entrust = entrustService.findById(id);
+        if (entrust == null) return "redirect:/entrust";
 
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String loginUserId = user.getUsername();
@@ -121,13 +122,6 @@ public class EntrustController {
 
         int likeCount = entrustLikeService.getLikeCount(id);
         entrust.setLike_count(likeCount);
-
-        // 로그인 사용자 좋아요 여부
-//        String memberId = (String) session.getAttribute("loginId");
-//        if (memberId != null) {
-//            boolean liked = entrustLikeService.isLiked(id, memberId);
-//            entrust.setLiked(liked);
-//        }
 
         model.addAttribute("entrust", entrust);
 

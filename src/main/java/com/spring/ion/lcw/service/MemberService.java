@@ -66,9 +66,4 @@ public class MemberService {
         public void updateProfileImg(String userId, String profileImg) {
             memberRepository.updateProfileImg(userId, profileImg);
         }
-
-
-    public MemberDTO findByNickname(String nickname) {
-        return memberRepository.findByNickname(nickname);
-    }
 }

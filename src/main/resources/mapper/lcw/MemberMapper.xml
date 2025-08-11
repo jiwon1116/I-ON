@@ -166,18 +166,6 @@
         AND ma.authority = 'ROLE_ADMIN'
         ) THEN 1 ELSE 0 END
     </select>
-
-    </mapper>
-
-
-
-    <select id="findByNickname" parameterType="String" resultType="com.spring.ion.lcw.dto.MemberDTO">
-        SELECT *
-        FROM member
-        WHERE nickname = #{nickname}
-    </select>
-
-
 </mapper>
 
 
