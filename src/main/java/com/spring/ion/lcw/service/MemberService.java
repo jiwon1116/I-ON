@@ -82,13 +82,4 @@ public class MemberService {
         memberRepository.updateMemberBan(member);  // DB에 반영
     }
 
-    @Transactional
-    public void unbanUser(String userId) {
-        MemberDTO member = memberRepository.findByUserId(userId);
-        if (member == null) {
-            throw new IllegalArgumentException("해당 회원을 찾을 수 없습니다.");
-        }
-        member.setEnabled(true);  // enabled를 true로 설정하여 회원 정지 해제
-        memberRepository.unban(member);  // DB에 반영
-    }
 }

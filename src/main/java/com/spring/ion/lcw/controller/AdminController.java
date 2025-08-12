@@ -72,16 +72,5 @@ public class AdminController {
         return "redirect:/admin";  // 관리자의 회원 목록 페이지로 리디렉션
     }
 
-    // 회원 정지 해제
-    @PostMapping("/admin/unban/{userId}")
-    public String unbanMember(@PathVariable String userId, RedirectAttributes ra) {
-        try {
-            memberService.unbanUser(userId);  // 회원 정지 해제 처리
-            ra.addFlashAttribute("editSuccess", "회원의 정지가 해제되었습니다.");
-        } catch (Exception e) {
-            ra.addFlashAttribute("editError", "회원 정지 해제 중 오류가 발생했습니다.");
-        }
-        return "redirect:/admin";
-    }
 }
 
