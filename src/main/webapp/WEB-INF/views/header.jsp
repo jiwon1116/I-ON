@@ -2,10 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <header>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
 
 <style>
@@ -108,7 +111,8 @@
       <li class="main-menu"><a href="/info">정보 공유</a></li>
     </ul>
     <div class="icons">
-     <%-- 알림 팝오버 버튼 --%>
+
+      <%-- 알림 팝오버 버튼 --%>
      <div class="icon-link">
        <button id="alertBtn" type="button" class="icon-btn"
                data-bs-html="true" data-bs-container="body" title="알림" aria-label="알림">
@@ -116,19 +120,18 @@
        </button>
        <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
      </div>
+    
+      <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
+    <div id="popover-content" class="d-none"></div>
 
-     <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
-     <div id="popover-content" class="d-none"></div>
-
-     <%-- 편지 아이콘에 총 읽지 않은 메시지 수 추가 --%>
-     <a href="${pageContext.request.contextPath}/chat" class="icon-link" aria-label="쪽지">
-       <i class="bi bi-envelope"></i>
-       <c:if test="${totalUnreadCount > 0}">
-         <span id="total-unread-count" class="badge unread-count-badge">
-           ${totalUnreadCount}
-         </span>
-       </c:if>
-     </a>
+      <%-- 편지 아이콘에 총 읽지 않은 메시지 수 추가 --%>
+      <a href="/chat" class="icon-link">
+          <span class="icon">✉️</span>
+          <span id="total-unread-count" class="badge unread-count-badge"
+                style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
+              ${totalUnreadCount}
+          </span>
+      </a>
 
 
     </div>
@@ -267,5 +270,66 @@ function deleteNotify(id, buttonElement) {
 }
 </script>
 
-</header>
+ <script>
+     let stompClientHeader = null;
+     let isHeaderConnected = false;
+     const currentUserId = '${currentUserId}';
 
+     function connectHeader() {
+         if (isHeaderConnected) return;
+         isHeaderConnected = true;
+
+         const socket = new SockJS('${pageContext.request.contextPath}/chat');
+         stompClientHeader = Stomp.over(socket);
+         stompClientHeader.debug = null;
+
+         stompClientHeader.connect({}, function (frame) {
+
+             stompClientHeader.subscribe('/user/sub/chat/user/' + currentUserId, function (message) {
+                 updateHeaderBadge();
+             });
+
+         }, function(error) {
+             isHeaderConnected = false;
+         });
+     }
+
+    async function updateHeaderBadge() {
+        try {
+            const timestamp = new Date().getTime();
+            const url = '${pageContext.request.contextPath}/chat/totalUnreadCount?_=' + timestamp;
+
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('total unread count fetch 실패');
+            }
+            const count = await response.json();
+            const badgeElement = document.getElementById('total-unread-count');
+            if (badgeElement) {
+                if (count > 0) {
+                    badgeElement.textContent = count;
+                    badgeElement.style.display = 'inline';
+                } else {
+                    badgeElement.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('알림 갱신 오류:', error);
+        }
+    }
+
+     window.addEventListener('load', function() {
+         connectHeader();
+         updateHeaderBadge();
+     });
+
+     window.addEventListener('beforeunload', function() {
+         if (stompClientHeader !== null && stompClientHeader.connected) {
+             stompClientHeader.disconnect();
+         }
+         isHeaderConnected = false;
+     });
+
+</script>
+
+</header>
