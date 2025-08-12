@@ -5,6 +5,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 
 <style>
@@ -44,11 +45,53 @@
     border-radius: 50%;
     padding: 2px 6px;
   }
+  .icon-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+
+  .icon-btn:hover {
+    opacity: 0.85;
+  }
+
+  .icon-link i {
+    font-size: 20px;
+    color: #fff;
+    line-height: 1;
+  }
+
+  /* 로고 영역도 같은 높이에서 가운데 정렬 */
+  .logo-section{
+    height: 64px;
+    display: flex;
+    align-items: center;        /* 로고 세로 가운데 */
+    justify-content: center;
+  }
+
+  .logo-section .logo {
+  height: 190px;
+  width: auto;
+  display: block;
+
+  }
+
+  /* (선택) 이미지 자체 여백 때문에 살짝 위/아래 치우쳐 보이면 미세 보정 */
+  .logo-section .logo.tweak-up   { transform: translateY(-2px); }
+  .logo-section .logo.tweak-down { transform: translateY( 2px); }
+
+
 </style>
 
   <nav class="top-nav">
     <div class="logo-section">
-      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
+       <a href="${pageContext.request.contextPath}/">
+          <img src="${pageContext.request.contextPath}/resources/img/logo.png" alt="ION" class="logo">
+        </a>
     </div>
     <ul class="nav-tabs">
       <li class="main-menu"><a href="/mypage/">마이페이지</a></li>
@@ -67,24 +110,26 @@
     <div class="icons">
      <%-- 알림 팝오버 버튼 --%>
      <div class="icon-link">
-       <button id="alertBtn" type="button" class="btn btn-secondary"
-               data-bs-html="true" data-bs-container="body" title="알림">🔔</button>
-
+       <button id="alertBtn" type="button" class="icon-btn"
+               data-bs-html="true" data-bs-container="body" title="알림" aria-label="알림">
+         <i class="bi bi-bell"></i>
+       </button>
        <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
      </div>
 
-      <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
-    <div id="popover-content" class="d-none"></div>
+     <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
+     <div id="popover-content" class="d-none"></div>
 
-      <%-- 편지 아이콘에 총 읽지 않은 메시지 수 추가 --%>
-      <a href="/chat" class="icon-link">
-          <span class="icon">✉️</span>
-          <c:if test="${totalUnreadCount > 0}">
-              <span id="total-unread-count" class="badge unread-count-badge">
-                  ${totalUnreadCount}
-              </span>
-          </c:if>
-      </a>
+     <%-- 편지 아이콘에 총 읽지 않은 메시지 수 추가 --%>
+     <a href="${pageContext.request.contextPath}/chat" class="icon-link" aria-label="쪽지">
+       <i class="bi bi-envelope"></i>
+       <c:if test="${totalUnreadCount > 0}">
+         <span id="total-unread-count" class="badge unread-count-badge">
+           ${totalUnreadCount}
+         </span>
+       </c:if>
+     </a>
+
 
     </div>
   </nav>

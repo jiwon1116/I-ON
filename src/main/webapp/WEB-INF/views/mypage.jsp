@@ -241,9 +241,9 @@
                             <span style="font-weight:600; font-size:1.08rem;">신뢰도 점수판</span>
                             <span class="donut-grade-badge">
                               <c:choose>
-                                <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">🌱 새싹맘</c:when>
-                                <c:when test="${fn:trim(trustScore.grade) eq '도토리맘'}">🥜 도토리맘</c:when>
-                                <c:when test="${fn:trim(trustScore.grade) eq '캡숑맘'}">👑 캡숑맘</c:when>
+                                <c:when test="${fn:trim(trustScore.grade) eq '새싹 보호자'}">🌱 새싹 보호자 </c:when>
+                                <c:when test="${fn:trim(trustScore.grade) eq '안심 지킴이'}">🏠 안심 지킴이</c:when>
+                                <c:when test="${fn:trim(trustScore.grade) eq '최고 안전 수호자'}">🏆 최고 안전 수호자</c:when>
                               </c:choose>
                               (${trustScore.totalScore}점)
                             </span>
@@ -285,9 +285,9 @@
                               <li><b>제보 횟수</b> : 신고/제보 게시판에 올린 게시글 수를 의미합니다.</li>
                               <li><b>위탁 횟수</b> : 위탁 게시판에 작성한 게시글 수를 의미합니다.</li>
                               <li><b>댓글</b> : 내가 단 댓글의 총 개수를 의미합니다.</li>
-                                  <span style="color:#40a048; font-weight:500;">새싹맘 (0~9점)</span>,
-                                  <span style="color:#a8743d; font-weight:500;">도토리맘 (10~29점)</span>,
-                                  <span style="color:#f6a623; font-weight:500;">캡숑맘 (30점 이상)</span>
+                                  <span style="color:#40a048; font-weight:500;">새싹 보호자 (0~9점)</span>,
+                                  <span style="color:#a8743d; font-weight:500;">안심 지킴이 (10~29점)</span>,
+                                  <span style="color:#f6a623; font-weight:500;">최고 안전 수호자 (30점 이상)</span>
                               </li>
                             </ul>
                             <div class="mt-2 text-secondary" style="font-size:0.98rem;">
@@ -433,12 +433,12 @@
       }, 300);
 
       let text = '';
-      if (grade === '캡숑맘') {
-          text = '최고 등급 달성! 👑';
-      } else if (grade === '도토리맘') {
-          text = '캡숑맘까지 <b>' + (30-totalScore) + '</b>점 남았어요!'; // 수정된 부분
-      } else if (grade === '새싹맘') {
-          text = '도토리맘까지 <b>' + (10-totalScore) + '</b>점 남았어요!'; // 수정된 부분
+      if (grade === '최고 안전 수호자') {
+          text = '최고 등급 달성!  🏆';
+      } else if (grade === '안심 지킴이') {
+          text = '안심 지킴이까지 <b>' + (30-totalScore) + '</b>점 남았어요!'; // 수정된 부분
+      } else if (grade === '새싹 보호자') {
+          text = '새싹 보호자까지 <b>' + (10-totalScore) + '</b>점 남았어요!'; // 수정된 부분
       }
       gaugeText.innerHTML = text;
 

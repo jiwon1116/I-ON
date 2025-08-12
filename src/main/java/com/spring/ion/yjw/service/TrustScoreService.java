@@ -16,7 +16,7 @@ public class TrustScoreService {
         int entrustCount = trustScoreRepository.countAllEntrustsByNickname(nickname);
 
         int total = commentCount + reportCount + entrustCount;
-        String grade = total >= 30 ? "캡숑맘" : (total >= 10 ? "도토리맘" : "새싹맘");
+        String grade = total >= 30 ? "최고 안전 수호자" : (total >= 10 ? "안심 지킴이" : "새싹 보호자");
 
         // 계산 직후 DB에 저장
         trustScoreRepository.updateMemberTrust(nickname, total);
