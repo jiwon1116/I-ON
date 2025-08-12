@@ -5,6 +5,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
@@ -47,11 +48,53 @@
     border-radius: 50%;
     padding: 2px 6px;
   }
+  .icon-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+
+  .icon-btn:hover {
+    opacity: 0.85;
+  }
+
+  .icon-link i {
+    font-size: 20px;
+    color: #fff;
+    line-height: 1;
+  }
+
+  /* 로고 영역도 같은 높이에서 가운데 정렬 */
+  .logo-section{
+    height: 64px;
+    display: flex;
+    align-items: center;        /* 로고 세로 가운데 */
+    justify-content: center;
+  }
+
+  .logo-section .logo {
+  height: 190px;
+  width: auto;
+  display: block;
+
+  }
+
+  /* (선택) 이미지 자체 여백 때문에 살짝 위/아래 치우쳐 보이면 미세 보정 */
+  .logo-section .logo.tweak-up   { transform: translateY(-2px); }
+  .logo-section .logo.tweak-down { transform: translateY( 2px); }
+
+
 </style>
 
   <nav class="top-nav">
     <div class="logo-section">
-      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
+       <a href="${pageContext.request.contextPath}/">
+          <img src="${pageContext.request.contextPath}/resources/img/logo.png" alt="ION" class="logo">
+        </a>
     </div>
     <ul class="nav-tabs">
       <li class="main-menu"><a href="/mypage/">마이페이지</a></li>
@@ -68,10 +111,16 @@
       <li class="main-menu"><a href="/info">정보 공유</a></li>
     </ul>
     <div class="icons">
+
       <%-- 알림 팝오버 버튼 --%>
-    <button id="alertBtn" type="button" class="btn btn-secondary"
-            data-bs-html="true" data-bs-container="body" title="알림">🔔</button>
-    <div id="popover-content" class="d-none"></div>
+     <div class="icon-link">
+       <button id="alertBtn" type="button" class="icon-btn"
+               data-bs-html="true" data-bs-container="body" title="알림" aria-label="알림">
+         <i class="bi bi-bell"></i>
+       </button>
+       <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
+     </div>
+    
       <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
     <div id="popover-content" class="d-none"></div>
 
@@ -83,6 +132,7 @@
               ${totalUnreadCount}
           </span>
       </a>
+
 
     </div>
   </nav>
@@ -104,10 +154,22 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!res.ok) throw new Error("HTTP " + res.status);
     var items = await res.json(); // ← 여기서부터 items 사용
 
-    // 4) 최신이 위로 오게 정렬
-    items.sort(function (a, b) {
-      return (b.created_at || 0) - (a.created_at || 0);
-    });
+// 읽지 않은 알림 수 계산해서 배지 업데이트
+var unreadCount = items.filter(n => !n.isRead).length;
+var badge = document.getElementById("notify-unread-count");
+if (badge) {
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount;
+    badge.style.display = "inline-block";
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+// 4) 최신이 위로 오게 정렬
+items.sort(function (a, b) {
+  return (b.created_at || 0) - (a.created_at || 0);
+});
 
     // 5) HTML 시작 (5개 높이 정도로 보이게 → 스크롤)
     var html = '<div style="max-height:220px; overflow-y:auto;">'

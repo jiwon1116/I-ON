@@ -4,9 +4,10 @@ import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.repository.MemberRepository;
 import com.spring.ion.lcw.security.InfoChangeRestrictionException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -16,15 +17,18 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public MemberDTO findById(Long id){
+    public MemberDTO findById(Long id) {
         return memberRepository.findById(id);
     }
-    public MemberDTO findByUserId(String userId){
+
+    public MemberDTO findByUserId(String userId) {
         return memberRepository.findByUserId(userId);
     }
-    public MemberDTO findByNickname(String nickname){
+
+    public MemberDTO findByNickname(String nickname) {
         return memberRepository.findByNickname(nickname);
     }
+
     public void save(MemberDTO memberDTO) {
         memberRepository.save(memberDTO);
     }
@@ -63,8 +67,19 @@ public class MemberService {
         memberRepository.edit(currentMember);
     }
 
-        public void updateProfileImg(String userId, String profileImg) {
-            memberRepository.updateProfileImg(userId, profileImg);
+    public void updateProfileImg(String userId, String profileImg) {
+        memberRepository.updateProfileImg(userId, profileImg);
+    }
+
+    @Transactional
+    public void banUser(String userId, LocalDateTime banUntil) {
+        MemberDTO member = memberRepository.findByUserId(userId);
+        if (member == null) {
+            throw new IllegalArgumentException("해당 회원을 찾을 수 없습니다.");
         }
+        member.setEnabled(false);  // enabled를 false로 설정하여 회원 정지
+        member.setBanUntil(banUntil);  // 정지 기간 설정
+        memberRepository.updateMemberBan(member);  // DB에 반영
+    }
 
 }

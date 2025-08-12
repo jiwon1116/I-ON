@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -19,13 +20,18 @@
 
   <table class="table table-hover align-middle">
     <thead>
-      <tr><th>신고자 ID</th><th>게시판</th><th>제목</th><th>승인</th><th>반려</th></tr>
+      <tr><th>신고자 ID</th><th>게시판</th><th>신고 내용</th><th>승인</th><th>반려</th></tr>
     </thead>
     <tbody>
     <c:forEach var="report" items="${reportList}">
       <tr>
         <td>${report.reporterId}</td>
-        <td>${report.targetBoard} / ${report.targetContentId}</td>
+        <td>
+          ${report.targetBoard} /
+          <a href="${pageContext.request.contextPath}/${fn:toLowerCase(report.targetBoard)}/${report.targetContentId}">
+            ${report.targetContentId}
+          </a>
+        </td>
         <td><c:out value="${report.description}"/></td>
         <td>
           <form method="post" action="${pageContext.request.contextPath}/report/${report.id}/approve" style="display:inline;">
