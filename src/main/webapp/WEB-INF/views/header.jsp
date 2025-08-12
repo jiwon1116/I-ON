@@ -14,7 +14,7 @@
 
   <nav class="top-nav">
     <div class="logo-section">
-      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
+      <a href="/"><img src="${pageContext.request.contextPath}/resources/img/logo.png" alt="logo"></a>
     </div>
     <ul class="nav-tabs">
       <li class="main-menu">
