@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -67,4 +68,11 @@ public class MemberService {
             memberRepository.updateProfileImg(userId, profileImg);
         }
 
+    public int checkDuplicateUserId(String userId) {
+       return memberRepository.checkDuplicateUserId(userId);
+    }
+
+    public int checkDuplicateNickname(String nickname) {
+        return memberRepository.checkDuplicateNickname(nickname);
+    }
 }

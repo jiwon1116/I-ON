@@ -108,6 +108,19 @@
         WHERE userId = #{userId}
     </update>
 
+    <select id="checkDuplicateUserId" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM member
+        WHERE userId = #{userId}
+    </select>
+
+    <select id="checkDuplicateNickname" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM member
+        WHERE nickname = #{nickname}
+    </select>
+
+
     <update id="updateNicknameUntil" parameterType="com.spring.ion.lcw.dto.MemberDTO">
         UPDATE member
         SET nickname_until = #{nicknameUntil}
@@ -185,6 +198,8 @@
         FROM member
         WHERE nickname = #{value}
     </select>
+
+
 </mapper>
 
 

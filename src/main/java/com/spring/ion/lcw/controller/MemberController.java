@@ -9,6 +9,7 @@ import com.spring.ion.lcw.service.ReCaptchaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -231,6 +232,29 @@ public class MemberController {
             redirectAttributes.addFlashAttribute("member", currentMember);
             return "redirect:/naver-edit";
         }
+    }
+
+    @GetMapping("/checkDuplicateUserId")
+    public ResponseEntity<Boolean> checkDuplicateUserId(@RequestParam String userId) {
+        boolean isDuplicate = memberService.checkDuplicateUserId(userId) > 0;
+        return ResponseEntity.ok(isDuplicate);
+    }
+
+    @GetMapping("/checkDuplicateNickname")
+    public ResponseEntity<Boolean> checkDuplicateNickname(@RequestParam String nickname) {
+        boolean isDuplicate = memberService.checkDuplicateNickname(nickname) > 0;
+        return ResponseEntity.ok(isDuplicate);
+    }
+
+    @GetMapping("/checkDuplicateNicknameForEdit")
+    public ResponseEntity<Boolean> checkDuplicateNicknameForEdit(@RequestParam String nickname) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberDTO currentMember = userDetails.getMemberDTO();
+        boolean isDuplicate = memberService.checkDuplicateNickname(nickname) > 0;
+        if(currentMember.getNickname().equals(nickname)){
+            isDuplicate = false;
+        }
+        return ResponseEntity.ok(isDuplicate);
     }
 
 

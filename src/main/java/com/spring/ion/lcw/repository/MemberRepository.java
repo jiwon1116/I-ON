@@ -113,5 +113,12 @@ public class MemberRepository {
     }
 
 
+    public int checkDuplicateUserId(String userId) {
+        return sql.selectOne("Member.checkDuplicateUserId", userId);
+    }
+
+    public int checkDuplicateNickname(String nickname) {
+        return sql.selectOne("Member.checkDuplicateNickname", nickname);
+    }
 }
 
