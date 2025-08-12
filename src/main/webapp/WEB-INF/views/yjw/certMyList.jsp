@@ -1,4 +1,5 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
@@ -40,6 +41,17 @@
     .btn:active{transform:translateY(1px)}
     .btn.outline{ background:#fff; color:#111; border:1px solid var(--line); box-shadow:none; }
     .btn.sm{ height:36px; padding:0 12px; font-size:13px; box-shadow:none; }
+
+/* 브랜드 버튼(부트스트랩 .btn 덮어쓰기) */
+.btn-brand{
+  background: var(--brand) !important;
+  color: #111 !important;
+  border: none !important;
+  box-shadow: 0 8px 16px rgba(242,172,40,.25) !important;
+}
+.btn-brand:active{ transform: translateY(1px); }
+.btn-brand:hover{ filter: brightness(.98); }
+
 
     /* 카드 & 테이블 */
     .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; overflow:hidden; }
@@ -87,7 +99,9 @@
   </style>
 </head>
 <body>
+<jsp:include page="/WEB-INF/views/header.jsp" />
 <div class="wrap">
+
   <div class="container">
 
     <div class="page-head">
@@ -95,7 +109,8 @@
         <h1 class="page-title">내 자녀 등록 내역</h1>
         <p class="sub">제출/승인 현황을 확인할 수 있어요.</p>
       </div>
-      <a class="btn" href="<c:url value='/cert/upload'/>">자녀 등록하기</a>
+     <a class="btn btn-brand" href="<c:url value='/cert/upload'/>">자녀 등록하기</a>
+
     </div>
 
     <c:choose>
