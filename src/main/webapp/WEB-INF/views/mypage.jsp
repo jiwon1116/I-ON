@@ -13,6 +13,8 @@
   <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <style>
@@ -482,9 +484,7 @@
 
         <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
           <i class="fas fa-envelope"></i>
-          <c:if test="${totalUnreadCount > 0}">
-            <span id="total-unread-count-sm" class="badge unread-count-badge">${totalUnreadCount}</span>
-          </c:if>
+          <span id="total-unread-count" class="badge unread-count-badge" style="display:none"></span>
         </a>
       </div>
       <button class="logout-btn logout-btn-sm" onclick="location.href='/logout'">로그아웃</button>
@@ -546,10 +546,9 @@
       </button>
       <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
         <i class="fas fa-envelope"></i>
-        <c:if test="${totalUnreadCount > 0}">
-          <span id="total-unread-count" class="badge unread-count-badge">${totalUnreadCount}</span>
-        </c:if>
+        <span id="total-unread-count-sm" class="badge unread-count-badge" style="display:none"></span>
       </a>
+
     </div>
 
     <div id="popover-content" class="d-none"></div>
@@ -902,7 +901,63 @@
       .catch(()=> alert("삭제 중 오류가 발생했습니다."));
   }
 </script>
+<script>
+    let stompClientHeader = null;
+    let isHeaderConnected = false;
+    const currentUserId = '${currentUserId}';
 
+    function connectHeader() {
+        if (isHeaderConnected) return;
+        isHeaderConnected = true;
+
+        const socket = new SockJS('${pageContext.request.contextPath}/chat');
+        stompClientHeader = Stomp.over(socket);
+        stompClientHeader.debug = null;
+
+        stompClientHeader.connect({}, function (frame) {
+            stompClientHeader.subscribe('/user/sub/chat/user/' + currentUserId, function (message) {
+                updateHeaderBadge();
+            });
+        }, function(error) {
+            isHeaderConnected = false;
+        });
+    }
+
+    async function updateHeaderBadge() {
+      try {
+        const url = '${pageContext.request.contextPath}/chat/totalUnreadCount?_=' + Date.now();
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('fetch 실패');
+        const count = await res.json();
+
+        ['total-unread-count','total-unread-count-sm'].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (count > 0) {
+            el.textContent = count;
+            el.style.display = 'inline';
+          } else {
+            el.style.display = 'none';
+          }
+        });
+      } catch (e) {
+        console.error('쪽지 뱃지 갱신 오류:', e);
+      }
+    }
+
+
+    window.addEventListener('load', function() {
+        connectHeader();
+        updateHeaderBadge();
+    });
+
+    window.addEventListener('beforeunload', function() {
+        if (stompClientHeader && stompClientHeader.connected) {
+            stompClientHeader.disconnect();
+        }
+        isHeaderConnected = false;
+    });
+</script>
 <script>
   function setVhUnit(){
     document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
