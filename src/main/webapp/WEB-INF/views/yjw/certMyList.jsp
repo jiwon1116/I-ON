@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
@@ -42,16 +41,15 @@
     .btn.outline{ background:#fff; color:#111; border:1px solid var(--line); box-shadow:none; }
     .btn.sm{ height:36px; padding:0 12px; font-size:13px; box-shadow:none; }
 
-/* 브랜드 버튼(부트스트랩 .btn 덮어쓰기) */
-.btn-brand{
-  background: var(--brand) !important;
-  color: #111 !important;
-  border: none !important;
-  box-shadow: 0 8px 16px rgba(242,172,40,.25) !important;
-}
-.btn-brand:active{ transform: translateY(1px); }
-.btn-brand:hover{ filter: brightness(.98); }
-
+    /* 브랜드 버튼(부트스트랩 .btn 덮어쓰기) */
+    .btn-brand{
+      background: var(--brand) !important;
+      color: #111 !important;
+      border: none !important;
+      box-shadow: 0 8px 16px rgba(242,172,40,.25) !important;
+    }
+    .btn-brand:active{ transform: translateY(1px); }
+    .btn-brand:hover{ filter: brightness(.98); }
 
     /* 카드 & 테이블 */
     .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; overflow:hidden; }
@@ -73,11 +71,19 @@
     /* Empty */
     .empty{ display:flex; align-items:center; justify-content:center; text-align:center; color:var(--muted); padding:40px 10px; }
 
-    /* ---------- 재제출 모달 ---------- */
-    .modal-backdrop{
-      position:fixed; inset:0; background:rgba(0,0,0,.35); display:none; align-items:center; justify-content:center; z-index:50;
+    /* ---------- 재제출 모달 (Bootstrap과 클래스 충돌 방지) ---------- */
+    .res-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.35);
+      display:none; align-items:center; justify-content:center; z-index:5000;
     }
-    .modal{ width:100%; max-width:640px; background:#fff; border-radius:16px; box-shadow:var(--shadow); padding:20px; }
+    .res-backdrop.is-open{ display:flex !important; }
+
+    .res-modal{
+      width:100%; max-width:640px; background:#fff;
+      border-radius:16px; box-shadow:var(--shadow); padding:20px;
+      max-height:90vh; overflow:auto;
+    }
+
     .modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
     .modal-title{ margin:0; font-weight:800; font-size:18px; }
     .close-x{ border:none; background:transparent; font-size:22px; line-height:1; cursor:pointer; }
@@ -95,13 +101,49 @@
     .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
     .alert{ border-radius:10px; padding:10px 12px; margin-top:8px; display:none; }
     .alert.err{ background:#fff1f2; color:#991b1b; border:1px solid #fecdd3; }
-    .show{ display:flex !important; }
+
+    /* ---------- 반응형 ---------- */
+    @media (max-width: 1024px){
+      .wrap{ padding:36px 14px; }
+      .page-title{ font-size:20px; }
+    }
+    @media (max-width: 768px){
+      .page-head{ flex-direction:column; align-items:flex-start; gap:8px; }
+      .btn{ height:40px; padding:0 14px; font-size:13px; }
+      .container{ max-width:100%; }
+    }
+    @media (max-width: 640px){
+      /* 테이블 → 카드 */
+      table{ border:0; min-width:0; }
+      thead{ display:none; }
+      tbody, tr, td { display:block; width:100%; }
+      tbody tr{
+        background:#fff; border:1px solid var(--line); border-radius:12px;
+        padding:10px 12px; box-shadow:var(--shadow); margin-bottom:12px;
+      }
+      tbody td{
+        border:none; padding:8px 0; word-break:break-word;
+      }
+      tbody td + td{ border-top:1px dashed #eee; }
+      tbody td::before{
+        content: attr(data-label);
+        display:block; font-size:12px; color:#777; margin-bottom:4px; font-weight:700;
+      }
+      .chip{ font-size:11px; padding:5px 8px; }
+
+      /* 모달 크기 & 폼 스택 */
+      .res-modal{ width:94vw; max-height:85vh; padding:16px; }
+      .row{ flex-direction:column; gap:8px; }
+    }
+    @media (max-width: 480px){
+      .actions{ flex-direction:column; align-items:stretch; }
+      .btn.sm{ height:32px; padding:0 10px; font-size:12px; }
+    }
   </style>
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/header.jsp" />
 <div class="wrap">
-
   <div class="container">
 
     <div class="page-head">
@@ -109,8 +151,7 @@
         <h1 class="page-title">내 자녀 등록 내역</h1>
         <p class="sub">제출/승인 현황을 확인할 수 있어요.</p>
       </div>
-     <a class="btn btn-brand" href="<c:url value='/cert/upload'/>">자녀 등록하기</a>
-
+      <a class="btn btn-brand" href="<c:url value='/cert/upload'/>">자녀 등록하기</a>
     </div>
 
     <c:choose>
@@ -136,21 +177,21 @@
             <tbody>
             <c:forEach var="it" items="${items}">
               <tr>
-                <td>
+                <td data-label="자녀">
                   <strong>${it.childName}</strong>
                   <c:if test="${it.childAge != null}"><span style="color:#888;">(${it.childAge})</span></c:if>
                 </td>
-                <td>${it.childBirth}</td>
-                <td>${it.childSchool} <c:if test="${not empty it.childGrade}">/ ${it.childGrade}</c:if></td>
-                <td>
+                <td data-label="생년월일">${it.childBirth}</td>
+                <td data-label="학교/학년">${it.childSchool} <c:if test="${not empty it.childGrade}">/ ${it.childGrade}</c:if></td>
+                <td data-label="상태">
                   <c:choose>
                     <c:when test="${it.status == 'APPROVED'}"><span class="chip ok">승인됨</span></c:when>
                     <c:when test="${it.status == 'REJECTED'}"><span class="chip bad">반려됨</span></c:when>
                     <c:otherwise><span class="chip wait">승인 대기</span></c:otherwise>
                   </c:choose>
                 </td>
-                <td>${it.createdAt}</td>
-                <td>
+                <td data-label="등록일">${it.createdAt}</td>
+                <td data-label="비고">
                   <c:if test="${it.status == 'REJECTED'}">
                     <button class="btn sm outline"
                             data-id="${it.id}"
@@ -175,8 +216,8 @@
 </div>
 
 <!-- 재제출 모달 -->
-<div id="resubmitBackdrop" class="modal-backdrop">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<div id="resubmitBackdrop" class="res-backdrop">
+  <div class="res-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-head">
       <h3 id="modalTitle" class="modal-title">재제출</h3>
       <button class="close-x" type="button" onclick="closeResubmit()">×</button>
@@ -228,10 +269,11 @@
 </div>
 
 <script>
-  const LIST_URL = '<c:url value="/cert/my"/>';
   let currentId = null;
+  let currentRow = null; // 재제출 대상 행 보관
 
   function handleOpenResubmit(btn){
+    currentRow = btn.closest('tr');
     openResubmit({
       id: btn.dataset.id,
       name: btn.dataset.name || '',
@@ -263,12 +305,14 @@
     const msg = document.getElementById('rsMsg');
     msg.style.display='none'; msg.textContent='';
 
-    // 모달 오픈
-    document.getElementById('resubmitBackdrop').classList.add('show');
+    // 모달 오픈 + 바디 스크롤 잠금
+    document.getElementById('resubmitBackdrop').classList.add('is-open');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeResubmit(){
-    document.getElementById('resubmitBackdrop').classList.remove('show');
+    document.getElementById('resubmitBackdrop').classList.remove('is-open');
+    document.body.style.overflow = '';
   }
 
   function previewThumb(e){
@@ -286,6 +330,24 @@
     if(e.target.id === 'resubmitBackdrop') closeResubmit();
   });
 
+  // 행을 '승인 대기'로 갱신하는 헬퍼
+  function setRowToPending(row, updated){
+    if(!row) return;
+    // thead: [자녀, 생년월일, 학교/학년, 상태, 등록일, 비고]
+    const statusTd = row.children[3];
+    const etcTd    = row.children[5];
+
+    statusTd.innerHTML = '<span class="chip wait">승인 대기</span>';
+    etcTd.innerHTML    = '<span class="text-muted small">재제출 완료</span>';
+
+    if (updated){
+      if (updated.childSchool || updated.childGrade){
+        row.children[2].textContent =
+          (updated.childSchool || '') + (updated.childGrade ? (' / ' + updated.childGrade) : '');
+      }
+    }
+  }
+
   // 재제출 전송(AJAX)
   document.getElementById('resubmitForm').addEventListener('submit', async (e)=>{
     e.preventDefault();
@@ -295,16 +357,35 @@
 
     try{
       const fd = new FormData(e.target);
-      const res = await fetch(e.target.action, { method:'POST', body: fd });
-      const data = await res.json().catch(()=> ({}));
+      const res = await fetch(e.target.action, { method:'POST', body: fd, redirect:'follow' });
 
-      if(res.ok && (data.ok || data.message)){
-        alert(data.message || '재제출되었습니다.');
-        location.href = LIST_URL;
-      }else{
-        msg.textContent = data.error || data.message || `재제출 실패 (HTTP ${res.status})`;
-        msg.style.display='block';
+      if (res.redirected) {
+        closeResubmit();
+        setRowToPending(currentRow, null);
+        alert('재제출되었습니다.');
+        return;
       }
+
+      const ct = res.headers.get('content-type') || '';
+
+      if (ct.includes('application/json')) {
+        const data = await res.json().catch(()=> ({}));
+        if (res.ok && (data.ok || data.message)) {
+          closeResubmit();
+          setRowToPending(currentRow, data.item || null);
+          alert(data.message || '재제출되었습니다.');
+          return;
+        } else {
+          msg.textContent = data.error || data.message || `재제출 실패 (HTTP ${res.status})`;
+          msg.style.display='block';
+          return;
+        }
+      }
+
+      closeResubmit();
+      setRowToPending(currentRow, null);
+      alert('재제출되었습니다.');
+
     }catch(err){
       msg.textContent = '네트워크 오류가 발생했습니다.';
       msg.style.display='block';
