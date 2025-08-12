@@ -148,7 +148,8 @@ public class StudentCertController {
         return res;
     }
 
-    // 반려건 재제출
+
+    // StudentCertController.java
     @PostMapping("/{id}/resubmit")
     @ResponseBody
     public Map<String,Object> resubmit(@PathVariable Long id,
@@ -157,9 +158,9 @@ public class StudentCertController {
                                        @RequestParam("childBirth") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate childBirth,
                                        @RequestParam(value="childSchool", required=false) String childSchool,
                                        @RequestParam(value="childGrade", required=false) String childGrade) {
-        String userId = resolveUserId();
         Map<String,Object> res = new HashMap<>();
-        if (userId == null) { res.put("error","로그인이 필요합니다."); return res; }
+        String userId = resolveUserId();
+        if (userId == null) { res.put("ok", false); res.put("error","로그인이 필요합니다."); return res; }
 
         int calcAge = LocalDate.now().getYear() - childBirth.getYear()
                 - (LocalDate.now().getDayOfYear() < childBirth.withYear(LocalDate.now().getYear()).getDayOfYear() ? 1 : 0);
@@ -173,11 +174,19 @@ public class StudentCertController {
         dto.setChildSchool(childSchool);
         dto.setChildGrade(childGrade);
 
-        service.resubmit(file, dto);
-        res.put("ok", true);
-        res.put("message", "재제출되었습니다. 승인 대기(PENDING)로 변경되었습니다.");
+        try {
+            service.resubmit(file, dto);             // DB 갱신
+            StudentCertDTO updated = service.detail(id); // 갱신된 값 조회
+            res.put("ok", true);
+            res.put("message", "재제출되었습니다. 승인 대기(PENDING)로 변경되었습니다.");
+            res.put("item", updated);
+        } catch (Exception e) {
+            res.put("ok", false);
+            res.put("error", e.getMessage());
+        }
         return res;
     }
+
 
 
     /** 파일 미리보기(이미지 스트리밍) */
