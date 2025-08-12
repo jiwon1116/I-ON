@@ -12,7 +12,7 @@
         .main-box {
             background: #ffeb99;
             border-radius: 20px;
-            margin: 60px auto 0 auto;
+            margin: 150px auto 0 auto;
             max-width: 900px;
             padding: 36px 36px 32px 36px;
             box-shadow: 0 8px 24px rgba(255,200,70,0.11);
