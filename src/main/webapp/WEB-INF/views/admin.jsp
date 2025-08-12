@@ -178,21 +178,40 @@
       margin:12px auto 0; text-align:center;
     }
 
-    /* ========== Responsive (모바일/태블릿) ========== */
+    /* 모바일/태블릿에서만 가로 배치 */
     @media (max-width: 992px){
       .mypage-layout{ grid-template-columns:1fr; }
+
       .sidebar{
-        position:static; height:auto;
+        position:static; height:80px;
         border-right:none; border-bottom:1px solid var(--line);
-        flex-direction:row; gap:14px; justify-content:flex-start;
-        background:#E9ECEF;
+        display:flex; flex-direction:row; align-items:center;
+        justify-content:flex-start; gap:14px;
+        background:#E9ECEF; padding:14px 16px;
+        flex-wrap:nowrap;                 /* 줄바꿈 방지 */
       }
+
+      /* 프로필 폼: 이미지와 이름을 가로로 */
+      .sidebar form{
+        display:flex; flex-direction:row; align-items:center; gap:10px;
+        width:auto;                       /* 데스크톱의 width:100% 영향 차단 */
+        margin:0;
+      }
+
       .profile-img{ width:56px; height:56px; }
-      .profile-name{ margin-top:0; font-size:.98rem; }
-      .sidebar-bottom{ margin-top:0; margin-left:auto; padding-top:0; }
+      .profile-name{ margin:0 0 0 8px; font-size:1rem; text-align:left; }
+
+      /* 로그아웃: 이름 오른쪽에 바로 붙임 */
+      .sidebar-bottom{
+        display:flex; align-items:center; justify-content:flex-start;
+        width:auto; margin:0 0 0 12px; padding:0;  /* 이름-버튼 간격 조절 */
+      }
+      .logout-btn{ margin:0; }
+
       .main-header{ display:none; }
       .main-board{ padding:16px; }
     }
+
 
     /* 카드 빈 상태 문구 전용 중앙 정렬 */
     .empty-center{
@@ -239,7 +258,7 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <form action="/profile/upload" method="post" enctype="multipart/form-data"
-          style="display:flex; flex-direction:column; align-items:center; width:100%;">
+          style="display:flex; align-items:center;">
       <label for="profileImgInput" style="cursor:pointer;">
         <img src="https://img.icons8.com/ios-glyphs/60/000000/user.png" class="profile-img" id="profileImgPreview" alt="프로필 이미지">
       </label>
@@ -282,7 +301,7 @@
           <span>아동 범죄 예방 게시판</span>
         </div>
         <div class="card link-card">
-          <a href="/map" class="stretched-link"></a>
+          <a href="/map/" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/worldwide-location.png" alt="">
           <span>어린이 범죄 예방 지도</span>
         </div>
