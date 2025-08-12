@@ -116,7 +116,7 @@
         // 일반 회원: 이모지 배지
         if (isAdminChip(n.nextElementSibling)) n.nextElementSibling.remove();
         const lv = Number(meta.level ?? 1);
-        const emoji = lv === 3 ? '👑' : (lv === 2 ? '🥜' : '🌱');
+        const emoji = lv === 3 ? '🏆' : (lv === 2 ? '🏠' : '🌱');
 
         const badge = document.createElement('span');
         badge.className = 'trust-badge badge-l' + (lv || 1);
