@@ -12,9 +12,7 @@
 
   <nav class="top-nav">
     <div class="logo-section">
-       <a href="${pageContext.request.contextPath}/">
-          <img src="${pageContext.request.contextPath}/resources/img/logo.png" alt="ION" class="logo">
-        </a>
+      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
     </div>
     <ul class="nav-tabs">
       <li class="main-menu">
@@ -51,7 +49,9 @@
                 style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
               ${totalUnreadCount}
           </span>
-      <a href="/chat"><span class="icon">✉️</span></a>
+
+      <a href="/chat" class="icon-link"><span class="icon">✉️</span></a>
+
     </div>
   </nav>
 

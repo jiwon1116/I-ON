@@ -1,68 +1,153 @@
+/* ===== Flag Detail (info-* 스코프) ===== */
 :root{
-  --brand:#FFD253;   /* 포인트 컬러 */
+  --brand: rgb(255,199,39);
   --ink:#222;
-  --muted:#6b7280;
-  --line:#e9ecef;
+  --muted:#666;
+  --line:#eceff3;
 }
-body{ background:#fff; color:var(--ink); }
 
-.board-wrap{ max-width: 950px; margin: 32px auto 96px; padding: 0 16px; }
-
-/* ===== post ===== */
-.post{ background:#fff; border:1px solid var(--line); border-radius:12px; }
-.post-head{ padding:20px 20px 12px; border-bottom:1px solid var(--line); }
-.post-title{ margin:0; font-size:28px; font-weight:800; line-height:1.25; }
-.post-meta{ display:flex; align-items:center; gap:10px; margin-top:10px; color:var(--muted); font-size:14px; }
-.post-meta .avatar{ width:36px; height:36px; border-radius:50%; background:#eee; }
-.post-body{ padding:20px; line-height:1.7; background:#fff; }
-
-/* 첨부 */
-.attach{ padding:0 20px 20px; }
-.attach h6{ font-weight:700; margin:0 0 8px; }
-.attach ul{ list-style:none; margin:0; padding:0; border-top:1px dashed var(--line); }
-.attach li{ padding:10px 0; border-bottom:1px dashed var(--line); }
-.attach img{ max-width:100%; border-radius:8px; }
-
-/* actions (좋아요/조회/댓글수 + 버튼) */
-.post-actions{ padding:12px 20px 20px; display:flex; align-items:center; justify-content:space-between; }
-.stats{ display:flex; align-items:center; gap:18px; color:#555; font-weight:600; }
-.stats i{ margin-right:6px; }
-
-.btn-like{
-  display:inline-flex; align-items:center; gap:6px;
-  border:1.5px solid var(--brand); color:#333; background:#fff;
-  padding:6px 14px; border-radius:999px; font-weight:700;
+.info-page-wrap{
+  display:flex; justify-content:center;
+  padding:40px 16px 80px;
+  background:#f7f7f8;
 }
-.btn-like.liked{ background:var(--brand); border-color:var(--brand); }
-.btn-like .bi{ vertical-align:-2px; }
-
-/* ===== comment form (본문 아래, 목록 위) ===== */
-.cmt-form{ margin:18px 0; }
-.cmt-input{
-  display:flex; align-items:center;
-  border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff; height:56px;
+.info-card{
+  width:100%; max-width:880px;
+  background:#fff; border-radius:16px;
+  box-shadow:0 6px 20px rgba(0,0,0,.06);
+  padding:28px 28px 18px;
 }
-.cmt-input textarea{
-  flex:1; height:100%; padding:14px; border:0; outline:none; resize:none; font-size:14px;
-}
-.cmt-input textarea::placeholder{ color:#9aa0a6; }
-.cmt-send{
-  flex:0 0 96px; height:100%; border:0; background:var(--brand); font-weight:700;
-}
-.cmt-input:focus-within{ box-shadow:0 0 0 3px rgba(255,210,83,.25); }
 
-/* ===== comments ===== */
-.comments{ background:#fff; border:1px solid var(--line); border-radius:12px; }
-.comments-head{ padding:14px 16px; border-bottom:1px solid var(--line); font-weight:700; }
-.cmt-item{ padding:14px 16px; border-bottom:1px solid #e9ecef; } /* 필요 시 #000으로 바꿔 라인 진하게 */
-.cmt-top{ display:flex; align-items:center; gap:10px; color:var(--muted); font-size:13px; margin-bottom:6px; }
-.cmt-top .avatar{ width:32px; height:32px; border-radius:50%; background:#eee; }
-.cmt-body{ white-space:pre-wrap; line-height:1.6; }
-.cmt-actions{ margin-top:8px; }
-.cmt-actions .btn{ padding:2px 8px; }
+/* 제목 + 우측 액션 */
+.info-head{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:16px; margin-bottom:12px;
+}
+.info-title{
+  font-size:28px; font-weight:700; letter-spacing:-.3px;
+  margin:0; color:var(--ink);
+}
+.info-actions{ display:flex; gap:12px; font-size:14px; color:#666; }
+.info-actions .link,
+.info-actions button{
+  background:transparent; border:none; color:#666; cursor:pointer;
+  padding:6px 8px; border-radius:8px; text-decoration:none;
+}
+.info-actions .link:hover,
+.info-actions button:hover{ background:#f2f2f2; }
 
-/* links */
-a, .link{ color:#222; text-decoration:none; }
-a:hover{ color:#111; text-decoration:underline; }
+/* 메타 */
+.info-meta{
+  display:flex; align-items:center; flex-wrap:wrap; gap:12px 18px;
+  color:#8a8a8a; font-size:14px; margin-bottom:16px;
+}
+.info-meta .info-author{ font-weight:600; color:#444; }
+.info-meta a{ color:#444; text-decoration:none; }
+.info-meta a:hover{ color:var(--brand); text-decoration:underline; }
+
+/* 본문 이미지 */
+.info-image{ width:100%; border-radius:12px; overflow:hidden; margin:10px 0 16px; }
+.info-image img{
+  display:block; width:50%; height:auto; object-fit:cover; margin:auto; border-radius:10px;
+}
+/* 여러 장일 경우 그리드 */
+.info-image-grid{
+  display:grid; gap:12px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  margin:12px 0 4px;
+}
+.info-image-grid img{
+  width:100%; height:180px; object-fit:cover; border-radius:10px; border:1px solid var(--line);
+}
+
+/* 본문 */
+.info-content{
+  background:#f8f8f9; border:1px solid var(--line); border-radius:12px;
+  padding:18px 16px; color:#444; line-height:1.7;
+}
+.info-content textarea{
+  width:100%; min-height:180px; border:none; background:transparent;
+  resize:vertical; font-size:17px; color:#444; line-height:1.7;
+  outline:none; white-space:pre-wrap;
+}
+
+/* 카운트/좋아요 */
+.info-stats{
+  display:flex; align-items:center; gap:16px; color:#666;
+  margin:16px 4px 6px; font-size:14px;
+}
+.info-like-btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:10px; background:#fff; cursor:pointer; border:1px solid var(--line);
+}
+.info-like-btn .heart{ font-size:18px; line-height:1; }
+.info-like-btn.liked .heart{ color:#f44336; }
+
+/* 댓글 */
+.info-comment-wrap{ margin-top:18px; }
+.info-comment-list{ display:flex; flex-direction:column; gap:10px; margin:8px 0 18px; }
+.info-comment-item{
+  display:flex; gap:12px; padding:14px;
+  background:#fafafa; border:1px solid var(--line); border-radius:12px;
+}
+.info-comment-avatar{ width:40px; height:40px; border-radius:50%; background:#ffe29a; flex:0 0 auto; }
+.info-comment-body{ flex:1; }
+.info-comment-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.info-comment-meta{ display:flex; align-items:center; gap:12px; }
+.info-comment-date{ color:#9aa1a9; font-size:12px; }
+.info-comment-content{ margin-top:6px; color:#444; line-height:1.6; }
+.info-comment-writer span{ font-weight:700; color:#333; }
+.info-comment-writer a{ color:#333; text-decoration:none; }
+.info-comment-writer a:hover{ color:var(--brand); text-decoration:underline; }
+
+.info-btn-del{
+  border:none; background:transparent; color:#666; padding:6px 8px;
+  border-radius:8px; cursor:pointer;
+}
+.info-btn-del:hover{ background:#f2f2f2; color:red; }
+
+/* 댓글 입력 */
+.info-comment-editor{
+  display:flex; gap:10px; align-items:flex-end;
+  padding:12px; border:1px solid var(--line); border-radius:12px; background:#fffdf7;
+}
+.info-comment-editor textarea{
+  flex:1; border:1px solid #e2e5ea; border-radius:10px;
+  padding:12px 14px; font-size:14px; outline:none; resize:vertical; min-height:80px;
+}
+.info-comment-editor button{
+  background:var(--brand); color:#222; border:1px solid var(--brand);
+  border-radius:10px; padding:12px 18px; font-weight:700; cursor:pointer;
+}
+.info-comment-editor button:hover{ filter:brightness(.97); }
+
+/* 하단 버튼 */
+.info-bottom-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:10px; }
+.info-btn-secondary{ background:#fff; border:1px solid #e2e5ea; border-radius:10px; padding:10px 16px; cursor:pointer; color:#333; }
+.info-btn-secondary:hover{ background:#f2f2f2; }
+.info-btn-primary{ background:var(--brand); color:#222; border:1px solid var(--brand); border-radius:10px; padding:10px 16px; cursor:pointer; font-weight:700; }
+.info-btn-primary:hover{ filter:brightness(.97); }
+
+/* 신고 버튼 배경 */
 .btn-brand{ background:var(--brand); border-color:var(--brand); }
-.btn-brand:hover{ filter:brightness(.98); }
+.btn-brand:hover{ filter:brightness(.97); }
+
+/* 스크롤바(전역) */
+::-webkit-scrollbar{ width:6px; height:6px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background-color:rgba(0,0,0,.3); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover{ background-color:rgba(0,0,0,.5); }
+*{ scrollbar-width:thin; scrollbar-color:rgba(0,0,0,.3) transparent; }
+
+/* 반응형 */
+@media (max-width:768px){
+  .info-title{ font-size:22px; }
+  .info-head{ flex-direction:column; align-items:flex-start; gap:8px; }
+  .info-meta{ gap:10px; }
+  .info-comment-item{ padding:12px; }
+  .info-comment-editor{ flex-direction:column; align-items:stretch; }
+  .info-comment-editor button{ width:100%; }
+}
+@media (max-width:480px){
+  .info-card{ padding:22px 18px; }
+}

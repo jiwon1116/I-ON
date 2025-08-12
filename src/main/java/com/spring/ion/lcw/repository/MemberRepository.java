@@ -27,11 +27,9 @@ public class MemberRepository {
         sql.delete("Member.deleteMember", username);
 
     }
-
     public MemberDTO findById(Long id) {
         return sql.selectOne("Member.findById", id);
     }
-
     public MemberDTO findByUserId(String username) {
         return sql.selectOne("Member.findByUserId", username);
     }
@@ -97,9 +95,7 @@ public class MemberRepository {
         return sql.selectOne("Member.findLevelByNickname", nickname);
     }
 
-    /**
-     * 닉네임 → {level, admin}
-     */
+    /** 닉네임 → {level, admin} */
     public Map<String, Map<String, Object>> findBadgeMetaByNicknames(List<String> names) {
         if (names == null || names.isEmpty()) return Collections.emptyMap();
         List<Map<String, Object>> rows = sql.selectList("Member.findBadgeMetaByNicknames", names);
@@ -131,6 +127,13 @@ public class MemberRepository {
     @Transactional
     public void updateMemberBan(MemberDTO member) {
         sql.update("Member.updateMemberBan", member);
+    }
+    public int checkDuplicateUserId(String userId) {
+        return sql.selectOne("Member.checkDuplicateUserId", userId);
+    }
+
+    public int checkDuplicateNickname(String nickname) {
+        return sql.selectOne("Member.checkDuplicateNickname", nickname);
     }
 }
 

@@ -9,7 +9,7 @@
     :root{
       --info-primary: rgb(255,199,39);
       --info-border:#e5e7eb;
-      --info-muted:#6b7280;
+      --info-muted:#6b7280
       --info-bg:#fff;
       --info-page:#fff9ed;
       --info-radius:12px;

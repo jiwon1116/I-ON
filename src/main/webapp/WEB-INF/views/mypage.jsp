@@ -2,9 +2,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<!DOCTYPE html>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -18,172 +16,433 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <style>
-    /* ===== 레이아웃 기본 ===== */
-    html,body{height:100%;overflow:hidden}
-    body{background:#F8F9FA;margin:0;font-family:'Pretendard','Apple SD Gothic Neo',Arial,sans-serif}
-    .mypage-layout{display:flex;height:100vh;overflow:hidden}
 
-    .sidebar{width:220px;height:100vh;background:#fff;border-right:1.5px solid #eee;display:flex;flex-direction:column;align-items:center}
-    .profile-img{width:72px;height:72px;border-radius:50%;background:#ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/46px no-repeat;margin-top:42px;margin-bottom:10px;object-fit:cover;cursor:pointer}
-    .profile-name{font-weight:600;font-size:1.02rem;color:#444;margin-bottom:6px}
-    .profile-edit-btn,.logout-btn{border:none;background:#f8f9fa;color:#666;font-size:.9rem;border-radius:10px;padding:6px 12px;margin-top:6px;cursor:pointer;transition:background .15s}
-    .profile-edit-btn:hover,.logout-btn:hover{background:#f1f1f1;color:#222}
-    .sidebar-bottom{margin-top:auto;width:100%;display:flex;flex-direction:column;align-items:center;padding-bottom:26px}
-
-    .mypage-main{flex:1 1 0;display:flex;flex-direction:column;min-width:0;min-height:0}
-    .main-header{flex:0 0 56px;height:56px;background:#D9D9D9;display:flex;align-items:center;justify-content:flex-end;padding:0 16px;border-bottom:1.5px solid #eee}
-    .icon-btn{position:relative;background:transparent;border:none;font-size:22px;margin-left:14px;color:#333;cursor:pointer}
-    .unread-count-badge{position:absolute;top:-6px;right:-8px;background:#ff3b30;color:#fff;border-radius:999px;padding:2px 6px;font-size:10px;line-height:1}
-
-    .main-board{flex:1 1 auto;display:flex;flex-direction:column;gap:14px;padding:16px;min-height:0;overflow:hidden}
-
-    /* ===== 그리드 (반응형) ===== */
-    /* 상단 4타일: 자동 칼럼 수, 최소 240px */
-    .cards-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:12px;
-      min-height:0;
-    }
-    /* 미니 카드 3개: 자동 칼럼 수, 최소 200px */
-    .mini-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:12px;
-      min-height:0;
+    /* === 전체 레이아웃 === */
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #F8F9FA;
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', Arial, sans-serif;
+      overflow-x: hidden; /* 가로 스크롤 방지 */
     }
 
-    /* 하단 2칸: 좌 1.6, 우 1 비율 → 좁아지면 자동 한 줄 */
-    .cards-grid:last-of-type{
-      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    .mypage-layout {
+      display: flex;
+      height: 100vh;
     }
 
-    /* ===== 타일/카드 ===== */
-    .tile{
-      position:relative;display:flex;align-items:center;gap:10px;
-      height:56px;background:#fff;border:none;border-radius:20px;
-      box-shadow:0 4px 10px rgba(20,30,58,.06);padding:0 14px
-    }
-    .tile img{width:28px;height:28px}
-    .tile span{font-size:15px;color:#333}
-    .tile a.stretched-link{position:absolute;inset:0;border-radius:20px}
-
-    .card{background:#fff;border-radius:20px;box-shadow:0 4px 10px rgba(20,30,58,.06);border:none}
-    .card-body{padding:16px}
-    .card.big{min-height:0}
-
-    /* ===== “내 소식”만 스크롤 ===== */
-    .news-card{display:flex;flex-direction:column;min-height:0;height:clamp(240px,36vh,460px)}
-    .notify-scroll{flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch}
-
-    /* ===== 신뢰도(도넛/게이지) ===== */
-    .donut-box{display:flex;flex-direction:column;align-items:center;justify-content:center}
-    .donut-box canvas{
-      margin-top:6px;
-      width:100% !important;
-      max-width:180px;      /* 기본 크기 */
-      height:auto !important;
-      aspect-ratio:1/1;     /* 비율 유지 */
-    }
-    .donut-labels{display:flex;gap:10px;justify-content:center;margin-top:8px;font-size:13px;flex-wrap:wrap}
-    .donut-label-dot{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:4px}
-    .donut-grade-badge{display:flex;align-items:center;gap:6px;margin-top:2px;font-size:15px;font-weight:600}
-    .trust-gauge-wrap{margin-top:10px;width:100%;max-width:220px}
-    .trust-gauge-bar-bg{width:100%;height:14px;background:#eee;border-radius:9px;overflow:hidden}
-    .trust-gauge-bar{height:100%;background:#FFC112;border-radius:9px 0 0 9px;width:0;transition:width .9s cubic-bezier(.23,1.01,.32,1)}
-    .trust-gauge-label{font-size:.9rem;text-align:right;margin-top:4px;color:#666}
-
-    /* ===== 반응형 세부 튜닝 ===== */
-    @media (max-width:1200px){
-      .sidebar{width:200px}
-    }
-    /* 작은 화면에서도 사이드바 유지 (컴팩트) */
-    @media (max-width: 900px){
-      .sidebar{
-        display:flex !important;   /* 숨기지 말고 유지 */
-        width: 120px;              /* 폭만 줄이기 */
-      }
-      .main-header{height:52px}
-      .main-board{padding:12px}
-
-      /* 사이드바 안 요소 컴팩트화 */
-      .profile-img{width:56px;height:56px;margin-top:20px}
-      .profile-name{font-size:.9rem;margin-bottom:4px}
-      .profile-edit-btn,.logout-btn{
-        font-size:.8rem; padding:4px 8px; border-radius:10px;
-      }
-      .sidebar-bottom{padding-bottom:18px}
+    /* === 사이드바 === */
+    .sidebar {
+      width: 250px;
+      background: #fff;
+      border-right: 1.5px solid #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 36px;
     }
 
-    /* 아주 작은 화면(찐 모바일) */
-    @media (max-width: 560px){
-      .sidebar{width: 96px}
-      .profile-img{width:52px;height:52px;margin-top:16px}
-      .profile-name{font-size:.85rem}
-      .profile-edit-btn,.logout-btn{font-size:.75rem;padding:3px 7px}
-    }
-    /* ===== 사진 레이아웃 고정 ===== */
-    /* 상단 타일: 데스크톱에서 항상 2열(= 2×2) */
-    .top-tiles{
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:14px;
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 0 10px;
     }
 
-    /* 미니 카드: 데스크톱 3열 고정 */
-    .mini-cards{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:14px;
+    .profile-img {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 8px;
+      background: #ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/46px no-repeat;
+      cursor: pointer;
     }
 
-    /* 하단 2칸: 좌 2, 우 1 비율 */
-    .bottom-grid{
-      display:grid;
-      grid-template-columns:2fr 1fr;
-      gap:14px;
+    .profile-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #444;
+      margin-bottom: 6px;
+      word-break: keep-all;
+      text-align: center;
     }
 
-    /* 카드/타일 더 작고 둥글게 */
-    .tile{
-      height:52px; padding:0 12px; border-radius:22px; box-shadow:0 4px 10px rgba(20,30,58,.06);
-    }
-    .tile img{width:26px;height:26px}
-    .tile span{font-size:15px}
-
-    .card{border-radius:22px; box-shadow:0 4px 10px rgba(20,30,58,.06)}
-    .card-body{padding:16px}
-
-    /* 내 소식: 높이 고정 + 내부 스크롤 */
-    .news-card{height:380px; min-height:0; display:flex; flex-direction:column}
-    .notify-scroll{flex:1 1 auto; min-height:0; overflow:auto; -webkit-overflow-scrolling:touch}
-
-    /* 도넛 차트: 데스크톱에서 정확히 맞게, 작은 화면에서만 축소 */
-    .donut-box canvas{
-      width:200px !important; height:200px !important; max-width:100%;
+    .profile-edit-btn, .logout-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+      background: #f8f9fa;
+      color: #666;
+      font-size: .85rem;
+      border-radius: 10px;
+      padding: 6px 10px;
+      margin-top: 6px;
+      cursor: pointer;
+      transition: background .15s;
     }
 
-    /* ===== 반응형 ===== */
-    @media (max-width: 1200px){
-      .top-tiles{grid-template-columns:repeat(2, minmax(0,1fr))}
-      .mini-cards{grid-template-columns:repeat(3, minmax(0,1fr))}
-      .bottom-grid{grid-template-columns:1.6fr 1fr}
-      .news-card{height:360px}
+    .profile-edit-btn:hover, .logout-btn:hover {
+      background: #f1f1f1;
+      color: #222;
     }
-    @media (max-width: 992px){
-      .top-tiles{grid-template-columns:repeat(2, minmax(0,1fr))}
-      .mini-cards{grid-template-columns:repeat(2, minmax(0,1fr))}
-      .bottom-grid{grid-template-columns:1fr}
-      .news-card{height:320px}
-      .donut-box canvas{width:180px !important; height:180px !important}
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 18px 0;
+      width: 100%;
     }
-    @media (max-width: 560px){
-      .top-tiles{grid-template-columns:1fr}
-      .mini-cards{grid-template-columns:1fr}
-      .news-card{height:300px}
-      .tile{height:48px;border-radius:24px}
-      .donut-box canvas{width:160px !important; height:160px !important}
+
+    /* === 오른쪽 메인 === */
+    .mypage-main {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
     }
+
+    /* 헤더 */
+    .main-header {
+      flex: 0 0 56px;
+      height: 56px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 16px;
+      border-bottom: 1.5px solid #eee;
+    }
+
+    .icon-btn {
+      position: relative;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 22px;
+      margin-left: 14px;
+      color: #333;
+      padding: 0 7px;
+      cursor: pointer;
+    }
+
+    .unread-count-badge {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: #ff3b30;
+      color: #fff;
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    /* === 메인 보드 === */
+    .main-board {
+      height: calc(100vh - 56px);
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      row-gap: 16px;
+      padding: 50px 200px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* 상단 그리드 (커뮤니티, 지도) */
+    .top-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .top-grid .card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .top-grid .card a.stretched-link {
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+    }
+
+    .top-grid .card img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .top-grid .card span {
+      font-size: 15px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    /* 중간 그리드 (자녀 등록, 글, 댓글) */
+    .middle-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    /* 하단 그리드 (내 소식, 신뢰도) */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    /* === 카드 공통 === */
+    .card {
+      position: relative;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(20, 30, 58, .06);
+      border: none;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    /* 내 소식 전용 스타일 */
+    .news-card {
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden; /* 카드 밖으로 새지 않게 */
+    }
+    .news-card .card-body {
+      flex: 1 1 0;
+      min-height: 0;          /* ← 핵심: 자식 스크롤 허용 */
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 0;
+    }
+    .news-card .notify-scroll {
+      flex: 1 1 0;
+      min-height: 0;          /* ← 핵심: 실제 스크롤 영역 */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-right: 10px;
+    }
+    .notification-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    /* 신뢰도 점수판 전용 스타일 */
+    .trust-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+    }
+
+    .donut-box {
+      width: 100%;
+      max-width: 180px; /* 도넛 차트 크기 줄임 */
+      margin: 10px auto;
+    }
+
+    .donut-labels {
+      display: flex;
+      justify-content: center;
+      gap: 7px; /* 라벨 간 간격 줄임 */
+      flex-wrap: wrap;
+      margin-top: 10px; /* 마진 줄임 */
+      font-size: 12px; /* 폰트 크기 줄임 */
+    }
+
+    .donut-grade-badge {
+      font-size: 0.9rem; /* 폰트 크기 줄임 */
+    }
+
+ /* 부모: 세로 스택 + 가운데 정렬 */
+ .trust-gauge-wrap{
+   display:flex;
+   flex-direction:column;
+   align-items:center;
+ }
+
+ .trust-gauge-label{
+   display:block;
+   width:auto;
+   align-self:center;
+   margin-top:6px;
+   text-align:center;
+   white-space:nowrap;
+ }
+
+ .trust-gauge-bar-bg{
+   position: relative;
+   width:145px;
+   height:8px;
+   background:#e9ecef;
+   border-radius:999px;
+   margin:8px auto 6px;
+   overflow:hidden;
+ }
+
+ .trust-gauge-bar{
+   position:absolute;
+   left:0; top:0; bottom:0;
+   width:0;               /* JS에서 width%로 채움 */
+   background:#ffc107;
+   border-radius:999px;
+   transition:width .5s ease-in-out;
+ }
+    .donut-label-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+
+/* ===== 모바일 (<=992px) 레이아웃 조정 ===== */
+  @media (max-width: 992px) {
+    html, body { height: auto; overflow-x: hidden; }
+
+    .mypage-layout{
+      flex-direction: column;
+      height: auto !important;
+      min-height: 100vh;
+      overflow: visible !important;
+    }
+
+    .sidebar{
+      width: 100%; height: auto;
+      border-right: none; border-bottom: 1.5px solid #eee;
+      flex-direction: row; align-items: center;
+      padding: 12px; gap: 10px;
+    }
+    .profile-section{ flex-direction: row; gap: 10px; align-items: center; width: auto; }
+    .profile-img{ width: 48px; height: 48px; margin: 0; }
+    .profile-name{ font-size: .95rem; margin: 0; }
+    .profile-edit-btn{ display: none; }
+    .mobile-actions, .sidebar-bottom{ margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .logout-btn{ width: auto; font-size: .8rem; padding: 6px 12px; margin-left: 25px; }
+
+    .main-header{ display: none; }
+
+    .main-board{
+      height: auto !important;
+      padding: 16px !important;
+      overflow: visible !important;
+      grid-template-rows: auto auto auto;
+    }
+
+    .top-grid, .middle-grid, .bottom-grid{ grid-template-columns: 1fr; }
+    .bottom-grid{ gap: 16px; }
+    .card{ padding: 16px; }
+
+    /* 여기서부터 수정된 부분 */
+    .news-card {
+      height: auto; /* Allow the card to grow based on content */
+      min-height: 200px; /* Minimum height for the card on mobile */
+    }
+    .news-card .card-body {
+      flex: 1; /* Allow card-body to grow */
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .news-card .notify-scroll {
+      flex: 1; /* This is the key: allow the scroll area to fill the remaining space */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-right: 0; /* Remove padding on mobile */
+    }
+  }
+
+  /* 데스크톱에서 점수판이 칸을 넘지 않도록, 도넛을 반응형으로 축소 */
+  @media (min-width: 1200px) {
+    .trust-card {
+      overflow: hidden;
+    }
+    .trust-card .card-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px; /* 간격 더 줄임 */
+      padding-bottom: 10px; /* 하단 패딩 추가 */
+    }
+    .trust-card .donut-box {
+      max-width: 140px; /* 최대 너비 더 줄임 */
+      margin: 5px auto 0; /* 상단 마진 더 줄임 */
+    }
+    #trustDonut {
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 1 / 1;
+      display: block;
+    }
+    .trust-card .donut-labels { margin-top: 5px; font-size: 11px; } /* 마진 및 폰트 사이즈 더 줄임 */
+    .donut-grade-badge { font-size: 0.85rem; } /* 폰트 사이즈 더 줄임 */
+    .trust-gauge-wrap { margin-top: 5px; } /* 마진 더 줄임 */
+    .trust-gauge-label { font-size: 0.8rem; text-align:center; } /* 폰트 사이즈 더 줄임 */
+    .trust-card button { top: 10px; right: 12px; width: 24px; height: 24px; font-size: 0.7rem; } /* 버튼 위치 및 크기 조정 */
+    .trust-card button i { font-size: 0.6rem; } /* 아이콘 크기 조정 */
+  }
+/* === 신뢰도 카드: 안 잘리게 살짝 축소 + 여백 정리 === */
+.trust-card .donut-box{
+  max-width: clamp(170px, 30vw, 205px) !important; /* 살짝 더 작게 */
+  margin: 6px auto 6px;
+}
+
+.trust-card .donut-labels{
+  margin-top: 6px;
+  font-size: 11.5px;
+}
+
+.trust-gauge-bar-bg{
+  width: clamp(150px, 55%, 190px); /* 바도 카드 폭에 맞게 */
+  height: 8px;
+  margin: 8px auto 4px;
+}
+
+.trust-gauge-label{
+  margin: 2px auto 0;     /* 아래로 밀리지 않게 */
+  text-align: center;
+  white-space: normal;     /* 필요 시 줄바꿈 허용 → 높이 절약 */
+  line-height: 1.25;
+}
+
+/* 카드 안쪽 여백을 조금 줘서 마지막 요소 마진이 밖으로 못 튀게 */
+.trust-card .card-body{
+  padding-bottom: 12px !important;
+}
+
+/* 데스크톱에서 로그아웃 버튼만 깔끔하게 */
+@media (min-width: 992px) {
+  .sidebar-bottom {
+    padding: 18px 10px 45px 10px;
+    text-align: center;          /* 가운데 정렬 */
+  }
+  .sidebar-bottom .logout-btn {
+    display: inline-block;       /* 100% 폭 제거 */
+    width: auto;                 /* 내용만큼 */
+    padding: 6px 14px;           /* 적당한 패딩 */
+    border-radius: 10px;         /* 기존 스타일 유지 */
+  }
+}
+
   </style>
 </head>
 
@@ -193,25 +452,39 @@
 </c:if>
 
 <div class="mypage-layout">
-  <!-- 사이드바 -->
+
   <aside class="sidebar">
-    <div style="display:flex; flex-direction:column; align-items:center; width:100%;">
-      <img id="profileImgPreview"
-           src="<c:choose>
-                   <c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when>
-                   <c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise>
-                </c:choose>"
-           class="profile-img" alt="프로필 이미지"
-           data-bs-toggle="modal" data-bs-target="#profileImgModal" style="cursor:pointer;">
-      <div class="profile-name">${member.nickname}</div>
-      <button type="button" class="profile-edit-btn mt-1" data-bs-toggle="modal" data-bs-target="#profileImgModal">이미지 수정하기</button>
+    <div class="profile-section">
+      <img id="profileImgPreview" src="<c:choose><c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when><c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise></c:choose>"
+           class="profile-img" alt="프로필 이미지" data-bs-toggle="modal" data-bs-target="#profileImgModal">
+      <div>
+        <div class="profile-name">${member.nickname}</div>
+        <button type="button" class="profile-edit-btn mt-1" data-bs-toggle="modal" data-bs-target="#profileImgModal">이미지 수정하기</button>
+      </div>
     </div>
-    <div class="sidebar-bottom">
+
+    <div class="sidebar-right d-flex d-lg-none">
+      <div class="mobile-actions">
+        <button id="alertBtnSm" type="button" class="icon-btn" title="알림">
+          <i class="fas fa-bell"></i>
+          <span id="notify-unread-count-sm" class="badge unread-count-badge" style="display:none"></span>
+        </button>
+        <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
+          <i class="fas fa-envelope"></i>
+          <c:if test="${totalUnreadCount > 0}">
+            <span id="total-unread-count-sm" class="badge unread-count-badge">${totalUnreadCount}</span>
+          </c:if>
+        </a>
+      </div>
+      <button class="logout-btn logout-btn-sm" onclick="location.href='/logout'">로그아웃</button>
+    </div>
+
+    <div class="sidebar-bottom d-none d-lg-block">
       <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
     </div>
   </aside>
 
-  <!-- 프로필 이미지 업로드 모달 -->
+
   <div class="modal fade" id="profileImgModal" tabindex="-1" aria-labelledby="profileImgModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -223,10 +496,7 @@
           <div class="modal-body">
             <div class="mb-3 text-center">
               <img id="modalProfilePreview"
-                   src="<c:choose>
-                           <c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when>
-                           <c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise>
-                        </c:choose>"
+                   src="<c:choose><c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when><c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise></c:choose>"
                    class="profile-img" style="width:100px;height:100px;" alt="미리보기">
             </div>
             <input type="file" name="profileImg" id="modalProfileImgInput" accept="image/*" class="form-control"/>
@@ -240,7 +510,7 @@
     </div>
   </div>
 
-  <!-- 오른쪽 메인 -->
+
   <div class="mypage-main">
     <div class="main-header">
       <button id="alertBtn" type="button" class="icon-btn" data-bs-html="true" data-bs-container="body" title="알림">
@@ -257,34 +527,40 @@
 
     <div id="popover-content" class="d-none"></div>
 
-    <!-- 메인 보드 -->
+
     <div class="main-board">
-      <!-- 상단 4개 타일 -->
-      <div class="cards-grid top-tiles">
-        <div class="tile">
+      <div class="top-grid">
+        <div class="card">
+
           <a href="/free" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/speech-bubble--v1.png" alt="">
           <span>소통 커뮤니티</span>
         </div>
-        <div class="tile">
+
+        <div class="card">
+
           <a href="/flag" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/faq.png" alt="">
           <span>제보 및 신고 커뮤니티</span>
         </div>
-        <div class="tile">
+
+        <div class="card">
+
           <a href="/info" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/police-badge.png" alt="">
           <span>아동 범죄 발생</span>
         </div>
-        <div class="tile">
+
+        <div class="card">
+
           <a href="/map/" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/worldwide-location.png" alt="">
           <span>어린이 범죄 예방 지도</span>
         </div>
       </div>
 
-      <!-- 미니 타일 3개 -->
-      <div class="mini-grid mini-cards">
+      <div class="middle-grid">
+
         <div class="card"><div class="card-body">
           <span>자녀 등록</span><br>
           <a href="/cert/my" class="btn btn-warning btn-sm mt-2">바로가기</a>
@@ -299,18 +575,20 @@
         </div></div>
       </div>
 
-      <!-- 하단 2칸: 내 소식 / 신뢰도 -->
-      <div class="cards-grid bottom-grid" style="grid-template-columns:2fr 1fr">
-        <!-- 내 소식 (여기만 스크롤) -->
-        <div class="card big">
-          <div class="card-body news-card">
-            <span>내 소식</span>
+
+      <div class="bottom-grid">
+        <div class="card news-card">
+          <div class="card-body">
+            <h6 class="mb-3">내 소식</h6>
+
             <div class="notify-scroll">
               <div class="notification-list" id="notifyList">
                 <c:forEach var="notify" items="${notifyList}">
                   <c:choose>
                     <c:when test="${notify.type == 'COMMENT'}">
-                      <div class="notification-item" style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
+
+                      <div class="notification-item">
+
                         <div class="notify-header"><span class="notify-icon">[댓글]💬</span></div>
                         <div class="notify-content">${notify.content}</div>
                         <div class="d-flex gap-2 mt-1">
@@ -325,7 +603,9 @@
 
                     <c:when test="${notify.type == 'DANGER_ALERT'}">
                       <input type="hidden" class="danger-alert" value="${notify.content}" />
-                      <div class="notification-item" style="padding:10px 0;border-bottom:1px solid #f0f0f0;">
+
+                      <div class="notification-item">
+
                         <div class="notify-header"><span class="notify-icon">[위험]🚨</span></div>
                         <div class="notify-content">${notify.content}</div>
                         <div class="d-flex gap-2 mt-1">
@@ -341,7 +621,6 @@
                 </c:forEach>
               </div>
 
-              <!-- 지역 위험 알림 모달 -->
               <div class="modal fade" id="dangerModal" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">
@@ -351,14 +630,13 @@
                   </div>
                 </div>
               </div>
-            </div><!-- /notify-scroll -->
-          </div>
+
+            </div></div>
         </div>
 
-        <!-- 신뢰도 점수판 -->
-        <div class="card big">
-          <div class="card-body" style="position:relative">
-            <div class="d-flex align-items-center mb-2" style="gap:10px;">
+        <div class="card trust-card">
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-2">
               <span style="font-weight:600;font-size:1.08rem;">신뢰도 점수판</span>
               <span class="donut-grade-badge">
                 <c:choose>
@@ -391,7 +669,6 @@
           </div>
         </div>
 
-        <!-- 신뢰도 안내 모달 -->
         <div class="modal fade" id="trustScoreModal" tabindex="-1" aria-labelledby="trustScoreModalLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -421,12 +698,7 @@
             </div>
           </div>
         </div>
-      </div><!-- /하단 그리드 -->
-    </div><!-- /main-board -->
-  </div><!-- /mypage-main -->
-</div><!-- /mypage-layout -->
-
-<script>
+      </div></div></div></div><script>
   // 프로필 이미지 미리보기
   document.getElementById('modalProfileImgInput').addEventListener('change', function(event) {
     const reader = new FileReader();
@@ -499,82 +771,118 @@
   gaugeText.innerHTML = text;
 </script>
 
-<!-- 알림 팝오버 -->
 <script>
-document.addEventListener("DOMContentLoaded", async function () {
-  var btn = document.getElementById("alertBtn");
-  if (!btn) return;
-  var base = "${pageContext.request.contextPath}" || "";
+  document.addEventListener("DOMContentLoaded", async function () {
+    var base = "${pageContext.request.contextPath}" || "";
 
-  try {
-    var res = await fetch(base + "/notify/list", { credentials: "same-origin" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    var items = await res.json();
+    // 두 위치(PC 헤더, 모바일 사이드바)에 있는 알림 버튼과 뱃지들
+    var alertBtnIds = ["alertBtn", "alertBtnSm"];
+    var notifyBadgeIds = ["notify-unread-count", "notify-unread-count-sm"];
 
-    var unreadCount = items.filter(n => !n.isRead).length;
-    var badge = document.getElementById("notify-unread-count");
-    if (badge) {
-      if (unreadCount > 0) { badge.textContent = unreadCount; badge.style.display = "inline-block"; }
-      else { badge.style.display = "none"; }
+    // 유틸: 버튼 존재하면 팝오버 생성
+    function setupPopover(btn, contentHtml) {
+      if (!btn) return;
+      new bootstrap.Popover(btn, {
+        html: true,
+        container: 'body',
+        placement: 'bottom',
+        trigger: 'click',
+        title: '알림',
+        content: contentHtml,
+        sanitize: false
+      });
     }
 
-    items.sort((a,b)=>(b.created_at||0)-(a.created_at||0));
+    try {
+      var res = await fetch(base + "/notify/list", { credentials: "same-origin" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      var items = await res.json();
 
-    var html = '<div style="max-height:220px; overflow-y:auto;">'
-             +   '<ul class="list-unstyled mb-0">';
-    if (items.length) {
-      for (var i=0;i<items.length;i++){
-        var n = items[i];
-        var text = (n && n.content) ? n.content : '';
-        var board = (n && n.related_board) ? n.related_board : "";
-        var pid   = (n && n.related_post_id) ? n.related_post_id : "";
-        var link  = base + "/" + board + "/" + pid;
+      // 읽지 않은 개수 → PC/모바일 배지 모두 업데이트
+      var unreadCount = items.filter(n => !n.isRead).length;
+      notifyBadgeIds.forEach(function(id){
+        var badge = document.getElementById(id);
+        if (!badge) return;
+        if (unreadCount > 0) { badge.textContent = unreadCount; badge.style.display = "inline-block"; }
+        else { badge.style.display = "none"; }
+      });
 
-        html += '<li style="padding:6px 0; border-bottom:1px solid #f0f0f0;">'
-             +   '<a href="'+link+'" style="text-decoration:none; color:inherit;">'+text+'</a>'
-             +   '<button type="button" class="notify-delete" data-id="'+n.id+'"'
-             +           ' style="margin-left:8px;background:none;border:none;cursor:pointer;">❌</button>'
-             + '</li>';
+      // 최신순 정렬
+      items.sort((a,b)=>(b.created_at||0)-(a.created_at||0));
+
+      // 팝오버 HTML
+      var html = '<div style="max-height:220px; overflow-y:auto;">'
+               +   '<ul class="list-unstyled mb-0">';
+      if (items.length) {
+        for (var i=0;i<items.length;i++){
+          var n = items[i] || {};
+          var text = n.content || '';
+          var board = n.related_board || '';
+          var pid   = n.related_post_id || '';
+          var link  = base + "/" + board + "/" + pid;
+
+          html += '<li style="padding:6px 0; border-bottom:1px solid #f0f0f0;">'
+               +   '<a href="'+link+'" style="text-decoration:none; color:inherit;">'+text+'</a>'
+               +   '<button type="button" class="notify-delete" data-id="'+n.id+'"'
+               +           ' style="margin-left:8px;background:none;border:none;cursor:pointer;">❌</button>'
+               + '</li>';
+        }
+      } else {
+        html += '<li style="padding:10px;">알림이 없습니다🙂</li>';
       }
-    } else {
-      html += '<li style="padding:10px;">알림이 없습니다🙂</li>';
+      html +=   '</ul></div>';
+
+      // PC/모바일 버튼 모두 팝오버 장착
+      alertBtnIds.forEach(function(id){
+        var btn = document.getElementById(id);
+        setupPopover(btn, html);
+      });
+
+    } catch (e) {
+      console.error("notify popover error:", e);
+      var fallback = '<div style="max-height:220px; overflow-y:auto;">'
+                   +   '<ul class="list-unstyled mb-0"><li>알림을 불러오지 못했습니다</li></ul>'
+                   + '</div>';
+      alertBtnIds.forEach(function(id){
+        var btn = document.getElementById(id);
+        if (!btn) return;
+        new bootstrap.Popover(btn, {
+          html:true, container:'body', placement:'bottom', trigger:'click',
+          title:'알림', content:fallback
+        });
+      });
+    }
+  });
+
+  // 문서 위임 삭제 이벤트(기존 그대로 유지)
+  document.addEventListener('click', function(e){
+    if (e.target && e.target.classList.contains('notify-delete')) {
+      const id = e.target.getAttribute('data-id');
+      deleteNotify(id);
+      e.target.closest('li')?.remove();
+
     }
     html +=   '</ul></div>';
 
-    new bootstrap.Popover(btn, {
-      html:true, container:'body', placement:'bottom', trigger:'click',
-      title:'알림', content:html, sanitize:false
-    });
 
-  } catch (e) {
-    console.error("notify popover error:", e);
-    var fallback = '<div style="max-height:220px; overflow-y:auto;">'
-                 +   '<ul class="list-unstyled mb-0"><li>알림을 불러오지 못했습니다</li></ul>'
-                 + '</div>';
-    new bootstrap.Popover(btn, {
-      html:true, container:'body', placement:'bottom', trigger:'click',
-      title:'알림', content:fallback
-    });
+  function deleteNotify(id){
+    if (!confirm("이 알림을 삭제할까요?")) return;
+    const base = "${pageContext.request.contextPath}" || "";
+    fetch(base + "/notify/delete/" + id, { method:"DELETE", credentials:"same-origin" })
+      .then(res=>{ if(!res.ok) throw new Error("삭제 실패: "+res.status); return res.text(); })
+      .then(()=> window.location.reload())
+      .catch(()=> alert("삭제 중 오류가 발생했습니다."));
   }
-});
+</script>
 
-// 문서 위임 삭제
-document.addEventListener('click', function(e){
-  if (e.target && e.target.classList.contains('notify-delete')) {
-    const id = e.target.getAttribute('data-id');
-    deleteNotify(id);
-    e.target.closest('li')?.remove();
+<script>
+  function setVhUnit(){
+    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
   }
-});
+  window.addEventListener('resize', setVhUnit);
+  window.addEventListener('orientationchange', setVhUnit);
+  setVhUnit();
 
-function deleteNotify(id){
-  if (!confirm("이 알림을 삭제할까요?")) return;
-  const base = "${pageContext.request.contextPath}" || "";
-  fetch(base + "/notify/delete/" + id, { method:"DELETE", credentials:"same-origin" })
-    .then(res=>{ if(!res.ok) throw new Error("삭제 실패: "+res.status); return res.text(); })
-    .then(()=> window.location.reload())
-    .catch(()=> alert("삭제 중 오류가 발생했습니다."));
-}
 </script>
 </body>
 </html>

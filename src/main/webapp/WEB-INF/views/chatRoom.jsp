@@ -73,7 +73,7 @@
             }
 
             .other-message {
-                background-color: #ffffff;
+                background-color: #d3d3d3;
                 margin-right: auto;
             }
 
@@ -86,6 +86,7 @@
                 font-size: 0.8em;
                 color: #999;
                 margin-top: 2px;
+                margin-bottom: 8px;
                 text-align: right;
             }
         </style>
