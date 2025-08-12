@@ -49,14 +49,66 @@
     .thumb{display:none; max-width:360px; border:1px solid var(--line); border-radius:12px; margin:10px 0}
 
     .btn{
-      width:100%; height:50px; border:none; border-radius:12px; font-weight:700; font-size:15px;
-      background:var(--brand); color:#111; cursor:pointer; box-shadow:0 8px 16px rgba(242,172,40,.25)}
-    .btn:active{transform:translateY(1px)}
+      width:100%; height:50px;
+      border:none; border-radius:12px;
+      font-weight:700; font-size:15px;
+      background:var(--brand); color:#111;
+      cursor:pointer; box-shadow:0 8px 16px rgba(242,172,40,.25);
+      display:inline-flex;             /* ✅ 플렉스 버튼 */
+      align-items:center;              /* ✅ 세로 가운데 */
+      justify-content:center;          /* ✅ 가로 가운데 */
+      text-align:center;               /* ✅ 텍스트 기준 가운데 */
+      text-decoration:none;            /* 링크 밑줄 제거 */
+    }
+
+
+    /* 버튼 그룹 & 공통 */
+    .btn-group{ display:flex; gap:12px; margin-top:16px; align-items:stretch; }
+    .btn-group .btn{ flex:1; width:auto; } /* 기존 width:100% 덮어쓰기 */
+
+    /* 목록으로 돌아가기: 아웃라인 */
+    .btn.outline{
+      background:#fff; color:#444;
+      border:1px solid var(--line);
+      box-shadow:none;
+      text-decoration: none;
+    }
+    .btn.outline:hover{
+      border-color:var(--brand);
+      background:rgba(242,172,40,.08);
+      color:#111;
+    }
+    .btn.outline:focus-visible{
+      outline:none;
+      box-shadow:0 0 0 4px rgba(242,172,40,.18);
+    }
+    /* 왼쪽 화살표 아이콘 */
+    .btn.outline::before{
+      content:"←";
+      display:inline-block;
+      margin-right:6px;
+      line-height:1;
+    }
+
+    /* (선택) 제출 버튼 강조 */
+    .btn.submit{
+      background:var(--brand);
+      box-shadow:0 8px 16px rgba(242,172,40,.25);
+    }
+
+    /* 모바일에선 세로로 쌓기 */
+    @media (max-width:480px){
+      .btn-group{ flex-direction:column; }
+    }
+
 
     .alert{width:100%; max-width:720px; border-radius:12px; padding:12px 14px; margin:10px auto}
     .alert-success{background:#ecfdf3; color:#166534; border:1px solid #bbf7d0}
     .alert-danger{background:#fff1f2; color:#991b1b; border:1px solid #fecdd3}
     .d-none{display:none}
+
+
+
   </style>
 </head>
 <body>
@@ -66,14 +118,6 @@
     <h1>재학증명서 제출</h1>
     <p>재학증명서 제출을 위한 정보를 입력해주세요</p>
 
-    <div class="stepper" aria-hidden="true">
-      <div class="s-dot">1</div><div class="s-line"></div>
-      <div class="s-dot active">2</div><div class="s-line"></div>
-      <div class="s-dot">3</div>
-    </div>
-    <div class="s-labels" aria-hidden="true">
-      <span>회원가입</span><span>자녀 정보 설정</span><span>사용 준비 완료</span>
-    </div>
   </div>
 
   <!-- 서버 메시지 -->
@@ -124,7 +168,12 @@
       <img id="thumb" class="thumb" alt="미리보기">
     </div>
 
-    <button type="submit" class="btn">제출하기</button>
+    <div class="btn-group">
+      <!-- 절대 URL 원하시면 href="http://localhost:8080/cert/my" 로 바꾸셔도 됩니다 -->
+      <a href="<c:url value='/cert/my'/>" class="btn outline" role="button">목록으로 돌아가기</a>
+      <button type="submit" class="btn">제출하기</button>
+    </div>
+
   </form>
 </div>
 
