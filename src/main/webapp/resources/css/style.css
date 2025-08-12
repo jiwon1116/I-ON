@@ -13,6 +13,7 @@ list-style: none;
 a{
 text-decoration: none;
 color: inherit;
+font-size: 18px;
 }
 
 :root {
@@ -49,9 +50,9 @@ body {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  height: 60px;
+  height: 70px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 20px;
   position: relative;
   z-index: 10;
 }
@@ -65,6 +66,7 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
+  border-style: none;
 }
 
 /* 메인 메뉴 공통 */
@@ -80,17 +82,19 @@ body {
   align-items: center;
   justify-content: center;
   transition: color 0.2s ease;
+  width: 200px;
+  border-radius: 50px 50px 0px 0px;
+  height: 53px;
 }
 
 /* hover 시 텍스트 색상만 밝아짐 */
 .main-menu:hover {
-  color: #ffffffcc;
+  color: #555;
+  background: #fff8e7;
 }
 
 /* 활성 탭 */
 .main-menu.active {
-  background-color: white;
-  color: #222;
   z-index: 2;
   margin-bottom: 0;
 }
@@ -103,13 +107,13 @@ body {
   left: 0;
   width: 100%;
   box-sizing: border-box;
-  background: #ffc727;
+  background: #fff8e7;
   list-style: none;
   padding: 8px 0;
   margin: 0;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
   border-radius: 0 0 12px 12px;
   z-index: 5;
+
 }
 
 /* hover 시 서브 메뉴 보임 */
@@ -132,9 +136,87 @@ body {
 }
 
 .icons {
-  display: flex;
-  gap: 16px;
-  font-size: 20px;
-  padding-bottom: 10px;
+           display: flex;
+           gap: 16px;
+           font-size: 20px;
+           padding-bottom: 10px;
+           height: 50px;
+           margin-right: 100px;
 }
+
+  /* 네비/아이콘 영역이 팝오버를 가리지 않게 */
+  .top-nav, .icons {
+    position: relative;
+    overflow: visible !important;
+    z-index: 1060; /* 부트스트랩 모달/팝오버 레벨대 맞춤 */
+  }
+
+  /* 혹시 전역에서 nav/header에 overflow:hidden; 준 경우 방지 */
+  header, nav {
+    overflow: visible !important;
+  }
+
+  /* 팝오버 자체 z-index 강화 (보이는지 테스트용) */
+  .popover {
+    z-index: 2000 !important;
+    max-width: 320px; /* 내용 잘림 방지(선택) */
+  }
+
+  /* 편지 아이콘과 배지를 감싸는 링크 스타일 */
+  .icon-link {
+    position: relative; /* 배지 위치를 잡기 위해 필요 */
+    display: inline-block; /* 팝오버 버튼과 나란히 표시 */
+    margin-right: 15px; /* 버튼과 간격 주기 */
+
+  }
+
+  /* 총 읽지 않은 메시지 수를 표시하는 배지 스타일 */
+  .unread-count-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    font-size: 0.75rem; /* 글씨 크기 조절 */
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+  }
+  .icon-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+
+  .icon-btn:hover {
+    opacity: 0.85;
+  }
+
+  .icon-link i {
+    font-size: 29px;
+    color: #fff;
+    line-height: 1;
+  }
+
+  /* 로고 영역도 같은 높이에서 가운데 정렬 */
+  .logo-section{
+    height: 64px;
+    display: flex;
+    align-items: center;        /* 로고 세로 가운데 */
+    justify-content: center;
+  }
+
+  .logo-section .logo {
+  height: 190px;
+  width: auto;
+  display: block;
+
+  }
+
+  /* (선택) 이미지 자체 여백 때문에 살짝 위/아래 치우쳐 보이면 미세 보정 */
+  .logo-section .logo.tweak-up   { transform: translateY(-2px); }
+  .logo-section .logo.tweak-down { transform: translateY( 2px); }
 
