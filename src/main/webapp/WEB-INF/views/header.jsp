@@ -51,7 +51,7 @@
                 style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
               ${totalUnreadCount}
           </span>
-      <a href="/chat" class="icon-link"><span class="icon">✉️</span></a>
+      <a href="/chat"><span class="icon">✉️</span></a>
     </div>
   </nav>
 
