@@ -178,40 +178,65 @@
       margin:12px auto 0; text-align:center;
     }
 
-    /* 모바일/태블릿에서만 가로 배치 */
+    /* 데스크톱(>=992px): 프로필 아래에 이름, 로그아웃은 맨 아래 중앙 */
+    @media (min-width: 992px){
+      .sidebar{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+      }
+      /* 인라인 스타일(overrides) 무력화: 세로 배치로 강제 */
+      .sidebar form{
+        display:flex !important;
+        flex-direction:column !important;
+        align-items:center !important;
+        width:100% !important;
+        margin:0;
+        gap:0;
+      }
+      .profile-name{
+        margin-top:10px;
+        text-align:center;
+      }
+      .sidebar-bottom{
+        margin-top:auto;
+        width:100%;
+        display:flex;
+        justify-content:center;
+        padding-top:18px;
+      }
+    }
+
+    /* 모바일/태블릿(<992px): 이미지 → 이름 → 로그아웃 가로 배치 */
     @media (max-width: 992px){
       .mypage-layout{ grid-template-columns:1fr; }
 
       .sidebar{
-        position:static; height:80px;
+        position:static; height:auto;
         border-right:none; border-bottom:1px solid var(--line);
         display:flex; flex-direction:row; align-items:center;
         justify-content:flex-start; gap:14px;
         background:#E9ECEF; padding:14px 16px;
-        flex-wrap:nowrap;                 /* 줄바꿈 방지 */
+        flex-wrap:nowrap;
       }
 
-      /* 프로필 폼: 이미지와 이름을 가로로 */
       .sidebar form{
         display:flex; flex-direction:row; align-items:center; gap:10px;
-        width:auto;                       /* 데스크톱의 width:100% 영향 차단 */
-        margin:0;
+        width:auto; margin:0;
       }
 
       .profile-img{ width:56px; height:56px; }
       .profile-name{ margin:0 0 0 8px; font-size:1rem; text-align:left; }
 
-      /* 로그아웃: 이름 오른쪽에 바로 붙임 */
       .sidebar-bottom{
         display:flex; align-items:center; justify-content:flex-start;
-        width:auto; margin:0 0 0 12px; padding:0;  /* 이름-버튼 간격 조절 */
+        width:auto; margin:0 0 0 12px; padding:0;
       }
       .logout-btn{ margin:0; }
 
       .main-header{ display:none; }
       .main-board{ padding:16px; }
     }
-
 
     /* 카드 빈 상태 문구 전용 중앙 정렬 */
     .empty-center{
