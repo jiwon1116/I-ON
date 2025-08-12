@@ -45,25 +45,30 @@
       </div>
     </div>
 
-    <!-- 메타 -->
-    <div class="info-meta">
-      <div class="info-author">
-        ✍ <span class="js-user" data-nickname="${flag.nickname}">
-            <a href="${CTX}/othermemberprofile/checkprofile?nickname=${flag.nickname}">
-              <c:out value="${flag.nickname}" />
-            </a>
-          </span>
-      </div>
-      <div>🕒
-        <c:if test="${flag.created_at != null}">
-          <fmt:formatDate value="${flag.created_at}" pattern="yyyy.MM.dd HH:mm"/>
-        </c:if>
-      </div>
-      <c:if test="${not empty flag.city}">
-        <div>📍 ${flag.city} ${flag.district}</div>
-      </c:if>
-      <div>👁️ <span id="viewCount">${flag.view_count}</span></div>
-    </div>
+     <!-- 메타 -->
+                <div class="info-meta">
+                  <c:if test="${not empty flag.nickname}">
+                    <div class="info-author">
+                      <span class="js-user" data-nickname="${flag.nickname}">
+                        <a href="${CTX}/othermemberprofile/checkprofile?nickname=${flag.nickname}">
+                          <c:out value="${flag.nickname}" />
+                        </a>
+                      </span>
+                    </div>
+                  </c:if>
+
+                  <div>
+                    <i class="bi bi-clock me-1"></i>
+                    <c:if test="${flag.created_at != null}">
+                      <fmt:formatDate value="${flag.created_at}" pattern="yyyy.MM.dd HH:mm"/>
+                    </c:if>
+                  </div>
+
+                  <div>
+                    <i class="bi bi-eye me-1"></i>
+                    <span id="viewCount">${flag.view_count}</span>
+                  </div>
+                </div>
 
     <!-- 첨부 이미지(있으면) -->
     <c:if test="${not empty fileList}">
