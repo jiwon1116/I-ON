@@ -1,104 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%-- 현재 요청 경로 가져오기 --%>
+<c:set var="path" value="${pageContext.request.requestURI}" />
 
 <header>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
-
-<style>
-  /* 네비/아이콘 영역이 팝오버를 가리지 않게 */
-  .top-nav, .icons {
-    position: relative;
-    overflow: visible !important;
-    z-index: 1060; /* 부트스트랩 모달/팝오버 레벨대 맞춤 */
-  }
-
-  /* 혹시 전역에서 nav/header에 overflow:hidden; 준 경우 방지 */
-  header, nav {
-    overflow: visible !important;
-  }
-
-  /* 팝오버 자체 z-index 강화 (보이는지 테스트용) */
-  .popover {
-    z-index: 2000 !important;
-    max-width: 320px; /* 내용 잘림 방지(선택) */
-  }
-
-  /* 편지 아이콘과 배지를 감싸는 링크 스타일 */
-  .icon-link {
-    position: relative; /* 배지 위치를 잡기 위해 필요 */
-    display: inline-block; /* 팝오버 버튼과 나란히 표시 */
-    margin-right: 15px; /* 버튼과 간격 주기 */
-  }
-
-  /* 총 읽지 않은 메시지 수를 표시하는 배지 스타일 */
-  .unread-count-badge {
-    position: absolute;
-    top: -5px;
-    right: -10px;
-    font-size: 0.75rem; /* 글씨 크기 조절 */
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-  }
-  .icon-btn {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 20px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 4px 6px;
-  }
-
-  .icon-btn:hover {
-    opacity: 0.85;
-  }
-
-  .icon-link i {
-    font-size: 20px;
-    color: #fff;
-    line-height: 1;
-  }
-
-  /* 로고 영역도 같은 높이에서 가운데 정렬 */
-  .logo-section{
-    height: 64px;
-    display: flex;
-    align-items: center;        /* 로고 세로 가운데 */
-    justify-content: center;
-  }
-
-  .logo-section .logo {
-  height: 190px;
-  width: auto;
-  display: block;
-
-  }
-
-  /* (선택) 이미지 자체 여백 때문에 살짝 위/아래 치우쳐 보이면 미세 보정 */
-  .logo-section .logo.tweak-up   { transform: translateY(-2px); }
-  .logo-section .logo.tweak-down { transform: translateY( 2px); }
-
-
-</style>
-
   <nav class="top-nav">
     <div class="logo-section">
-       <a href="${pageContext.request.contextPath}/">
-          <img src="${pageContext.request.contextPath}/resources/img/logo.png" alt="ION" class="logo">
-        </a>
+      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
     </div>
     <ul class="nav-tabs">
-      <li class="main-menu"><a href="/mypage/">마이페이지</a></li>
-      <li class="main-menu"><a href="/map/">범죄 예방 지도</a></li>
+      <li class="main-menu">
+      <a href="/mypage/">마이페이지</a></li>
+      <li class="main-menu">
+      <a href="/map/">범죄 예방 지도</a>
+      </li>
       <li class="main-menu active">
         <a href="/free">커뮤니티</a>
         <ul class="sub-menu">
@@ -110,8 +33,8 @@
       <li class="main-menu"><a href="/flag">제보 및 신고</a></li>
       <li class="main-menu"><a href="/info">정보 공유</a></li>
     </ul>
-    <div class="icons">
 
+    <div class="icons">
       <%-- 알림 팝오버 버튼 --%>
      <div class="icon-link">
        <button id="alertBtn" type="button" class="icon-btn"
@@ -120,23 +43,22 @@
        </button>
        <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
      </div>
-    
-      <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
+       <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
+               <i class="bi bi-envelope"></i>
+               <c:if test="${totalUnreadCount > 0}">
+                 <span id="total-unread-count-sm" class="badge unread-count-badge">${totalUnreadCount}</span>
+               </c:if>
+             </a>
+    <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
     <div id="popover-content" class="d-none"></div>
-
-      <%-- 편지 아이콘에 총 읽지 않은 메시지 수 추가 --%>
-      <a href="/chat" class="icon-link">
-          <span class="icon">✉️</span>
+      <%-- 알림 아이콘에 총 읽지 않은 메시지 수 추가 --%>
           <span id="total-unread-count" class="badge unread-count-badge"
                 style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
               ${totalUnreadCount}
           </span>
-      </a>
-
-
     </div>
-  </nav>
 
+  </nav>
   <%-- 알림 팝오버 스크립트 --%>
 <script>
 document.addEventListener("DOMContentLoaded", async function () {
@@ -207,15 +129,17 @@ items.sort(function (a, b) {
            + '</div>';
 
     // 9) 팝오버 생성 (content 옵션으로 주입)  sanitize 끄기
-   const pop = new bootstrap.Popover(btn, {
-     html: true,
-     container: 'body',
-     placement: 'bottom',
-     trigger: 'click',
-     title: '알림',
-     content: html,
-     sanitize: false
-   });
+ const pop = new bootstrap.Popover(btn, {
+   html: true,
+   container: 'body',
+   placement: 'bottom',
+   trigger: 'click',
+   title: '알림',
+   content: html,
+   sanitize: false,
+   customClass: 'notify-panel',
+   offset: [0, 15]
+ });
 
   } catch (e) {
     console.error("notify popover error:", e);

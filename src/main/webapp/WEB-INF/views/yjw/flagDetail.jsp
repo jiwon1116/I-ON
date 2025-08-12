@@ -13,143 +13,161 @@
   <!-- libs -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-  <!-- 페이지 전용 CSS -->
+  <!-- 페이지 전용 CSS (위 detail.css 내용으로 교체) -->
   <link href="${CTX}/resources/css/detail.css" rel="stylesheet" />
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- 배지(헤더에서 이미 넣었으면 이 줄은 제거) -->
   <script src="${CTX}/resources/js/badge.js"></script>
 </head>
 <body>
 
-<%@ include file="/WEB-INF/views/header.jsp" %>
+<!-- 헤더는 jsp:include 로 (contentType 충돌 방지) -->
+<jsp:include page="/WEB-INF/views/header.jsp" />
 
-<div class="board-wrap">
+<div class="info-page-wrap">
+  <div class="info-card">
 
-  <!-- ===== 글 ===== -->
-  <article class="post mb-3">
-    <header class="post-head">
-      <h1 class="post-title"><c:out value="${flag.title}" /></h1>
+    <!-- 상단: 제목 + 액션 -->
+    <div class="info-head">
+      <h1 class="info-title"><c:out value="${flag.title}" /></h1>
 
-      <div class="post-meta">
-        <span class="avatar"></span>
-        <div>
-          <span class="js-user" data-nickname="${flag.nickname}">
-            <a href="${CTX}/othermemberprofile/checkprofile?nickname=${flag.nickname}">
-              <c:out value="${flag.nickname}" />
-            </a>
-          </span>
-          <span class="ms-2">
-            <c:if test="${flag.created_at != null}">
-              <fmt:formatDate value="${flag.created_at}" pattern="yyyy.MM.dd HH:mm"/>
-            </c:if>
-          </span>
-          <c:if test="${not empty flag.city}"><span class="ms-2 text-muted">${flag.city} ${flag.district}</span></c:if>
-        </div>
-
-        <div class="ms-auto d-flex align-items-center gap-3">
-          <security:authentication property="principal.username" var="loginUserId"/>
-          <c:if test="${loginUserId eq flag.userId or isAdmin}">
-            <a href="${CTX}/flag/update/${flag.id}" class="link">수정</a>
-            <a href="${CTX}/flag/delete/${flag.id}" class="link"
-               onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
-          </c:if>
-          <c:if test="${loginUserId ne flag.userId}">
-            <a href="javascript:void(0)" id="reportBtn" class="link">신고</a>
-          </c:if>
-        </div>
+      <div class="info-actions">
+        <security:authentication property="principal.username" var="loginUserId"/>
+        <c:if test="${loginUserId eq flag.userId or isAdmin}">
+          <a class="link" href="${CTX}/flag/update/${flag.id}">수정</a>
+          <a class="link" href="${CTX}/flag/delete/${flag.id}"
+             onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
+        </c:if>
+        <c:if test="${loginUserId ne flag.userId}">
+          <button type="button" id="reportBtn">신고</button>
+        </c:if>
       </div>
-    </header>
-
-    <div class="post-body">
-      ${flag.content}
     </div>
 
-    <!-- 첨부 -->
+     <!-- 메타 -->
+                <div class="info-meta">
+                  <c:if test="${not empty flag.nickname}">
+                    <div class="info-author">
+                      <span class="js-user" data-nickname="${flag.nickname}">
+                        <a href="${CTX}/othermemberprofile/checkprofile?nickname=${flag.nickname}">
+                          <c:out value="${flag.nickname}" />
+                        </a>
+                      </span>
+                    </div>
+                  </c:if>
+
+                  <div>
+                    <i class="bi bi-clock me-1"></i>
+                    <c:if test="${flag.created_at != null}">
+                      <fmt:formatDate value="${flag.created_at}" pattern="yyyy.MM.dd HH:mm"/>
+                    </c:if>
+                  </div>
+
+                  <div>
+                    <i class="bi bi-eye me-1"></i>
+                    <span id="viewCount">${flag.view_count}</span>
+                  </div>
+                </div>
+
+    <!-- 첨부 이미지(있으면) -->
     <c:if test="${not empty fileList}">
-      <section class="attach">
-        <ul>
-          <c:forEach var="file" items="${fileList}">
+      <c:set var="imgCount" value="0"/>
+      <div class="info-image-grid">
+        <c:forEach var="file" items="${fileList}">
+          <c:set var="lower" value="${fn:toLowerCase(file.storedFileName)}"/>
+          <c:if test="${fn:endsWith(lower, '.jpg') or fn:endsWith(lower, '.jpeg') or fn:endsWith(lower, '.png') or fn:endsWith(lower, '.gif')}">
+            <img src="${CTX}/flag/preview?fileName=${file.storedFileName}" alt="${file.originalFileName}"/>
+            <c:set var="imgCount" value="${imgCount + 1}"/>
+          </c:if>
+        </c:forEach>
+      </div>
+      <!-- 이미지 외 파일(문서 등) 링크 표시 -->
+      <ul class="mt-2" style="list-style:none; padding:0;">
+        <c:forEach var="file" items="${fileList}">
+          <c:set var="lower" value="${fn:toLowerCase(file.storedFileName)}"/>
+          <c:if test="${!(fn:endsWith(lower, '.jpg') or fn:endsWith(lower, '.jpeg') or fn:endsWith(lower, '.png') or fn:endsWith(lower, '.gif'))}">
             <li>
-              <c:set var="lower" value="${fn:toLowerCase(file.storedFileName)}"/>
-              <c:choose>
-                <c:when test="${fn:endsWith(lower, '.jpg') or fn:endsWith(lower, '.jpeg') or fn:endsWith(lower, '.png') or fn:endsWith(lower, '.gif')}">
-                  <img src="${CTX}/flag/preview?fileName=${file.storedFileName}" alt="${file.originalFileName}">
-                </c:when>
-                <c:otherwise>
-                  <a href="${CTX}/flag/preview?fileName=${file.storedFileName}" target="_blank">
-                    <c:out value="${file.originalFileName}" />
-                  </a>
-                </c:otherwise>
-              </c:choose>
+              <a href="${CTX}/flag/preview?fileName=${file.storedFileName}" target="_blank">
+                <c:out value="${file.originalFileName}" />
+              </a>
             </li>
-          </c:forEach>
-        </ul>
-      </section>
+          </c:if>
+        </c:forEach>
+      </ul>
     </c:if>
 
-    <!-- 하단 액션 -->
-    <div class="post-actions">
-      <div class="stats">
-        <span><i class="bi bi-heart-fill text-danger"></i><span id="likeCountDisplay">${flag.like_count}</span></span>
-        <span><i class="bi bi-chat-left-text"></i>${fn:length(flagCommentDTOList)}</span>
-        <span class="text-muted">조회 <span id="viewCount">${flag.view_count}</span></span>
-      </div>
-      <button type="button" id="likeBtn" class="btn btn-like ${flag.liked ? 'liked' : ''}">
-        <i class="bi ${flag.liked ? 'bi-heart-fill' : 'bi-heart'}"></i>
+    <!-- 본문 -->
+    <div class="info-content">
+      <textarea readonly>${flag.content}</textarea>
+    </div>
+
+    <!-- 좋아요/카운트 -->
+    <div class="info-stats">
+      <button type="button" class="info-like-btn ${flag.liked ? 'liked' : ''}" id="likeBtn">
+        <span class="heart">${flag.liked ? '❤️' : '🤍'}</span>
         <span id="likeCount">${flag.like_count}</span>
       </button>
+      <span>좋아요: <span id="likeCountDisplay">${flag.like_count}</span></span>
+      <span>댓글: ${fn:length(flagCommentDTOList)}</span>
     </div>
-  </article>
 
-  <!-- ===== 댓글 입력 ===== -->
-  <form id="commentForm" class="cmt-form">
-    <input type="hidden" name="post_id" id="post_id" value="${flag.id}"/>
-    <div class="cmt-input">
-      <textarea id="content" name="content" rows="1" placeholder="댓글을 작성해주세요"></textarea>
-      <button type="submit" class="cmt-send">작성</button>
+    <!-- 댓글 입력 -->
+    <div class="info-comment-editor">
+      <form id="commentForm" style="display:contents">
+        <input type="hidden" name="post_id" id="post_id" value="${flag.id}"/>
+        <textarea id="content" name="content" placeholder="댓글을 작성해주세요"></textarea>
+        <button type="submit">작성</button>
+      </form>
     </div>
-  </form>
 
-  <!-- ===== 댓글 목록 ===== -->
-  <section class="comments">
-    <div class="comments-head">댓글 <span class="text-muted">(${fn:length(flagCommentDTOList)})</span></div>
-    <div id="commentList">
-      <c:if test="${not empty flagCommentDTOList}">
-        <c:forEach var="comment" items="${flagCommentDTOList}">
-          <div class="cmt-item">
-            <div class="cmt-top">
-              <span class="avatar"></span>
-              <div class="flex-grow-1">
-                <span class="js-user" data-nickname="${comment.nickname}">
-                  <a href="${CTX}/othermemberprofile/checkprofile?nickname=${comment.nickname}">
-                    <c:out value="${comment.nickname}" />
-                  </a>
-                </span>
-                <span class="ms-2"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd HH:mm"/></span>
-              </div>
-              <c:if test="${comment.userId eq loginUserId or isAdmin}">
-                <div class="cmt-actions">
-                  <button class="btn btn-sm btn-outline-danger"
-                          onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
+    <!-- 댓글 목록 -->
+    <section class="info-comment-wrap">
+      <div class="info-comment-list" id="commentList">
+        <c:if test="${not empty flagCommentDTOList}">
+          <c:forEach var="comment" items="${flagCommentDTOList}">
+            <div class="info-comment-item">
+              <div class="info-comment-avatar"></div>
+              <div class="info-comment-body">
+                <div class="info-comment-row">
+                  <div class="info-comment-writer">
+                    <span class="js-user" data-nickname="${comment.nickname}">
+                      <a href="${CTX}/othermemberprofile/checkprofile?nickname=${comment.nickname}">
+                        <c:out value="${comment.nickname}" />
+                      </a>
+                    </span>
+                  </div>
+                  <div class="info-comment-meta">
+                    <span class="info-comment-date">
+                      <fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd HH:mm"/>
+                    </span>
+                    <security:authentication property="principal.username" var="loginUserId"/>
+                    <c:if test="${comment.userId eq loginUserId or isAdmin}">
+                      <button type="button" class="info-btn-del"
+                              onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
+                    </c:if>
+                  </div>
                 </div>
-              </c:if>
+                <div class="info-comment-content">
+                  ${comment.content}
+                </div>
+              </div>
             </div>
-            <div class="cmt-body">
-              ${comment.content}
-            </div>
-          </div>
-        </c:forEach>
-      </c:if>
-      <c:if test="${empty flagCommentDTOList}">
-        <div class="p-4 text-muted">첫 댓글을 남겨보세요.</div>
-      </c:if>
-    </div>
-  </section>
+          </c:forEach>
+        </c:if>
+        <c:if test="${empty flagCommentDTOList}">
+          <div class="p-4 text-muted">첫 댓글을 남겨보세요.</div>
+        </c:if>
+      </div>
+    </section>
 
-</div><!-- /.board-wrap -->
+    <!-- 하단 버튼 -->
+    <div class="info-bottom-actions">
+      <button type="button" class="info-btn-secondary" onclick="location.href='${CTX}/flag'">목록</button>
+    </div>
+
+  </div>
+</div>
 
 <!-- 신고 모달 -->
 <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
@@ -203,7 +221,7 @@
     });
   });
 
-  // 좋아요 토글
+  // 좋아요 토글 (이모지 하트 스타일)
   $('#likeBtn').on('click', function(){
     const flagId = '${flag.id}';
     $.ajax({
@@ -213,12 +231,9 @@
         if(data && data.error){ alert(data.error); return; }
         $('#likeCount, #likeCountDisplay').text(data.likeCount);
         const $btn = $('#likeBtn');
-        const $icon = $btn.find('.bi');
-        if(data.liked){
-          $btn.addClass('liked'); $icon.removeClass('bi-heart').addClass('bi-heart-fill');
-        }else{
-          $btn.removeClass('liked'); $icon.removeClass('bi-heart-fill').addClass('bi-heart');
-        }
+        const $heart = $btn.find('.heart');
+        if(data.liked){ $btn.addClass('liked'); $heart.text('❤️'); }
+        else { $btn.removeClass('liked'); $heart.text('🤍'); }
       },
       error: function(){ alert('좋아요 처리 실패!'); }
     });

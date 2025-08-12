@@ -24,8 +24,10 @@ public class MypageController {
     private final TrustScoreService trustScoreService;
     private final MemberService memberService;
 
+
+
     // mypage로 이동하며 정보(알림, 신뢰도) 뿌림
-    @GetMapping
+    @GetMapping({"/", ""})
     public String notifyList(Model model) {
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = user.getUsername(); // 또는 user.getMemberDTO().getUserId();
@@ -41,10 +43,7 @@ public class MypageController {
         model.addAttribute("member", latestMember); // 최신 값으로 넘기기
         System.out.println("알림 객체: " + notifyList);
 
-        model.addAttribute("notifyList", notifyList);
-        model.addAttribute("member", latestMember);
-
-        // 신뢰도 점수판 정보 추가
+         // 신뢰도 점수판 정보 추가
         TrustScoreDTO trustScoreDTO = trustScoreService.getTrustScore(nickname);
         model.addAttribute("trustScore", trustScoreDTO);
         return "mypage";

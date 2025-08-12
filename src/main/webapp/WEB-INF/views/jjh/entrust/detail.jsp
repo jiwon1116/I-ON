@@ -1,437 +1,275 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<%@ include file="/WEB-INF/views/header.jsp" %>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>위탁 게시판</title>
+  <c:set var="CTX" value="${pageContext.request.contextPath}" />
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/common.css"/>
+  <!-- 페이지 전용 CSS (info-* 디자인) -->
+  <link rel="stylesheet" href="${CTX}/resources/css/common.css"/>
+  <link rel="stylesheet" href="${CTX}/resources/css/detail.css"/>
 
-    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <!-- 라이브러리 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
-
-
-  <style>
-    body {
-      margin: 0;
-      font-family: "Noto Sans KR", sans-serif;
-      background-color: #fff8e7;
-    }
-
-    /* 게시글 스타일 */
-    .post-container {
-      max-width: 900px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 32px;
-      border-radius: 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    .post-title {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 12px;
-    }
-    .post-meta {
-      color: #999;
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-    .post-content {
-      white-space: pre-wrap;
-      line-height: 1.6;
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-    .post-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: flex-end;
-      font-size: 14px;
-      color: #777;
-      cursor:pointer;
-    }
-
-
-    /* 댓글 스타일 */
-    .comments-section {
-      margin-top: 40px;
-    }
-    .comment-form {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-    }
-    .comment-form input[type=text] {
-      padding: 8px 10px;
-      flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    .comment-form button {
-      padding: 8px 16px;
-      background-color: #ffc727;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .comment-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 16px;
-      text-align: center;
-    }
-    .comment-table th, .comment-table td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      font-size: 14px;
-    }
-
-    .preview-img {
-      max-width: 250px;
-      border-radius: 10px;
-      margin-top: 10px;
-    }
-
-    .comment-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 24px;
-    }
-
-    .comment-card {
-      display: flex;
-      padding: 16px;
-      background: #fff;
-      border-radius: 12px;
-      border: 1px solid #eee;
-      align-items: flex-start;
-    }
-
-    .comment-avatar img {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .comment-body {
-      margin-left: 12px;
-      flex: 1;
-    }
-
-    .comment-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 6px;
-    }
-
-    .comment-nickname {
-      font-weight: bold;
-    }
-
-    .comment-date {
-      font-size: 12px;
-      color: #aaa;
-      margin-left: auto;
-      margin-right: 8px;
-    }
-
-    .comment-delete {
-      font-size: 12px;
-      color: #999;
-      cursor: pointer;
-    }
-
-    .comment-delete:hover {
-      color: #f44;
-    }
-
-    .comment-content {
-      font-size: 15px;
-      color: #333;
-      white-space: pre-wrap;
-    }
-
-    .comment-input-wrapper {
-      display: flex;
-      margin-top: 24px;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #fff;
-    }
-
-    .comment-input-wrapper textarea {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      resize: none;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .comment-input-wrapper button {
-      background-color: #ffc727;
-      border: none;
-      padding: 0 20px;
-      font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .like-btn .heart {
-        font-size: 1.4em;
-        vertical-align: middle;
-        transition: color 0.15s;
-    }
-    .like-btn.liked .heart {
-        color: #f44336;
-    }
-    .like-btn .heart {
-        color: #fff;
-        text-shadow: 0 0 2px #d1d1d1;
-    }
-    .like-btn {
-        border: 1.5px solid #f44336 !important;
-    }
-  </style>
+  <!-- 배지 스크립트(헤더에서 이미 넣었으면 생략 가능) -->
+  <script src="${CTX}/resources/js/badge.js"></script>
 </head>
 <body>
 
-<div class="post-container">
-    <div class="post-title">${entrust.title}</div>
+<!-- 헤더는 jsp:include 권장 (contentType 충돌 예방) -->
+<jsp:include page="/WEB-INF/views/header.jsp" />
 
+<div class="info-page-wrap">
+  <div class="info-card">
 
-    <!-- 작성자 닉네임 + 배지 -->
-    <div class="post-meta">
-      <c:if test="${not empty entrust.nickname}">
-        <span class="js-user" data-nickname="${entrust.nickname}">${entrust.nickname}</span>
-      </c:if>
-    </div>
+    <!-- 헤더: 제목 + 우측 액션 -->
+    <div class="info-head">
+      <h1 class="info-title"><c:out value="${entrust.title}" /></h1>
 
-
-    <div class="post-content">${entrust.content}</div>
-
-    <c:forEach items="${fileList}" var="file">
-      <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png')}">
-        <img class="preview-img" src="/entrust/preview?fileName=${file.storedFileName}" />
-      </c:if>
-    </c:forEach>
-
-    <div class="mb-2">
-        <button type="button" class="btn like-btn ${entrust != null && entrust.liked ? 'liked' : ''}" id="likeBtn">
-            <span class="heart">${entrust != null && entrust.liked ? '❤️' : '🤍'}</span>
-            <span id="likeCount">${entrust != null ? entrust.like_count : 0}</span>
-        </button>
-    </div>
-    <!-- 스크립트에서 갱신하는 표시 -->
-    좋아요: <span id="likeCountDisplay">${entrust != null ? entrust.like_count : 0}</span>
-
-    <div class="post-actions">
-
-    <sec:authentication property="principal" var="loginUser" />
+      <div class="info-actions">
+        <security:authentication property="principal.username" var="loginUserId"/>
         <c:if test="${loginUserId eq entrust.userId || isAdmin}">
-            <span onclick="updateFn()">수정</span>
-            <span onclick="deleteFn()">삭제</span>
+          <button type="button" onclick="updateFn()">수정</button>
+          <button type="button" onclick="deleteFn()">삭제</button>
         </c:if>
         <c:if test="${loginUserId ne entrust.userId}">
-            <button type="button" id="reportBtn">🚩 신고</button>
+          <button type="button" id="reportBtn">신고</button>
         </c:if>
-
-    </div>
-
-    <!-- 신고 모달 -->
-    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <form id="reportForm">
-          <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-              <h5 class="modal-title" id="reportModalLabel">게시글 신고</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-            </div>
-            <div class="modal-body">
-              <input type="hidden" name="postId" value="${entrust.id}" />
-              <div class="mb-3">
-              <label for="reportType" class="form-label">신고 유형</label>
-                <select class="form-select" name="type" id="reportType" required>
-                  <option value="">-- 신고 유형 선택 --</option>
-                  <option value="CURSE">욕설/비방</option>
-                  <option value="SPAM">스팸/광고</option>
-                  <option value="IMPROPER">부적절한 콘텐츠</option>
-                </select>
-                <label for="reportReason" class="form-label">신고 사유</label>
-                <textarea class="form-control" name="reason" id="reportReason" required placeholder="신고 사유를 입력하세요"></textarea>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-              <button type="submit" class="btn btn-danger">신고하기</button>
-            </div>
-          </div>
-        </form>
       </div>
     </div>
 
-    <div class="comment-input-wrapper">
-      <input type="hidden" id="nickname" value="${member.nickname}" />
-      <textarea id="content" placeholder="댓글을 작성해주세요"></textarea>
-      <button onclick="commentWrite()">작성</button>
-    </div>
-
-    <div class="comment-list">
-      <c:forEach items="${commentList}" var="comment">
-        <div class="comment-card">
-          <div class="comment-avatar">
-            <img src="/img/avatar${comment.id % 3 + 1}.png" alt="profile" />
-          </div>
-          <div class="comment-body">
-            <div class="comment-header">
-
-              <!-- 댓글 닉네임 + 배지 -->
-              <span class="comment-nickname">
-                <span class="js-user" data-nickname="${comment.nickname}"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></span>
+    <!-- 메타 -->
+        <div class="info-meta">
+          <c:if test="${not empty entrust.nickname}">
+            <div class="info-author">
+              <span class="js-user" data-nickname="${entrust.nickname}">
+                <a href="${CTX}/othermemberprofile/checkprofile?nickname=${entrust.nickname}">
+                  <c:out value="${entrust.nickname}" />
+                </a>
               </span>
-
-              <span class="comment-date"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/></span>
-              <c:if test="${loginUserId eq comment.userId || isAdmin}">
-                <span class="comment-delete" onclick="commentDelete('${comment.id}')">삭제</span>
-              </c:if>
             </div>
-            <div class="comment-content">${comment.content}</div>
+          </c:if>
+
+          <div>
+            <i class="bi bi-clock me-1"></i>
+            <c:if test="${entrust.created_at != null}">
+              <fmt:formatDate value="${entrust.created_at}" pattern="yyyy.MM.dd HH:mm"/>
+            </c:if>
+          </div>
+
+          <div>
+            <i class="bi bi-eye me-1"></i>
+            <span id="viewCount">${entrust.view_count}</span>
           </div>
         </div>
-      </c:forEach>
+
+    <!-- 첨부 이미지 그리드 -->
+    <c:if test="${not empty fileList}">
+      <div class="info-image-grid">
+        <c:forEach items="${fileList}" var="file">
+          <c:if test="${file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png') || file.originalFileName.endsWith('.jpeg') || file.originalFileName.endsWith('.gif')}">
+            <img src="${CTX}/entrust/preview?fileName=${file.storedFileName}" alt="${file.originalFileName}"/>
+          </c:if>
+        </c:forEach>
+      </div>
+
+      <!-- 이미지 외 파일 링크 -->
+      <ul style="list-style:none; padding:0; margin-top:8px;">
+        <c:forEach items="${fileList}" var="file">
+          <c:if test="${!(file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png') || file.originalFileName.endsWith('.jpeg') || file.originalFileName.endsWith('.gif'))}">
+            <li>
+              <a href="${CTX}/entrust/preview?fileName=${file.storedFileName}" target="_blank">
+                <c:out value="${file.originalFileName}" />
+              </a>
+            </li>
+          </c:if>
+        </c:forEach>
+      </ul>
+    </c:if>
+
+    <!-- 본문 -->
+    <div class="info-content">
+      <textarea readonly>${entrust.content}</textarea>
     </div>
 
+    <!-- 좋아요/카운트 -->
+    <div class="info-stats">
+      <button type="button" class="info-like-btn ${entrust != null && entrust.liked ? 'liked' : ''}" id="likeBtn">
+        <span class="heart">${entrust != null && entrust.liked ? '❤️' : '🤍'}</span>
+        <span id="likeCount">${entrust != null ? entrust.like_count : 0}</span>
+      </button>
+      <span>좋아요: <span id="likeCountDisplay">${entrust != null ? entrust.like_count : 0}</span></span>
+      <span>댓글: ${commentList != null ? commentList.size() : 0}</span>
+    </div>
+
+    <!-- 댓글 입력 -->
+    <div class="info-comment-editor">
+      <input type="hidden" id="nickname" value="${member.nickname}" />
+      <textarea id="content" placeholder="댓글을 작성해주세요"></textarea>
+      <button type="button" onclick="commentWrite()">작성</button>
+    </div>
+
+    <!-- 댓글 목록 -->
+    <section class="info-comment-wrap">
+      <div class="info-comment-list" id="commentList">
+        <c:forEach items="${commentList}" var="comment">
+          <div class="info-comment-item">
+            <div class="info-comment-avatar"></div>
+            <div class="info-comment-body">
+              <div class="info-comment-row">
+                <div class="info-comment-writer">
+                  <span class="js-user" data-nickname="${comment.nickname}">
+                    <a href="${CTX}/othermemberprofile/checkprofile?nickname=${comment.nickname}">
+                      <c:out value="${comment.nickname}" />
+                    </a>
+                  </span>
+                </div>
+                <div class="info-comment-meta">
+                  <span class="info-comment-date">
+                    <fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd"/>
+                  </span>
+                  <security:authentication property="principal.username" var="loginUserId"/>
+                  <c:if test="${loginUserId eq comment.userId || isAdmin}">
+                    <button class="info-btn-del" onclick="commentDelete('${comment.id}')">삭제</button>
+                  </c:if>
+                </div>
+              </div>
+              <div class="info-comment-content">${comment.content}</div>
+            </div>
+          </div>
+        </c:forEach>
+        <c:if test="${empty commentList}">
+          <div class="p-4 text-muted">첫 댓글을 남겨보세요.</div>
+        </c:if>
+      </div>
+    </section>
+
+    <!-- 하단 버튼 -->
+    <div class="info-bottom-actions">
+      <button type="button" class="info-btn-secondary" onclick="location.href='${CTX}/entrust'">목록</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- 신고 모달 -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="reportForm">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="reportModalLabel">게시글 신고</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="postId" value="${entrust.id}" />
+          <div class="mb-3">
+            <label for="reportType" class="form-label">신고 유형</label>
+            <select class="form-select" name="type" id="reportType" required>
+              <option value="" hidden selected>-- 신고 유형 선택 --</option>
+              <option value="CURSE">욕설/비방</option>
+              <option value="SPAM">스팸/광고</option>
+              <option value="IMPROPER">부적절한 콘텐츠</option>
+            </select>
+            <label for="reportReason" class="form-label mt-2">신고 사유</label>
+            <textarea class="form-control" name="reason" id="reportReason" rows="4" required placeholder="신고 사유를 입력하세요"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+          <button type="submit" class="btn btn-brand text-dark">신고하기</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script>
-  const updateFn = () => {
-    location.href = "/entrust/update/${entrust.id}";
-  }
+  // 수정/삭제
+  const updateFn = () => { location.href = "${CTX}/entrust/update/${entrust.id}"; }
   const deleteFn = () => {
-    const confirmed = confirm("정말 삭제하시겠습니까?");
-    if (confirmed) {
-      location.href = "/entrust/delete?id=${entrust.id}";
+    if (confirm("정말 삭제하시겠습니까?")) {
+      location.href = "${CTX}/entrust/delete?id=${entrust.id}";
     }
   }
-
   const commentDelete = (commentId) => {
-    const confirmed = confirm("댓글을 삭제하시겠습니까?");
-    if (confirmed) {
-      location.href = "/entrustComment/delete?id=" + commentId;
+    if (confirm("댓글을 삭제하시겠습니까?")) {
+      location.href = "${CTX}/entrustComment/delete?id=" + commentId;
     }
   }
 
+  // 댓글 등록
   const commentWrite = () => {
     const nickname = document.getElementById("nickname").value;
-    const content = document.getElementById("content").value.trim();
-    const postId = "${entrust.id}";
-
-    if (!postId || !content) {
-      alert("내용을 입력해주세요.");
-      return;
-    }
+    const content  = document.getElementById("content").value.trim();
+    const postId   = "${entrust.id}";
+    if (!postId || !content) { alert("내용을 입력해주세요."); return; }
 
     $.ajax({
       type: "post",
-      url: "/entrustComment/save",
+      url: "${CTX}/entrustComment/save",
       data: { content, post_id: postId, nickname },
       dataType: "json",
-      success: function() { location.reload(); },
-      error: function() { alert("댓글 등록 실패"); }
+      success: function(){ location.reload(); },
+      error:   function(){ alert("댓글 등록 실패"); }
     });
   }
-</script>
 
-<script>
-  $(function () {
-    // 좋아요 버튼
+  // 좋아요
+  $('#likeBtn').on('click', function(){
+    const entrustId = '${entrust.id}';
+    $.ajax({
+      type: 'POST',
+      url: '${CTX}/entrustLike/like/' + entrustId,
+      success: function(data){
+        if(data && data.error){ alert(data.error); return; }
+        $('#likeCount, #likeCountDisplay').text(data.likeCount);
+        const $btn = $('#likeBtn');
+        const $heart = $btn.find('.heart');
+        if(data.liked){ $btn.addClass('liked'); $heart.text('❤️'); }
+        else { $btn.removeClass('liked'); $heart.text('🤍'); }
+      },
+      error: function(xhr){
+        try{ const d = JSON.parse(xhr.responseText); alert(d.error || "좋아요 처리 실패!"); }
+        catch(e){ alert("좋아요 처리 실패!"); }
+      }
+    });
+  });
 
-        $('#likeBtn').click(function(){
-            const entrustId = '${entrust.id}';
-            $.ajax({
-                type: 'POST',
-                url: '${pageContext.request.contextPath}/entrustLike/like/' + entrustId,
-                success: function(data){
-                    if(data.error){
-                        alert(data.error);
-                        return;
-                    }
-                    $('#likeCount').text(data.likeCount);
-                    $('#likeCountDisplay').text(data.likeCount);
-                    // 하트 토글
-                    if(data.liked){
-                        $('#likeBtn').addClass('liked');
-                        $('#likeBtn .heart').text('❤️');
-                    } else {
-                        $('#likeBtn').removeClass('liked');
-                        $('#likeBtn .heart').text('🤍');
-                    }
-                },
-                error: function(xhr) {
-                    try {
-                        const data = JSON.parse(xhr.responseText);
-                        alert(data.error || "좋아요 처리 실패!");
-                    } catch (e) {
-                        alert("좋아요 처리 실패!");
-                    }
-                }
-            });
-        });
+  // 신고 모달
+  $('#reportBtn').on('click', function(){
+    new bootstrap.Modal(document.getElementById('reportModal')).show();
+  });
 
-      // 신고 버튼
-      $('#reportBtn').click(function(){
-          // 폼 초기화 부분. 필요시 주석 해제하기
-          // const $form = $('#reportForm');
-          // $form[0].reset();
-          // $('#reportReason').attr('placeholder', '신고 사유를 입력하세요');
+  // 신고 제출
+  $('#reportForm').on('submit', function(e){
+    e.preventDefault();
+    const postId = $('input[name="postId"]').val();
+    const type   = $('#reportType').val();
+    const reason = $('#reportReason').val();
+    if(!reason.trim()) return alert("신고 사유를 입력해주세요.");
 
-          var modal = new bootstrap.Modal(document.getElementById('reportModal'));
-          modal.show();
-      });
-
-      // 신고 폼 제출
-      $('#reportForm').submit(function(e){
-          e.preventDefault();
-
-          const postId = $('input[name="postId"]').val();
-          const type   = $('#reportType').val();
-          const reason = $('#reportReason').val();
-          const board = 'ENTRUST';
-          if(!reason.trim()) return alert("신고 사유를 입력해주세요.");
-
-          const payload = { targetBoard: board, targetContentId: postId, type, description: reason };
-
-          $.ajax({
-              type: 'POST',
-              url: '${pageContext.request.contextPath}/report',
-              contentType: 'application/json; charset=UTF-8',
-              dataType: 'text',
-              data: JSON.stringify(payload),
-              success: function(){
-                  alert('신고가 접수되었습니다.');
-                  const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
-                  modal && modal.hide();
-              },
-              error: function(){
-                  alert("신고 접수에 실패했습니다.");
-              }
-          });
-      });
+    const payload = { targetBoard:'ENTRUST', targetContentId: postId, type, description: reason };
+    $.ajax({
+      type:'POST',
+      url: '${CTX}/report',
+      contentType:'application/json; charset=UTF-8',
+      dataType:'text',
+      data: JSON.stringify(payload),
+      success: function(){
+        alert('신고가 접수되었습니다.');
+        bootstrap.Modal.getInstance(document.getElementById('reportModal'))?.hide();
+      },
+      error: function(){ alert("신고 접수에 실패했습니다."); }
+    });
   });
 </script>
 </body>

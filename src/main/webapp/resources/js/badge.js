@@ -13,8 +13,10 @@
 .badge-l1{background:#e9f7ec}
 .badge-l2{background:#f9efe2}
 .badge-l3{background:#fff3cd}
+
 /* 관리자 강조: 링크까지 확실히 파랗게 */
 .is-admin, .is-admin a{font-weight:700;color:#2563eb !important}
+
 .admin-chip{
   display:inline-block;margin-left:6px;padding:2px 6px;
   font-size:11px;font-weight:600;border-radius:9999px;
