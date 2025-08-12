@@ -18,74 +18,90 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <style>
-    /* ===== 레이아웃 기본 ===== */
+    /* == 페이지 전체 스크롤 금지 == */
     html,body{height:100%;overflow:hidden}
-    body{background:#F8F9FA;margin:0;font-family:'Pretendard','Apple SD Gothic Neo',Arial,sans-serif}
+    body{margin:0;background:#F8F9FA;font-family:'Pretendard','Apple SD Gothic Neo',Arial,sans-serif}
+
+    /* == 좌우 레이아웃 == */
     .mypage-layout{display:flex;height:100vh;overflow:hidden}
 
-    .sidebar{width:220px;height:100vh;background:#fff;border-right:1.5px solid #eee;display:flex;flex-direction:column;align-items:center}
-    .profile-img{width:72px;height:72px;border-radius:50%;background:#ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/46px no-repeat;margin-top:42px;margin-bottom:10px;object-fit:cover;cursor:pointer}
-    .profile-name{font-weight:600;font-size:1.02rem;color:#444;margin-bottom:6px}
-    .profile-edit-btn,.logout-btn{border:none;background:#f8f9fa;color:#666;font-size:.9rem;border-radius:10px;padding:6px 12px;margin-top:6px;cursor:pointer;transition:background .15s}
+    /* == 사이드바 (모바일에서도 유지) == */
+    .sidebar{width:160px;background:#fff;border-right:1.5px solid #eee;display:flex;flex-direction:column;align-items:center}
+    .profile-img{width:72px;height:72px;border-radius:50%;object-fit:cover;margin-top:36px;margin-bottom:8px;background:#ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/46px no-repeat}
+    .profile-name{font-weight:600;font-size:1rem;color:#444;margin-bottom:6px}
+    .profile-edit-btn,.logout-btn{display:block;white-space:nowrap;width:120px;text-align:center;border:none;background:#f8f9fa;color:#666;font-size:.85rem;border-radius:10px;padding:6px 10px;margin-top:6px;cursor:pointer;transition:background .15s}
     .profile-edit-btn:hover,.logout-btn:hover{background:#f1f1f1;color:#222}
-    .sidebar-bottom{margin-top:auto;width:100%;display:flex;flex-direction:column;align-items:center;padding-bottom:26px}
+    .sidebar-bottom{margin-top:auto;padding:18px 0}
+    @media (max-width:900px){ .sidebar{width:140px} }
+    @media (max-width:560px){ .sidebar{width:120px} }
 
+    /* == 우측 메인 == */
     .mypage-main{flex:1 1 0;display:flex;flex-direction:column;min-width:0;min-height:0}
+
+    /* 헤더 */
     .main-header{flex:0 0 56px;height:56px;background:#D9D9D9;display:flex;align-items:center;justify-content:flex-end;padding:0 16px;border-bottom:1.5px solid #eee}
-    .icon-btn{position:relative;background:transparent;border:none;font-size:22px;margin-left:14px;color:#333;cursor:pointer}
+    .icon-btn{position:relative;border:0;outline:0;background:transparent;appearance:none;font-size:22px;margin-left:14px;color:#333;cursor:pointer}
+    .icon-btn:focus{outline:0;box-shadow:none}
     .unread-count-badge{position:absolute;top:-6px;right:-8px;background:#ff3b30;color:#fff;border-radius:999px;padding:2px 6px;font-size:10px;line-height:1}
 
-    .main-board{flex:1 1 auto;display:flex;flex-direction:column;gap:14px;padding:16px;min-height:0;overflow:hidden}
-
-    /* ===== 그리드 (반응형) ===== */
-    /* 상단 4타일: 자동 칼럼 수, 최소 240px */
-    .cards-grid{
+    /* === 메인 보드: 3행 그리드 (auto, auto, 1fr)로 고정 === */
+    .main-board{
+      height:calc(100vh - 56px);          /* 헤더 제외 높이를 확실히 계산 */
       display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:12px;
-      min-height:0;
-    }
-    /* 미니 카드 3개: 자동 칼럼 수, 최소 200px */
-    .mini-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:12px;
+      grid-template-rows:auto auto 1fr;   /* 위–위–아래(남는 높이) */
+      row-gap:14px;
+      padding:16px;
+      overflow:hidden;
       min-height:0;
     }
 
-    /* 하단 2칸: 좌 1.6, 우 1 비율 → 좁아지면 자동 한 줄 */
-    .cards-grid:last-of-type{
-      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    /* 위 타일 2×2 고정 */
+    .top-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;min-height:0}
+
+    /* 미니카드 3열 */
+    .mini-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;min-height:0}
+
+    /* 하단 2칸: 남는 높이 모두 먹음 */
+    .bottom-grid{
+      display:grid;
+      grid-template-columns:2fr 1fr !important; /* 인라인 스타일 있어도 강제 */
+      gap:14px;
+      min-height:0;
+      height:100%;                  /* main-board의 1fr 전부 차지 */
+      align-items:stretch;
     }
 
-    /* ===== 타일/카드 ===== */
+    /* 카드/타일 공통 (작고 둥글게) */
     .tile{
-      position:relative;display:flex;align-items:center;gap:10px;
-      height:56px;background:#fff;border:none;border-radius:20px;
-      box-shadow:0 4px 10px rgba(20,30,58,.06);padding:0 14px
-    }
-    .tile img{width:28px;height:28px}
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    height:52px;
+    padding:5px 12px;
+    background:#fff;
+    border:none;
+    border-radius:22px;
+    box-shadow:0 4px 10px rgba(20,30,58,.06)}
+    .tile img{width:26px;height:26px}
     .tile span{font-size:15px;color:#333}
-    .tile a.stretched-link{position:absolute;inset:0;border-radius:20px}
+    .tile a.stretched-link{position:absolute;inset:0;border-radius:22px}
 
-    .card{background:#fff;border-radius:20px;box-shadow:0 4px 10px rgba(20,30,58,.06);border:none}
-    .card-body{padding:16px}
-    .card.big{min-height:0}
+    .card{background:#fff;border-radius:22px;box-shadow:0 4px 10px rgba(20,30,58,.06);border:none}
+    .card .card-body{padding:16px}
 
-    /* ===== “내 소식”만 스크롤 ===== */
-    .news-card{display:flex;flex-direction:column;min-height:0;height:clamp(240px,36vh,460px)}
+    /* 하단 카드가 정확히 같은 높이가 되도록 */
+    .bottom-grid > .card{display:flex;flex-direction:column;height:100%;min-height:0}
+    .bottom-grid > .card .card-body{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+
+    /* 내 소식만 스크롤 */
+    .news-card{flex:1 1 auto;min-height:0}
     .notify-scroll{flex:1 1 auto;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch}
 
-    /* ===== 신뢰도(도넛/게이지) ===== */
+    /* 도넛/게이지 */
     .donut-box{display:flex;flex-direction:column;align-items:center;justify-content:center}
-    .donut-box canvas{
-      margin-top:6px;
-      width:100% !important;
-      max-width:180px;      /* 기본 크기 */
-      height:auto !important;
-      aspect-ratio:1/1;     /* 비율 유지 */
-    }
-    .donut-labels{display:flex;gap:10px;justify-content:center;margin-top:8px;font-size:13px;flex-wrap:wrap}
+    .donut-box canvas{width:200px!important;height:200px!important;max-width:100%}
+    .donut-labels{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px;font-size:13px}
     .donut-label-dot{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:4px}
     .donut-grade-badge{display:flex;align-items:center;gap:6px;margin-top:2px;font-size:15px;font-weight:600}
     .trust-gauge-wrap{margin-top:10px;width:100%;max-width:220px}
@@ -93,97 +109,66 @@
     .trust-gauge-bar{height:100%;background:#FFC112;border-radius:9px 0 0 9px;width:0;transition:width .9s cubic-bezier(.23,1.01,.32,1)}
     .trust-gauge-label{font-size:.9rem;text-align:right;margin-top:4px;color:#666}
 
-    /* ===== 반응형 세부 튜닝 ===== */
-    @media (max-width:1200px){
-      .sidebar{width:200px}
+    /* 반응형 */
+    @media (max-width:992px){
+      .mini-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .bottom-grid{grid-template-columns:1.6fr 1fr !important}
+      .donut-box canvas{width:180px!important;height:180px!important}
     }
-    /* 작은 화면에서도 사이드바 유지 (컴팩트) */
-    @media (max-width: 900px){
-      .sidebar{
-        display:flex !important;   /* 숨기지 말고 유지 */
-        width: 120px;              /* 폭만 줄이기 */
-      }
-      .main-header{height:52px}
-      .main-board{padding:12px}
-
-      /* 사이드바 안 요소 컴팩트화 */
-      .profile-img{width:56px;height:56px;margin-top:20px}
-      .profile-name{font-size:.9rem;margin-bottom:4px}
-      .profile-edit-btn,.logout-btn{
-        font-size:.8rem; padding:4px 8px; border-radius:10px;
-      }
-      .sidebar-bottom{padding-bottom:18px}
-    }
-
-    /* 아주 작은 화면(찐 모바일) */
-    @media (max-width: 560px){
-      .sidebar{width: 96px}
-      .profile-img{width:52px;height:52px;margin-top:16px}
-      .profile-name{font-size:.85rem}
-      .profile-edit-btn,.logout-btn{font-size:.75rem;padding:3px 7px}
-    }
-    /* ===== 사진 레이아웃 고정 ===== */
-    /* 상단 타일: 데스크톱에서 항상 2열(= 2×2) */
-    .top-tiles{
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:14px;
-    }
-
-    /* 미니 카드: 데스크톱 3열 고정 */
-    .mini-cards{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:14px;
-    }
-
-    /* 하단 2칸: 좌 2, 우 1 비율 */
-    .bottom-grid{
-      display:grid;
-      grid-template-columns:2fr 1fr;
-      gap:14px;
-    }
-
-    /* 카드/타일 더 작고 둥글게 */
-    .tile{
-      height:52px; padding:0 12px; border-radius:22px; box-shadow:0 4px 10px rgba(20,30,58,.06);
-    }
-    .tile img{width:26px;height:26px}
-    .tile span{font-size:15px}
-
-    .card{border-radius:22px; box-shadow:0 4px 10px rgba(20,30,58,.06)}
-    .card-body{padding:16px}
-
-    /* 내 소식: 높이 고정 + 내부 스크롤 */
-    .news-card{height:380px; min-height:0; display:flex; flex-direction:column}
-    .notify-scroll{flex:1 1 auto; min-height:0; overflow:auto; -webkit-overflow-scrolling:touch}
-
-    /* 도넛 차트: 데스크톱에서 정확히 맞게, 작은 화면에서만 축소 */
-    .donut-box canvas{
-      width:200px !important; height:200px !important; max-width:100%;
-    }
-
-    /* ===== 반응형 ===== */
-    @media (max-width: 1200px){
-      .top-tiles{grid-template-columns:repeat(2, minmax(0,1fr))}
-      .mini-cards{grid-template-columns:repeat(3, minmax(0,1fr))}
-      .bottom-grid{grid-template-columns:1.6fr 1fr}
-      .news-card{height:360px}
-    }
-    @media (max-width: 992px){
-      .top-tiles{grid-template-columns:repeat(2, minmax(0,1fr))}
-      .mini-cards{grid-template-columns:repeat(2, minmax(0,1fr))}
-      .bottom-grid{grid-template-columns:1fr}
-      .news-card{height:320px}
-      .donut-box canvas{width:180px !important; height:180px !important}
-    }
-    @media (max-width: 560px){
+    @media (max-width:560px){
       .top-tiles{grid-template-columns:1fr}
       .mini-cards{grid-template-columns:1fr}
-      .news-card{height:300px}
-      .tile{height:48px;border-radius:24px}
-      .donut-box canvas{width:160px !important; height:160px !important}
+      .bottom-grid{grid-template-columns:1fr !important}
+      .donut-box canvas{width:160px!important;height:160px!important}
     }
+    /* 1) dvh 지원 브라우저에선 그걸로 정확히 맞추기 */
+    @supports (height: 100dvh) {
+      .mypage-layout{ height: 100dvh; }
+      .main-board{ height: calc(100dvh - 56px); } /* 헤더 제외 */
+    }
+
+    /* 2) dvh 미지원(iOS Safari 등)을 위한 폴백: JS가 --vh 넣어줌 */
+    @supports not (height: 100dvh) {
+      .mypage-layout{ height: calc(var(--vh, 1vh) * 100); }
+      .main-board{ height: calc(calc(var(--vh, 1vh) * 100) - 56px); }
+    }
+
+    /* 3) 바닥 패딩을 살짝 줄여 완전 밀착(원하면 0으로) */
+    .main-board{ padding-bottom: 8px; }  /* 기존 16px → 8px */
+
+    /* 모든 카드에 동일한 내부 여백(가장자리 띠) 추가 */
+    .card{
+      padding: 20px !important;   /* 필요하면 10~16px로 조절 */
+      box-sizing: border-box;
+    }
+
+    /* 카드 내부 본문은 기존처럼 유지 (많아 보이면 12px로) */
+    .card .card-body{
+      padding: 20px;
+    }
+
+    /* 상단 타일(소통/제보/아동범죄/지도)도 살짝 여백 확대 */
+    .tile{
+      padding: 8px 16px !important;  /* 세로 8px, 좌우 16px */
+    }
+
+    /* 하단 두 카드(내 소식/신뢰도)도 스크롤 영역 유지 */
+    .bottom-grid > .card .card-body{
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-tiles .tile{
+      padding: 15px 20px !important;
+      min-height: 56px;
+      height: auto !important;
+      box-sizing: border-box;
+    }
+
+    /* 아이콘/텍스트 사이 살짝 여유 원하면 */
+    .top-tiles .tile img { margin-left: 2px; }
   </style>
 </head>
 
@@ -357,7 +342,7 @@
 
         <!-- 신뢰도 점수판 -->
         <div class="card big">
-          <div class="card-body" style="position:relative">
+          <div class="card-body trust-card" style="position:relative">
             <div class="d-flex align-items-center mb-2" style="gap:10px;">
               <span style="font-weight:600;font-size:1.08rem;">신뢰도 점수판</span>
               <span class="donut-grade-badge">
@@ -575,6 +560,14 @@ function deleteNotify(id){
     .then(()=> window.location.reload())
     .catch(()=> alert("삭제 중 오류가 발생했습니다."));
 }
+</script>
+<script>
+  function setVhUnit(){
+    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  }
+  window.addEventListener('resize', setVhUnit);
+  window.addEventListener('orientationchange', setVhUnit);
+  setVhUnit();
 </script>
 </body>
 </html>
