@@ -14,276 +14,367 @@
      <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 
      <!-- 전역 배지 스크립트 -->
-         <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f4f6f8;
-        }
+     /* ===== Post Detail (layout only, no functional changes) ===== */
+     .page-wrap {
+       display:flex;
+       justify-content:center;
+       padding: 40px 16px 80px;
+     }
 
-        .container {
-            display: flex;
-            height: 100vh;
-        }
+     .post-card{
+       width:100%;
+       max-width: 880px;
+       background:#fff;
+       border-radius: 16px;
+       box-shadow: 0 6px 20px rgba(0,0,0,.06);
+       padding: 28px 28px 18px;
+     }
 
-        .sidebar {
-            width: 240px;
-            background-color: #ffb830;
-            padding: 40px 20px;
-            color: #333;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-        }
+     /* 제목 + 우측 액션 */
+     .post-head{
+       display:flex;
+       align-items:flex-start;
+       justify-content:space-between;
+       gap:16px;
+       margin-bottom: 12px;
+     }
 
-        .sidebar img {
-            width: 100px;
-            margin-bottom: 50px;
-        }
+     .post-title{
+       font-size: 28px;
+       font-weight: 599;
+       letter-spacing: -.3px;
+       margin: 0;
+       color:#222;
+     }
 
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
+     .post-actions{
+       display:flex;
+       gap:12px;
+       font-size: 14px;
+       color:#666;
+     }
+     .post-actions button{
+       background:transparent;
+       border:none;
+       color:#666;
+       cursor:pointer;
+       padding: 6px 8px;
+       border-radius:8px;
+     }
+     .post-actions button:hover{ background:#f2f2f2; }
 
-        .sidebar li {
-            margin: 20px 0;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
+     /* 메타 */
+     .post-meta{
+       display:flex;
+       align-items:center;
+       gap:18px;
+       color:#8a8a8a;
+       font-size: 14px;
+       margin-bottom: 16px;
+     }
+     .post-meta .author{ font-weight:600; color:#444; }
 
-        .sidebar li:hover {
-            background-color: #ffe9a9;
-            border-radius: 8px;
-            padding: 6px 10px;
-        }
+     /* 본문 이미지 */
+     .post-image{
+       width:100%;
+       border-radius:12px;
+       overflow:hidden;
+       margin: 10px 0 16px;
+     }
+     .post-image img{
+          display: block;
+          width: 50%;
+          height: auto;
+          object-fit: cover;
+          margin: auto;
+          border-radius: 10px;
 
-        .content {
-            flex: 1;
-            padding: 60px 80px;
-            overflow-y: auto;
-        }
+     }
 
-        .form-container {
-            background: #fff;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-        }
+     /* 내용 박스 */
+     .post-content{
+       background:#f8f8f9;
+       border:1px solid #eceff3;
+       border-radius:12px;
+       padding:18px 16px;
+       color:#444;
+       line-height:1.7;
+     }
+     .post-content textarea{
+       width:100%;
+       min-height:180px;
+       border:none;
+       background:transparent;
+       resize:vertical;
+       font-size:17px;
+       color:#444;
+       line-height:1.7;
+       outline:none;
+       white-space:pre-wrap;
+     }
 
-        .form-container h2 {
-            font-size: 26px;
-            margin-bottom: 25px;
-            color: #333;
-        }
+/* 크롬, 엣지, 사파리 */
+::-webkit-scrollbar {
+  width: 6px;              /* 세로 스크롤바 두께 */
+  height: 6px;             /* 가로 스크롤바 두께 */
+}
 
-        .form-group {
-            margin: 20px 0;
-        }
+::-webkit-scrollbar-track {
+  background: transparent; /* 트랙 배경 */
+}
 
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #444;
-        }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3); /* 스크롤 핸들 색상 */
+  border-radius: 3px;                   /* 둥글게 */
+}
 
-        .form-group input[type="text"],
-        .form-group textarea {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 15px;
-            background-color: #fdfdfd;
-        }
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.5); /* 호버 시 색 진하게 */
+}
 
-        .form-group textarea {
-            min-height: 200px;
-            resize: vertical;
-        }
+/* 파이어폭스 */
+* {
+  scrollbar-width: thin;                /* 얇게 */
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* 색상(핸들, 배경) */
+}
 
-        .meta-info {
-            display: flex;
-            gap: 40px;
-            margin-top: 10px;
-            margin-bottom: 30px;
-            color: #888;
-            font-size: 14px;
-        }
+     /* 좋아요/카운트 */
+     .post-stats{
+       display:flex;
+       align-items:center;
+       gap:16px;
+       color:#666;
+       margin: 16px 4px 6px;
+       font-size:14px;
+     }
+     .btn.like-btn{
+       display:inline-flex;
+       align-items:center;
+       gap:8px;
+       padding:8px 12px;
+       border-radius:10px;
+       background:#fff;
+       cursor:pointer;
+     }
+     .btn.like-btn .heart{ font-size:18px; line-height:1; }
+     .btn.like-btn.liked .heart{ color:#f44336; }
 
-        .form-actions {
-            text-align: right;
-            margin-top: 40px;
-        }
 
-        .form-actions button {
-            padding: 10px 20px;
-            margin-left: 10px;
-            background-color: #f5a623;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
+     /* 댓글 */
+     .comment-wrap{ margin-top: 18px; }
+     .comment-list{ display:flex; flex-direction:column; gap:10px; margin: 8px 0 18px; }
+     .comment-item{
+       display:flex; gap:12px; padding:14px;
+       background:#fafafa; border:1px solid #eef1f5; border-radius:12px;
+       height: 90px;
+     }
 
-        .form-actions button:hover {
-            background-color: #e9971b;
-        }
+     .comment-item {
+       display: flex;
+       gap: 12px;
+       padding: 14px;
+       background: #fafafa;
+       border: 1px solid #eef1f5;
+       border-radius: 12px;
+       height: 70%;
+     }
 
-        .comment-section {
-            margin-top: 60px;
-        }
+     .comment-body { flex: 1; }
 
-        .comment-section h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+     /* 상단 한 줄을 좌우로 배치 */
+     .comment-row {
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       gap: 10px;
+     }
 
-         .comment-section textarea {
-                    min-height: 90px;
-                    resize: vertical;
-                }
+     /* 우측 묶음: 날짜 + 삭제버튼 */
+     .comment-meta {
+       display: flex;
+       align-items: center;
+       gap: 12px;
+     }
 
-        .comment-box {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 10px;
-        }
+     .comment-date { color: #9aa1a9; font-size: 12px; }
 
-        .comment-writer {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+     /* 삭제 버튼 */
+     .btn-del {
+       border: none;
+       background: transparent;
+       color: #666;
+       padding: 6px 8px;
+       border-radius: 8px;
+       cursor: pointer;
+     }
+     .btn-del:hover {
+       background: #f2f2f2;
+       color: red;
+     }
 
-        .comment-date {
-            color: #999;
-            font-size: 13px;
-            margin-top: 5px;
-        }
+     .comment-avatar{ width:40px;height:40px;border-radius:50%; background:#ffe29a; flex:0 0 auto; }
+     .comment-body{ flex:1; }
+     .comment-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+     .comment-date{ color:#9aa1a9; font-size:12px; }
+     .comment-content{ margin-top:6px; color:#444; line-height:1.6; }
 
-        .like-btn .heart {
-                    font-size: 1.4em;
-                    vertical-align: middle;
-                    transition: color 0.15s;
-                }
-                .like-btn.liked .heart {
-                    color: #f44336;
-                }
-                .like-btn .heart {
-                    color: #fff;
-                    text-shadow: 0 0 2px #d1d1d1;
-                }
-                .like-btn {
-                    border: 1.5px solid #f44336 !important;
-                }
+    .comment-writer span {
+      font-weight:700; color:#333;
+     }
 
+     .comment-writer span:hover {
+       color:  rgb(255, 199, 39);
+     }
+
+     /* 댓글 입력 */
+     .comment-editor{
+       display:flex; gap:10px; align-items:flex-end;
+       padding:12px; border:1px solid #eceff3; border-radius:12px; background:#fffdf7;
+     }
+     .comment-editor input[type="text"]{
+       flex:1; border:1px solid #e2e5ea; border-radius:10px;
+       padding:12px 14px; font-size:14px; outline:none;
+     }
+     .comment-editor button{
+       background:#f5a623; color:#fff; border:none;
+       border-radius:10px; padding:12px 18px; font-weight:700; cursor:pointer;
+     }
+     .comment-editor button:hover{ background:#e9971b; }
+
+     /* 하단 버튼 */
+     .bottom-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top: 10px; }
+     .bottom-actions button{ border:none; border-radius:10px; padding:10px 16px; cursor:pointer; }
+     .btn-secondary{ background:#fff; border:1px solid #e2e5ea; }
+     .btn-primary{ background:#f5a623; color:#fff; }
+
+     .bottom-actions button:hover
+     { background: #f2f2f2;
+             color: #666; }
+
+
+     /* 반응형 */
+     @media (max-width: 768px){
+       .post-title{ font-size:22px; }
+       .post-head{ flex-direction:column; align-items:flex-start; gap:8px; }
+       .post-meta{ flex-wrap:wrap; gap:10px; }
+       .comment-item{ padding:12px; }
+       .comment-editor{ flex-direction:column; align-items:stretch; }
+       .comment-editor button{ width:100%; }
+     }
+     @media (max-width: 480px){
+       .post-card{ padding:22px 18px; }
+     }
     </style>
 </head>
 <body>
+<%@ include file="/WEB-INF/views/header.jsp" %>
+
 <div class="container">
-    <!-- 사이드바 -->
-    <aside class="sidebar">
-        <img src="#" alt="logo">
-        <ul>
-            <li>📌 마이페이지</li>
-            <li>🗺️ 범죄 예방 지도</li>
-            <li>💬 커뮤니티</li>
-            <li>🚨 제보 및 신고</li>
-            <li>📚 정보 공유</li>
-        </ul>
-    </aside>
+   <div class="page-wrap">
+     <div class="post-card">
+       <!-- 기존 폼/네임/액션 그대로 -->
+       <form action="/info/detail" method="post" name="infoupdateForm">
+         <!-- 제목 + 관리자 액션 -->
+         <div class="post-head">
+           <h2 class="post-title">${findDto.title}</h2>
+           <div class="post-actions">
+             <security:authorize access="hasRole('ROLE_ADMIN')">
+               <button type="button" onclick="updatefn()">수정</button>
+               <button type="button" onclick="deletefn()">삭제</button>
+             </security:authorize>
+           </div>
+         </div>
 
-    <!-- 메인 콘텐츠 -->
-    <main class="content">
-        <div class="form-container">
-            <h2>글 상세보기</h2>
-            <form action="/info/detail" method="post" name="infoupdateForm">
-                <div class="form-group">
-                    <label>제목</label>
-                    <input type="text" name="title" value="${findDto.title}" readonly />
+         <!-- 메타 -->
+         <div class="post-meta">
+           <c:if test="${not empty findDto.nickname}">
+             <div class="author">
+               ✍ <span class="js-user" data-nickname="${findDto.nickname}">${findDto.nickname}</span>
+             </div>
+           </c:if>
+           <div>🕒 <fmt:formatDate value="${findDto.created_at}" pattern="yyyy-MM-dd HH:mm" /></div>
+           <div>👁️ ${findDto.view_count}</div>
+         </div>
+
+         <!-- 본문 이미지 -->
+         <c:if test="${not empty findFileDto}">
+           <div class="post-image">
+             <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" alt="post image" />
+           </div>
+         </c:if>
+
+         <!-- 본문 (textarea 그대로 사용, 읽기전용) -->
+         <div class="post-content">
+           <textarea name="content" readonly>${findDto.content}</textarea>
+         </div>
+
+         <!-- 좋아요/카운트 (id/class 유지) -->
+         <div class="post-stats">
+           <button type="button" class="btn like-btn ${findDto != null && findDto.liked ? 'liked' : ''}" id="likeBtn">
+             <span class="heart">${findDto.liked ? '❤️' : '🤍'}</span>
+             <span id="likeCount">${findDto.like_count}</span>
+           </button>
+           <span>좋아요: <span id="likeCountDisplay">${findDto != null ? findDto.like_count : 0}</span></span>
+         </div>
+
+         <input type="hidden" name="id" value="${findDto.id}" />
+       </form>
+
+            <!-- 댓글 입력 -->
+                <div class="comment-editor">
+                  <input type="text" id="commentContents" placeholder="댓글을 작성해주세요" />
+                  <button type="button" onclick="commentWrite()">작성</button>
                 </div>
+              </section>
 
-                <div class="meta-info">
-                    <div>🕒 작성일: <fmt:formatDate value="${findDto.created_at}" pattern="yyyy-MM-dd" /></div>
-                    <div>👁️‍ 조회수: ${findDto.view_count}</div>
-                    <c:if test="${not empty findDto.nickname}">
-                        <div>✍ 작성자:
-                            <!-- ✅ 배지 대상 -->
-                            <span class="js-user" data-nickname="${findDto.nickname}">${findDto.nickname}</span>
-                        </div>
+
+       <!-- 댓글 목록 -->
+       <section class="comment-wrap">
+         <div class="comment-list" id="comment-list">
+           <c:forEach items="${commentList}" var="comment">
+            <div class="comment-item">
+              <div class="comment-avatar"></div>
+              <div class="comment-body">
+                <!-- 상단 행: 작성자 / (날짜 + 삭제버튼) -->
+                <div class="comment-row">
+                  <div class="comment-writer">
+                    <span class="js-user" data-nickname="${comment.nickname}">
+                      <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">
+                        ${comment.nickname}
+                      </a>
+                    </span>
+                  </div>
+
+                  <div class="comment-meta">
+                    <span class="comment-date">
+                      <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
+                    </span>
+                    <c:if test="${comment.nickname == member.nickname}">
+                      <button type="button"
+                              class="btn-del"
+                              onclick="commentDelete('${comment.nickname}', ${comment.id})">삭제</button>
                     </c:if>
+                  </div>
                 </div>
 
-                <div class="form-group">
-                    <!-- 게시물에 첨부된 사진 넣기(두 번째 이미지 출력) -->
-                    <c:if test="${not empty findFileDto}">
-                        <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" style="width:300px; height:300px;" />
-                    </c:if>
-               </div>
-
-                <div class="form-group">
-                    <textarea name="content" readonly>${findDto.content}</textarea>
+                <div class="comment-content">${comment.content}</div>
+                  </div>
                 </div>
 
-                <input type="hidden" name="id" value="${findDto.id}" />
+           </c:forEach>
+         </div>
 
-                <!-- 좋아요 버튼 (하트 토글) -->
-                <div class="mb-2">
-                    <button type="button" class="btn like-btn ${findDto != null && findDto.liked ? 'liked' : ''}" id="likeBtn">
-                        <span class="heart">${findDto.liked ? '❤️' : '🤍'}</span>
-                        <span id="likeCount">${findDto.like_count}</span>
-                    </button>
-                </div>
-                좋아요: <span id="likeCountDisplay">${findDto != null ? findDto.like_count : 0}</span>
 
-                <security:authorize access="hasRole('ROLE_ADMIN')">
-                    <div class="form-actions">
-                        <button type="button" onclick="updatefn()">수정</button>
-                        <button type="button" onclick="deletefn()">삭제</button>
-                    </div>
-                </security:authorize>
-                <div class="form-actions">
-                    <button type="button" onclick="infoForm()">목록</button>
-                </div>
-            </form>
 
-            <!-- 댓글 영역 -->
-            <div class="comment-section">
-                <h3>댓글</h3>
+       <!-- 목록 버튼 (기존 함수 유지) -->
+       <div class="bottom-actions">
+         <button type="button" class="btn-secondary" onclick="infoForm()">목록</button>
+       </div>
+     </div>
+   </div>
 
-            <!-- 댓글 작성 폼 -->
-              <input type = "text" id = "commentContents" placeholder = "내용"  />
-               <div class="form-actions">
-                 <button type="button" onclick="commentWrite()">댓글 작성</button>
-               </div>
-
-                <!-- 댓글 목록 -->
-                <div id="comment-list">
-                    <c:forEach items="${commentList}" var="comment">
-                        <div class="comment-box">
-                            <div class="comment-writer">
-                                <!-- ✅ 배지 대상 -->
-                                <span class="js-user" data-nickname="${comment.nickname}"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></span>
-                            </div>
-                            <div>${comment.content}</div>
-                            <div class="comment-date">
-                                <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm" />
-                            </div>
-                            <div>
-                                <c:if test="${comment.nickname == member.nickname}">
-                                    <button type="button" onclick="commentDelete('${comment.nickname}', ${comment.id})">삭제</button>
-                                </c:if>
-                            </div>
-                        </div>
-                    </c:forEach>
-                </div>
-            </div>
-    </main>
 </div>
 
 <script>

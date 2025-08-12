@@ -132,6 +132,7 @@
 
                 <input type="hidden" name="id" value="${findDto.id}" readonly/>
                 <div class="form-actions">
+                    <button type="button" onClick="goBack()">뒤로가기</button>
                     <button  onclick="updatefinish()" >수정</button>
                </div>
             </form>
@@ -159,5 +160,8 @@ const updatefinish = () => {
     }
 };
 
+function goBack(){
+    window.history.back();
+}
 </script>
 </html>

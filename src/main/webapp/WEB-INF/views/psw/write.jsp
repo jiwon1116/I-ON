@@ -19,38 +19,6 @@
             display: flex;
             height: 100vh;
         }
-
-        .sidebar {
-            width: 220px;
-            background-color: #f4a300;
-            padding: 30px 20px;
-            color: #fff;
-        }
-
-        .sidebar .logo {
-            margin-bottom: 40px;
-            font-weight: bold;
-            font-size: 20px;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar li {
-            margin: 25px 0;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar li:hover {
-            text-decoration: underline;
-        }
-
         .content {
             flex: 1;
             padding: 50px;
@@ -117,21 +85,56 @@
             background-color: #db9000;
         }
 
+/* 반응형 */
+@media (max-width: 1024px) {
+    .form-container {
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    .form-container {
+        padding: 20px;
+        margin: 0 10px;
+    }
+    .form-group input[type="text"],
+    .form-group textarea,
+    .form-group input[type="file"] {
+        font-size: 13px;
+        padding: 10px;
+    }
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .form-actions button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 16px;
+    }
+    .form-title {
+        font-size: 20px;
+    }
+    .form-group label {
+        font-size: 14px;
+    }
+    .form-group textarea {
+        min-height: 120px;
+    }
+}
     </style>
 </head>
 <body>
+
+<%@ include file="/WEB-INF/views/header.jsp" %>
 <div class="container">
-    <!-- 사이드바 -->
-    <aside class="sidebar">
-        <div class="logo">logo</div>
-        <ul>
-           <li>📌 마이페이지</li>
-           <li>🗺️ 범죄 예방 지도</li>
-           <li>💬 커뮤니티</li>
-           <li>🚨 제보 및 신고</li>
-           <li>📚 정보 공유</li>
-        </ul>
-    </aside>
 
     <!-- 메인 콘텐츠 -->
     <main class="content">
@@ -152,7 +155,7 @@
               <div class="form-group">
 
                  <label for="file" class="form-label">게시물 이미지(필수)</label>
-                 <input type="file" class="form-control" id="file" name="file">
+                 <input type="file" class="form-control" id="file" name="file" required>
 
               </div>
 
@@ -162,7 +165,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" onClick="writeFinish()">등록하기</button>
+                <button type="button" onClick="goBack()">뒤로가기</button>
+                <button type="button" onClick="writeFinish()">등록하기</button>
                 </div>
             </form>
         </div>
@@ -185,6 +189,11 @@ function writeFinish() {
     // 모든 값이 채워져 있으면 알림 후 전송
     alert("글 작성이 완료되었습니다🙂");
     form.submit();
+}
+
+
+function goBack(){
+    window.history.back();
 }
 </script>
 
