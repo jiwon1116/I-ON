@@ -16,7 +16,7 @@
         .alert-error { background-color: #f8d7da; color: #721c24; }
         .create-chat-form { display: flex; margin-bottom: 20px; }
         .create-chat-form input { flex-grow: 1; padding: 10px; margin-right: 10px; border: 1px solid #ccc; border-radius: 5px; }
-        .create-chat-form button { padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .create-chat-form button { padding: 10px 15px; background-color: #FFCC3C; color: 333; border: none; border-radius: 5px; cursor: pointer; }
         .chat-room-list { list-style: none; padding: 0; }
         .chat-room-item { border: 1px solid #eee; margin-bottom: 10px; padding: 15px; border-radius: 8px; background-color: #f9f9f9; transition: background-color 0.2s; }
         .chat-room-item:hover { background-color: #f1f1f1; }

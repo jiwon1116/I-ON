@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<jsp:useBean id="now" class="java.util.Date" />
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -14,36 +15,205 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* === (생략) 기존 스타일 복사 === */
-        body { background: #F8F9FA; margin: 0; font-family: 'Pretendard','Apple SD Gothic Neo',Arial,sans-serif; }
-        .mypage-layout { display: flex; min-height: 100vh; }
-        .sidebar { width: 220px; height: 100vh; background: #fff; border-right: 1.5px solid #eee; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; }
-        .profile-img { width: 76px; height: 76px; border-radius: 50%; background: #ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/48px no-repeat; margin-top: 50px; margin-bottom: 10px; object-fit: cover; cursor: pointer; }
-        .profile-name { font-weight: 600; font-size: 1.08rem; color: #444; margin-bottom: 8px; }
-        .profile-edit-btn, .logout-btn { border: none; background: #f8f9fa; color: #666; font-size: 0.92rem; border-radius: 7px; padding: 5px 15px; margin-top: 6px; cursor: pointer; transition: background 0.15s; }
-        .profile-edit-btn:hover, .logout-btn:hover { background: #f1f1f1; color: #222; }
-        .sidebar-bottom { margin-top: auto; width: 100%; display: flex; flex-direction: column; align-items: center; padding-bottom: 34px; }
-        .main-header { height: 64px; background: #D9D9D9; display: flex; align-items: center; justify-content: flex-end; padding: 0 40px; border-bottom: 1.5px solid #eee; }
-        .main-header .icon-btn { background: transparent; border: none; outline: none; font-size: 25px; margin-left: 18px; color: #333; cursor: pointer; }
-        .main-header .icon-btn:focus { outline: none; }
-        .mypage-main { flex: 1 1 0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: auto; }
-        .main-board { flex: 1 1 0; display: flex; flex-direction: column; justify-content: flex-start; padding: 38px 40px 30px 40px; }
-        .dashboard-row { display: flex; gap: 25px; margin-bottom: 18px; }
-        .card { border-radius: 15px; box-shadow: 0 4px 12px rgba(20,30,58,0.06); border: none; }
-        .dashboard-row .card { flex: 1; }
-        /* 도넛차트 */
-        .donut-box canvas { margin-top: 18px; width: 220px !important; height: 220px !important; min-width: 50px !important; min-height: 50px !important; }
-        .donut-box { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; }
-        .donut-labels { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: 15px; }
-        .donut-label-dot { display: inline-block; width: 12px; height: 12px; border-radius: 6px; margin-right: 5px; }
-        .donut-grade-badge { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 16px; font-weight: 600; }
-        /* 게이지바 */
-        .trust-gauge-wrap { margin-top: 16px; }
-        .trust-gauge-bar-bg { width: 100%; height: 18px; background: #eee; border-radius: 9px; position: relative; overflow: hidden; }
-        .trust-gauge-bar { height: 100%; background: #FFC112; border-radius: 9px 0 0 9px; width: 0; transition: width 0.9s cubic-bezier(.23,1.01,.32,1); }
-        .trust-gauge-label { font-size: 0.93rem; text-align: right; margin-top: 4px; }
-        @media (max-width: 1200px) { .main-board { padding: 18px 10px 18px 10px; } }
-        @media (max-width: 900px) { .sidebar { display: none; } .main-board { padding: 7px; } }
+      /* === 베이스 === */
+      html, body {
+        height: 100%;
+        margin: 0;
+        background: #F8F9FA;
+        font-family: 'Pretendard','Apple SD Gothic Neo',Arial,sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* 레이아웃 */
+      .mypage-layout { display:flex; min-height:100vh; }
+      .mypage-main   { flex:1 1 0; display:flex; flex-direction:column; min-height:100vh; min-width:0; }
+
+      /* 사이드바 */
+      .sidebar{
+        width:250px;
+        background:#fff;
+        border-right:1.5px solid #eee;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        padding-top:36px;
+      }
+      .profile-img{
+        width:72px; height:72px; border-radius:50%;
+        object-fit:cover; margin-bottom:8px; cursor:pointer;
+        background:#ddd url('https://img.icons8.com/ios-glyphs/60/000000/user.png') center/46px no-repeat;
+      }
+      .profile-name{ font-weight:600; font-size:1rem; color:#444; margin-bottom:6px; text-align:center; word-break:keep-all; }
+      .profile-edit-btn, .logout-btn{
+        display:inline-block;
+        text-align:center;
+        border:1px solid #e0e0e0;
+        background:#f8f9fa;
+        color:#666;
+        font-size:.85rem;
+        border-radius:10px;
+        padding:6px 12px;
+        margin-top:6px;
+        cursor:pointer;
+        transition:background .15s,color .15s;
+      }
+      .profile-edit-btn:hover, .logout-btn:hover{ background:#f1f1f1; color:#222; }
+      .sidebar-bottom{ margin-top:auto; padding:18px 10px 32px; width:100%; text-align:center; }
+
+      /* 상단 헤더 */
+      .main-header{
+        height:70px; flex:0 0 70px;
+        background:#D9D9D9;
+        display:flex; align-items:center; justify-content:flex-end;
+        padding:0 16px; border-bottom:1.5px solid #eee;
+      }
+      .main-header .icon-btn{
+        border:0; outline:0; background:transparent;
+        font-size:22px; color:#333; padding:0 7px; margin-left:14px; cursor:pointer;
+      }
+
+      /* 메인 보드 (그리드 컨테이너) */
+      .main-board{
+        height:calc(100vh - 70px);
+        display:grid;
+        grid-template-rows:auto auto auto 1fr;
+        row-gap:16px;
+        padding:50px 200px;
+        box-sizing:border-box;
+        overflow:hidden;
+      }
+
+      /* 대시보드 행을 카드 2개 그리드로 정렬 */
+      .dashboard-row{
+        display:grid;
+        grid-template-columns:repeat(2, 1fr);
+        gap:16px;
+        margin:0; /* 상하 여백은 main-board의 row-gap로 관리 */
+      }
+
+      /* 카드 공통 */
+      .card{
+        position:relative;
+        background:#fff;
+        border:none;
+        border-radius:16px;
+        box-shadow:0 4px 10px rgba(20,30,58,.06);
+        padding:20px;
+        display:flex; flex-direction:column;
+      }
+      .card.p-4{ padding:20px !important; } /* 기존 클래스 유지 호환 */
+
+      /* 링크타일(아이콘+텍스트) 정렬 */
+      .dashboard-row .card{
+        display:flex; align-items:center; gap:10px;
+      }
+      .dashboard-row .card a.stretched-link{
+        position:absolute; inset:0; border-radius:16px;
+      }
+      .dashboard-row .card img{ width:32px; height:32px; }
+      .dashboard-row .card span{ font-size:15px; font-weight:500; color:#333; }
+
+      /* 도넛/라벨/배지 */
+      .donut-box{ width:100%; max-width:205px; margin:6px auto; display:flex; flex-direction:column; align-items:center; }
+      .donut-box canvas{ width:100% !important; height:auto !important; aspect-ratio:1/1; display:block; margin-top:4px; }
+      .donut-labels{
+        display:flex; justify-content:center; gap:7px; flex-wrap:wrap;
+        margin-top:6px; font-size:12px;
+      }
+      .donut-label-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; }
+      .donut-grade-badge{ font-size:.9rem; }
+
+      #trustGaugeText{
+        white-space: nowrap;
+        display: block;
+        width: 100%;
+        text-align: center !important; /* .text-end 무력화 */
+        margin: 6px 0 0 0;            /* 위로 살짝 붙임 */
+        padding: 10px 0 0 0;
+      }
+
+    .donut-box .trust-gauge-wrap{
+      text-align: center;           /* 부모 정렬 */
+    }
+
+    .btn.btn-warning.btn-sm {
+      min-width: 400px;
+      text-align: center; /* 텍스트 중앙 */
+    }
+
+
+      /* 래퍼가 230px로 묶여 있어 중앙이 틀어져 보였음 → 카드 너비 기준으로 정렬 */
+      .trust-gauge-wrap{
+        max-width: none !important;   /* inline max-width:230px 무시 */
+        width: 100% !important;
+        align-items: center;           /* 내부 요소 중앙 */
+      }
+    /* 게이지 바 컨테이너를 기준 박스로 지정 + 높이/배경 복원 */
+    .trust-gauge-bar-bg{
+      position: relative;          /* ★ 부모 기준 박스 */
+      height: 10px;                 /* 막대 높이 */
+      background: #e9ecef;
+      border-radius: 999px;
+      overflow: hidden;
+      width: clamp(150px, 48%, 220px); /* 살짝 줄여 중앙 느낌 강화 */
+      margin: 6px auto 4px;
+      margin-top: 0;
+    }
+
+    /* 실제 채워지는 막대: 컨테이너 내부에서만 높이 차지 */
+    .trust-gauge-bar{
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;                /* 부모 높이만 사용 */
+      width: 0;                    /* JS에서 %로 채움 */
+      background: #ffc107;
+      border-radius: 999px;
+      transition: width .5s ease-in-out;
+    }
+
+      .trust-gauge-label{
+        display:block; width:auto; align-self:center;
+        margin:2px auto 0; text-align:center; white-space:normal; line-height:1.25; font-size:.85rem;
+        color:#666 !important;
+      }
+
+      /* 반응형 */
+      @media (max-width: 1200px){
+        .main-board{ padding:24px 32px; }
+      }
+
+      /* 모바일: 사이드바 상단바화, 그리드 단일 컬럼 */
+      @media (max-width: 992px){
+        html, body{ height:auto; overflow-x:hidden; }
+        .mypage-layout{ flex-direction:column; min-height:100vh; }
+        .sidebar{
+          width:100%; height:auto;
+          border-right:none; border-bottom:1.5px solid #eee;
+          flex-direction:row; align-items:center; justify-content:flex-start;
+          padding:12px; gap:10px; background:#D9D9D9;
+        }
+        .profile-img{ width:48px; height:48px; margin:0; }
+        .profile-name{ font-size:.95rem; margin:0; }
+        .profile-edit-btn{ display:none; }
+        .sidebar-bottom{ display:none; }
+
+        .main-header{ display:none; }
+
+        .main-board{
+          height:auto; padding:16px !important; overflow:visible !important;
+          grid-template-rows:auto auto auto auto;
+        }
+        .dashboard-row{ grid-template-columns:1fr; gap:12px; }
+        .card{ padding:16px; }
+      }
+
+      /* 데스크톱에서 사이드바 하단 버튼 정돈 */
+      @media (min-width: 992px){
+        .sidebar-bottom .logout-btn{
+          display:inline-block; width:auto; padding:6px 14px; border-radius:10px;
+        }
+      }
     </style>
     <script src="https://kit.fontawesome.com/65ecdc8e2b.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -71,7 +241,17 @@
             <div class="profile-name">
                 ${target.nickname}님의 프로필
                 <security:authorize access="hasRole('ADMIN')">
-                  <a class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#banModal">계정 정지</a>
+                  <c:choose>
+                    <c:when test="${banned}">
+                      <a class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#unbanModal">정지 해제</a>
+                      <span class="badge text-bg-danger ms-2">
+                        정지 ~ <fmt:formatDate value="${banUntil}" pattern="yyyy-MM-dd HH:mm"/>
+                      </span>
+                    </c:when>
+                    <c:otherwise>
+                      <a class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#banModal">계정 정지</a>
+                    </c:otherwise>
+                  </c:choose>
                 </security:authorize>
                 <div class="modal fade" id="banModal" tabindex="-1" aria-hidden="true">
                   <div class="modal-dialog">
@@ -88,6 +268,28 @@
                         <security:csrfInput/>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                         <button type="submit" class="btn btn-danger">정지</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div class="modal fade" id="unbanModal" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <form method="post" action="${pageContext.request.contextPath}/admin/unban/${target.userId}" class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">정지 해제</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p class="mb-1"><b>${target.nickname}</b> 님의 계정을 해제하시겠습니까?</p>
+                        <small class="text-secondary">
+                          현재 정지 종료 예정:
+                          <fmt:formatDate value="${target.banUntil}" pattern="yyyy-MM-dd HH:mm"/>
+                        </small>
+                      </div>
+                      <div class="modal-footer">
+                        <security:csrfInput/>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="submit" class="btn btn-success">정지 해제</button>
                       </div>
                     </form>
                   </div>
@@ -149,9 +351,9 @@
                             <span style="font-weight:600; font-size:1.08rem;">${target.nickname}님의 신뢰도 점수판</span>
                             <span class="donut-grade-badge">
                               <c:choose>
-                                <c:when test="${fn:trim(trustScore.grade) eq '새싹맘'}">🌱 새싹맘</c:when>
-                                <c:when test="${fn:trim(trustScore.grade) eq '도토리맘'}">🥜 도토리맘</c:when>
-                                <c:when test="${fn:trim(trustScore.grade) eq '캡숑맘'}">👑 캡숑맘</c:when>
+                                <c:when test="${fn:trim(trustScore.grade) eq '새싹 보호자'}">🌱 새싹 보호자</c:when>
+                                <c:when test="${fn:trim(trustScore.grade) eq '안심 지킴이'}">🏠 안심 지킴이</c:when>
+                                <c:when test="${fn:trim(trustScore.grade) eq '최고 안전 수호자'}">🏆 최고 안전 수호자</c:when>
                               </c:choose>
                               (${trustScore.totalScore}점)
                             </span>
@@ -195,9 +397,9 @@
                               <li><b>댓글</b> : 내가 단 댓글의 총 개수를 의미합니다.</li>
                               <li><b>총점</b> : 제보+위탁+댓글의 합산 점수입니다.</li>
                               <li><b>등급</b> : 총점에 따라 등급이 올라갑니다! <br>
-                                  <span style="color:#40a048; font-weight:500;">새싹맘 (0~9점)</span>,
-                                  <span style="color:#a8743d; font-weight:500;">도토리맘 (10~29점)</span>,
-                                  <span style="color:#f6a623; font-weight:500;">캡숑맘 (30점 이상)</span>
+                                  <span style="color:#40a048; font-weight:500;">새싹 보호자 (0~9점)</span>,
+                                  <span style="color:#a8743d; font-weight:500;">안심 지킴이 (10~29점)</span>,
+                                  <span style="color:#f6a623; font-weight:500;">최고 안전 수호자 (30점 이상)</span>
                               </li>
                             </ul>
                             <div class="mt-2 text-secondary" style="font-size:0.98rem;">
@@ -265,12 +467,12 @@
 
 
         let text = '';
-        if (grade === '캡숑맘') {
+        if (grade === '최고 안전 수호자') {
             text = `${target.nickname}님은 최고 등급 달성! 👑`;
-        } else if (grade === '도토리맘') {
-            text = `${target.nickname}님은 캡숑맘까지 <b>${30-totalScore}</b>점 남았어요!`;
-        } else if (grade === '새싹맘') {
-            text = `${target.nickname}님은 도토리맘까지 <b>${10-totalScore}</b>점 남았어요!`;
+        } else if (grade === '안심 지킴이') {
+            text = `${target.nickname}님은 최고 안전 수호자까지 <b>${30-totalScore}</b>점 남았어요!`;
+        } else if (grade === '새싹 보호자') {
+            text = `${target.nickname}님은 안심 지킴이까지 <b>${10-totalScore}</b>점 남았어요!`;
         }
         gaugeText.innerHTML = text;
 
