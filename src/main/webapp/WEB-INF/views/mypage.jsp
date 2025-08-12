@@ -479,6 +479,7 @@
           <i class="fas fa-bell"></i>
           <span id="notify-unread-count-sm" class="badge unread-count-badge" style="display:none"></span>
         </button>
+
         <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
           <i class="fas fa-envelope"></i>
           <c:if test="${totalUnreadCount > 0}">

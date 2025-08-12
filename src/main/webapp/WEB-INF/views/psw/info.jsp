@@ -27,6 +27,17 @@
             margin-bottom: 30px;
         }
 
+        .top-bar button{
+             border: none;
+             background-color: #fdfdfd;
+             font-size: 20px;
+        }
+
+        .top-bar form{
+           margin-left: 70px;
+        }
+
+
         .search-input {
             width: 300px;
             padding: 10px 16px;
