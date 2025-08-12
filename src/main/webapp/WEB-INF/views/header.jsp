@@ -10,86 +10,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
-
-<style>
-  /* 네비/아이콘 영역이 팝오버를 가리지 않게 */
-  .top-nav, .icons {
-    position: relative;
-    overflow: visible !important;
-    z-index: 1060; /* 부트스트랩 모달/팝오버 레벨대 맞춤 */
-  }
-
-  /* 혹시 전역에서 nav/header에 overflow:hidden; 준 경우 방지 */
-  header, nav {
-    overflow: visible !important;
-  }
-
-  /* 팝오버 자체 z-index 강화 (보이는지 테스트용) */
-  .popover {
-    z-index: 2000 !important;
-    max-width: 320px; /* 내용 잘림 방지(선택) */
-  }
-
-  /* 편지 아이콘과 배지를 감싸는 링크 스타일 */
-  .icon-link {
-    position: relative; /* 배지 위치를 잡기 위해 필요 */
-    display: inline-block; /* 팝오버 버튼과 나란히 표시 */
-    margin-right: 15px; /* 버튼과 간격 주기 */
-  }
-
-  /* 총 읽지 않은 메시지 수를 표시하는 배지 스타일 */
-  .unread-count-badge {
-    position: absolute;
-    top: -5px;
-    right: -10px;
-    font-size: 0.75rem; /* 글씨 크기 조절 */
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-  }
-  .icon-btn {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 20px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 4px 6px;
-  }
-
-  .icon-btn:hover {
-    opacity: 0.85;
-  }
-
-  .icon-link i {
-    font-size: 20px;
-    color: #fff;
-    line-height: 1;
-  }
-
-  /* 로고 영역도 같은 높이에서 가운데 정렬 */
-  .logo-section{
-    height: 64px;
-    display: flex;
-    align-items: center;        /* 로고 세로 가운데 */
-    justify-content: center;
-  }
-
-  .logo-section .logo {
-  height: 190px;
-  width: auto;
-  display: block;
-
-  }
-
-  /* (선택) 이미지 자체 여백 때문에 살짝 위/아래 치우쳐 보이면 미세 보정 */
-  .logo-section .logo.tweak-up   { transform: translateY(-2px); }
-  .logo-section .logo.tweak-down { transform: translateY( 2px); }
-
-
-</style>
-
   <nav class="top-nav">
     <div class="logo-section">
        <a href="${pageContext.request.contextPath}/">
@@ -97,8 +17,11 @@
         </a>
     </div>
     <ul class="nav-tabs">
-      <li class="main-menu"><a href="/mypage/">마이페이지</a></li>
-      <li class="main-menu"><a href="/map/">범죄 예방 지도</a></li>
+      <li class="main-menu">
+      <a href="/mypage/">마이페이지</a></li>
+      <li class="main-menu">
+      <a href="/map/">범죄 예방 지도</a>
+      </li>
       <li class="main-menu active">
         <a href="/free">커뮤니티</a>
         <ul class="sub-menu">
@@ -120,20 +43,15 @@
        </button>
        <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
      </div>
-    
+
       <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
     <div id="popover-content" class="d-none"></div>
-
-      <%-- 편지 아이콘에 총 읽지 않은 메시지 수 추가 --%>
-      <a href="/chat" class="icon-link">
-          <span class="icon">✉️</span>
+      <%-- 알림 아이콘에 총 읽지 않은 메시지 수 추가 --%>
           <span id="total-unread-count" class="badge unread-count-badge"
                 style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
               ${totalUnreadCount}
           </span>
-      </a>
-
-
+      <a href="/chat" class="icon-link"><span class="icon">✉️</span></a>
     </div>
   </nav>
 
