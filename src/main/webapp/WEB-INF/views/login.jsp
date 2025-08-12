@@ -44,7 +44,7 @@
       cursor:pointer; transition:transform .05s ease, filter .2s ease;
     }
     .btn:active{transform:translateY(1px)}
-    .btn-primary{background:var(--brand); color:#111; box-shadow:0 8px 16px rgba(242,172,40,.25)}
+    .btn-primary{background:var(--brand); color:#111; box-shadow:0 8px 16px rgba(242,172,40,.25); margin-top: 10px;}
     .btn-naver{
       background:var(--naver); color:#fff; display:flex; align-items:center; justify-content:center; gap:10px;
     }

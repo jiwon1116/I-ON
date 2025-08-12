@@ -176,7 +176,6 @@
         </style>
 </head>
 <body>
-  <jsp:include page="/WEB-INF/views/header.jsp" />
 <div class="chat-container">
     <div class="chat-header">
         <h2>상대방: ${partnerNickname}</h2>

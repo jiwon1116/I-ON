@@ -254,7 +254,7 @@
                   </c:choose>
                 </security:authorize>
                 <div class="modal fade" id="banModal" tabindex="-1" aria-hidden="true">
-                  <div class="modal-dialog">
+                  <div class="modal-dialog modal-dialog-centered">
                     <form method="post" action="${pageContext.request.contextPath}/admin/ban/${target.userId}" class="modal-content">
                       <div class="modal-header">
                         <h5 class="modal-title">회원 정지</h5>
@@ -268,28 +268,6 @@
                         <security:csrfInput/>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
                         <button type="submit" class="btn btn-danger">정지</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-                <div class="modal fade" id="unbanModal" tabindex="-1" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <form method="post" action="${pageContext.request.contextPath}/admin/unban/${target.userId}" class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">정지 해제</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                      </div>
-                      <div class="modal-body">
-                        <p class="mb-1"><b>${target.nickname}</b> 님의 계정을 해제하시겠습니까?</p>
-                        <small class="text-secondary">
-                          현재 정지 종료 예정:
-                          <fmt:formatDate value="${target.banUntil}" pattern="yyyy-MM-dd HH:mm"/>
-                        </small>
-                      </div>
-                      <div class="modal-footer">
-                        <security:csrfInput/>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                        <button type="submit" class="btn btn-success">정지 해제</button>
                       </div>
                     </form>
                   </div>
