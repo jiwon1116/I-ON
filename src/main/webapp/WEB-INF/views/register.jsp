@@ -199,7 +199,7 @@
       </div>
 
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-      <button class="btn" type="submit">Sign In</button>
+      <button class="btn" type="submit">회원가입</button>
     </form>
   </div>
 </div>
