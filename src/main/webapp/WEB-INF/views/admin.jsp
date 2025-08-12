@@ -178,18 +178,62 @@
       margin:12px auto 0; text-align:center;
     }
 
-    /* ========== Responsive (모바일/태블릿) ========== */
+    /* 데스크톱(>=992px): 프로필 아래에 이름, 로그아웃은 맨 아래 중앙 */
+    @media (min-width: 992px){
+      .sidebar{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+      }
+      /* 인라인 스타일(overrides) 무력화: 세로 배치로 강제 */
+      .sidebar form{
+        display:flex !important;
+        flex-direction:column !important;
+        align-items:center !important;
+        width:100% !important;
+        margin:0;
+        gap:0;
+      }
+      .profile-name{
+        margin-top:10px;
+        text-align:center;
+      }
+      .sidebar-bottom{
+        margin-top:auto;
+        width:100%;
+        display:flex;
+        justify-content:center;
+        padding-top:18px;
+      }
+    }
+
+    /* 모바일/태블릿(<992px): 이미지 → 이름 → 로그아웃 가로 배치 */
     @media (max-width: 992px){
       .mypage-layout{ grid-template-columns:1fr; }
+
       .sidebar{
         position:static; height:auto;
         border-right:none; border-bottom:1px solid var(--line);
-        flex-direction:row; gap:14px; justify-content:flex-start;
-        background:#E9ECEF;
+        display:flex; flex-direction:row; align-items:center;
+        justify-content:flex-start; gap:14px;
+        background:#E9ECEF; padding:14px 16px;
+        flex-wrap:nowrap;
       }
+
+      .sidebar form{
+        display:flex; flex-direction:row; align-items:center; gap:10px;
+        width:auto; margin:0;
+      }
+
       .profile-img{ width:56px; height:56px; }
-      .profile-name{ margin-top:0; font-size:.98rem; }
-      .sidebar-bottom{ margin-top:0; margin-left:auto; padding-top:0; }
+      .profile-name{ margin:0 0 0 8px; font-size:1rem; text-align:left; }
+
+      .sidebar-bottom{
+        display:flex; align-items:center; justify-content:flex-start;
+        width:auto; margin:0 0 0 12px; padding:0;
+      }
+      .logout-btn{ margin:0; }
+
       .main-header{ display:none; }
       .main-board{ padding:16px; }
     }
@@ -239,7 +283,7 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <form action="/profile/upload" method="post" enctype="multipart/form-data"
-          style="display:flex; flex-direction:column; align-items:center; width:100%;">
+          style="display:flex; align-items:center;">
       <label for="profileImgInput" style="cursor:pointer;">
         <img src="https://img.icons8.com/ios-glyphs/60/000000/user.png" class="profile-img" id="profileImgPreview" alt="프로필 이미지">
       </label>
@@ -282,7 +326,7 @@
           <span>아동 범죄 예방 게시판</span>
         </div>
         <div class="card link-card">
-          <a href="/map" class="stretched-link"></a>
+          <a href="/map/" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/worldwide-location.png" alt="">
           <span>어린이 범죄 예방 지도</span>
         </div>
