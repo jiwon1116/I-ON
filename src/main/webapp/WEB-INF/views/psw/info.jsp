@@ -62,7 +62,6 @@
           max-width: 1200px;
           margin: 24px auto;
           padding: 0 16px;
-
         }
 
        /* 3열 그리드 */
@@ -93,7 +92,6 @@
          aspect-ratio: 1 / 1;   /* 정사각형 */
          overflow: hidden;
          background: #f6f6f6;
-
        }
        .card-thumb img {
          width: 100%;
@@ -120,14 +118,54 @@
          -webkit-box-orient: vertical;
          overflow: hidden;
          min-height: calc(1.4em * 2); /* 두 줄 높이 확보 -> 카드 높이 통일에 도움 */
+         margin: auto;
        }
 
        /* 반응형 */
-       @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
-       @media (max-width: 600px)  {
-         .card-grid { grid-template-columns: 1fr; }
-         .card { height: 320px; } /* 모바일에서 살짝 낮춤 */
-       }
+      /* 반응형 카드 그리드 세분화 */
+      @media (max-width: 1400px) {
+        /* 큰 모니터 → 일반 노트북 */
+        .card-grid { grid-template-columns: repeat(3, 1fr); }
+      }
+
+      @media (max-width: 1200px) {
+        /* 중간 화면(작은 노트북, 가로폭 줄인 브라우저) */
+        .card-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+
+      @media (max-width: 900px) {
+        /* 태블릿 가로 */
+        .card-grid { grid-template-columns: 2fr 2fr; }
+        .card { height: auto; } /* 높이 자동으로 → 세로 여백 최소화 */
+      }
+
+      @media (max-width: 768px) {
+        /* 태블릿 세로 */
+        .card-grid { grid-template-columns: 1fr 1fr; }
+        .card { height: auto; }
+      }
+      @media (max-width: 500px) {
+        /* 작은 스마트폰 */
+        .card-grid { grid-template-columns: 1fr; }
+        .card { height: auto; }
+      }
+
+      /* 가로가 좁고 세로가 긴 경우 하단 여백 줄이기 */
+      @media (max-width: 900px) and (min-height: 900px) {
+        .container {
+          margin-bottom: 50px; /* 기존보다 훨씬 줄임 */
+        }
+        .cards-wrap {
+          margin-bottom: 10px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .element {
+          margin-bottom: 10px;
+        }
+      }
+
 
 
         /* Pagination */
