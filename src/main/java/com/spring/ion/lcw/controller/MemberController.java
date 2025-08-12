@@ -51,35 +51,8 @@ public class MemberController {
         return "register";
     }
 
-    @PostMapping("/register")
-    public String register(MemberDTO memberDTO, RedirectAttributes redirectAttributes) {
-
-        String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
-        memberDTO.setPassword(encodedPassword);
-        memberDTO.setEnabled(true);
-        memberDTO.setProvider("LOCAL");
-
-        try {
-            memberService.save(memberDTO);
-            redirectAttributes.addFlashAttribute("registerSuccess", "회원가입이 완료되었습니다!");
-            return "redirect:/login";
-
-        } catch (DataIntegrityViolationException e) {
-            redirectAttributes.addFlashAttribute("registerError", "이미 사용 중인 아이디 또는 닉네임입니다.");
-            return "redirect:/register";
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("registerError", "회원가입 중 알 수 없는 오류가 발생했습니다.");
-            return "redirect:/register";
-        }
-    }
-
 //    @PostMapping("/register")
-//    public String register(@RequestParam("g-recaptcha-response") String reCaptchaResponse, MemberDTO memberDTO, Model model, RedirectAttributes redirectAttributes) {
-//        if (!reCaptchaService.verify(reCaptchaResponse)) {
-//            model.addAttribute("reCaptchaError", "CAPTCHA 인증 실패");
-//            return "register";
-//        }
+//    public String register(MemberDTO memberDTO, RedirectAttributes redirectAttributes) {
 //
 //        String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
 //        memberDTO.setPassword(encodedPassword);
@@ -100,6 +73,33 @@ public class MemberController {
 //            return "redirect:/register";
 //        }
 //    }
+
+    @PostMapping("/register")
+    public String register(@RequestParam("g-recaptcha-response") String reCaptchaResponse, MemberDTO memberDTO, Model model, RedirectAttributes redirectAttributes) {
+        if (!reCaptchaService.verify(reCaptchaResponse)) {
+            model.addAttribute("reCaptchaError", "CAPTCHA 인증 실패");
+            return "register";
+        }
+
+        String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
+        memberDTO.setPassword(encodedPassword);
+        memberDTO.setEnabled(true);
+        memberDTO.setProvider("LOCAL");
+
+        try {
+            memberService.save(memberDTO);
+            redirectAttributes.addFlashAttribute("registerSuccess", "회원가입이 완료되었습니다!");
+            return "redirect:/login";
+
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("registerError", "이미 사용 중인 아이디 또는 닉네임입니다.");
+            return "redirect:/register";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("registerError", "회원가입 중 알 수 없는 오류가 발생했습니다.");
+            return "redirect:/register";
+        }
+    }
 
 
     @DeleteMapping("/withdraw")

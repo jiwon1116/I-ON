@@ -27,7 +27,7 @@ public class CustomUserDetails implements UserDetails, Serializable {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<String> authorities = memberDTO.getAuthorities();
         if (authorities == null) {
-            return List.of(); // 권한이 없을 경우 빈 리스트 반환
+            return List.of();
         }
 
         return authorities.stream()

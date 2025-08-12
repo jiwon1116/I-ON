@@ -12,4 +12,5 @@ public class MessageDTO {
     private String content;
     private LocalDateTime createdAt;
     private Boolean isRead;
+    private String formattedCreatedAt;
 }

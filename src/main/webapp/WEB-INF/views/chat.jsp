@@ -71,56 +71,150 @@
     </div>
 
     <script>
-        let stompClient = null;
-        let isConnected = false;
+        let stompClientList = null;
+        let isConnectedList = false;
+        const currentUserIdList = '${currentUserId}';
 
-        function connect() {
-            if (isConnected) return;
-            isConnected = true;
+        function connectChatList() {
+            if (isConnectedList) return;
+            isConnectedList = true;
 
-            const socket = new SockJS('/chat');
-            stompClient = Stomp.over(socket);
+            const socket = new SockJS('${pageContext.request.contextPath}/chat');
+            stompClientList = Stomp.over(socket);
+            stompClientList.debug = null;
 
-            stompClient.connect({}, function (frame) {
-                console.log('Connected to chat room list: ' + frame);
-
-                stompClient.subscribe('/sub/chat/roomList', function (message) {
+            stompClientList.connect({}, function (frame) {
+                stompClientList.subscribe('/sub/chat/user/' + currentUserIdList, function (message) {
                     const receivedMessage = JSON.parse(message.body);
-                    updateChatRoomList(receivedMessage);
+                    if (receivedMessage.type === 'READ_UPDATE') {
+                        handleReadUpdate(receivedMessage.roomId);
+                    } else {
+                        handleNewMessage(receivedMessage);
+                    }
                 });
             }, function(error) {
-                console.log('Connection error: ' + error);
-                isConnected = false;
+                isConnectedList = false;
             });
         }
 
-        function updateChatRoomList(message) {
-            const chatRoomDiv = document.querySelector(`.chat-room-item[data-room-id="${message.roomId}"]`);
+       async function handleNewMessage(message) {
 
+
+               if (!message || !message.roomId) {
+                   return;
+               }
+
+
+               const messageContent = message.content;
+
+               const chatRoomListContainer = document.getElementById('chat-room-list');
+
+               let chatRoomDiv = null;
+               const allChatRooms = chatRoomListContainer.querySelectorAll('.chat-room-item');
+               for (const room of allChatRooms) {
+                   if (parseInt(room.dataset.roomId) === message.roomId) {
+                       chatRoomDiv = room;
+                       break;
+                   }
+               }
+
+               if (!chatRoomDiv) {
+
+                   try {
+                       const fetchUrl = `${pageContext.request.contextPath}/chat/roomInfo/` + message.roomId;
+                       const response = await fetch(fetchUrl);
+
+                       if (!response.ok) {
+                           throw new Error('fetch 안됨');
+                       }
+                       const roomInfo = await response.json();
+
+                       chatRoomDiv = document.createElement('li');
+                       chatRoomDiv.className = 'chat-room-item';
+                       chatRoomDiv.dataset.roomId = roomInfo.id;
+
+                       const link = document.createElement('a');
+                       link.href = `${pageContext.request.contextPath}/chat/room/${roomInfo.id}`;
+                       link.className = 'chat-room-link';
+
+                       const infoDiv = document.createElement('div');
+                       infoDiv.className = 'chat-room-info';
+
+                       const nicknameP = document.createElement('p');
+                       const nicknameStrong = document.createElement('strong');
+                       nicknameStrong.textContent = `상대방: ${roomInfo.partnerNickname}`;
+                       nicknameP.appendChild(nicknameStrong);
+
+                       const lastMessageP = document.createElement('p');
+                       lastMessageP.className = 'last-message';
+                       lastMessageP.textContent = '최근 메시지: ' + messageContent; // 수정된 부분
+
+                       infoDiv.appendChild(nicknameP);
+                       infoDiv.appendChild(lastMessageP);
+                       link.appendChild(infoDiv);
+
+                       if (message.senderId != currentUserIdList) {
+                           const unreadBadge = document.createElement('span');
+                           unreadBadge.className = 'unread-count';
+                           unreadBadge.textContent = '1';
+                           link.appendChild(unreadBadge);
+                       }
+
+                       chatRoomDiv.appendChild(link);
+                       chatRoomListContainer.prepend(chatRoomDiv);
+
+                   } catch (error) {
+                       console.error('새로운 채팅방 생성 안됨:', error);
+                   }
+               } else {
+
+                   const lastMessageP = chatRoomDiv.querySelector('.last-message');
+                   if (lastMessageP) {
+
+                       lastMessageP.innerText = '최근 메시지: ' + messageContent;
+
+                   } else {
+                       console.error('최근 메시지 element 못 찾음');
+                   }
+
+                   chatRoomListContainer.prepend(chatRoomDiv);
+
+                   if (message.senderId != currentUserIdList) {
+                       let unreadBadge = chatRoomDiv.querySelector('.unread-count');
+                       const currentCount = parseInt(unreadBadge ? unreadBadge.textContent : '0') || 0;
+                       const newCount = currentCount + 1;
+
+                       if (!unreadBadge) {
+                           unreadBadge = document.createElement('span');
+                           unreadBadge.className = 'unread-count';
+                           chatRoomDiv.querySelector('.chat-room-link').appendChild(unreadBadge);
+                       }
+                       unreadBadge.textContent = newCount;
+                   }
+               }
+           }
+
+        function handleReadUpdate(roomId) {
+            const chatRoomDiv = document.querySelector(`.chat-room-item[data-room-id="${roomId}"]`);
             if (chatRoomDiv) {
-                const lastMessageP = chatRoomDiv.querySelector('.last-message');
-                lastMessageP.innerText = `최근 메시지: ${message.content}`;
-
-                const chatListContainer = document.getElementById('chat-room-list');
-                chatListContainer.prepend(chatRoomDiv);
+                const unreadBadge = chatRoomDiv.querySelector('.unread-count');
+                if (unreadBadge) {
+                    unreadBadge.remove();
+                }
             }
         }
 
-        window.addEventListener('pageshow', function(event) {
-            if (event.persisted) {
-                connect();
-            } else {
-                connect();
-            }
+        window.addEventListener('load', function() {
+            connectChatList();
         });
 
         window.addEventListener('beforeunload', function() {
-            if (stompClient !== null && stompClient.connected) {
-                stompClient.disconnect();
+            if (stompClientList !== null && stompClientList.connected) {
+                stompClientList.disconnect();
             }
-            isConnected = false;
+            isConnectedList = false;
         });
-
     </script>
+
 </body>
 </html>
