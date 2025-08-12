@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
     @GetMapping("/")
+
     public String index(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -25,6 +26,7 @@ public class HomeController {
                 return "admin";
             }
         }
-        return "index";
+        return "redirect:/mypage/";
+
     }
 }
