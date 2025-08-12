@@ -20,6 +20,8 @@ public class FlagPostDTO {
     private String city;
     private String district;
     private String status;
+    private String profileImg;
+
 
 
     private Boolean liked;

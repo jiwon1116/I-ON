@@ -41,7 +41,7 @@
                 ${post.content}
                 <div class="d-flex justify-content-between align-items-center mt-2">
                     <div class="d-flex align-items-center">
-                        <img src="https://www.w3schools.com/howto/img_avatar.png" alt="기본프로필">
+
                         <div class="ms-2">
                             <div class="fw-semibold">
                                <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${post.nickname}">${post.nickname}</a>

@@ -161,4 +161,20 @@
         ORDER BY id DESC
     </select>
 
+    <select id="findAllPosts" resultType="FlagPost">
+        SELECT
+        f.id,
+        f.title,
+        f.content,
+        f.view_count,
+        f.like_count,
+        f.status,
+        f.nickname,
+        m.profileImg
+        FROM flag_post f
+        LEFT JOIN member m ON f.nickname = m.nickname
+        ORDER BY f.id DESC
+    </select>
+
+
 </mapper>

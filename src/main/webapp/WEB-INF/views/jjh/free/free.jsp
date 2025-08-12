@@ -47,7 +47,7 @@
         ${free.content}
         <div class="d-flex justify-content-between align-items-center mt-2">
           <div class="d-flex align-items-center">
-            <img src="${CTX}/images/default-profile.png" alt="profile">
+
             <div class="ms-2">
               <div class="fw-semibold">
                 <a href="${CTX}/othermemberprofile/checkprofile?nickname=${free.nickname}">
