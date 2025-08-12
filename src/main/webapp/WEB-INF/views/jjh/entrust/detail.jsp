@@ -47,23 +47,29 @@
     </div>
 
     <!-- 메타 -->
-    <div class="info-meta">
-      <c:if test="${not empty entrust.nickname}">
-        <div class="info-author">
-          ✍ <span class="js-user" data-nickname="${entrust.nickname}">
-            <a href="${CTX}/othermemberprofile/checkprofile?nickname=${entrust.nickname}">
-              <c:out value="${entrust.nickname}" />
-            </a>
-          </span>
+        <div class="info-meta">
+          <c:if test="${not empty entrust.nickname}">
+            <div class="info-author">
+              <span class="js-user" data-nickname="${entrust.nickname}">
+                <a href="${CTX}/othermemberprofile/checkprofile?nickname=${entrust.nickname}">
+                  <c:out value="${entrust.nickname}" />
+                </a>
+              </span>
+            </div>
+          </c:if>
+
+          <div>
+            <i class="bi bi-clock me-1"></i>
+            <c:if test="${entrust.created_at != null}">
+              <fmt:formatDate value="${entrust.created_at}" pattern="yyyy.MM.dd HH:mm"/>
+            </c:if>
+          </div>
+
+          <div>
+            <i class="bi bi-eye me-1"></i>
+            <span id="viewCount">${entrust.view_count}</span>
+          </div>
         </div>
-      </c:if>
-      <div>🕒
-        <c:if test="${entrust.created_at != null}">
-          <fmt:formatDate value="${entrust.created_at}" pattern="yyyy.MM.dd HH:mm"/>
-        </c:if>
-      </div>
-      <div>👁️ <span id="viewCount">${entrust.view_count}</span></div>
-    </div>
 
     <!-- 첨부 이미지 그리드 -->
     <c:if test="${not empty fileList}">

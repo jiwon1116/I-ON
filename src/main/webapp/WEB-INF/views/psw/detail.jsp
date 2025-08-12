@@ -9,6 +9,8 @@
   <meta charset="UTF-8">
   <title>글 상세보기</title>
   <meta name="ctx" content="${pageContext.request.contextPath}"/>
+<!-- (필요 시 head에 추가) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <script src="https://code.jquery.com/jquery-latest.min.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
@@ -161,12 +163,21 @@
         <div class="info-meta">
           <c:if test="${not empty findDto.nickname}">
             <div class="info-author">
-              ✍ <span class="js-user" data-nickname="${findDto.nickname}">${findDto.nickname}</span>
+              <span class="js-user" data-nickname="${findDto.nickname}">${findDto.nickname}</span>
             </div>
           </c:if>
-          <div>🕒 <fmt:formatDate value="${findDto.created_at}" pattern="yyyy-MM-dd HH:mm" /></div>
-          <div>👁️ ${findDto.view_count}</div>
+
+          <div>
+            <i class="bi bi-clock"></i>
+            <fmt:formatDate value="${findDto.created_at}" pattern="yyyy-MM-dd HH:mm" />
+          </div>
+
+          <div>
+            <i class="bi bi-eye"></i>
+            <span id="viewCount">${findDto.view_count}</span>
+          </div>
         </div>
+
 
         <!-- 본문 이미지 -->
         <c:if test="${not empty findFileDto}">
