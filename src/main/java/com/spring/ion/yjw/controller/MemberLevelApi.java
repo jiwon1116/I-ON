@@ -13,22 +13,19 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/member")
 public class MemberLevelApi {
 
-    private final MemberRepository memberRepository;   // 닉네임 → 레벨/관리자여부
-    private final TrustScoreService trustScoreService; // 신뢰도 계산 & 저장
+    private final MemberRepository memberRepository;
+    private final TrustScoreService trustScoreService;
 
-    /** 기존: 레벨만 */
     @GetMapping("/levels")
     public Map<String, Integer> levels(@RequestParam String nicknames) {
         var names = Arrays.stream(nicknames.split(","))
                 .map(String::trim).filter(s -> !s.isEmpty()).distinct()
                 .collect(Collectors.toList());
-
-        var map = memberRepository.findLevelsByNicknames(names); // {nick -> level}
-
-        // 누락된 닉네임은 즉석 계산 후 응답 보정
+        var map = memberRepository.findLevelsByNicknames(names);
+        if (map == null) map = new HashMap<>();
         for (String n : names) {
             if (!map.containsKey(n)) {
-                var dto = trustScoreService.getTrustScore(n); // 내부에서 trust_score 반영
+                var dto = trustScoreService.getTrustScore(n);
                 int lv = dto.getTotalScore() >= 30 ? 3 : (dto.getTotalScore() >= 10 ? 2 : 1);
                 map.put(n, lv);
             }
@@ -36,7 +33,6 @@ public class MemberLevelApi {
         return map;
     }
 
-    /** 신규: 레벨 + 관리자 여부 (badge.js가 이걸 사용) */
     @GetMapping("/badges")
     public Map<String, Map<String, Object>> badges(@RequestParam String nicknames) {
         var names = Arrays.stream(nicknames.split(","))
@@ -44,19 +40,29 @@ public class MemberLevelApi {
                 .collect(Collectors.toList());
         if (names.isEmpty()) return Collections.emptyMap();
 
-        // 1) DB에서 일괄 조회
-        var meta = memberRepository.findBadgeMetaByNicknames(names); // {nick -> {level, admin}}
+        var meta = memberRepository.findBadgeMetaByNicknames(names);
+        if (meta == null) meta = new HashMap<>();
 
-        // 2) 누락된 닉네임은 즉석 계산(레벨), 관리자 여부는 단건 조회
         for (String n : names) {
             if (!meta.containsKey(n)) {
-                var dto = trustScoreService.getTrustScore(n); // trust_score 업데이트
+                var dto = trustScoreService.getTrustScore(n);
                 int lv = dto.getTotalScore() >= 30 ? 3 : (dto.getTotalScore() >= 10 ? 2 : 1);
-                boolean isAdmin = memberRepository.isAdminByNickname(n);
+                boolean isAdmin = Boolean.TRUE.equals(memberRepository.isAdminByNickname(n));
                 var row = new HashMap<String, Object>();
                 row.put("level", lv);
                 row.put("admin", isAdmin);
                 meta.put(n, row);
+            } else {
+                var row = meta.get(n);
+                if (row.get("level") == null) {
+                    var dto = trustScoreService.getTrustScore(n);
+                    int lv = dto.getTotalScore() >= 30 ? 3 : (dto.getTotalScore() >= 10 ? 2 : 1);
+                    row.put("level", lv);
+                }
+                Object admin = row.get("admin");
+                boolean isAdmin = (admin instanceof Boolean) ? (Boolean) admin
+                        : "1".equals(String.valueOf(admin)) || "Y".equals(admin) || "true".equalsIgnoreCase(String.valueOf(admin));
+                row.put("admin", isAdmin);
             }
         }
         return meta;

@@ -43,7 +43,7 @@
 
     /* 파일 업로드 */
     .drop{border:1.5px dashed #d9d9d9; border-radius:12px; padding:14px;
-      display:flex; align-items:center; justify-content:space-between; gap:12px; background:#fff}
+      display:flex; align-items:center; justify-content:space-between; gap:12px; background:#fff; cursor:pointer;}
     .drop:hover{border-color:var(--brand)}
     .drop .hint{color:#9a9a9a; font-size:13px}
     .thumb{display:none; max-width:360px; border:1px solid var(--line); border-radius:12px; margin:10px 0}
@@ -148,39 +148,39 @@
   }
 
   const form = document.getElementById('certForm');
-    const msgBox = document.getElementById('ajaxMsg');
+  const msgBox = document.getElementById('ajaxMsg');
 
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
 
-      // 중복 제출 방지(선택)
-      const submitBtn = form.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
+    // 중복 제출 방지(선택)
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
 
-      msgBox.className = 'alert d-none';
-      msgBox.textContent = '';
+    msgBox.className = 'alert d-none';
+    msgBox.textContent = '';
 
-      const fd = new FormData(form);
-      try{
-        const res  = await fetch(form.action, { method:'POST', body: fd });
-        const data = await res.json().catch(()=>({}));
+    const fd = new FormData(form);
+    try{
+      const res  = await fetch(form.action, { method:'POST', body: fd });
+      const data = await res.json().catch(()=>({}));
 
-        if(res.ok && (data.ok || data.message)){
-          // 알림 후 이동
-          alert(data.message || '제출되었습니다.');
-          window.location.href = '<c:url value="/cert/my"/>';
-          return; // 여기서 종료
-        }else{
-          msgBox.className = 'alert alert-danger';
-          msgBox.textContent = data.error || data.message || `업로드 실패 (HTTP ${res.status})`;
-        }
-      }catch(err){
+      if(res.ok && (data.ok || data.message)){
+        // 알림 후 내 목록으로 이동
+        alert(data.message || '제출되었습니다.');
+        window.location.href = '<c:url value="/cert/my"/>';
+        return; // 여기서 종료
+      }else{
         msgBox.className = 'alert alert-danger';
-        msgBox.textContent = '네트워크 오류가 발생했습니다.';
-      }finally{
-        submitBtn.disabled = false;
+        msgBox.textContent = data.error || data.message || `업로드 실패 (HTTP ${res.status})`;
       }
-    });
-  </script>
+    }catch(err){
+      msgBox.className = 'alert alert-danger';
+      msgBox.textContent = '네트워크 오류가 발생했습니다.';
+    }finally{
+      submitBtn.disabled = false;
+    }
+  });
+</script>
 </body>
 </html>

@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -34,13 +35,15 @@ public class MemberController {
     private final ReCaptchaService reCaptchaService;
 
     @GetMapping("/login")
-    public String showLoginPage() {
+    public String showLoginPage(HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated() &&
                 !(authentication instanceof AnonymousAuthenticationToken)) {
             return "redirect:/";
         }
+
+        session.removeAttribute("dangerAlertShown"); // 로그인 시 지역 사건 알림 1회 띄우기 위함 
         return "login";
     }
 
