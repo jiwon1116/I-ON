@@ -88,11 +88,11 @@
     <form action="${pageContext.request.contextPath}/login" method="post">
       <div class="field">
         <label for="username">아이디</label>
-        <input class="input" id="username" name="username" type="text" placeholder="Value" required />
+        <input class="input" id="username" name="username" type="text" placeholder="아이디" required />
       </div>
       <div class="field">
         <label for="password">비밀번호</label>
-        <input class="input" id="password" name="password" type="password" placeholder="Value" required />
+        <input class="input" id="password" name="password" type="password" placeholder="비밀번호" required />
       </div>
 
       <div>

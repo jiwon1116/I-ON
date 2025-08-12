@@ -256,4 +256,48 @@ function deleteNotify(id, buttonElement) {
 
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 현재 페이지의 경로를 가져옵니다.
+    var currentPath = window.location.pathname;
+
+    // 모든 메인 메뉴 항목들을 가져옵니다.
+    var mainMenus = document.querySelectorAll('.main-menu');
+
+    // 기존 'active' 클래스 제거
+    var activeMenu = document.querySelector('.main-menu.active');
+    if (activeMenu) {
+        activeMenu.classList.remove('active');
+    }
+
+    mainMenus.forEach(function(menu) {
+        var link = menu.querySelector('a');
+
+        // Case 1: <a> 태그가 있는 경우
+        if (link) {
+            var href = link.getAttribute('href');
+            // href가 현재 경로를 포함하면 active 클래스 추가
+            if (currentPath.startsWith(href)) {
+                menu.classList.add('active');
+            }
+        }
+        // Case 2: <a> 태그가 없고, data-type 속성이 있는 경우 (map.jsp 등)
+        else {
+            var dataType = menu.getAttribute('data-type');
+            var urlParam = new URLSearchParams(window.location.search).get('type');
+
+            // data-type이 URL 파라미터 'type'과 일치하면 active 클래스 추가
+            if (dataType && dataType === urlParam) {
+                menu.classList.add('active');
+            }
+            // data-type이 'offender'이면서 URL에 'type' 파라미터가 없는 경우
+            // (이 부분은 URL 구조에 따라 다를 수 있으니 필요 시 수정)
+            else if (dataType === 'offender' && urlParam === null) {
+                menu.classList.add('active');
+            }
+        }
+    });
+});
+</script>
+
 </header>

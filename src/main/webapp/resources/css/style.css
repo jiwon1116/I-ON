@@ -1,4 +1,4 @@
- /* reset.css */
+/* reset.css */
 
 *{
 margin:0;
@@ -14,7 +14,7 @@ a{
 text-decoration: none;
 color: inherit;
 font-size: 18px;
-padding-bottom: 10px;
+/* padding-bottom: 0; // 이 부분은 이제 .nav-tabs .main-menu > a 의 padding으로 대체됩니다. */
 }
 
 :root {
@@ -69,26 +69,40 @@ body {
   padding: 0;
   border-style: none;
   margin-left: 118px;
-
 }
 
 /* 메인 메뉴 공통 */
 .main-menu {
   position: relative;
-  padding: 12px 24px;
+  /* li의 패딩은 제거 */
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   cursor: pointer;
   background-color: transparent;
   color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; /* li에 flexbox를 적용하여 내부 요소 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center; /* 가로 중앙 정렬 */
   transition: color 0.2s ease;
   width: 200px;
   border-radius: 50px 50px 0px 0px;
   height: 53px;
 }
+
+/* 메인 메뉴의 링크가 전체 영역을 차지하도록 */
+.nav-tabs .main-menu > a {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0; /* li의 패딩 영역까지 완벽하게 덮도록 설정 */
+    display: flex; /* a 태그 내부 텍스트를 정렬하기 위해 flex 사용 */
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px; /* li에 있던 패딩을 a 태그로 이동 */
+    text-decoration: none;
+}
+
 
 /* hover 시 텍스트 색상만 밝아짐 */
 .main-menu:hover {
@@ -106,7 +120,7 @@ body {
 
 /* 서브 메뉴 */
 .sub-menu {
-  display: block; /* 기본 display로 바꾸고 애니메이션 제어 */
+  display: block;
   position: absolute;
   top: 100%;
   left: 0;
@@ -120,10 +134,9 @@ body {
   z-index: 5;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-  /* 부드럽게 나타나게 */
   opacity: 0;
   transform: translateY(-10px);
-  pointer-events: none; /* 안 보일 때 클릭 방지 */
+  pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
@@ -133,7 +146,6 @@ body {
   transform: translateY(0);
   pointer-events: auto;
 }
-
 
 /* hover 시 서브 메뉴 보임 */
 .main-menu:hover .sub-menu {
@@ -152,96 +164,94 @@ body {
 }
 
 .sub-menu li:hover {
-  color:  rgb(255, 199, 39); /* 글자 색 */
-  text-decoration: underline; /* 밑줄 표시 */
-  text-decoration-color: rgb(255, 199, 39); /* 밑줄 색상 지정 */
-  text-underline-offset: 4px; /* 밑줄과 글자 사이 간격 */
+  color:  rgb(255, 199, 39);
+  text-decoration: underline;
+  text-decoration-color: rgb(255, 199, 39);
+  text-underline-offset: 4px;
 }
 
 .icons {
-           display: flex;
-           gap: 16px;
-           font-size: 20px;
-           padding-bottom: 10px;
-           height: 50px;
-
+   display: flex;
+   gap: 16px;
+   font-size: 20px;
+   padding-bottom: 10px;
+   height: 50px;
 }
 
-  /* 네비/아이콘 영역이 팝오버를 가리지 않게 */
-  .top-nav, .icons {
-    position: relative;
-    overflow: visible !important;
-    z-index: 1060; /* 부트스트랩 모달/팝오버 레벨대 맞춤 */
-  }
+/* 네비/아이콘 영역이 팝오버를 가리지 않게 */
+.top-nav, .icons {
+  position: relative;
+  overflow: visible !important;
+  z-index: 1060;
+}
 
-  /* 혹시 전역에서 nav/header에 overflow:hidden; 준 경우 방지 */
-  header, nav {
-    overflow: visible !important;
-  }
+/* 혹시 전역에서 nav/header에 overflow:hidden; 준 경우 방지 */
+header, nav {
+  overflow: visible !important;
+}
 
-  /* 팝오버 자체 z-index 강화 (보이는지 테스트용) */
-  .popover {
-    z-index: 2000 !important;
-    max-width: 320px; /* 내용 잘림 방지(선택) */
-  }
+/* 팝오버 자체 z-index 강화 (보이는지 테스트용) */
+.popover {
+  z-index: 2000 !important;
+  max-width: 320px;
+}
 
-  /* 편지 아이콘과 배지를 감싸는 링크 스타일 */
-  .icon-link {
-    position: relative; /* 배지 위치를 잡기 위해 필요 */
-    display: inline-block; /* 팝오버 버튼과 나란히 표시 */
-    margin-right: 15px; /* 버튼과 간격 주기 */
+/* 편지 아이콘과 배지를 감싸는 링크 스타일 */
+.icon-link {
+  position: relative;
+  display: inline-block;
+  margin-right: 15px;
+}
 
-  }
+/* 총 읽지 않은 메시지 수를 표시하는 배지 스타일 */
+.unread-count-badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  font-size: 0.75rem;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+}
 
-  /* 총 읽지 않은 메시지 수를 표시하는 배지 스타일 */
-  .unread-count-badge {
-    position: absolute;
-    top: -5px;
-    right: -10px;
-    font-size: 0.75rem; /* 글씨 크기 조절 */
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-  }
-  .icon-btn {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 29px;
-    line-height: 1;
-    cursor: pointer;
-    padding: 4px 6px;
-  }
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 29px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 6px;
+}
 
-  .icon-btn:hover {
-    opacity: 0.85;
-  }
+.icon-btn:hover {
+  opacity: 0.85;
+}
 
-  .icon-link i {
-    font-size: 29px;
-    color: #fff;
-    line-height: 1;
-  }
+.icon-link i {
+  font-size: 29px;
+  color: #fff;
+  line-height: 1;
+}
 
-  /* 로고 영역도 같은 높이에서 가운데 정렬 */
-  .logo-section{
-    height: 64px;
-    display: flex;
-    align-items: center;        /* 로고 세로 가운데 */
-    justify-content: center;
-  }
+/* 로고 영역도 같은 높이에서 가운데 정렬 */
+.logo-section{
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .logo-section .logo {
+.logo-section .logo {
   height: 190px;
   width: auto;
   display: block;
+}
 
-  }
-
-  /* (선택) 이미지 자체 여백 때문에 살짝 위/아래 치우쳐 보이면 미세 보정 */
-  .logo-section .logo.tweak-up   { transform: translateY(-2px); }
-  .logo-section .logo.tweak-down { transform: translateY( 2px); }
+/* (선택) 이미지 자체 여백 때문에 살짝 위/아래 치우쳐 보이면 미세 보정 */
+.logo-section .logo.tweak-up   { transform: translateY(-2px); }
+.logo-section .logo.tweak-down { transform: translateY( 2px); }
 
 /* 팝오버 전체 패널(전역 선택자; 부모 붙이지 마세요) */
 .popover.notify-panel{
