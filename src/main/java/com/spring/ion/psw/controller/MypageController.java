@@ -41,10 +41,7 @@ public class MypageController {
         model.addAttribute("member", latestMember); // 최신 값으로 넘기기
         System.out.println("알림 객체: " + notifyList);
 
-        model.addAttribute("notifyList", notifyList);
-        model.addAttribute("member", latestMember);
-
-        // 신뢰도 점수판 정보 추가
+         // 신뢰도 점수판 정보 추가
         TrustScoreDTO trustScoreDTO = trustScoreService.getTrustScore(nickname);
         model.addAttribute("trustScore", trustScoreDTO);
         return "mypage";
