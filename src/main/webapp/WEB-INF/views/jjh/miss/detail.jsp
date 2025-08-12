@@ -47,23 +47,29 @@
     </div>
 
     <!-- 메타 -->
-    <div class="info-meta">
-      <c:if test="${not empty miss.nickname}">
-        <div class="info-author">
-          ✍ <span class="js-user" data-nickname="${miss.nickname}">
-            <a href="${CTX}/othermemberprofile/checkprofile?nickname=${miss.nickname}">
-              <c:out value="${miss.nickname}" />
-            </a>
-          </span>
-        </div>
-      </c:if>
-      <div>🕒
-        <c:if test="${miss.created_at != null}">
-          <fmt:formatDate value="${miss.created_at}" pattern="yyyy.MM.dd HH:mm"/>
-        </c:if>
-      </div>
-      <div>👁️ <span id="viewCount">${miss.view_count}</span></div>
-    </div>
+            <div class="info-meta">
+              <c:if test="${not empty miss.nickname}">
+                <div class="info-author">
+                  <span class="js-user" data-nickname="${miss.nickname}">
+                    <a href="${CTX}/othermemberprofile/checkprofile?nickname=${miss.nickname}">
+                      <c:out value="${miss.nickname}" />
+                    </a>
+                  </span>
+                </div>
+              </c:if>
+
+              <div>
+                <i class="bi bi-clock me-1"></i>
+                <c:if test="${miss.created_at != null}">
+                  <fmt:formatDate value="${miss.created_at}" pattern="yyyy.MM.dd HH:mm"/>
+                </c:if>
+              </div>
+
+              <div>
+                <i class="bi bi-eye me-1"></i>
+                <span id="viewCount">${miss.view_count}</span>
+              </div>
+            </div>
 
     <!-- 첨부 이미지/파일 -->
     <c:if test="${not empty fileList}">
