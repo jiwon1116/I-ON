@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="CTX" value="${pageContext.request.contextPath}" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -60,7 +61,24 @@
     .chip.bad{color:var(--bad); border-color:#fecdd3; background:#fff1f2;}
     .chip.wait{color:var(--wait); border-color:#e5e7eb; background:#f9fafb;}
 
+/* 탭 한 줄 정렬 */
+.tabs {
+  display: flex; /* 가로 배치 */
+  gap: 8px;      /* 버튼 사이 간격 */
+  flex-wrap: nowrap; /* 줄바꿈 방지 */
+}
+
+.tabs .nav-item {
+  flex: 1; /* 버튼이 같은 폭으로 나눠짐 */
+}
+
+.tabs .nav-link {
+  width: 100%; /* nav-item 안에서 꽉 채움 */
+  text-align: center;
+}
+
     /* 버튼 */
+
     .btn-brand{
       display:inline-flex; align-items:center; justify-content:center;
       height:36px; padding:0 12px; border:none; border-radius:10px; cursor:pointer; text-decoration:none;
@@ -75,6 +93,7 @@
   </style>
 </head>
 <body>
+
 <div class="wrap">
   <div class="container-n">
 
@@ -83,6 +102,12 @@
         <h3 class="page-title">재학증명서 접수 내역</h3>
         <p class="sub">관리자용 전체/상태별 접수 현황</p>
       </div>
+      <!-- 뒤로가기 버튼 -->
+      <a href="javascript:void(0)"
+         class="btn-brand btn-outline"
+         onclick="if(document.referrer){history.back();}else{location.href='${CTX}/';}">
+        ← 뒤로가기
+      </a>
     </div>
 
     <ul class="nav tabs" role="tablist">

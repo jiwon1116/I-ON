@@ -20,6 +20,25 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="${CTX}/resources/js/badge.js"></script>
 </head>
+<style>
+#reportModal .modal-dialog{
+
+  align-items: center;
+  min-height: calc(100% - var(--bs-modal-margin) * 2);
+}
+/* 내용 길 때 뷰포트 넘치지 않게 */
+#reportModal .modal-content{
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+}
+/* 신고 모달을 화면에서 살짝 아래로 내림 (예: 40px) */
+#reportModal.show .modal-dialog {
+  transform: translateY(200px);
+}
+
+
+
+</style>
 <body>
 
 <!-- 헤더는 jsp:include 로 (contentType 충돌 방지) -->
@@ -35,8 +54,8 @@
       <div class="info-actions">
         <security:authentication property="principal.username" var="loginUserId"/>
         <c:if test="${loginUserId eq flag.userId or isAdmin}">
-          <a class="link" href="${CTX}/flag/update/${flag.id}">수정</a>
-          <a class="link" href="${CTX}/flag/delete/${flag.id}"
+          <a class="info-btn-del" href="${CTX}/flag/update/${flag.id}">수정</a>
+          <a class="info-btn-del" href="${CTX}/flag/delete/${flag.id}"
              onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
         </c:if>
         <c:if test="${loginUserId ne flag.userId}">
