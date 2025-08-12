@@ -4,158 +4,79 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>게시글 수정</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        .sidebar {
-            width: 220px;
-            height: 100vh;
-            background-color: #f6a623;
-            position: fixed;
-            top: 0;
-            left: 0;
-            padding-top: 40px;
-            color: #fff;
-        }
-
-        .sidebar h4 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .sidebar a {
-            display: block;
-            color: #fff;
-            padding: 15px 30px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .main-content {
-            margin-left: 220px;
-            padding: 40px;
-        }
-
-        .update-box {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 12px;
-            max-width: 700px;
-            margin: 0 auto;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .update-box h3 {
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-
-        .form-label {
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        .form-control {
-            padding: 12px;
-            font-size: 15px;
-            border-radius: 6px;
-        }
-
-        .form-control[readonly] {
-            background-color: #eee;
-        }
-
-        .btn-submit {
-            background-color: #f6a623;
-            color: white;
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            margin-top: 30px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .btn-submit:hover {
-            background-color: #d89114;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>게시글 수정</title>
+  <c:set var="CTX" value="${pageContext.request.contextPath}" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="${CTX}/resources/css/update.css">
 </head>
-
 <body>
 
-<!-- 사이드바 -->
-<div class="sidebar">
-    <h4>logo</h4>
-    <a href="#">마이페이지</a>
-    <a href="#">범죄 예방 지도</a>
-    <a href="#">커뮤니티</a>
-    <a href="#">제보 및 신고</a>
-    <a href="#">정보 공유</a>
-</div>
+  <jsp:include page="/WEB-INF/views/header.jsp" />
 
-<!-- 본문 영역 -->
-<div class="main-content">
-    <div class="update-box">
-        <h3>글 수정</h3>
-        <form action="${pageContext.request.contextPath}/flag/update" method="post" enctype="multipart/form-data">
-            <!-- id는 hidden으로 전달 -->
-            <input type="hidden" name="id" value="${flag.id}" />
+  <div class="info-page-wrap">
+    <div class="info-form-card">
+      <form id="updateForm" action="${CTX}/flag/update" method="post" enctype="multipart/form-data">
+        <div class="info-form-grid">
 
-            <label for="title" class="form-label">제목</label>
-            <input type="text" id="title" name="title" class="form-control" value="${flag.title}" required />
+          <input type="hidden" name="id" value="${flag.id}" />
 
-            <label for="content" class="form-label">내용</label>
-            <textarea id="content" name="content" rows="6" class="form-control" required>${flag.content}</textarea>
+          <div class="info-group">
+            <label for="title" class="info-label">제목</label>
+            <input type="text" id="title" name="title" value="${flag.title}" required class="info-input" />
+          </div>
 
-            <!-- 기존 첨부파일 보여주기 -->
-            <c:if test="${not empty fileList}">
-                <h6 class="mt-4">기존 첨부 파일</h6>
-                <ul>
-                    <c:forEach var="file" items="${fileList}">
-                        <li>
-                            <c:choose>
-                                <c:when test="${file.storedFileName.endsWith('.jpg') || file.storedFileName.endsWith('.png') || file.storedFileName.endsWith('.jpeg') || file.storedFileName.endsWith('.gif')}">
-                                    <img src="${pageContext.request.contextPath}/flag/preview?fileName=${file.storedFileName}"
-                                         alt="${file.originalFileName}" style="max-width: 200px;">
-                                </c:when>
-                                <c:otherwise>
-                                    <a href="${pageContext.request.contextPath}/flag/preview?fileName=${file.storedFileName}" target="_blank">
-                                        ${file.originalFileName}
-                                    </a>
-                                </c:otherwise>
-                            </c:choose>
-                            <label>
-                                <input type="checkbox" name="deleteFile" value="${file.id}"> 삭제
-                            </label>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:if>
+          <div class="info-group">
+            <label for="content" class="info-label">내용</label>
+            <textarea id="content" name="content" required class="info-textarea">${flag.content}</textarea>
+          </div>
 
-            <!-- 새 파일 첨부 -->
-            <div class="mb-3">
-                <label for="boardFile" class="form-label">새 파일 첨부</label>
-                <input type="file" class="form-control" id="boardFile" name="boardFile">
-            </div>
+          <c:if test="${not empty fileList}">
+            <h6 class="mt-2">기존 첨부 파일</h6>
+            <ul class="info-file-list">
+              <c:forEach var="file" items="${fileList}">
+                <li>
+                  <c:choose>
+                    <c:when test="${file.storedFileName.endsWith('.jpg') || file.storedFileName.endsWith('.jpeg') || file.storedFileName.endsWith('.png') || file.storedFileName.endsWith('.gif')}">
+                      <img src="${CTX}/flag/preview?fileName=${file.storedFileName}" alt="${file.originalFileName}">
+                    </c:when>
+                    <c:otherwise>
+                      <a href="${CTX}/flag/preview?fileName=${file.storedFileName}" target="_blank">${file.originalFileName}</a>
+                    </c:otherwise>
+                  </c:choose>
+                  <label class="ms-2">
+                    <input type="checkbox" name="deleteFile" value="${file.id}"> 삭제
+                  </label>
+                </li>
+              </c:forEach>
+            </ul>
+          </c:if>
 
-            <button type="submit" class="btn btn-submit" onclick="return confirm('수정하시겠습니까?')">수정하기</button>
-        </form>
+          <div class="info-group">
+            <label for="boardFile" class="info-label">새 파일 첨부</label>
+            <input type="file" id="boardFile" name="boardFile" class="info-input-file" />
+          </div>
 
+          <div class="info-actions">
+            <button type="button" class="info-btn info-btn-secondary" onclick="history.back()">뒤로가기</button>
+            <button type="button" class="info-btn info-btn-primary" onclick="updatefinish()">수정</button>
+          </div>
+
+        </div>
+      </form>
     </div>
-</div>
+  </div>
 
+  <script>
+    function updatefinish(){
+      if(!confirm('정말 수정하시겠습니까?')) return;
+      const form = document.getElementById('updateForm');
+      const required = form.querySelectorAll('[required]');
+      for(const el of required){
+        if(!el.value.trim()){ alert('모든 항목을 작성해주세요!'); el.focus(); return; }
+      }
+      form.submit();
+    }
+  </script>
 </body>
 </html>
