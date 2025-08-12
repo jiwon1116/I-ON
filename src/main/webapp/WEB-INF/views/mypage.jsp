@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <style>
+
     /* === 전체 레이아웃 === */
     html, body {
       height: 100%;
@@ -441,6 +442,7 @@
     border-radius: 10px;         /* 기존 스타일 유지 */
   }
 }
+
   </style>
 </head>
 
@@ -450,6 +452,7 @@
 </c:if>
 
 <div class="mypage-layout">
+
   <aside class="sidebar">
     <div class="profile-section">
       <img id="profileImgPreview" src="<c:choose><c:when test='${not empty member.profile_img}'>/profile/img/${member.profile_img}</c:when><c:otherwise>https://img.icons8.com/ios-glyphs/60/000000/user.png</c:otherwise></c:choose>"
@@ -507,6 +510,7 @@
     </div>
   </div>
 
+
   <div class="mypage-main">
     <div class="main-header">
       <button id="alertBtn" type="button" class="icon-btn" data-bs-html="true" data-bs-container="body" title="알림">
@@ -523,24 +527,32 @@
 
     <div id="popover-content" class="d-none"></div>
 
+
     <div class="main-board">
       <div class="top-grid">
         <div class="card">
+
           <a href="/free" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/speech-bubble--v1.png" alt="">
           <span>소통 커뮤니티</span>
         </div>
+
         <div class="card">
+
           <a href="/flag" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/faq.png" alt="">
           <span>제보 및 신고 커뮤니티</span>
         </div>
+
         <div class="card">
+
           <a href="/info" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/police-badge.png" alt="">
           <span>아동 범죄 발생</span>
         </div>
+
         <div class="card">
+
           <a href="/map/" class="stretched-link"></a>
           <img src="https://img.icons8.com/color/48/worldwide-location.png" alt="">
           <span>어린이 범죄 예방 지도</span>
@@ -548,6 +560,7 @@
       </div>
 
       <div class="middle-grid">
+
         <div class="card"><div class="card-body">
           <span>자녀 등록</span><br>
           <a href="/cert/my" class="btn btn-warning btn-sm mt-2">바로가기</a>
@@ -562,16 +575,20 @@
         </div></div>
       </div>
 
+
       <div class="bottom-grid">
         <div class="card news-card">
           <div class="card-body">
             <h6 class="mb-3">내 소식</h6>
+
             <div class="notify-scroll">
               <div class="notification-list" id="notifyList">
                 <c:forEach var="notify" items="${notifyList}">
                   <c:choose>
                     <c:when test="${notify.type == 'COMMENT'}">
+
                       <div class="notification-item">
+
                         <div class="notify-header"><span class="notify-icon">[댓글]💬</span></div>
                         <div class="notify-content">${notify.content}</div>
                         <div class="d-flex gap-2 mt-1">
@@ -586,7 +603,9 @@
 
                     <c:when test="${notify.type == 'DANGER_ALERT'}">
                       <input type="hidden" class="danger-alert" value="${notify.content}" />
+
                       <div class="notification-item">
+
                         <div class="notify-header"><span class="notify-icon">[위험]🚨</span></div>
                         <div class="notify-content">${notify.content}</div>
                         <div class="d-flex gap-2 mt-1">
@@ -611,6 +630,7 @@
                   </div>
                 </div>
               </div>
+
             </div></div>
         </div>
 
@@ -840,8 +860,10 @@
       const id = e.target.getAttribute('data-id');
       deleteNotify(id);
       e.target.closest('li')?.remove();
+
     }
-  });
+    html +=   '</ul></div>';
+
 
   function deleteNotify(id){
     if (!confirm("이 알림을 삭제할까요?")) return;
@@ -860,6 +882,7 @@
   window.addEventListener('resize', setVhUnit);
   window.addEventListener('orientationchange', setVhUnit);
   setVhUnit();
+
 </script>
 </body>
 </html>

@@ -95,6 +95,10 @@
         <input class="input" id="password" name="password" type="password" placeholder="Value" required />
       </div>
 
+      <div>
+        <input type="checkbox" name="remember-me">로그인 유지
+      </div>
+
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
       <button class="btn btn-primary" type="submit">로그인</button>
     </form>

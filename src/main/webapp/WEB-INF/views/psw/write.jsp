@@ -2,190 +2,133 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>정보 공유 글쓰기</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <title>I-ON</title>
 
-        body {
-            margin: 0;
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f9f9f9;
-        }
-
-        .container {
-            display: flex;
-            height: 100vh;
-        }
-
-        .sidebar {
-            width: 220px;
-            background-color: #f4a300;
-            padding: 30px 20px;
-            color: #fff;
-        }
-
-        .sidebar .logo {
-            margin-bottom: 40px;
-            font-weight: bold;
-            font-size: 20px;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar li {
-            margin: 25px 0;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar li:hover {
-            text-decoration: underline;
-        }
-
-        .content {
-            flex: 1;
-            padding: 50px;
-            overflow-y: auto;
-        }
-
-        .form-container {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .form-container h2 {
-            margin-bottom: 30px;
-            font-size: 24px;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            font-size: 15px;
-            color: #444;
-        }
-
-        .form-group input[type="text"],
-        .form-group textarea,
-        .form-group input[type="file"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .form-group textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-
-        .form-actions {
-            text-align: right;
-        }
-
-        .form-actions button {
-            background-color: #f4a300;
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        .form-actions button:hover {
-            background-color: #db9000;
-        }
-
-    </style>
-</head>
-<body>
-<div class="container">
-    <!-- 사이드바 -->
-    <aside class="sidebar">
-        <div class="logo">logo</div>
-        <ul>
-           <li>📌 마이페이지</li>
-           <li>🗺️ 범죄 예방 지도</li>
-           <li>💬 커뮤니티</li>
-           <li>🚨 제보 및 신고</li>
-           <li>📚 정보 공유</li>
-        </ul>
-    </aside>
-
-    <!-- 메인 콘텐츠 -->
-    <main class="content">
-        <div class="form-container">
-            <h2>글쓰기</h2>
-             <!-- 파일 업로드를 위한 설정 multipart/form-data -->
-            <form id="writeForm" action="${pageContext.request.contextPath}/info/save" method="post"  enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="title">제목</label>
-                    <input type="text" id="title" name="title" placeholder="제목을 입력해주세요" required />
-                </div>
-
-                <div class="form-group">
-              <label for="file" class="form-label">썸네일 이미지(필수)</label>
-              <input type="file" class="form-control" id="file" name="file" required >
-                </div>
-
-              <div class="form-group">
-
-                 <label for="file" class="form-label">게시물 이미지(필수)</label>
-                 <input type="file" class="form-control" id="file" name="file">
-
-              </div>
-
-                <div class="form-group">
-                    <label for="content">내용</label>
-                    <textarea id="content" name="content" placeholder="내용을 입력해주세요"></textarea>
-                </div>
-
-                <div class="form-actions">
-                    <button type="button" onClick="writeFinish()">등록하기</button>
-                </div>
-            </form>
-        </div>
-    </main>
-</div>
-<script>
-function writeFinish() {
-    // form 안의 필수 입력 요소들 찾기 (required 속성 기준)
-    const form = document.getElementById("writeForm");
-    const requiredFields = form.querySelectorAll("input[required], textarea[required]");
-
-    for (let field of requiredFields) {
-        if (!field.value.trim()) { // 공백만 입력된 경우도 막기
-            alert("모든 항목을 작성해주세요!");
-            field.focus();
-            return; // 함수 종료
-        }
+  <style>
+    :root{
+      --info-primary: rgb(255,199,39);
+      --info-border:#e5e7eb;
+      --info-muted:#6b7280;
+      --info-bg:#fff;
+      --info-page:#fff9ed;
+      --info-radius:12px;
     }
 
-    // 모든 값이 채워져 있으면 알림 후 전송
-    alert("글 작성이 완료되었습니다🙂");
-    form.submit();
+    body{ margin:0; font-family:'Noto Sans KR',system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:#fdfdfd; }
+
+    /* 페이지 래퍼 */
+    .info-page-wrap{ max-width:1040px; margin:0 auto; padding:40px 16px 72px; background:transparent; }
+
+    /* 카드 */
+    .info-form-card{
+      max-width:860px; margin:0 auto; background:var(--info-bg);
+      border:1px solid var(--info-border); border-radius:var(--info-radius);
+      box-shadow:0 8px 24px rgba(0,0,0,.06); padding:28px;
+    }
+
+
+    /* 폼 레이아웃 */
+    .info-form-grid{ display:grid; gap:18px; }
+    .info-group{ display:grid; gap:8px; }
+
+    .info-label{ font-size:15px; font-weight:700; color:#222; }
+
+    .info-input,.info-textarea{
+      width:100%; border:1px solid var(--info-border); border-radius:10px;
+      padding:12px 14px; font-size:15px; outline:none; background:#fff;
+    }
+    .info-input:focus,.info-textarea:focus{ border-color:var(--info-primary); box-shadow:0 0 0 3px rgba(255,199,39,.2); }
+    .info-textarea{ min-height:220px; resize:vertical; }
+
+    /* 파일 입력(기능 유지: id/name 변경하지 않음) */
+    .info-input-file{
+      width:100%; border:1px solid var(--info-border); border-radius:10px;
+      padding:10px 12px; background:#fff; font-size:14px; outline:none;
+    }
+    .info-input-file:focus{ border-color:var(--info-primary); box-shadow:0 0 0 3px rgba(255,199,39,.2); }
+    .info-input-file::file-selector-button{
+      margin-right:12px; padding:10px 16px; border:none; border-radius:10px;
+      background:var(--info-primary); color:#222; font-weight:700; cursor:pointer;
+    }
+    .info-input-file::file-selector-button:hover{ filter:brightness(.95); }
+
+    /* 액션 버튼 */
+    .info-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:6px; }
+    .info-btn{ border:1px solid transparent; border-radius:10px; padding:10px 20px; font-size:15px; cursor:pointer; transition:transform .05s ease, background .15s ease, border-color .15s ease; }
+    .info-btn:active{ transform:translateY(1px); }
+    .info-btn-secondary{ background:#fff; border-color:var(--info-border); color:#222; }
+    .info-btn-secondary:hover{ border-color:#cfd3da; }
+    .info-btn-primary{ background:var(--info-primary); color:#222; font-weight:700; }
+    .info-btn-primary:hover{ filter:brightness(.95); }
+
+    /* 반응형 */
+    @media (max-width:1024px){ .info-form-card{ padding:24px; } }
+    @media (max-width:768px){
+      .info-page-wrap{ padding:28px 14px 56px; }
+    }
+    @media (max-width:480px){
+      .info-form-card{ padding:20px; }
+      .info-actions{ flex-direction:column; }
+      .info-btn{ width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+<%@ include file="/WEB-INF/views/header.jsp" %>
+
+<div class="info-page-wrap">
+  <div class="info-form-card">
+
+    <!-- 기능 유지: id/action/method/enctype 동일 -->
+    <form id="writeForm" action="${pageContext.request.contextPath}/info/save" method="post" enctype="multipart/form-data">
+      <div class="info-form-grid">
+
+        <div class="info-group">
+          <label for="title" class="info-label">제목</label>
+          <input type="text" id="title" name="title" placeholder="제목을 입력해주세요" required class="info-input" />
+        </div>
+
+        <div class="info-group">
+          <label for="file" class="info-label">썸네일 이미지(필수)</label>
+          <input type="file" class="info-input-file" id="file" name="file" required>
+        </div>
+
+        <div class="info-group">
+          <label for="file" class="info-label">게시물 이미지(필수)</label>
+          <input type="file" class="info-input-file" id="file" name="file" required>
+        </div>
+
+        <div class="info-group">
+          <label for="content" class="info-label">내용</label>
+          <textarea id="content" name="content" placeholder="내용을 입력해주세요" class="info-textarea"></textarea>
+        </div>
+
+        <div class="info-actions">
+          <button type="button" class="info-btn info-btn-secondary" onClick="goBack()">뒤로가기</button>
+          <button type="button" class="info-btn info-btn-primary" onClick="writeFinish()">등록하기</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function writeFinish() {
+  const form = document.getElementById("writeForm");
+  const requiredFields = form.querySelectorAll("input[required], textarea[required]");
+  for (let field of requiredFields) {
+    if (!field.value.trim()) {
+      alert("모든 항목을 작성해주세요!");
+      field.focus();
+      return;
+    }
+  }
+  alert("글 작성이 완료되었습니다🙂");
+  form.submit();
 }
+function goBack(){ window.history.back(); }
 </script>
 
 </body>
