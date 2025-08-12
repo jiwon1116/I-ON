@@ -38,6 +38,7 @@
     </insert>
 
 
+
     <delete id="deleteMember" parameterType="String">
         DELETE
         FROM member
@@ -109,6 +110,19 @@
         WHERE userId = #{userId}
     </update>
 
+    <select id="checkDuplicateUserId" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM member
+        WHERE userId = #{userId}
+    </select>
+
+    <select id="checkDuplicateNickname" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM member
+        WHERE nickname = #{nickname}
+    </select>
+
+
     <update id="updateNicknameUntil" parameterType="com.spring.ion.lcw.dto.MemberDTO">
         UPDATE member
         SET nickname_until = #{nicknameUntil}
@@ -148,7 +162,6 @@
         AND ma.authority IN ('ROLE_ADMIN','ROLE_SUPER')
         ) THEN TRUE ELSE FALSE END
     </select>
-
 
     <!-- 리스트 닉네임 trust_level -->
     <select id="findBadgeMetaByNicknames" parameterType="list" resultType="map">
@@ -201,3 +214,6 @@
         WHERE userId = #{userId}
     </update>
 </mapper>
+
+
+

@@ -13,7 +13,7 @@
             alert('${editError}');
         </script>
     </c:if>
-    <form action="/edit" method="post" onsubmit="return confirm('정말 회원 정보를 수정하시겠습니까?\n30일에 한 번씩만 수정이 가능합니다.');">
+    <form action="/edit" method="post">
                     <div>
                         <label for="edit-password">비밀번호:</label>
                         <input type="password" id="edit-password" name="password" placeholder="변경 시에만 입력해주세요." />
@@ -21,6 +21,7 @@
                     <div>
                         <label for="edit-nickname">닉네임:</label>
                         <input type="text" id="edit-nickname" name="nickname" value="${member.nickname}"/>
+                        <p id="nickname-message" class="message"></p>
                     </div>
                     <div>
                         <label for="reg-city">지역:</label>
@@ -37,7 +38,8 @@
                     <button type="submit">수정하기</button>
                     <a href="/mypage/">마이페이지</a>
                 </form>
-                <script>
+                <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+                <script type="text/javascript">
                         const districtMap = {
                             "서울특별시": [
                                 "강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구",
@@ -130,6 +132,56 @@
                                 districtSelect.disabled = false;
                             }
                         });
+
+
+                            let isNicknameValid = false;
+
+
+                            const nicknameMessage = $('#nickname-message');
+
+
+
+                            $('#edit-nickname').on('blur', function() {
+                                checkDuplicateNicknameForEdit($(this).val());
+                            });
+
+
+
+                            function checkDuplicateNicknameForEdit(nickname) {
+                                if (!nickname.trim()) {
+                                    nicknameMessage.text('').css('color', '');
+                                    isNicknameValid = false;
+                                    return;
+                                }
+
+                                $.ajax({
+                                    url: '/checkDuplicateNicknameForEdit',
+                                    type: 'GET',
+                                    data: { nickname: nickname },
+                                    success: function(isDuplicate) {
+                                        if (isDuplicate) {
+                                            nicknameMessage.text('이미 사용 중인 닉네임입니다.').css('color', 'red');
+                                            isNicknameValid = false;
+                                        } else {
+                                            nicknameMessage.text('사용 가능한 닉네임입니다.').css('color', 'green');
+                                            isNicknameValid = true;
+                                        }
+                                    }
+                                });
+                            }
+
+                            $('form').on('submit', function(e) {
+                                if (!confirm('정말 회원 정보 수정을 진행하시겠습니까? 30일에 한 번씩만 수정이 가능합니다.')) {
+                                    e.preventDefault();
+                                    return;
+                                }
+
+                                if (!isUserIdValid || !isNicknameValid) {
+                                    alert('닉네임 중복을 확인해주세요.');
+                                    e.preventDefault();
+                                    return;
+                                }
+                            });
                     </script>
 </body>
 </html>

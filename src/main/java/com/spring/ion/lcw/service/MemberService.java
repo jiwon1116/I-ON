@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -82,4 +83,11 @@ public class MemberService {
         memberRepository.updateMemberBan(member);  // DB에 반영
     }
 
+    public int checkDuplicateUserId(String userId) {
+       return memberRepository.checkDuplicateUserId(userId);
+    }
+
+    public int checkDuplicateNickname(String nickname) {
+        return memberRepository.checkDuplicateNickname(nickname);
+    }
 }
