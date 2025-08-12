@@ -57,51 +57,78 @@
             background-color: #ffaa00;
         }
 
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 24px;
+        /* 카드 레이아웃 래퍼 */
+        .cards-wrap {
+          max-width: 1200px;
+          margin: 24px auto;
+          padding: 0 16px;
+
         }
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-        }
+       /* 3열 그리드 */
+       .card-grid {
+         display: grid;
+         grid-template-columns: repeat(3, minmax(0, 1fr));
+         gap: 24px;
+         align-items: start;
+       }
 
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
-        }
+       /* 카드 통일 높이 + 호버 */
+       .card {
+         display: flex;
+         flex-direction: column;
+         height: 360px; /* ← 필요 시 340~380px로 조절 가능 */
+         background: #fff;
+         border-radius: 12px;
+         box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+         overflow: hidden;
+         cursor: pointer;
+         transition: transform .15s ease, box-shadow .15s ease;
+       }
+       .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,0.10); }
 
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            display: block;
-        }
+       /* 이미지: 정사각 유지 + 꽉 채우기 */
+       .card-thumb {
+         width: 100%;
+         aspect-ratio: 1 / 1;   /* 정사각형 */
+         overflow: hidden;
+         background: #f6f6f6;
 
-        .card .card-body {
-            padding: 16px;
-        }
+       }
+       .card-thumb img {
+         width: 100%;
+         height: 100%;
+         object-fit: cover;
+         display: block;
+       }
 
-        .card .title {
-            font-weight: bold;
-            font-size: 16px;
-            color: #222;
-            margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+       /* 본문 */
+       .card-body {
+         padding: 12px 14px 16px;
+         display: flex;
+         align-items: flex-start;
+       }
 
-        .card .author {
-            font-size: 13px;
-            color: #777;
-        }
+       /* 제목: 2줄까지만 보이고 ... 처리 + 최소높이로 카드 높이 안정화 */
+       .card-body .title {
+         font-size: 16px;
+         font-weight: 600;
+         color: #222;
+         line-height: 1.4;
+         display: -webkit-box;
+         -webkit-line-clamp: 2;      /* 두 줄 말줄임 */
+         -webkit-box-orient: vertical;
+         overflow: hidden;
+         min-height: calc(1.4em * 2); /* 두 줄 높이 확보 -> 카드 높이 통일에 도움 */
+       }
+
+       /* 반응형 */
+       @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+       @media (max-width: 600px)  {
+         .card-grid { grid-template-columns: 1fr; }
+         .card { height: 320px; } /* 모바일에서 살짝 낮춤 */
+       }
+
 
         /* Pagination */
         nav[aria-label="Page navigation"] {
@@ -159,65 +186,76 @@
          </security:authorize>
     </div>
 
-   <!-- 게시글 카드 반복 -->
-   <div class="card-grid">
-       <c:forEach var="entry" items="${postMap}">
-           <c:set var="content" value="${entry.key}" />
-           <c:set var="file" value="${entry.value}" />
+  <!-- 카드 목록 -->
+  <div class="cards-wrap">
+    <div class="card-grid">
+      <c:forEach var="entry" items="${postMap}">
+        <c:set var="content" value="${entry.key}" />
+        <c:set var="file" value="${entry.value}" />
 
-           <div class="card" onclick="location.href='/info/${content.id}'">
-               <img src="/info/preview?storedFileName=${file.storedFileName}" style="width:300px; height:300px;" />
-               <div class="card-body">
-                   <div class="title">${content.title}</div>
-               </div>
-           </div>
-       </c:forEach>
-   </div>
+        <div class="card" onclick="location.href='${pageContext.request.contextPath}/info/${content.id}'">
+          <div class="card-thumb">
+            <img src="${pageContext.request.contextPath}/info/preview?storedFileName=${file.storedFileName}" alt="${content.title}" />
+          </div>
+          <div class="card-body">
+            <div class="title">${content.title}</div>
+          </div>
+        </div>
+      </c:forEach>
+    </div>
+  </div>
 
 
-    <nav aria-label="Page navigation">
-        <ul class="pagination">
-            <c:choose>
-                <c:when test="${paging.page <= 1}">
-                    <li class="page-item disabled"><a class="page-link">← Previous</a></li>
-                </c:when>
-                <c:otherwise>
-                    <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}/info/paging?page=${paging.page - 1}">← Previous</a>
-                    </li>
-                </c:otherwise>
-            </c:choose>
+  <nav aria-label="Page navigation">
+    <ul class="pagination">
+      <!-- Prev -->
+      <c:choose>
+        <c:when test="${paging.page <= 1}">
+          <li class="page-item disabled"><a class="page-link">← Previous</a></li>
+        </c:when>
+        <c:otherwise>
+          <li class="page-item">
+            <a class="page-link"
+               href="${pageContext.request.contextPath}/info/paging?page=${paging.page - 1}">← Previous</a>
+          </li>
+        </c:otherwise>
+      </c:choose>
 
-            <c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="i">
-                <c:choose>
-                    <c:when test="${i eq paging.page}">
-                        <li class="page-item active"><a class="page-link">${i}</a></li>
-                    </c:when>
-                    <c:otherwise>
-                        <li class="page-item">
-                            <a class="page-link" href="${pageContext.request.contextPath}/info/paging?page=${i}">${i}</a>
-                        </li>
-                    </c:otherwise>
-                </c:choose>
-            </c:forEach>
+      <!-- Page numbers -->
+      <c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="i">
+        <c:choose>
+          <c:when test="${i eq paging.page}">
+            <li class="page-item active"><a class="page-link">${i}</a></li>
+          </c:when>
+          <c:otherwise>
+            <li class="page-item">
+              <a class="page-link"
+                 href="${pageContext.request.contextPath}/info/paging?page=${i}">${i}</a>
+            </li>
+          </c:otherwise>
+        </c:choose>
+      </c:forEach>
 
-            <c:choose>
-                <c:when test="${paging.page >= paging.maxPage}">
-                    <li class="page-item disabled"><a class="page-link">Next →</a></li>
-                </c:when>
-                <c:otherwise>
-                    <li class="page-item">
-                        <a class="page-link" href="${pageContext.request.contextPath}/info/paging?page=${paging.page + 1}">Next →</a>
-                    </li>
-                </c:otherwise>
-            </c:choose>
-        </ul>
-    </nav>
+      <!-- Next -->
+      <c:choose>
+        <c:when test="${paging.page >= paging.maxPage}">
+          <li class="page-item disabled"><a class="page-link">Next →</a></li>
+        </c:when>
+        <c:otherwise>
+          <li class="page-item">
+            <a class="page-link"
+               href="${pageContext.request.contextPath}/info/paging?page=${paging.page + 1}">Next →</a>
+          </li>
+        </c:otherwise>
+      </c:choose>
+    </ul>
+  </nav>
+
 </div>
-<script>
-    function writeFn() {
-                 location.href = "/info/save";
-         }
-</script>
+
+   <script>
+     function writeFn(){ location.href="/info/save"; }
+   </script>
+
 </body>
 </html>

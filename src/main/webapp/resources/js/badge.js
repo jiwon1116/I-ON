@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 .badge-l3{background:#fff3cd}
 
 /* 관리자 강조(굵게+파란톤) */
-.is-admin{font-weight:700;color:#2563eb}
+.is-admin{font-weight:700;}
 
 /* 관리자 칩 */
 .admin-chip{
