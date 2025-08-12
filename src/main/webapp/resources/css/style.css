@@ -59,7 +59,7 @@ body {
 }
 
 .logo-section img {
-  height: 36px;
+  height: 220px;
 }
 
 .nav-tabs {
@@ -68,7 +68,7 @@ body {
   margin: 0;
   padding: 0;
   border-style: none;
-  margin-left: 118px;
+  margin-left: -90px;
 
 }
 
