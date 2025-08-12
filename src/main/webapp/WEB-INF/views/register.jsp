@@ -152,18 +152,19 @@
     <form action="/register" method="post">
       <div class="field">
         <label for="reg-userId">아이디</label>
-        <input class="input" type="text" id="reg-userId" name="userId" placeholder="Value" required />
+        <input class="input" type="text" id="reg-userId" name="userId" placeholder="아이디는 4~30 자리의 영어 또는 숫자만 가능합니다." required />
         <p id="userId-message" class="message"></p>
       </div>
 
       <div class="field">
         <label for="reg-password">비밀번호</label>
-        <input class="input" type="password" id="reg-password" name="password" placeholder="Value" required />
+        <input class="input" type="password" id="reg-password" name="password" placeholder="비밀번호는 영어와 숫자가 하나 이상 포함된 8~16자리의 영어, 숫자, 특수문자만 가능합니다." required />
+        <p id="password-message" class="message"></p>
       </div>
 
       <div class="field">
         <label for="reg-nickname">닉네임</label>
-        <input class="input" type="text" id="reg-nickname" name="nickname" placeholder="Value" required />
+        <input class="input" type="text" id="reg-nickname" name="nickname" placeholder="닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다." required />
         <p id="nickname-message" class="message"></p>
       </div>
 
@@ -299,18 +300,58 @@
     });
 
     let isUserIdValid = false;
+    let isPasswordValid = false;
     let isNicknameValid = false;
 
+
     const userIdMessage = $('#userId-message');
+    const passwordMessage = $('#password-message');
     const nicknameMessage = $('#nickname-message');
 
+    let getUserIdRegExp = /^[a-zA-Z0-9]{4,30}$/;
+    let getPasswordRegExp = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9~!@#$%^&*]{8,16}$/;
+    let getNicknameRegExp = /^[a-zA-Z0-9가-힣]{2,12}$/;
+
+    $('#reg-userId, #reg-password, #reg-nickname').on('input', function() {
+            const messageElement = $(this).next('p.message');
+            messageElement.text('');
+
+            if ($(this).attr('id') === 'reg-userId') isUserIdValid = false;
+            if ($(this).attr('id') === 'reg-password') isPasswordValid = false;
+            if ($(this).attr('id') === 'reg-nickname') isNicknameValid = false;
+        });
+
     $('#reg-userId').on('blur', function() {
-        checkDuplicateUserId($(this).val());
+        const userId = $(this).val();
+        if (!getUserIdRegExp.test(userId)) {
+                userIdMessage.text('아이디는 4~30 자리의 영어 또는 숫자만 가능합니다.').css('color', 'red');
+                isUserIdValid = false;
+            } else {
+                checkDuplicateUserId($(this).val());
+            }
     });
 
+    $('#reg-password').on('blur', function() {
+            const password = $(this).val();
+            if (!getPasswordRegExp.test(password)) {
+                    passwordMessage.text('비밀번호는 영어와 숫자가 하나 이상 포함된 8~16자리의 영어, 숫자, 특수문자만 가능합니다.').css('color', 'red');
+                    isPasswordValid = false;
+                }
+            else{
+                 passwordMessage.text('사용 가능한 비밀번호입니다.').css('color', 'green');
+                 isPasswordValid = true;
+            }
+        });
+
     $('#reg-nickname').on('blur', function() {
-        checkDuplicateNickname($(this).val());
-    });
+            const nickname = $(this).val();
+            if (!getNicknameRegExp.test(nickname)) {
+                        nicknameMessage.text('닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다.').css('color', 'red');
+                        isNicknameValid = false;
+                    } else {
+                        checkDuplicateNickname($(this).val());
+                    }
+        });
 
 
     function checkDuplicateUserId(userId) {
@@ -365,8 +406,8 @@
             return;
         }
 
-        if (!isUserIdValid || !isNicknameValid) {
-            alert('아이디 또는 닉네임 중복을 확인해주세요.');
+        if (!isUserIdValid || !isPasswordValid || !isNicknameValid) {
+            alert('입력하신 정보들을 다시 확인해주세요.');
             e.preventDefault();
             return;
         }
