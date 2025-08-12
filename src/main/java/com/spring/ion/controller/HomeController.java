@@ -15,12 +15,10 @@ public class HomeController {
         MemberDTO memberDTO = user.getMemberDTO();
         model.addAttribute("member", memberDTO);
         System.out.println("로그인 멤버 정보: " + memberDTO);
+        if(memberDTO.getAuthorities().contains("ROLE_ADMIN")){
+            return "admin";
+        }
+
         return "index";
     }
-
-
-
-
-
-
 }

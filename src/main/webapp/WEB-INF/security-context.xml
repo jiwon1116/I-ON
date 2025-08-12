@@ -36,7 +36,9 @@
 
         <security:form-login login-page="/login" default-target-url="/" authentication-failure-handler-ref="customLoginFailHandler"/>
 
-        <security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true" delete-cookies="JSESSIONID"/>
+        <security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true" delete-cookies="JSESSIONID, remember-me"/>
+
+        <security:remember-me token-validity-seconds="3600"/>
 
         <security:access-denied-handler ref="customAccessDeniedHandler"/>
 
