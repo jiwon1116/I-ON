@@ -187,14 +187,14 @@ public class MemberController {
         }
 
     }
-    @GetMapping("/naverEdit")
+    @GetMapping("/naver-edit")
     public String showNaverEditForm(Model model) {
 
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MemberDTO memberDTO = user.getMemberDTO();
         model.addAttribute("member", memberDTO);
 
-        return "naverEdit";
+        return "naver-edit";
     }
 
     @PatchMapping("/naver-edit")
