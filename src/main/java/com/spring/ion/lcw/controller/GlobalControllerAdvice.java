@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RequiredArgsConstructor
 @ControllerAdvice
 public class GlobalControllerAdvice {
@@ -18,7 +20,7 @@ public class GlobalControllerAdvice {
 
 
     @ModelAttribute
-    public void addCurrentUserToModel(Model model) {
+    public void addCurrentUserToModel(HttpServletRequest request) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -27,7 +29,7 @@ public class GlobalControllerAdvice {
             MemberDTO currentMember = userDetails.getMemberDTO();
 
             if (currentMember != null) {
-                model.addAttribute("currentUserId", currentMember.getId());
+                request.setAttribute("currentUserId", currentMember.getId());
             }
         }
     }

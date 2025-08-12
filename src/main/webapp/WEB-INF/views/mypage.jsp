@@ -143,7 +143,7 @@
 
     /* === 메인 보드 === */
     .main-board {
-      height: calc(100vh - 56px);
+      height: calc(100vh - 70px);
       display: grid;
       grid-template-rows: auto auto 1fr;
       row-gap: 16px;
@@ -888,7 +888,7 @@
       e.target.closest('li')?.remove();
 
     }
-    html +=   '</ul></div>';
+  });
 
 
   function deleteNotify(id){
