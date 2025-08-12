@@ -1,18 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%-- 현재 요청 경로 가져오기 --%>
+<c:set var="path" value="${pageContext.request.requestURI}" />
 
 <header>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
-
   <nav class="top-nav">
     <div class="logo-section">
-      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
+      <a href="/"><img src="${pageContext.request.contextPath}/resources/img/logo.png" alt="logo"></a>
     </div>
     <ul class="nav-tabs">
       <li class="main-menu">
@@ -31,9 +33,9 @@
       <li class="main-menu"><a href="/flag">제보 및 신고</a></li>
       <li class="main-menu"><a href="/info">정보 공유</a></li>
     </ul>
+
     <div class="icons">
       <%-- 알림 팝오버 버튼 --%>
-
      <div class="icon-link">
        <button id="alertBtn" type="button" class="icon-btn"
                data-bs-html="true" data-bs-container="body" title="알림" aria-label="알림">
@@ -41,21 +43,22 @@
        </button>
        <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
      </div>
-
-
-      <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
+       <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
+               <i class="bi bi-envelope"></i>
+               <c:if test="${totalUnreadCount > 0}">
+                 <span id="total-unread-count-sm" class="badge unread-count-badge">${totalUnreadCount}</span>
+               </c:if>
+             </a>
+    <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
     <div id="popover-content" class="d-none"></div>
       <%-- 알림 아이콘에 총 읽지 않은 메시지 수 추가 --%>
           <span id="total-unread-count" class="badge unread-count-badge"
                 style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
               ${totalUnreadCount}
           </span>
-
-      <a href="/chat" class="icon-link"><span class="icon">✉️</span></a>
-
     </div>
-  </nav>
 
+  </nav>
   <%-- 알림 팝오버 스크립트 --%>
 <script>
 document.addEventListener("DOMContentLoaded", async function () {
@@ -73,10 +76,22 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!res.ok) throw new Error("HTTP " + res.status);
     var items = await res.json(); // ← 여기서부터 items 사용
 
-    // 4) 최신이 위로 오게 정렬
-    items.sort(function (a, b) {
-      return (b.created_at || 0) - (a.created_at || 0);
-    });
+// 읽지 않은 알림 수 계산해서 배지 업데이트
+var unreadCount = items.filter(n => !n.isRead).length;
+var badge = document.getElementById("notify-unread-count");
+if (badge) {
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount;
+    badge.style.display = "inline-block";
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+// 4) 최신이 위로 오게 정렬
+items.sort(function (a, b) {
+  return (b.created_at || 0) - (a.created_at || 0);
+});
 
     // 5) HTML 시작 (5개 높이 정도로 보이게 → 스크롤)
     var html = '<div style="max-height:220px; overflow-y:auto;">'
@@ -114,15 +129,17 @@ document.addEventListener("DOMContentLoaded", async function () {
            + '</div>';
 
     // 9) 팝오버 생성 (content 옵션으로 주입)  sanitize 끄기
-   const pop = new bootstrap.Popover(btn, {
-     html: true,
-     container: 'body',
-     placement: 'bottom',
-     trigger: 'click',
-     title: '알림',
-     content: html,
-     sanitize: false
-   });
+ const pop = new bootstrap.Popover(btn, {
+   html: true,
+   container: 'body',
+   placement: 'bottom',
+   trigger: 'click',
+   title: '알림',
+   content: html,
+   sanitize: false,
+   customClass: 'notify-panel',
+   offset: [0, 15]
+ });
 
   } catch (e) {
     console.error("notify popover error:", e);

@@ -479,6 +479,7 @@
           <i class="fas fa-bell"></i>
           <span id="notify-unread-count-sm" class="badge unread-count-badge" style="display:none"></span>
         </button>
+
         <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
           <i class="fas fa-envelope"></i>
           <c:if test="${totalUnreadCount > 0}">
@@ -704,20 +705,21 @@
               </div>
               <div class="modal-body">
                 <ul style="padding-left: 1rem;">
-                  <li><b>제보 횟수</b> : 신고/제보 게시판에 올린 게시글 수를 의미합니다.</li>
-                  <li><b>위탁 횟수</b> : 위탁 게시판에 작성한 게시글 수를 의미합니다.</li>
-                  <li><b>댓글</b> : 내가 단 댓글의 총 개수를 의미합니다.</li>
+                  <li><b>제보 횟수</b> : 신고/제보 게시글 수</li>
+                  <li><b>위탁 횟수</b> : 위탁 게시글 수</li>
+                  <li><b>댓글</b> : 내가 작성한 댓글 수</li>
                   <li>
-                    <span style="color:#40a048; font-weight:500;">새싹 보호자 (0~9점)</span>,
-                    <span style="color:#a8743d; font-weight:500;">안심 지킴이 (10~29점)</span>,
-                    <span style="color:#f6a623; font-weight:500;">최고 안전 수호자 (30점 이상)</span>
+
+                    <span style="color:#40a048; font-weight:500;">새싹 보호자(0~9)</span>,
+                    <span style="color:#a8743d; font-weight:500;">안심 지킴이(10~29)</span>,
+                    <span style="color:#f6a623; font-weight:500;">최고 안전 수호자(30+)</span>
                   </li>
                 </ul>
                 <div class="mt-2 text-secondary" style="font-size:0.98rem;">
-                  신뢰도 점수판은 커뮤니티 활동의 활발함과 신뢰도를 시각적으로 보여줍니다.<br>
-                  활동이 많을수록 별이 더 많이 채워집니다.
+                  활동량이 높을수록 점수가 오르고 등급이 상승합니다.
                 </div>
               </div>
+
               <div class="modal-footer">
                 <button type="button" class="btn btn-warning" data-bs-dismiss="modal">확인</button>
               </div>

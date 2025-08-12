@@ -7,6 +7,7 @@ pageEncoding="UTF-8"%>
   <meta charset="UTF-8">
   <title>회원가입</title>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 </head>
 <body>
     <c:if test="${not empty registerError}">
@@ -16,10 +17,11 @@ pageEncoding="UTF-8"%>
     </c:if>
 <h1>회원가입</h1>
 <!-- 나중에 ajax 처리하기(닉네임 중복, 유효성 등)-->
-    <form action="/naver-register" method="post" onsubmit="return confirm('회원가입을 진행하시겠습니까?');">
+    <form action="/naver-register" method="post">
         <div>
             <label for="reg-nickname">닉네임:</label>
-            <input type="text" id="reg-nickname" name="nickname" required/>
+            <input type="text" id="reg-nickname" name="nickname" placeholder="닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다." required/>
+            <p id="nickname-message" class="message"></p>
         </div>
         <div>
             <label for="reg-gender">성별:</label>
@@ -136,6 +138,63 @@ pageEncoding="UTF-8"%>
                     districtSelect.disabled = false;
                 }
             });
+
+        let isNicknameValid = false;
+
+        const nicknameMessage = $('#nickname-message');
+
+        let getNicknameRegExp = /^[a-zA-Z0-9가-힣]{2,12}$/;
+
+        $('#reg-nickname').on('input', function() {
+                    const messageElement = $(this).next('p.message');
+                    messageElement.text('');
+                    if ($(this).attr('id') === 'reg-nickname') isNicknameValid = false;
+                });
+
+        $('#reg-nickname').on('blur', function() {
+                    const nickname = $(this).val();
+                    if (!getNicknameRegExp.test(nickname)) {
+                                nicknameMessage.text('닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다.').css('color', 'red');
+                                isNicknameValid = false;
+                            } else {
+                                checkDuplicateNickname($(this).val());
+                            }
+                });
+        function checkDuplicateNickname(nickname) {
+                if (!nickname.trim()) {
+                    nicknameMessage.text('').css('color', '');
+                    isNicknameValid = false;
+                    return;
+                }
+
+                $.ajax({
+                    url: '/checkDuplicateNickname',
+                    type: 'GET',
+                    data: { nickname: nickname },
+                    success: function(isDuplicate) {
+                        if (isDuplicate) {
+                            nicknameMessage.text('이미 사용 중인 닉네임입니다.').css('color', 'red');
+                            isNicknameValid = false;
+                        } else {
+                            nicknameMessage.text('사용 가능한 닉네임입니다.').css('color', 'green');
+                            isNicknameValid = true;
+                        }
+                    }
+                });
+            }
+
+            $('form').on('submit', function(e) {
+                    if (!confirm('회원가입을 진행하시겠습니까?')) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (!isNicknameValid) {
+                        alert('입력하신 정보들을 다시 확인해주세요.');
+                        e.preventDefault();
+                        return;
+                    }
+                });
         </script>
 
 </body>
