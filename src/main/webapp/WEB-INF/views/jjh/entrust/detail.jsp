@@ -9,12 +9,13 @@
 <head>
   <meta charset="UTF-8">
   <title>위탁 게시판</title>
-    <!-- badge.js가 API 호출할 때 쓸 컨텍스트 -->
-    <meta name="ctx" content="${pageContext.request.contextPath}"/>
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/common.css"/>
 
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 
     <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
+
 
   <style>
     body {

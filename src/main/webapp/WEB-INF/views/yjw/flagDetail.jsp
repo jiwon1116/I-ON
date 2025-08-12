@@ -1,296 +1,269 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>게시글 상세보기</title>
-    <meta name="ctx" content="${pageContext.request.contextPath}"/>
+  <meta charset="UTF-8" />
+  <title>게시글 상세보기</title>
+  <c:set var="CTX" value="${pageContext.request.contextPath}" />
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bootstrap 5 모달 동작 -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- libs -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- 페이지 전용 CSS -->
+  <link href="${CTX}/resources/css/detail.css" rel="stylesheet" />
 
-    <!-- 전역 배지 스크립트 (※ header.jsp에서 이미 포함되어 있으면 이 줄은 제거하세요) -->
-    <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <style>
-        .like-btn .heart { font-size: 1.4em; vertical-align: middle; transition: color 0.15s; }
-        .like-btn.liked .heart { color: #f44336; }
-        .like-btn { border: 1.5px solid #f44336 !important; }
-    </style>
+  <!-- 배지(헤더에서 이미 넣었으면 이 줄은 제거) -->
+  <script src="${CTX}/resources/js/badge.js"></script>
 </head>
 <body>
-<div class="container mt-5">
+
 <%@ include file="/WEB-INF/views/header.jsp" %>
 
-    <!-- 게시글 상세 -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-warning text-white fw-bold">게시글 상세</div>
-        <div class="card-body">
-            <h4 class="card-title">${flag != null ? flag.title : ''}</h4>
+<div class="board-wrap">
 
-            <div class="mb-3 text-muted small">
+  <!-- ===== 글 ===== -->
+  <article class="post mb-3">
+    <header class="post-head">
+      <h1 class="post-title"><c:out value="${flag.title}" /></h1>
 
-                <c:if test="${flag != null}">
-                    <!-- 닉네임 + 배지 -->
-                    <span class="js-user" data-nickname="${flag.nickname}"><a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${flag.nickname}"> ${flag != null ? flag.nickname : ''}</a></span>
-                </c:if>
-
-                <c:if test="${not empty flag.city}">
-                    <span class="ms-2 badge bg-light text-dark border">
-                        ${flag.city} ${flag.district}
-                    </span>
-                </c:if>
-            </div>
-
-            <p class="card-text">${flag != null ? flag.content : ''}</p>
-
-            <%-- 파일 리스트 --%>
-            <c:if test="${not empty fileList}">
-                <h6 class="mt-4">첨부 파일</h6>
-                <ul style="list-style: none; padding-left: 0;">
-                    <c:forEach var="file" items="${fileList}">
-                        <li>
-                            <c:choose>
-                                <c:when test="${file.storedFileName.endsWith('.jpg') || file.storedFileName.endsWith('.png') || file.storedFileName.endsWith('.jpeg') || file.storedFileName.endsWith('.gif')}">
-                                    <img src="${pageContext.request.contextPath}/flag/preview?fileName=${file.storedFileName}" alt="${file.originalFileName}" style="max-width: 300px; margin: 10px 0;">
-                                </c:when>
-                                <c:otherwise>
-                                    <a href="${pageContext.request.contextPath}/flag/preview?fileName=${file.storedFileName}" target="_blank">
-                                        ${file.originalFileName}
-                                    </a>
-                                </c:otherwise>
-                            </c:choose>
-                        </li>
-                    </c:forEach>
-                </ul>
+      <div class="post-meta">
+        <span class="avatar"></span>
+        <div>
+          <span class="js-user" data-nickname="${flag.nickname}">
+            <a href="${CTX}/othermemberprofile/checkprofile?nickname=${flag.nickname}">
+              <c:out value="${flag.nickname}" />
+            </a>
+          </span>
+          <span class="ms-2">
+            <c:if test="${flag.created_at != null}">
+              <fmt:formatDate value="${flag.created_at}" pattern="yyyy.MM.dd HH:mm"/>
             </c:if>
-
-            <div class="text-end mb-2">
-                <!-- 수정/삭제 버튼 -->
-                <security:authentication property="principal.username" var="loginUserId"/>
-                <c:if test="${loginUserId eq flag.userId or isAdmin}">
-                    <a href="${pageContext.request.contextPath}/flag/update/${flag.id}">수정</a>
-                    <a href="${pageContext.request.contextPath}/flag/delete/${flag.id}"
-                       onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
-                </c:if>
-
-
-                <!-- 신고 버튼(로그인 && 본인 글 아님) -->
-                <c:if test="${loginUserId ne flag.userId}">
-                    <button type="button" class="btn btn-outline-danger btn-sm ms-2" id="reportBtn">🚩 신고</button>
-                </c:if>
-            </div>
-
-            <!-- 신고 모달 -->
-            <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <form id="reportForm">
-                  <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                      <h5 class="modal-title" id="reportModalLabel">게시글 신고</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-                    </div>
-                    <div class="modal-body">
-                      <input type="hidden" name="postId" value="${flag.id}" />
-                      <div class="mb-3">
-                      <label for="reportType" class="form-label">신고 유형</label>
-                        <select class="form-select" name="type" id="reportType" required>
-                          <option value="">-- 신고 유형 선택 --</option>
-                          <option value="CURSE">욕설/비방</option>
-                          <option value="SPAM">스팸/광고</option>
-                          <option value="IMPROPER">부적절한 콘텐츠</option>
-                        </select>
-                        <label for="reportReason" class="form-label">신고 사유</label>
-                        <textarea class="form-control" name="reason" id="reportReason" required placeholder="신고 사유를 입력하세요"></textarea>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                      <button type="submit" class="btn btn-danger">신고하기</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-            <!-- 좋아요 버튼 -->
-            <div class="mb-2">
-                <button type="button" class="btn like-btn ${flag.liked ? 'liked' : ''}" id="likeBtn">
-                    <span class="heart">${flag.liked ? '❤️' : '🤍'}</span>
-                    <span id="likeCount">${flag.like_count}</span>
-                </button>
-            </div>
-
-            <div class="text-muted mt-2">
-                작성일:
-                <c:if test="${flag != null && flag.created_at != null}">
-                    <fmt:formatDate value="${flag.created_at}" pattern="yyyy-MM-dd HH:mm"/>
-                </c:if>
-                <br />
-                조회수: <span id="viewCount">${flag != null ? flag.view_count : 0}</span>
-                | 좋아요: <span id="likeCountDisplay">${flag != null ? flag.like_count : 0}</span>
-            </div>
-
-            <div class="text-end mt-3">
-                <a href="${pageContext.request.contextPath}/flag" class="btn btn-secondary">📄 목록으로 가기</a>
-            </div>
+          </span>
+          <c:if test="${not empty flag.city}"><span class="ms-2 text-muted">${flag.city} ${flag.district}</span></c:if>
         </div>
+
+        <div class="ms-auto d-flex align-items-center gap-3">
+          <security:authentication property="principal.username" var="loginUserId"/>
+          <c:if test="${loginUserId eq flag.userId or isAdmin}">
+            <a href="${CTX}/flag/update/${flag.id}" class="link">수정</a>
+            <a href="${CTX}/flag/delete/${flag.id}" class="link"
+               onclick="return confirm('정말 삭제하시겠습니까?');">삭제</a>
+          </c:if>
+          <c:if test="${loginUserId ne flag.userId}">
+            <a href="javascript:void(0)" id="reportBtn" class="link">신고</a>
+          </c:if>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-body">
+      ${flag.content}
     </div>
 
-    <!-- 댓글 작성 -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-warning text-white fw-bold">💬 댓글 작성</div>
-        <div class="card-body">
-            <form id="commentForm">
-                <input type="hidden" name="post_id" id="post_id" value="${flag != null ? flag.id : ''}"/>
-                <div class="mb-2"></div>
-                <div class="mb-2">
-                    <textarea class="form-control" id="content" name="content" placeholder="댓글을 입력하세요"></textarea>
-                </div>
-                <div class="text-end">
-                    <button type="submit" class="btn btn-primary" id="submitCommentBtn">댓글 등록</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- 첨부 -->
+    <c:if test="${not empty fileList}">
+      <section class="attach">
+        <ul>
+          <c:forEach var="file" items="${fileList}">
+            <li>
+              <c:set var="lower" value="${fn:toLowerCase(file.storedFileName)}"/>
+              <c:choose>
+                <c:when test="${fn:endsWith(lower, '.jpg') or fn:endsWith(lower, '.jpeg') or fn:endsWith(lower, '.png') or fn:endsWith(lower, '.gif')}">
+                  <img src="${CTX}/flag/preview?fileName=${file.storedFileName}" alt="${file.originalFileName}">
+                </c:when>
+                <c:otherwise>
+                  <a href="${CTX}/flag/preview?fileName=${file.storedFileName}" target="_blank">
+                    <c:out value="${file.originalFileName}" />
+                  </a>
+                </c:otherwise>
+              </c:choose>
+            </li>
+          </c:forEach>
+        </ul>
+      </section>
+    </c:if>
 
-    <!-- 댓글 출력 영역 (서버 렌더링) -->
+    <!-- 하단 액션 -->
+    <div class="post-actions">
+      <div class="stats">
+        <span><i class="bi bi-heart-fill text-danger"></i><span id="likeCountDisplay">${flag.like_count}</span></span>
+        <span><i class="bi bi-chat-left-text"></i>${fn:length(flagCommentDTOList)}</span>
+        <span class="text-muted">조회 <span id="viewCount">${flag.view_count}</span></span>
+      </div>
+      <button type="button" id="likeBtn" class="btn btn-like ${flag.liked ? 'liked' : ''}">
+        <i class="bi ${flag.liked ? 'bi-heart-fill' : 'bi-heart'}"></i>
+        <span id="likeCount">${flag.like_count}</span>
+      </button>
+    </div>
+  </article>
+
+  <!-- ===== 댓글 입력 ===== -->
+  <form id="commentForm" class="cmt-form">
+    <input type="hidden" name="post_id" id="post_id" value="${flag.id}"/>
+    <div class="cmt-input">
+      <textarea id="content" name="content" rows="1" placeholder="댓글을 작성해주세요"></textarea>
+      <button type="submit" class="cmt-send">작성</button>
+    </div>
+  </form>
+
+  <!-- ===== 댓글 목록 ===== -->
+  <section class="comments">
+    <div class="comments-head">댓글 <span class="text-muted">(${fn:length(flagCommentDTOList)})</span></div>
     <div id="commentList">
-        <c:if test="${not empty flagCommentDTOList}">
-            <c:forEach var="comment" items="${flagCommentDTOList}">
-                <div class="card mb-2">
-                    <div class="card-body">
-                        <p class="card-text">${comment.content}</p>
-                        <footer class="blockquote-footer">
-                            <span class="js-user" data-nickname="${comment.nickname}"> <a href="${pageContext.request.contextPath}/othermemberprofile/checkprofile?nickname=${comment.nickname}">${comment.nickname}</a></span>
-                            | <fmt:formatDate value="${comment.created_at}" pattern="yyyy-MM-dd HH:mm:ss" />
-                            <c:if test="${comment.userId eq loginUserId or isAdmin}">
-                                <button class="btn btn-sm btn-outline-danger float-end"
-                                        onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
-                            </c:if>
-                        </footer>
-                    </div>
+      <c:if test="${not empty flagCommentDTOList}">
+        <c:forEach var="comment" items="${flagCommentDTOList}">
+          <div class="cmt-item">
+            <div class="cmt-top">
+              <span class="avatar"></span>
+              <div class="flex-grow-1">
+                <span class="js-user" data-nickname="${comment.nickname}">
+                  <a href="${CTX}/othermemberprofile/checkprofile?nickname=${comment.nickname}">
+                    <c:out value="${comment.nickname}" />
+                  </a>
+                </span>
+                <span class="ms-2"><fmt:formatDate value="${comment.created_at}" pattern="yyyy.MM.dd HH:mm"/></span>
+              </div>
+              <c:if test="${comment.userId eq loginUserId or isAdmin}">
+                <div class="cmt-actions">
+                  <button class="btn btn-sm btn-outline-danger"
+                          onclick="deleteComment(${comment.id},${comment.post_id})">삭제</button>
                 </div>
-            </c:forEach>
-        </c:if>
+              </c:if>
+            </div>
+            <div class="cmt-body">
+              ${comment.content}
+            </div>
+          </div>
+        </c:forEach>
+      </c:if>
+      <c:if test="${empty flagCommentDTOList}">
+        <div class="p-4 text-muted">첫 댓글을 남겨보세요.</div>
+      </c:if>
     </div>
+  </section>
+
+</div><!-- /.board-wrap -->
+
+<!-- 신고 모달 -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="reportForm">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="reportModalLabel">게시글 신고</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="postId" value="${flag.id}" />
+          <div class="mb-3">
+            <label for="reportType" class="form-label">신고 유형</label>
+            <select class="form-select" name="type" id="reportType" required>
+              <option value="">-- 신고 유형 선택 --</option>
+              <option value="CURSE">욕설/비방</option>
+              <option value="SPAM">스팸/광고</option>
+              <option value="IMPROPER">부적절한 콘텐츠</option>
+            </select>
+            <label for="reportReason" class="form-label mt-2">신고 사유</label>
+            <textarea class="form-control" name="reason" id="reportReason" rows="4" required placeholder="신고 사유를 입력하세요"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+          <button type="submit" class="btn btn-brand text-dark">신고하기</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script>
-    $(document).ready(function () {
-        // 댓글 등록 → 성공 시 전체 새로고침
-        $('#commentForm').submit(function (e) {
-            e.preventDefault();
-            const content = $('#content').val();
-            const post_id = $('#post_id').val();
+  const CTX = '${CTX}';
 
-            if (!post_id || !content) return alert("내용을 입력해주세요.");
+  // 댓글 등록
+  $('#commentForm').on('submit', function (e) {
+    e.preventDefault();
+    const content = $('#content').val().trim();
+    const post_id = $('#post_id').val();
+    if (!post_id || !content) return alert("내용을 입력해주세요.");
 
-            $.ajax({
-                type: 'POST',
-                url: '${pageContext.request.contextPath}/FlagComment/write',
-                data: { content: content, post_id: post_id },
-                dataType: 'json',
-                success: function() {
-                    window.location.reload();
-                },
-                error: function() {
-                    alert("댓글 등록 실패");
-                }
-            });
-        });
-
-      // 신고 버튼
-      $('#reportBtn').click(function(){
-          // 폼 초기화 부분. 필요시 주석 해제하기
-          // const $form = $('#reportForm');
-          // $form[0].reset();
-          // $('#reportReason').attr('placeholder', '신고 사유를 입력하세요');
-
-          var modal = new bootstrap.Modal(document.getElementById('reportModal'));
-          modal.show();
-      });
-
-      // 신고 폼 제출
-      $('#reportForm').submit(function(e){
-          e.preventDefault();
-
-          const postId = $('input[name="postId"]').val();
-          const type   = $('#reportType').val();
-          const reason = $('#reportReason').val();
-          const board = 'FLAG';
-
-          if(!reason.trim()) return alert("신고 사유를 입력해주세요.");
-
-          const payload = { targetBoard: board, targetContentId: postId, type, description: reason };
-
-          $.ajax({
-              type: 'POST',
-              url: '${pageContext.request.contextPath}/report',
-              contentType: 'application/json; charset=UTF-8',
-              dataType: 'text',
-              data: JSON.stringify(payload),
-              success: function(){
-                  alert('신고가 접수되었습니다.');
-                  const modal = bootstrap.Modal.getInstance(document.getElementById('reportModal'));
-                  modal && modal.hide();
-              },
-              error: function(){
-                  alert("신고 접수에 실패했습니다.");
-              }
-          });
-      });
-
-        // 좋아요 버튼 (비동기 토글 유지)
-        $('#likeBtn').click(function(){
-            const flagId = '${flag.id}';
-            $.ajax({
-                type: 'POST',
-                url: '${pageContext.request.contextPath}/flagLike/like/' + flagId,
-                success: function(data){
-                    if(data.error){
-                        alert(data.error);
-                        return;
-                    }
-                    $('#likeCount').text(data.likeCount);
-                    $('#likeCountDisplay').text(data.likeCount);
-                    if(data.liked){
-                        $('#likeBtn').addClass('liked');
-                        $('#likeBtn .heart').text('❤️');
-                    } else {
-                        $('#likeBtn').removeClass('liked');
-                        $('#likeBtn .heart').text('🤍');
-                    }
-                },
-                error: function(){
-                    alert('좋아요 처리 실패!');
-                }
-            });
-        });
+    $.ajax({
+      type: 'POST',
+      url: CTX + '/FlagComment/write',
+      data: { content, post_id },
+      dataType: 'json',
+      success: function(){ window.location.reload(); },
+      error: function(){ alert("댓글 등록 실패"); }
     });
+  });
 
-    // 댓글 삭제 → 성공 시 전체 새로고침
-    function deleteComment(id, post_id) {
-        if (!confirm("정말 삭제하시겠습니까?")) return;
-        if (!id || !post_id) return alert("잘못된 댓글/게시글 정보입니다.");
+  // 좋아요 토글
+  $('#likeBtn').on('click', function(){
+    const flagId = '${flag.id}';
+    $.ajax({
+      type: 'POST',
+      url: CTX + '/flagLike/like/' + flagId,
+      success: function(data){
+        if(data && data.error){ alert(data.error); return; }
+        $('#likeCount, #likeCountDisplay').text(data.likeCount);
+        const $btn = $('#likeBtn');
+        const $icon = $btn.find('.bi');
+        if(data.liked){
+          $btn.addClass('liked'); $icon.removeClass('bi-heart').addClass('bi-heart-fill');
+        }else{
+          $btn.removeClass('liked'); $icon.removeClass('bi-heart-fill').addClass('bi-heart');
+        }
+      },
+      error: function(){ alert('좋아요 처리 실패!'); }
+    });
+  });
 
-        $.ajax({
-            type: 'get',
-            url: '${pageContext.request.contextPath}/FlagComment/delete?id=' + id + '&post_id=' + post_id,
-            dataType: 'json',
-            success: function () {
-                window.location.reload();
-            },
-            error: function () {
-                alert("댓글 삭제 실패");
-            }
-        });
-    }
+  // 신고 모달
+  $('#reportBtn').on('click', function(){
+    new bootstrap.Modal(document.getElementById('reportModal')).show();
+  });
+
+  // 신고 제출
+  $('#reportForm').on('submit', function(e){
+    e.preventDefault();
+    const postId = $('input[name="postId"]').val();
+    const type   = $('#reportType').val();
+    const reason = $('#reportReason').val();
+    if(!reason.trim()) return alert("신고 사유를 입력하세요.");
+
+    const payload = { targetBoard:'FLAG', targetContentId: postId, type, description: reason };
+    $.ajax({
+      type:'POST',
+      url: CTX + '/report',
+      contentType:'application/json; charset=UTF-8',
+      dataType:'text',
+      data: JSON.stringify(payload),
+      success: function(){
+        alert('신고가 접수되었습니다.');
+        bootstrap.Modal.getInstance(document.getElementById('reportModal'))?.hide();
+      },
+      error: function(){ alert("신고 접수에 실패했습니다."); }
+    });
+  });
+
+  // 댓글 삭제
+  function deleteComment(id, post_id){
+    if(!confirm("정말 삭제하시겠습니까?")) return;
+    $.ajax({
+      type:'GET',
+      url: CTX + '/FlagComment/delete?id='+id+'&post_id='+post_id,
+      dataType:'json',
+      success: function(){ window.location.reload(); },
+      error: function(){ alert("댓글 삭제 실패"); }
+    });
+  }
+  window.deleteComment = deleteComment;
 </script>
 </body>
 </html>

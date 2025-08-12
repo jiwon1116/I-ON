@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="security" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,72 +10,85 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <meta charset="UTF-8">
     <title>채팅방</title>
+
     <style>
-        .chat-container {
-            width: 600px;
-            margin: 20px auto;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            height: 80vh;
-        }
-        .chat-header {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            text-align: center;
-            font-weight: bold;
-        }
-        .chat-messages {
-            flex-grow: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background-color: #f9f9f9;
-        }
-        .message-input {
-            display: flex;
-            padding: 10px;
-            border-top: 1px solid #eee;
-        }
-        .message-input input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-        .message-input button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .message {
-                margin-bottom: 25px;
-                padding: 8px;
+            .chat-container {
+                width: 600px;
+                margin: 20px auto;
+                border: 1px solid #ccc;
                 border-radius: 8px;
-                max-width: 50%;
-                position: relative;
+                display: flex;
+                flex-direction: column;
+                height: 80vh;
             }
+            .chat-header {
+                padding: 15px;
+                border-bottom: 1px solid #eee;
+                text-align: center;
+                font-weight: bold;
+            }
+            .chat-messages {
+                flex-grow: 1;
+                padding: 15px;
+                overflow-y: auto;
+                background-color: #f9f9f9;
+                display: flex;
+                flex-direction: column;
+            }
+            .message-input {
+                display: flex;
+                padding: 10px;
+                border-top: 1px solid #eee;
+            }
+            .message-input input {
+                flex-grow: 1;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-right: 10px;
+            }
+            .message-input button {
+                padding: 10px 15px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+
+            .message {
+                display: flex;
+                flex-direction: column;
+                padding: 4px 8px;
+                border-radius: 12px;
+                max-width: 50%;
+                margin-bottom: 8px;
+                width: fit-content;
+            }
+
             .my-message {
                 background-color: #dcf8c6;
                 margin-left: auto;
             }
+
             .other-message {
-                background-color: #d3d3d3;
+                background-color: #ffffff;
+                margin-right: auto;
             }
+
+            .message p {
+                margin: 0;
+                word-wrap: break-word;
+            }
+
             .message-info {
                 font-size: 0.8em;
                 color: #999;
-                margin-top: 4px;
+                margin-top: 2px;
                 text-align: right;
-                position: absolute;
-                right: 8px;
-                bottom: -20px;
             }
-    </style>
+        </style>
 </head>
 <body>
 
@@ -85,22 +99,26 @@
 
     <div class="chat-messages" id="chat-messages">
         <security:authentication property="principal.memberDTO.id" var="currentUserId"/>
-        <c:forEach var="message" items="${messages}">
-            <c:choose>
-                <c:when test="${message.senderId eq currentUserId}">
-                    <div class="message my-message">
-                        <p>${message.content}</p>
-                        <div class="message-info"><span>${message.createdAt}</span></div>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <div class="message other-message">
-                        <p>${message.content}</p>
-                        <div class="message-info"><span>${message.createdAt}</span></div>
-                    </div>
-                </c:otherwise>
-            </c:choose>
-        </c:forEach>
+          <c:forEach var="message" items="${messages}">
+                             <c:choose>
+                                 <c:when test="${message.senderId eq currentUserId}">
+                                     <div class="message my-message">
+                                         <p>${message.content}</p>
+                                     </div>
+                                     <div class="message-info" style="text-align: right;">
+                                         <span><fmt:formatDate value="${message.createdAt}" pattern="yyyy/MM/dd HH:mm"/></span>
+                                     </div>
+                                 </c:when>
+                                 <c:otherwise>
+                                     <div class="message other-message">
+                                         <p>${message.content}</p>
+                                     </div>
+                                     <div class="message-info" style="text-align: left;">
+                                         <span><fmt:formatDate value="${message.createdAt}" pattern="yyyy/MM/dd HH:mm"/></span>
+                                     </div>
+                                 </c:otherwise>
+                             </c:choose>
+                         </c:forEach>
     </div>
 
     <form class="message-input" id="message-form">
@@ -114,15 +132,15 @@
     let isConnected = false;
     const chatRoomId = '${chatRoom.id}';
     const currentUserId = '${currentUserId}';
-    const partnerNickname = '${partnerNickname}';
 
     function connect() {
         if (stompClient && stompClient.connected) {
             return;
         }
 
-        const socket = new SockJS('/chat');
+        const socket = new SockJS('${pageContext.request.contextPath}/chat');
         stompClient = Stomp.over(socket);
+        stompClient.debug = null;
 
         stompClient.connect({}, function (frame) {
             const subscribeTopic = '/sub/chat/room/' + chatRoomId;
@@ -131,21 +149,23 @@
                     const receivedMessage = JSON.parse(message.body);
                     showMessage(receivedMessage);
                 } catch (e) {
+                    console.error("Error parsing message body: " + e);
                 }
             });
             isConnected = true;
         }, function(error) {
+            console.error("Websocket connection error: " + error);
             isConnected = false;
         });
     }
 
-    function disconnect() {
-        if (stompClient !== null && stompClient.connected) {
-            stompClient.disconnect(function() {
-            });
+    function exitRoom() {
+        if (currentUserId && chatRoomId) {
+            fetch('${pageContext.request.contextPath}/chat/exitRoom/' + chatRoomId + '/' + currentUserId, {
+                method: 'POST',
+                keepalive: true
+            }).catch(error => console.error('Error exiting room:', error));
         }
-        stompClient = null;
-        isConnected = false;
     }
 
     function sendMessage() {
@@ -160,7 +180,6 @@
             };
             stompClient.send("/pub/chat/send", {}, JSON.stringify(message));
             messageInput.value = '';
-        } else {
         }
     }
 
@@ -182,16 +201,26 @@
 
         const contentP = document.createElement('p');
         contentP.textContent = message.content || '';
+        messageDiv.appendChild(contentP);
+
+        chatMessages.appendChild(messageDiv);
 
         const infoDiv = document.createElement('div');
         infoDiv.classList.add('message-info');
         const infoSpan = document.createElement('span');
-        infoSpan.textContent = message.createdAt;
+
+        infoSpan.textContent = message.formattedCreatedAt || '';
+
         infoDiv.appendChild(infoSpan);
 
-        messageDiv.appendChild(contentP);
-        messageDiv.appendChild(infoDiv);
-        chatMessages.appendChild(messageDiv);
+        if (isMyMessage) {
+            infoDiv.style.textAlign = 'right';
+        } else {
+            infoDiv.style.textAlign = 'left';
+        }
+
+        chatMessages.appendChild(infoDiv);
+
         scrollToBottom();
     }
 
@@ -214,23 +243,11 @@
     });
 
     window.addEventListener('beforeunload', function() {
-        disconnect();
-        const roomId = '${chatRoom.id}';
-            const currentUserId = '${currentUserId}';
-
-            fetch('/chat/room/' + roomId + '/read/' + currentUserId, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                keepalive: true
-            })
-            .then(response => {
-                if (!response.ok) {
-                }
-            })
-            .catch(error => {
-            });
+        if (stompClient !== null && stompClient.connected) {
+            stompClient.disconnect();
+        }
+        isConnected = false;
+        exitRoom();
     });
 </script>
 </body>

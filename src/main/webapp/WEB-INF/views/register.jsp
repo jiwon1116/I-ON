@@ -193,6 +193,10 @@ pageEncoding="UTF-8"%>
         </div>
       </div>
 
+      <div class="field">
+            <div class="g-recaptcha" data-sitekey="6LfdKZgrAAAAAHP9TN8ZYOJDbKMmdx7Chl1CyUWP"></div>
+      </div>
+
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
       <button class="btn" type="submit">Sign In</button>
     </form>

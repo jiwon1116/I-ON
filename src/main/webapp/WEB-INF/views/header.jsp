@@ -2,9 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <header>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
 
 <style>
@@ -44,11 +48,53 @@
     border-radius: 50%;
     padding: 2px 6px;
   }
+  .icon-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+
+  .icon-btn:hover {
+    opacity: 0.85;
+  }
+
+  .icon-link i {
+    font-size: 20px;
+    color: #fff;
+    line-height: 1;
+  }
+
+  /* 로고 영역도 같은 높이에서 가운데 정렬 */
+  .logo-section{
+    height: 64px;
+    display: flex;
+    align-items: center;        /* 로고 세로 가운데 */
+    justify-content: center;
+  }
+
+  .logo-section .logo {
+  height: 190px;
+  width: auto;
+  display: block;
+
+  }
+
+  /* (선택) 이미지 자체 여백 때문에 살짝 위/아래 치우쳐 보이면 미세 보정 */
+  .logo-section .logo.tweak-up   { transform: translateY(-2px); }
+  .logo-section .logo.tweak-down { transform: translateY( 2px); }
+
+
 </style>
 
   <nav class="top-nav">
     <div class="logo-section">
-      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
+       <a href="${pageContext.request.contextPath}/">
+          <img src="${pageContext.request.contextPath}/resources/img/logo.png" alt="ION" class="logo">
+        </a>
     </div>
     <ul class="nav-tabs">
       <li class="main-menu"><a href="/mypage/">마이페이지</a></li>
@@ -65,26 +111,28 @@
       <li class="main-menu"><a href="/info">정보 공유</a></li>
     </ul>
     <div class="icons">
-     <%-- 알림 팝오버 버튼 --%>
-     <div class="icon-link">
-       <button id="alertBtn" type="button" class="btn btn-secondary"
-               data-bs-html="true" data-bs-container="body" title="알림">🔔</button>
 
+      <%-- 알림 팝오버 버튼 --%>
+     <div class="icon-link">
+       <button id="alertBtn" type="button" class="icon-btn"
+               data-bs-html="true" data-bs-container="body" title="알림" aria-label="알림">
+         <i class="bi bi-bell"></i>
+       </button>
        <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
      </div>
-
+    
       <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
     <div id="popover-content" class="d-none"></div>
 
       <%-- 편지 아이콘에 총 읽지 않은 메시지 수 추가 --%>
       <a href="/chat" class="icon-link">
           <span class="icon">✉️</span>
-          <c:if test="${totalUnreadCount > 0}">
-              <span id="total-unread-count" class="badge unread-count-badge">
-                  ${totalUnreadCount}
-              </span>
-          </c:if>
+          <span id="total-unread-count" class="badge unread-count-badge"
+                style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
+              ${totalUnreadCount}
+          </span>
       </a>
+
 
     </div>
   </nav>
@@ -222,5 +270,66 @@ function deleteNotify(id, buttonElement) {
 }
 </script>
 
-</header>
+ <script>
+     let stompClientHeader = null;
+     let isHeaderConnected = false;
+     const currentUserId = '${currentUserId}';
 
+     function connectHeader() {
+         if (isHeaderConnected) return;
+         isHeaderConnected = true;
+
+         const socket = new SockJS('${pageContext.request.contextPath}/chat');
+         stompClientHeader = Stomp.over(socket);
+         stompClientHeader.debug = null;
+
+         stompClientHeader.connect({}, function (frame) {
+
+             stompClientHeader.subscribe('/user/sub/chat/user/' + currentUserId, function (message) {
+                 updateHeaderBadge();
+             });
+
+         }, function(error) {
+             isHeaderConnected = false;
+         });
+     }
+
+    async function updateHeaderBadge() {
+        try {
+            const timestamp = new Date().getTime();
+            const url = '${pageContext.request.contextPath}/chat/totalUnreadCount?_=' + timestamp;
+
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('total unread count fetch 실패');
+            }
+            const count = await response.json();
+            const badgeElement = document.getElementById('total-unread-count');
+            if (badgeElement) {
+                if (count > 0) {
+                    badgeElement.textContent = count;
+                    badgeElement.style.display = 'inline';
+                } else {
+                    badgeElement.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('알림 갱신 오류:', error);
+        }
+    }
+
+     window.addEventListener('load', function() {
+         connectHeader();
+         updateHeaderBadge();
+     });
+
+     window.addEventListener('beforeunload', function() {
+         if (stompClientHeader !== null && stompClientHeader.connected) {
+             stompClientHeader.disconnect();
+         }
+         isHeaderConnected = false;
+     });
+
+</script>
+
+</header>
