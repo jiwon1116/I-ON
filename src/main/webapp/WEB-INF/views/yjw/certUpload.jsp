@@ -54,11 +54,11 @@
       font-weight:700; font-size:15px;
       background:var(--brand); color:#111;
       cursor:pointer; box-shadow:0 8px 16px rgba(242,172,40,.25);
-      display:inline-flex;             /* ✅ 플렉스 버튼 */
-      align-items:center;              /* ✅ 세로 가운데 */
-      justify-content:center;          /* ✅ 가로 가운데 */
-      text-align:center;               /* ✅ 텍스트 기준 가운데 */
-      text-decoration:none;            /* 링크 밑줄 제거 */
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      text-decoration:none;
     }
 
 
