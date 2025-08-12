@@ -82,6 +82,7 @@
       margin-top: 6px;
       cursor: pointer;
       transition: background .15s;
+      text-decoration: none !important;
     }
 
     .profile-edit-btn:hover, .logout-btn:hover {
@@ -106,9 +107,9 @@
 
     /* 헤더 */
     .main-header {
-      flex: 0 0 56px;
-      height: 56px;
-      background: #fff;
+      flex: 0 0 70px;
+      height: 70px;
+      background: #D9D9D9;
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -330,6 +331,7 @@
       border-right: none; border-bottom: 1.5px solid #eee;
       flex-direction: row; align-items: center;
       padding: 12px; gap: 10px;
+      background: #D9D9D9;
     }
     .profile-section{ flex-direction: row; gap: 10px; align-items: center; width: auto; }
     .profile-img{ width: 48px; height: 48px; margin: 0; }
@@ -374,6 +376,7 @@
   @media (min-width: 1200px) {
     .trust-card {
       overflow: hidden;
+      padding: 0px;
     }
     .trust-card .card-body {
       display: flex;
@@ -459,7 +462,14 @@
            class="profile-img" alt="프로필 이미지" data-bs-toggle="modal" data-bs-target="#profileImgModal">
       <div>
         <div class="profile-name">${member.nickname}</div>
-        <button type="button" class="profile-edit-btn mt-1" data-bs-toggle="modal" data-bs-target="#profileImgModal">이미지 수정하기</button>
+        <!-- 로그인 방식별 '회원 정보 수정' 링크 -->
+          <security:authorize access="isAuthenticated() and principal.memberDTO.provider == 'LOCAL'">
+            <a href="/edit" class="profile-edit-btn mt-1">회원 정보 수정</a>
+          </security:authorize>
+
+          <security:authorize access="isAuthenticated() and principal.memberDTO.provider == 'NAVER'">
+            <a href="/naver-edit" class="profile-edit-btn mt-1">회원 정보 수정</a>
+          </security:authorize>
       </div>
     </div>
 
@@ -480,8 +490,24 @@
     </div>
 
     <div class="sidebar-bottom d-none d-lg-block">
+      <!-- 기존 로그아웃 -->
       <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
+
+      <!-- 회원 탈퇴 (데스크톱: 텍스트 링크) -->
+      <security:authorize access="isAuthenticated()">
+        <form action="/withdraw" method="post"
+              onsubmit="return confirm('정말 회원을 탈퇴하시겠습니까?');"
+              style="margin-top:8px;">
+          <input type="hidden" name="_method" value="delete" />
+          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+          <button type="submit"
+                  style="background:none; border:none; padding:0; margin-top:6px; color:#888; font-size:0.85rem; cursor:pointer;">
+            회원 탈퇴
+          </button>
+        </form>
+      </security:authorize>
     </div>
+
   </aside>
 
 
