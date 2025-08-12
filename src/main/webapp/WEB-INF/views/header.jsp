@@ -14,14 +14,13 @@
 
   <nav class="top-nav">
     <div class="logo-section">
-      <a href="/"><img src="${pageContext.request.contextPath}/resources/img/logo.png" alt="logo"></a>
+      <a href="/"><img class="header-logo" src="${pageContext.request.contextPath}/resources/img/logo.png" alt="logo"></a>
     </div>
-    <ul class="nav-tabs">
-      <li class="main-menu">
-      <a href="/mypage/">마이페이지</a></li>
-      <li class="main-menu">
-      <a href="/map/">범죄 예방 지도</a>
-      </li>
+
+    <!-- 중앙 탭: id만 추가(스크립트용), 구조 변경 없음 -->
+    <ul id="primaryNav" class="nav-tabs">
+      <li class="main-menu"><a href="/mypage/">마이페이지</a></li>
+      <li class="main-menu"><a href="/map/">범죄 예방 지도</a></li>
       <li class="main-menu active">
         <a href="/free">커뮤니티</a>
         <ul class="sub-menu">
@@ -34,116 +33,88 @@
       <li class="main-menu"><a href="/info">정보 공유</a></li>
     </ul>
 
+    <!-- 오른쪽 아이콘 + 햄버거(추가) -->
     <div class="icons">
       <%-- 알림 팝오버 버튼 --%>
-     <div class="icon-link">
-       <button id="alertBtn" type="button" class="icon-btn"
-               data-bs-html="true" data-bs-container="body" title="알림" aria-label="알림">
-         <i class="bi bi-bell"></i>
-       </button>
-       <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
-     </div>
-       <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
-               <i class="bi bi-envelope"></i>
-               <c:if test="${totalUnreadCount > 0}">
-                 <span id="total-unread-count-sm" class="badge unread-count-badge">${totalUnreadCount}</span>
-               </c:if>
-             </a>
-    <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
-    <div id="popover-content" class="d-none"></div>
-      <%-- 알림 아이콘에 총 읽지 않은 메시지 수 추가 --%>
-          <span id="total-unread-count" class="badge unread-count-badge"
-                style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
-              ${totalUnreadCount}
-          </span>
-    </div>
+      <div class="icon-link">
+        <button id="alertBtn" type="button" class="icon-btn"
+                data-bs-html="true" data-bs-container="body" title="알림" aria-label="알림">
+          <i class="bi bi-bell"></i>
+        </button>
+        <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
+      </div>
 
+      <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
+        <i class="bi bi-envelope"></i>
+        <c:if test="${totalUnreadCount > 0}">
+          <span id="total-unread-count-sm" class="badge unread-count-badge">${totalUnreadCount}</span>
+        </c:if>
+      </a>
+
+      <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
+      <div id="popover-content" class="d-none"></div>
+
+      <%-- 알림 아이콘에 총 읽지 않은 메시지 수 추가 --%>
+      <span id="total-unread-count" class="badge unread-count-badge"
+            style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
+        ${totalUnreadCount}
+      </span>
+
+      <!-- ✅ 햄버거 버튼(추가, 기존 JS와 무관) -->
+      <button type="button" id="navToggle" class="nav-toggle" aria-label="메뉴 열기" aria-controls="primaryNav" aria-expanded="false">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
   </nav>
-  <%-- 알림 팝오버 스크립트 --%>
+
+  <%-- 알림 팝오버 스크립트 (기존 코드: 변경 없음) --%>
 <script>
 document.addEventListener("DOMContentLoaded", async function () {
-  // 1) 버튼 찾기
   var btn = document.getElementById("alertBtn");
   if (!btn) return;
-
-  // 2) 컨텍스트 경로 (루트가 아닐 때 대비)
   var base = "${pageContext.request.contextPath}" || "";
 
   try {
-    // 3) 알림 목록 가져오기 (JSON)
     var res = await fetch(base + "/notify/list", { credentials: "same-origin" });
-
     if (!res.ok) throw new Error("HTTP " + res.status);
-    var items = await res.json(); // ← 여기서부터 items 사용
+    var items = await res.json();
 
-// 읽지 않은 알림 수 계산해서 배지 업데이트
-var unreadCount = items.filter(n => !n.isRead).length;
-var badge = document.getElementById("notify-unread-count");
-if (badge) {
-  if (unreadCount > 0) {
-    badge.textContent = unreadCount;
-    badge.style.display = "inline-block";
-  } else {
-    badge.style.display = "none";
-  }
-}
+    var unreadCount = items.filter(n => !n.isRead).length;
+    var badge = document.getElementById("notify-unread-count");
+    if (badge) {
+      if (unreadCount > 0) { badge.textContent = unreadCount; badge.style.display = "inline-block"; }
+      else { badge.style.display = "none"; }
+    }
 
-// 4) 최신이 위로 오게 정렬
-items.sort(function (a, b) {
-  return (b.created_at || 0) - (a.created_at || 0);
-});
+    items.sort(function (a, b) { return (b.created_at || 0) - (a.created_at || 0); });
 
-    // 5) HTML 시작 (5개 높이 정도로 보이게 → 스크롤)
-    var html = '<div style="max-height:220px; overflow-y:auto;">'
-             +   '<ul class="list-unstyled mb-0">';
-
+    var html = '<div style="max-height:220px; overflow-y:auto;"><ul class="list-unstyled mb-0">';
     if (items.length) {
-      // 6) 알림을 한 줄씩 <li>로 쌓기 (링크 포함)
       for (var i = 0; i < items.length; i++) {
         var n = items[i];
-       // 한 줄 출력: 내용 전체를 클릭하면 게시물로 이동, 옆에 삭제 버튼
+        var text = (n && n.content) ? n.content : '';
+        var board = (n && n.related_board) ? n.related_board : "";
+        var pid   = (n && n.related_post_id) ? n.related_post_id : "";
+        var link  = base + "/" + board + "/" + pid;
 
-    // 내용
-    var text = (n && n.content) ? n.content : '';
-
-    // 링크: /{board}/{postId}  (컨텍스트 경로 포함)
-    var board = (n && n.related_board) ? n.related_board : "";
-    var pid   = (n && n.related_post_id) ? n.related_post_id : "";
-    var link  = base + "/" + board + "/" + pid;
-
-    // 한 줄 출력: 내용 전체를 클릭하면 게시물로 이동, 옆에 삭제 버튼
-  // 루프 안: 버튼을 onclick 대신 data-id로
-  html += '<li style="padding:6px 0; border-bottom:1px solid #f0f0f0;">'
-       +   '<a href="' + link + '" style="text-decoration:none; color:inherit;">' + text + '</a>'
-       +   '<button type="button" class="notify-delete" data-id="' + n.id + '"'
-       +           ' style="margin-left:8px;background:none;border:none;cursor:pointer;">❌</button>'
-       + '</li>';
-
+        html += '<li style="padding:6px 0; border-bottom:1px solid #f0f0f0;">'
+             +   '<a href="' + link + '" style="text-decoration:none; color:inherit;">' + text + '</a>'
+             +   '<button type="button" class="notify-delete" data-id="' + n.id + '"'
+             +           ' style="margin-left:8px;background:none;border:none;cursor:pointer;">❌</button>'
+             + '</li>';
       }
     } else {
-      // 7) 알림이 없을 때
       html += '<li style="padding:10px;">알림이 없습니다🙂</li>';
     }
-    // 8) HTML 마무리
-    html +=   '</ul>'
-           + '</div>';
+    html += '</ul></div>';
 
-    // 9) 팝오버 생성 (content 옵션으로 주입)  sanitize 끄기
- const pop = new bootstrap.Popover(btn, {
-   html: true,
-   container: 'body',
-   placement: 'bottom',
-   trigger: 'click',
-   title: '알림',
-   content: html,
-   sanitize: false,
-   customClass: 'notify-panel',
-   offset: [0, 15]
- });
+    const pop = new bootstrap.Popover(btn, {
+      html: true, container: 'body', placement: 'bottom', trigger: 'click',
+      title: '알림', content: html, sanitize: false, customClass: 'notify-panel', offset: [0, 15]
+    });
 
   } catch (e) {
     console.error("notify popover error:", e);
-    // 실패시 기본 문구
     var fallback = '<div style="max-height:220px; overflow-y:auto;">'
                  +   '<ul class="list-unstyled mb-0"><li>알림을 불러오지 못했습니다</li></ul>'
                  + '</div>';
@@ -154,39 +125,25 @@ items.sort(function (a, b) {
   }
 });
 
-// 문서 위임으로 삭제 클릭 처리 (onclick 필요 없음)
 document.addEventListener('click', function(e){
-  // 'notify-delete' 클래스를 가진 버튼을 클릭했는지 확인
   if (e.target && e.target.classList.contains('notify-delete')) {
     const id = e.target.getAttribute('data-id');
-
-    // 알림 삭제 함수 호출 (id만 전달)
     deleteNotify(id);
-
-    // 삭제 성공 시, UI에서 즉시 해당 목록 항목 제거
     e.target.closest('li')?.remove();
   }
 });
 
-// 알림 삭제 함수
 function deleteNotify(id, buttonElement) {
   if (!confirm("이 알림을 삭제할까요?")) return;
-
   const base = "${pageContext.request.contextPath}" || "";
-
   fetch(base + "/notify/delete/" + id, {
-    method: "DELETE",
-    credentials: "same-origin"
+    method: "DELETE", credentials: "same-origin"
   })
   .then(res => {
     if (!res.ok) throw new Error("삭제 실패: " + res.status);
-    return res.text(); // 서버 응답 텍스트를 받음
+    return res.text();
   })
-  .then(responseText => {
-    console.log(responseText); // "삭제 성공" 메시지가 출력
-    // 서버 응답 성공 시, 페이지를 새로고침하여 캐시 문제를 해결
-    window.location.reload();
-  })
+  .then(() => { window.location.reload(); })
   .catch(err => {
     console.error(err);
     alert("삭제 중 오류가 발생했습니다.");
@@ -208,11 +165,9 @@ function deleteNotify(id, buttonElement) {
          stompClientHeader.debug = null;
 
          stompClientHeader.connect({}, function (frame) {
-
              stompClientHeader.subscribe('/user/sub/chat/user/' + currentUserId, function (message) {
                  updateHeaderBadge();
              });
-
          }, function(error) {
              isHeaderConnected = false;
          });
@@ -253,51 +208,133 @@ function deleteNotify(id, buttonElement) {
          }
          isHeaderConnected = false;
      });
-
 </script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // 현재 페이지의 경로를 가져옵니다.
     var currentPath = window.location.pathname;
-
-    // 모든 메인 메뉴 항목들을 가져옵니다.
     var mainMenus = document.querySelectorAll('.main-menu');
 
-    // 기존 'active' 클래스 제거
     var activeMenu = document.querySelector('.main-menu.active');
-    if (activeMenu) {
-        activeMenu.classList.remove('active');
-    }
+    if (activeMenu) { activeMenu.classList.remove('active'); }
 
     mainMenus.forEach(function(menu) {
         var link = menu.querySelector('a');
-
-        // Case 1: <a> 태그가 있는 경우
         if (link) {
             var href = link.getAttribute('href');
-            // href가 현재 경로를 포함하면 active 클래스 추가
             if (currentPath.startsWith(href)) {
                 menu.classList.add('active');
             }
-        }
-        // Case 2: <a> 태그가 없고, data-type 속성이 있는 경우 (map.jsp 등)
-        else {
+        } else {
             var dataType = menu.getAttribute('data-type');
             var urlParam = new URLSearchParams(window.location.search).get('type');
-
-            // data-type이 URL 파라미터 'type'과 일치하면 active 클래스 추가
             if (dataType && dataType === urlParam) {
                 menu.classList.add('active');
-            }
-            // data-type이 'offender'이면서 URL에 'type' 파라미터가 없는 경우
-            // (이 부분은 URL 구조에 따라 다를 수 있으니 필요 시 수정)
-            else if (dataType === 'offender' && urlParam === null) {
+            } else if (dataType === 'offender' && urlParam === null) {
                 menu.classList.add('active');
             }
         }
     });
 });
+</script>
+
+<!-- ====================== 추가 CSS (반응형 & 햄버거) ====================== -->
+<style>
+  /* 로고 항상 일정 */
+  .header-logo{ height:56px; width:auto; object-fit:contain; display:block; }
+
+  /* 햄버거: 기본은 숨김 (모바일에서만 보임) */
+  .nav-toggle{
+    display:none; background:transparent; border:none; color:#fff;
+    font-size:32px; line-height:1; padding:4px 6px; margin-left:6px;
+  }
+
+  /* 모바일 메뉴 기본 숨김 */
+  @media (max-width: 992px){
+    .top-nav{ height:70px; }
+    /* 가운데 탭을 고정 레이어로 전환 */
+    .top-nav .nav-tabs{
+      position:fixed; left:0; right:0; top:70px;
+      display:none; flex-direction:column; gap:8px;
+      padding:12px; margin:0; background:#fff8e7;
+      border-top:1px solid rgba(0,0,0,.06);
+      box-shadow:0 10px 24px rgba(0,0,0,.08);
+      z-index:1050;
+    }
+    /* 열렸을 때 보이기 */
+    .top-nav.is-open .nav-tabs{ display:flex; }
+
+    /* 메뉴 아이템 카드 느낌 */
+    .top-nav .main-menu{
+      width:auto; height:auto; border-radius:12px; background:#fff; color:#333;
+      padding:10px 12px; box-shadow:0 6px 14px rgba(0,0,0,.06);
+    }
+    .top-nav .nav-tabs .main-menu > a{
+      position:relative; inset:auto; display:block; padding:6px 6px;
+    }
+
+    /* 데스크톱 호버 드롭다운 비활성, 클릭으로 열게 */
+    .top-nav .main-menu:hover .sub-menu{ display:none; }
+    .top-nav .main-menu .sub-menu{
+      position:relative; top:auto; left:auto; width:100%;
+      background:#fff; border-radius:10px; box-shadow:none;
+      padding:6px 0; margin-top:6px; display:none;
+    }
+    .top-nav .main-menu.open .sub-menu{ display:block; }
+
+    /* 햄버거 표시 */
+    .nav-toggle{ display:inline-flex; align-items:center; justify-content:center; }
+  }
+
+  /* 아이콘 크기 미세 조정 */
+  @media (max-width: 576px){
+    .icon-btn{ font-size:26px }
+  }
+</style>
+
+<!-- ====================== 추가 JS (기존 JS 변경 X) ====================== -->
+<script>
+  (function(){
+    const nav    = document.querySelector('.top-nav');
+    const toggle = document.getElementById('navToggle');
+    const panel  = document.getElementById('primaryNav');
+
+    // 햄버거 토글
+    toggle?.addEventListener('click', function(){
+      const isOpen = nav.classList.toggle('is-open');
+      this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      document.body.style.overflow = isOpen ? 'hidden' : ''; // 메뉴 열릴 때 배경 스크롤 잠금
+    });
+
+    // 모바일에서 서브메뉴 클릭 토글(커뮤니티 등)
+    panel?.addEventListener('click', function(e){
+      if (!window.matchMedia('(max-width: 992px)').matches) return;
+
+      const a = e.target.closest('.main-menu > a');
+      if (!a) return;
+
+      const li = a.parentElement;
+      const sub = li.querySelector('.sub-menu');
+      if (sub){
+        // 링크 이동 막고 펼치기
+        e.preventDefault();
+        li.classList.toggle('open');
+      } else {
+        // 일반 링크는 메뉴 닫고 진행
+        nav.classList.remove('is-open');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // 화면 다시 커지면 상태 초기화
+    window.addEventListener('resize', function(){
+      if (window.matchMedia('(min-width: 993px)').matches){
+        nav.classList.remove('is-open');
+        document.body.style.overflow = '';
+        document.querySelectorAll('.main-menu.open').forEach(el=>el.classList.remove('open'));
+      }
+    });
+  })();
 </script>
 
 </header>
