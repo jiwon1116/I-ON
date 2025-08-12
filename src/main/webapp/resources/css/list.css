@@ -176,8 +176,9 @@ a.btn.btn-dark:hover{ filter: brightness(.98); }
         .pagination .page-link:hover {
             background-color: #e0e0e0;
         }
-        .pagination .page-item.active .page-link {
 
+        .pagination .page-item.active .page-link {
+            background-color: #212121;
             color: #fff;
             pointer-events: none;
         }
