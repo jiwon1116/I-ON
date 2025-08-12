@@ -14,6 +14,7 @@ a{
 text-decoration: none;
 color: inherit;
 font-size: 18px;
+padding-bottom: 10px;
 }
 
 :root {
@@ -67,6 +68,8 @@ body {
   margin: 0;
   padding: 0;
   border-style: none;
+  margin-left: 118px;
+
 }
 
 /* 메인 메뉴 공통 */
@@ -95,13 +98,15 @@ body {
 
 /* 활성 탭 */
 .main-menu.active {
+  color: #555;
+  background: #fff8e7;
   z-index: 2;
   margin-bottom: 0;
 }
 
 /* 서브 메뉴 */
 .sub-menu {
-  display: none;
+  display: block; /* 기본 display로 바꾸고 애니메이션 제어 */
   position: absolute;
   top: 100%;
   left: 0;
@@ -113,8 +118,22 @@ body {
   margin: 0;
   border-radius: 0 0 12px 12px;
   z-index: 5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
+  /* 부드럽게 나타나게 */
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none; /* 안 보일 때 클릭 방지 */
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
+
+/* hover 시 부드럽게 내려옴 */
+.main-menu:hover .sub-menu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 
 /* hover 시 서브 메뉴 보임 */
 .main-menu:hover .sub-menu {
@@ -131,8 +150,12 @@ body {
   font-weight: 500;
   text-align: center;
 }
+
 .sub-menu li:hover {
-  color: #000;
+  color:  rgb(255, 199, 39); /* 글자 색 */
+  text-decoration: underline; /* 밑줄 표시 */
+  text-decoration-color: rgb(255, 199, 39); /* 밑줄 색상 지정 */
+  text-underline-offset: 4px; /* 밑줄과 글자 사이 간격 */
 }
 
 .icons {
@@ -141,7 +164,7 @@ body {
            font-size: 20px;
            padding-bottom: 10px;
            height: 50px;
-           margin-right: 100px;
+
 }
 
   /* 네비/아이콘 영역이 팝오버를 가리지 않게 */
@@ -185,7 +208,7 @@ body {
     background: transparent;
     border: none;
     color: #fff;
-    font-size: 20px;
+    font-size: 29px;
     line-height: 1;
     cursor: pointer;
     padding: 4px 6px;
@@ -220,3 +243,87 @@ body {
   .logo-section .logo.tweak-up   { transform: translateY(-2px); }
   .logo-section .logo.tweak-down { transform: translateY( 2px); }
 
+/* 팝오버 전체 패널(전역 선택자; 부모 붙이지 마세요) */
+.popover.notify-panel{
+  background:#fff !important;
+  border:1px solid #e5e8eb !important;
+  border-radius:14px !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.14);
+  color:#111;
+  max-width:360px;
+  z-index:2000;
+}
+
+/* 화살표 색 */
+.popover.notify-panel .popover-arrow::before{ border-bottom-color:#e5e8eb; }
+.popover.notify-panel .popover-arrow::after { border-bottom-color:#fff; }
+
+/* 헤더 */
+.popover.notify-panel .popover-header{
+  background:#f7f9fb;
+  color:#111;
+  font-weight:700;
+  font-size:14px;
+  border-bottom:1px solid #e5e8eb;
+  border-top-left-radius:14px;
+  border-top-right-radius:14px;
+  padding:10px 14px;
+}
+
+/* 본문 */
+.popover.notify-panel .popover-body{ padding:8px 8px 10px; }
+
+/* 스크롤 컨테이너 */
+.popover.notify-panel .popover-body > div{
+  max-height:420px;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,0,0,.25) transparent;
+}
+.popover.notify-panel .popover-body > div::-webkit-scrollbar{ width:6px; }
+.popover.notify-panel .popover-body > div::-webkit-scrollbar-thumb{
+  background:rgba(0,0,0,.25); border-radius:3px;
+}
+
+/* 리스트 */
+.popover.notify-panel .popover-body ul.list-unstyled.mb-0{ margin:0; padding:0; }
+
+/* 아이템(부트스트랩/인라인 스타일을 이기기 위해 !important 사용) */
+.popover.notify-panel .popover-body ul li{
+  list-style:none;
+  background:#fff;
+  border:1px solid #eceff2 !important;
+  border-radius:12px;
+  padding:12px !important;
+  margin:8px 4px !important;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* 링크 */
+.popover.notify-panel .popover-body ul li > a{
+  flex:1;
+  color:#555;
+  font-size:14px;
+  line-height:1.4;
+  text-decoration:none;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.popover.notify-panel .popover-body ul li > a:hover{ color:#222; }
+
+/* 삭제 버튼 */
+.popover.notify-panel .notify-delete{
+  flex:0 0 auto;
+  border:none;
+  background:#f2f4f6;
+  color:#c92a2a;
+  border-radius:8px;
+  padding:6px 8px !important;
+  cursor:pointer;
+}
+.popover.notify-panel .notify-delete:hover{
+  background:#e9ecef; color:#8a1c1c;
+}
