@@ -36,31 +36,28 @@
     <!-- 오른쪽 아이콘 + 햄버거(추가) -->
     <div class="icons">
       <%-- 알림 팝오버 버튼 --%>
-      <div class="icon-link">
+      <div class="icon-link" style="margin-right:4px; ">
         <button id="alertBtn" type="button" class="icon-btn"
                 data-bs-html="true" data-bs-container="body" title="알림" aria-label="알림">
-          <i class="bi bi-bell"></i>
+          <i class="bi bi-bell" style="position:relative; top:-2px;"></i>
         </button>
-        <span id="notify-unread-count" class="badge unread-count-badge" style="display:none"></span>
+        <span id="notify-unread-count" class="badge unread-count-badge" style="display:none; top:-7px;"></span>
       </div>
 
-      <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none">
+      <a href="/chat" class="icon-btn" title="쪽지" style="text-decoration:none; position:relative;">
         <i class="bi bi-envelope"></i>
         <c:if test="${totalUnreadCount > 0}">
-          <span id="total-unread-count-sm" class="badge unread-count-badge">${totalUnreadCount}</span>
+          <span id="total-unread-count-sm" class="badge unread-count-badge"
+                style="position:absolute; top:0; right:0; transform:translate(50%,-50%);">
+            ${totalUnreadCount}
+          </span>
         </c:if>
       </a>
+
 
       <%-- 팝오버에 넣을 HTML을 임시로 보관 --%>
       <div id="popover-content" class="d-none"></div>
 
-      <%-- 알림 아이콘에 총 읽지 않은 메시지 수 추가 --%>
-      <span id="total-unread-count" class="badge unread-count-badge"
-            style="display: ${totalUnreadCount > 0 ? 'inline' : 'none'};">
-        ${totalUnreadCount}
-      </span>
-
-      <!-- ✅ 햄버거 버튼(추가, 기존 JS와 무관) -->
       <button type="button" id="navToggle" class="nav-toggle" aria-label="메뉴 열기" aria-controls="primaryNav" aria-expanded="false">
         <i class="bi bi-list"></i>
       </button>
@@ -290,6 +287,16 @@ document.addEventListener("DOMContentLoaded", function() {
   @media (max-width: 576px){
     .icon-btn{ font-size:26px }
   }
+
+  .unread-count-badge {
+    background: red;
+    color: white;
+    font-size: 11px;
+    border-radius: 50%;
+    padding: 2px 5px;
+    line-height: 1;
+  }
+
 </style>
 
 <!-- ====================== 추가 JS (기존 JS 변경 X) ====================== -->

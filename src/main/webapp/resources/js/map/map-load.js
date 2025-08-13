@@ -1,21 +1,34 @@
-(function () {
-  // 위치 못 잡았을 때 사용할 위치 좌표 선언
-  const fallbackLat = 37.489996;
-  const fallbackLon = 126.927081;
+document.addEventListener("DOMContentLoaded", () => {
+  if (!window.kakao) {
+    console.error("Kakao script not loaded.");
+    return;
+  }
 
-  // 초기 지도 그리는 함수
-  function initMap(lat, lon) {
-    const locPosition = new kakao.maps.LatLng(lat, lon);
+  kakao.maps.load(() => {
+    const FIXED_LAT = 37.489999;
+    const FIXED_LON = 126.926972;
+    const INIT_LEVEL = 2;
+
     const mapContainer = document.getElementById("map");
-    const mapOption = {
-      center: locPosition,
-      level: 2,
+    if (!mapContainer) {
+      console.error("#map 요소를 찾을 수 없습니다.");
+      return;
+    }
+    // 높이/너비 0 방지 (혹시 스타일 빠졌을 때)
+    if (!mapContainer.offsetWidth || !mapContainer.offsetHeight) {
+      mapContainer.style.width = "100%";
+      mapContainer.style.height = "80vh";
+    }
+
+    const center = new kakao.maps.LatLng(FIXED_LAT, FIXED_LON);
+    window.map = new kakao.maps.Map(mapContainer, {
+      center,
+      level: INIT_LEVEL,
       maxLevel: 5,
       minLevel: 1
-    };
+    });
 
-    window.map = new kakao.maps.Map(mapContainer, mapOption);
-
+    // 클러스터러
     window.clusterer = new kakao.maps.MarkerClusterer({
       map: window.map,
       averageCenter: true,
@@ -23,36 +36,11 @@
       maxLevel: 5
     });
 
-    kakao.maps.event.addListener(window.map, 'idle', () => {
-      if (window.toggledLayers?.emergencybell) {
-        window.loadEmergencyMarkersByBounds();
-      }
-
-      if (window.toggledLayers?.safehouse) {
-        window.loadSafehouseMarkersByBounds();
-      }
-
-      if (window.toggledLayers?.offender) {
-        window.loadOffenderMarkersByBounds();
-      }
+    // 첫 로딩에 화면 이동시키지 않고 데이터만 로드
+    kakao.maps.event.addListener(window.map, "idle", () => {
+      if (window.toggledLayers?.emergencybell) window.loadEmergencyMarkersByBounds?.();
+      if (window.toggledLayers?.safehouse)     window.loadSafehouseMarkersByBounds?.();
+      if (window.toggledLayers?.offender)      window.loadOffenderMarkersByBounds?.();
     });
-  }
-
-  // 위치 기반 지도 초기화
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const offsetLat = 0.0033;
-        const offsetLon = 0.01285;
-        initMap(pos.coords.latitude + offsetLat, pos.coords.longitude - offsetLon);
-      },
-      () => {
-        console.warn("❗ 위치 실패, 기본 좌표로 지도 표시");
-        initMap(fallbackLat, fallbackLon);
-      }
-    );
-  } else {
-    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
-    initMap(fallbackLat, fallbackLon);
-  }
-})();
+  });
+});
