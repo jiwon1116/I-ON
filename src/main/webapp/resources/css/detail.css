@@ -151,3 +151,14 @@
 @media (max-width:480px){
   .info-card{ padding:22px 18px; }
 }
+/* 신고 모달을 화면에서 조금 아래에 띄우기 */
+#reportModal .modal-dialog{
+  margin: 18vh auto 1rem !important; /* 위 18vh 만큼 내려서 표시 */
+}
+
+/* 화면 높이가 낮을 때는 덜 내려가게 */
+@media (max-height: 700px){
+  #reportModal .modal-dialog{
+    margin-top: 8vh !important;
+  }
+}
