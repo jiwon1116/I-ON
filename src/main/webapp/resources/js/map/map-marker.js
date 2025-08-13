@@ -20,7 +20,6 @@ window.loadEmergencyMarkersByBounds = function () {
   fetch(url)
     .then(res => res.json())
     .then(data => {
-      console.log("📌 비상벨 마커 로딩됨:", data.length);
       window.clearEmergencyMarkers();
 
       const newMarkers = [];
@@ -75,7 +74,6 @@ window.loadSafehouseMarkersByBounds = function () {
   fetch(url)
     .then(res => res.json())
     .then(data => {
-      console.log("✅ 안전지킴이집 마커 로딩됨:", data);
 
       window.clearSafehouseMarkers();
 
@@ -120,7 +118,6 @@ window.clearOffenderMarkers = function () {
 };
 
 window.loadOffenderMarkersByBounds = function () {
-  console.log("📌 offender 마커 로딩 시작");
 
   window.clearOffenderMarkers();
 
@@ -138,8 +135,6 @@ window.loadOffenderMarkersByBounds = function () {
       return res.json();
     })
     .then(data => {
-      console.log("📍 마커 응답:", data);
-
       let items = Array.isArray(data) ? data : (data ? [data] : []);
       if (!items.length) {
         console.warn("⚠️ items가 없음");
