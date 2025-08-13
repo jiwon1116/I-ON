@@ -1,4 +1,4 @@
-package com.spring.ion.lcw.controller;
+package com.spring.ion.yjw.controller;
 
 import com.spring.ion.lcw.service.MemberService;
 import com.spring.ion.psw.service.NotifyService;
