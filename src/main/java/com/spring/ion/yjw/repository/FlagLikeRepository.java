@@ -42,5 +42,4 @@ public class FlagLikeRepository {
         sql.update("FlagLikeMapper.updateLikeCount", postId);
     }
 
-
 }

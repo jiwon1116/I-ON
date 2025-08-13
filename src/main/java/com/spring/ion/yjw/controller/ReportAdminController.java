@@ -30,11 +30,9 @@ public class ReportAdminController {
         return ResponseEntity.ok().build();
     }
 
-    // 목록 화면
     @GetMapping("/list")
     public String list(@RequestParam(required = false) String board, Model model) {
         if (board == null) {
-            // 승인 대기(PENDING)인 건만
             model.addAttribute("reportList", reportService.findPending());
         } else {
             model.addAttribute("reportList", reportService.findPendingByBoard(board));
@@ -42,7 +40,6 @@ public class ReportAdminController {
         return "jjh/reportList";
     }
 
-    // 신고 승인 + 원글 삭제
     @PostMapping("/{id}/approve")
     public String approve(@PathVariable Long id, RedirectAttributes ra) {
         reportService.approve(id);
@@ -50,7 +47,6 @@ public class ReportAdminController {
         return "redirect:/report/list";
     }
 
-    // 반려
     @PostMapping("/{id}/reject")
     public String reject(@PathVariable Long id, RedirectAttributes ra) {
         reportService.updateStatus(id, "REJECTED");

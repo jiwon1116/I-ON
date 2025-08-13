@@ -57,7 +57,6 @@ public class MemberRepository {
         sql.update("Member.updateProfileImg", param);
     }
 
-    // 작성자 제외한 같은 지역에 사는 회원 조회
     public List<MemberDTO> findByRegionExceptWriter(String city, String district, String writerNickname) {
         Map<String, String> params = new HashMap<>();
         params.put("city", city);
@@ -67,14 +66,12 @@ public class MemberRepository {
         return sql.selectList("Member.findByRegionExceptWriter", params);
     }
 
-    // 재학증명서 -yjw
     public int markVerified(String userId){
         Map<String,Object> p = new HashMap<>();
         p.put("userId", userId);
         return sql.update("Member.markVerified", p);
     }
 
-    // 뱃지 기능 추가 yjw
     public Map<String, Integer> findLevelsByNicknames(List<String> names) {
         if (names == null || names.isEmpty()) return Collections.emptyMap();
         List<Map<String, Object>> rows = sql.selectList("Member.findLevelsByNicknames", names);
@@ -87,15 +84,11 @@ public class MemberRepository {
         return out;
     }
 
-    /**
-     * 단건 레벨
-     */
     public Integer findLevelByNickname(String nickname) {
         if (nickname == null || nickname.isBlank()) return null;
         return sql.selectOne("Member.findLevelByNickname", nickname);
     }
 
-    /** 닉네임 → {level, admin} */
     public Map<String, Map<String, Object>> findBadgeMetaByNicknames(List<String> names) {
         if (names == null || names.isEmpty()) return Collections.emptyMap();
         List<Map<String, Object>> rows = sql.selectList("Member.findBadgeMetaByNicknames", names);
@@ -103,7 +96,7 @@ public class MemberRepository {
         for (Map<String, Object> r : rows) {
             String nick = (String) r.get("nickname");
             Object levelObj = r.get("level");
-            Object adminFlag = r.get("is_admin"); // 1/0
+            Object adminFlag = r.get("is_admin");
             if (nick == null) continue;
             int level = (levelObj instanceof Number) ? ((Number) levelObj).intValue() : 1;
             boolean admin = (adminFlag instanceof Number) && ((Number) adminFlag).intValue() == 1;
@@ -115,9 +108,6 @@ public class MemberRepository {
         return out;
     }
 
-    /**
-     * 단건: 관리자 여부
-     */
     public Boolean isAdminByNickname(String nickname) {
         Boolean v = sql.selectOne("Member.isAdminByNickname", nickname);
         return Boolean.TRUE.equals(v);

@@ -1,206 +1,332 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="security"
+	uri="http://www.springframework.org/security/tags"
+%>
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>회원가입</title>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <style>
-    /* ... 기존 CSS 코드 ... */
-    :root{
-      --brand: #F2AC28;   /* 포인트 노랑 */
-      --bg: #F7F7F7;      /* 페이지 배경 */
-      --text: #222;
-      --muted: #8A8A8A;
-      --card: #ffffff;
-      --line: #EAEAEA;
-      --radius: 16px;
-      --shadow: 0 10px 24px rgba(0,0,0,.06);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; background:var(--bg); color:var(--text);
-      font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Helvetica, Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-    }
-    .wrap{
-      min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-      padding:20px 16px;
-    }
-    .title{
-      text-align:center; margin-bottom:18px;
-    }
-    .title h1{
-      font-size:24px; margin:0 0 8px; font-weight:800;
-    }
-    .title p{margin:0; color:var(--muted); font-size:14px}
+<meta charset="UTF-8">
+<title>회원가입</title>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<style>
+:root {
+	--brand: #F2AC28;
+	--bg: #F7F7F7;
+	--text: #222;
+	--muted: #8A8A8A;
+	--card: #ffffff;
+	--line: #EAEAEA;
+	--radius: 16px;
+	--shadow: 0 10px 24px rgba(0, 0, 0, .06);
+}
 
-    /* 스텝퍼 */
-    .stepper{
-      display:flex; align-items:center; gap:14px;
-      justify-content:center; margin:6px 26px;
-    }
-    .step{display:flex; flex-direction:column; align-items:center; gap:6px; min-width:74px}
-    .dot{
-      width:32px; height:32px; border-radius:50%;
-      display:grid; place-items:center; font-weight:700; font-size:14px;
-      background:#fff; border:2px solid var(--line); color:#999;
-      box-shadow:0 2px 6px rgba(0,0,0,.04);
-    }
-    .step.active .dot{border-color:var(--brand); color:#000; background:#fff}
-    .label{font-size:13px; color:#666}
-    .line{
-      width:64px; height:2px; background:linear-gradient(90deg, var(--brand), rgba(242,172,40,.35));
-      border-radius:1px; opacity:.5;
-    }
+* {
+	box-sizing: border-box
+}
 
-    /* 카드 */
-    .card{
-      width:100%; max-width:580px; background:var(--card); border-radius:var(--radius);
-      padding:28px; box-shadow:var(--shadow);
-    }
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		"Noto Sans KR", Helvetica, Arial, "Apple SD Gothic Neo",
+		"Malgun Gothic", sans-serif;
+}
 
-    .field{margin-bottom:18px}
-    .field label{
-      display:block; font-size:15px; font-weight:600; margin-bottom:8px;
-    }
-    .input, select{
-      width:100%; height:50px; border:1px solid var(--line); background:#fff;
-      border-radius:12px; padding:0 14px; font-size:15px; outline:none;
-      transition:border .15s, box-shadow .15s;
-    }
-    .input::placeholder{color:#bdbdbd}
-    .input:focus, select:focus{
-      border-color:var(--brand);
-      box-shadow:0 0 0 4px rgba(242,172,40,.15);
-    }
+.wrap {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 20px 16px;
+}
 
-    /* 성별 라디오 */
-    .gender-row{display:flex; align-items:center; gap:26px}
-    .radio{
-      display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none;
-    }
-    .radio input{
-      appearance:none; width:18px; height:18px; border-radius:50%;
-      border:2px solid #CFCFCF; display:inline-block; position:relative;
-      outline:none; transition:all .15s;
-      background:#fff;
-    }
-    .radio input:checked{
-      border-color:var(--brand);
-      box-shadow:inset 0 0 0 5px var(--brand);
-    }
+.title {
+	text-align: center;
+	margin-bottom: 18px;
+}
 
-    /* 지역 2열 */
-    .row{display:flex; gap:12px}
-    .row > *{flex:1}
+.title h1 {
+	font-size: 24px;
+	margin: 0 0 8px;
+	font-weight: 800;
+}
 
-    /* 버튼 */
-    .btn{
-      width:100%; height:52px; border:none; border-radius:12px;
-      background:var(--brand); color:#111; font-size:16px; font-weight:700;
-      cursor:pointer; transition:transform .05s ease, filter .2s ease;
-      box-shadow:0 8px 16px rgba(242,172,40,.28);
-    }
-    .btn:active{transform:translateY(1px)}
-    .btn:hover{filter:brightness(0.98)}
+.title p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 14px
+}
 
-    /* 알림 */
-    .toast{
-      width:100%; max-width:580px; background:#fff3cd; color:#664d03;
-      border:1px solid #ffecb5; border-radius:12px; padding:12px 14px;
-      margin-bottom:16px;
-    }
+.stepper {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	justify-content: center;
+	margin: 6px 26px;
+}
 
-    @media (max-width:480px){
-      .line{width:40px}
-      .card{padding:22px}
-    }
-  </style>
+.step {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	min-width: 74px
+}
+
+.dot {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	display: grid;
+	place-items: center;
+	font-weight: 700;
+	font-size: 14px;
+	background: #fff;
+	border: 2px solid var(--line);
+	color: #999;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, .04);
+}
+
+.step.active .dot {
+	border-color: var(--brand);
+	color: #000;
+	background: #fff
+}
+
+.label {
+	font-size: 13px;
+	color: #666
+}
+
+.line {
+	width: 64px;
+	height: 2px;
+	background: linear-gradient(90deg, var(--brand), rgba(242, 172, 40, .35));
+	border-radius: 1px;
+	opacity: .5;
+}
+
+.card {
+	width: 100%;
+	max-width: 580px;
+	background: var(--card);
+	border-radius: var(--radius);
+	padding: 28px;
+	box-shadow: var(--shadow);
+}
+
+.field {
+	margin-bottom: 18px
+}
+
+.field label {
+	display: block;
+	font-size: 15px;
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.input, select {
+	width: 100%;
+	height: 50px;
+	border: 1px solid var(--line);
+	background: #fff;
+	border-radius: 12px;
+	padding: 0 14px;
+	font-size: 15px;
+	outline: none;
+	transition: border .15s, box-shadow .15s;
+}
+
+.input::placeholder {
+	color: #bdbdbd
+}
+
+.input:focus, select:focus {
+	border-color: var(--brand);
+	box-shadow: 0 0 0 4px rgba(242, 172, 40, .15);
+}
+
+.gender-row {
+	display: flex;
+	align-items: center;
+	gap: 26px
+}
+
+.radio {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.radio input {
+	appearance: none;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	border: 2px solid #CFCFCF;
+	display: inline-block;
+	position: relative;
+	outline: none;
+	transition: all .15s;
+	background: #fff;
+}
+
+.radio input:checked {
+	border-color: var(--brand);
+	box-shadow: inset 0 0 0 5px var(--brand);
+}
+
+.row {
+	display: flex;
+	gap: 12px
+}
+
+.row>* {
+	flex: 1
+}
+
+.btn {
+	width: 100%;
+	height: 52px;
+	border: none;
+	border-radius: 12px;
+	background: var(--brand);
+	color: #111;
+	font-size: 16px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: transform .05s ease, filter .2s ease;
+	box-shadow: 0 8px 16px rgba(242, 172, 40, .28);
+}
+
+.btn:active {
+	transform: translateY(1px)
+}
+
+.btn:hover {
+	filter: brightness(0.98)
+}
+
+.toast {
+	width: 100%;
+	max-width: 580px;
+	background: #fff3cd;
+	color: #664d03;
+	border: 1px solid #ffecb5;
+	border-radius: 12px;
+	padding: 12px 14px;
+	margin-bottom: 16px;
+}
+
+@media ( max-width :480px) {
+	.line {
+		width: 40px
+	}
+	.card {
+		padding: 22px
+	}
+}
+</style>
 </head>
 <body>
-<div class="wrap">
+	<div class="wrap">
 
-  <c:if test="${not empty registerError}">
-      <div class="toast">${registerError}</div>
-  </c:if>
+		<c:if test="${not empty registerError}">
+			<div class="toast">${registerError}</div>
+		</c:if>
 
-  <div class="title">
-    <h1>아이온 통합 회원가입</h1>
-    <p>회원정보를 정확히 입력해주세요</p>
-  </div>
+		<div class="title">
+			<h1>아이온 통합 회원가입</h1>
+			<p>회원정보를 정확히 입력해주세요</p>
+		</div>
 
-  <div class="stepper" aria-label="가입 단계">
-    <div class="step active">
-      <div class="dot">1</div>
-      <div class="label">회원가입</div>
-    </div>
-    <div class="line"></div>
-    <div class="step">
-      <div class="dot">2</div>
-      <div class="label">사용 준비 완료</div>
-    </div>
-  </div>
+		<div class="stepper" aria-label="가입 단계">
+			<div class="step active">
+				<div class="dot">1</div>
+				<div class="label">회원가입</div>
+			</div>
+			<div class="line"></div>
+			<div class="step">
+				<div class="dot">2</div>
+				<div class="label">사용 준비 완료</div>
+			</div>
+		</div>
 
-  <div class="card">
-    <form action="/register" method="post">
-      <div class="field">
-        <label for="reg-userId">아이디</label>
-        <input class="input" type="text" id="reg-userId" name="userId" placeholder="아이디는 4~30 자리의 영어 또는 숫자만 가능합니다." required />
-        <p id="userId-message" class="message"></p>
-      </div>
+		<div class="card">
+			<form action="/register" method="post">
+				<div class="field">
+					<label for="reg-userId">아이디</label> <input class="input"
+						type="text" id="reg-userId" name="userId"
+						placeholder="아이디는 4~30 자리의 영어 또는 숫자만 가능합니다." required
+					/>
+					<p id="userId-message" class="message"></p>
+				</div>
 
-      <div class="field">
-        <label for="reg-password">비밀번호</label>
-        <input class="input" type="password" id="reg-password" name="password" placeholder="비밀번호는 영어와 숫자가 하나 이상 포함된 8~16자리의 영어, 숫자, 특수문자만 가능합니다." required />
-        <p id="password-message" class="message"></p>
-      </div>
+				<div class="field">
+					<label for="reg-password">비밀번호</label> <input class="input"
+						type="password" id="reg-password" name="password"
+						placeholder="비밀번호는 영어와 숫자가 하나 이상 포함된 8~16자리의 영어, 숫자, 특수문자만 가능합니다."
+						required
+					/>
+					<p id="password-message" class="message"></p>
+				</div>
 
-      <div class="field">
-        <label for="reg-nickname">닉네임</label>
-        <input class="input" type="text" id="reg-nickname" name="nickname" placeholder="닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다." required />
-        <p id="nickname-message" class="message"></p>
-      </div>
+				<div class="field">
+					<label for="reg-nickname">닉네임</label> <input class="input"
+						type="text" id="reg-nickname" name="nickname"
+						placeholder="닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다." required
+					/>
+					<p id="nickname-message" class="message"></p>
+				</div>
 
-      <div class="field">
-        <label>성별</label>
-        <div class="gender-row">
-          <label class="radio">
-            <input type="radio" name="gender" value="M" checked />
-            <span>남</span>
-          </label>
-          <label class="radio">
-            <input type="radio" name="gender" value="F" />
-            <span>여</span>
-          </label>
-        </div>
-      </div>
+				<div class="field">
+					<label>성별</label>
+					<div class="gender-row">
+						<label class="radio"> <input type="radio" name="gender"
+							value="M" checked
+						/> <span>남</span>
+						</label> <label class="radio"> <input type="radio" name="gender"
+							value="F"
+						/> <span>여</span>
+						</label>
+					</div>
+				</div>
 
-      <div class="field">
-        <label>지역</label>
-        <div class="row">
-          <select class="input" name="city" id="reg-city" required>
-            <option value="">시/도 선택</option>
-          </select>
-          <select class="input" name="district" id="reg-district" required disabled>
-            <option value="">시/군/구 선택</option>
-          </select>
-        </div>
-      </div>
+				<div class="field">
+					<label>지역</label>
+					<div class="row">
+						<select class="input" name="city" id="reg-city" required>
+							<option value="">시/도 선택</option>
+						</select> <select class="input" name="district" id="reg-district" required
+							disabled
+						>
+							<option value="">시/군/구 선택</option>
+						</select>
+					</div>
+				</div>
 
-      <div class="field">
-            <div class="g-recaptcha" data-sitekey="6LfdKZgrAAAAAHP9TN8ZYOJDbKMmdx7Chl1CyUWP"></div>
-      </div>
+				<div class="field">
+					<div class="g-recaptcha"
+						data-sitekey="6LfdKZgrAAAAAHP9TN8ZYOJDbKMmdx7Chl1CyUWP"
+					></div>
+				</div>
 
-      <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-      <button class="btn" type="submit">회원가입</button>
-    </form>
-  </div>
-</div>
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}"
+				/>
+				<button class="btn" type="submit">회원가입</button>
+			</form>
+		</div>
+	</div>
 
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script type="text/javascript">
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript">
     const districtMap = {
         "서울특별시": [
             "강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구",

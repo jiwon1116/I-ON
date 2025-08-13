@@ -94,7 +94,7 @@
       (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-        createMap([lon, lat]);  // [경도, 위도] 순서로 전달
+        createMap([lon, lat]);
       },
       () => {
         console.warn("❗ 위치 실패, 기본 좌표로 지도 표시");

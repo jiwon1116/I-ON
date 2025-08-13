@@ -7,12 +7,10 @@
   <meta charset="UTF-8">
   <title>실종 게시판</title>
   <c:set var="CTX" value="${pageContext.request.contextPath}" />
-  <!-- info-* 규칙이 들어있는 공용 CSS -->
   <link rel="stylesheet" href="${CTX}/resources/css/update.css">
 </head>
 <body>
 
-  <!-- 헤더는 body 안에서 include (page directive 충돌 방지) -->
   <jsp:include page="/WEB-INF/views/header.jsp" />
 
   <div class="info-page-wrap">
@@ -23,7 +21,6 @@
 
           <input type="hidden" name="id" value="${miss.id}" />
 
-          <!-- 제목 -->
           <div class="info-group">
             <label for="title" class="info-label">제목</label>
             <input type="text" id="title" name="title" value="${miss.title}" required class="info-input" />
@@ -33,19 +30,16 @@
 
 
 
-          <!-- 내용 -->
           <div class="info-group">
             <label for="content" class="info-label">내용</label>
             <textarea id="content" name="content" rows="8" required class="info-textarea">${miss.content}</textarea>
           </div>
 
-          <!-- 파일 업로드 -->
-                    <div class="info-group">
-                      <label for="uploadFiles" class="info-label">파일 업로드</label>
-                      <input type="file" id="uploadFiles" name="file" multiple class="info-input-file" />
-                    </div>
+            <div class="info-group">
+              <label for="uploadFiles" class="info-label">파일 업로드</label>
+              <input type="file" id="uploadFiles" name="file" multiple class="info-input-file" />
+            </div>
 
-          <!-- 버튼 -->
           <div class="info-actions">
             <button type="button" class="info-btn info-btn-secondary" onclick="history.back()">뒤로가기</button>
             <button type="submit" class="info-btn info-btn-primary">수정하기</button>

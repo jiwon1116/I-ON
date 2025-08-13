@@ -10,13 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController // @Controller + @ResponseBody
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/missLike")
 public class MissLikeController {
     private final MissLikeService missLikeService;
 
-    // 좋아요 토글
     @PostMapping("/like/{postId}")
     @ResponseBody
     public Map<String, Object> likeAjax(@PathVariable("postId") Long postId) {
@@ -33,7 +32,6 @@ public class MissLikeController {
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
             memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
         } else if (principal instanceof String) {
-            // 로그인 안 한 상태는 대부분 "anonymousUser" 문자열임
             if ("anonymousUser".equals(principal)) {
                 memberId = null;
             } else {

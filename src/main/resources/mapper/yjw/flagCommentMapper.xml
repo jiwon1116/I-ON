@@ -10,8 +10,6 @@
         VALUES (#{post_id}, #{nickname}, #{userId}, #{content}, NOW())
     </insert>
 
-
-
     <select id="findAll" resultType="FlagComment">
         SELECT * FROM flag_comment
         WHERE post_id = #{post_id}
@@ -23,7 +21,6 @@
         SELECT * FROM flag_comment WHERE id = #{id}
     </select>
 
-    <!-- 댓글 삭제 -->
     <delete id="delete" parameterType="long">
         DELETE FROM flag_comment WHERE id = #{id}
     </delete>

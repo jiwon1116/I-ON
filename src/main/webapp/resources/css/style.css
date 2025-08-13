@@ -1,5 +1,3 @@
-/* reset.css */
-
 *{
 margin:0;
 padding:0;
@@ -14,21 +12,16 @@ a{
 text-decoration: none;
 color: inherit;
 font-size: 18px;
-/* padding-bottom: 0; // 이 부분은 이제 .nav-tabs .main-menu > a 의 padding으로 대체됩니다. */
 }
 
 :root {
-  /* === 컬러 === */
   --color-point: #F2AC28;
+  --text-main: #212121;
+  --text-sub: #666666;
+  --text-light: #999999;
+  --text-white: #ffffff;
+  --text-point: var(--color-point);
 
-  /* 텍스트 컬러 */
-  --text-main: #212121;     /* 기본 텍스트 */
-  --text-sub: #666666;      /* 서브 텍스트 */
-  --text-light: #999999;    /* 약한 텍스트 */
-  --text-white: #ffffff;    /* 흰색 텍스트 */
-  --text-point: var(--color-point); /* 강조 텍스트 */
-
-  /* === 폰트 사이즈 === */
   --font-xs: 12px;
   --font-sm: 14px;
   --font-md: 16px;
@@ -44,7 +37,6 @@ body {
   background-color: #fff8e7;
 }
 
-/* 네비게이션 바 */
 .top-nav {
   background-color: #ffc727;
   padding: 0 24px;
@@ -73,46 +65,40 @@ body {
 
 }
 
-/* 메인 메뉴 공통 */
 .main-menu {
   position: relative;
-  /* li의 패딩은 제거 */
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   cursor: pointer;
   background-color: transparent;
   color: #fff;
-  display: flex; /* li에 flexbox를 적용하여 내부 요소 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: center; /* 가로 중앙 정렬 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: color 0.2s ease;
   width: 200px;
   border-radius: 50px 50px 0px 0px;
   height: 53px;
 }
 
-/* 메인 메뉴의 링크가 전체 영역을 차지하도록 */
 .nav-tabs .main-menu > a {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
-    right: 0; /* li의 패딩 영역까지 완벽하게 덮도록 설정 */
-    display: flex; /* a 태그 내부 텍스트를 정렬하기 위해 flex 사용 */
+    right: 0;
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 24px; /* li에 있던 패딩을 a 태그로 이동 */
+    padding: 12px 24px;
     text-decoration: none;
 }
 
-
-/* hover 시 텍스트 색상만 밝아짐 */
 .main-menu:hover {
   color: #555;
   background: #fff8e7;
 }
 
-/* 활성 탭 */
 .main-menu.active {
   color: #555;
   background: #fff8e7;
@@ -120,7 +106,6 @@ body {
   margin-bottom: 0;
 }
 
-/* 서브 메뉴 */
 .sub-menu {
   display: block;
   position: absolute;
@@ -142,19 +127,16 @@ body {
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-/* hover 시 부드럽게 내려옴 */
 .main-menu:hover .sub-menu {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
-/* hover 시 서브 메뉴 보임 */
 .main-menu:hover .sub-menu {
   display: block;
 }
 
-/* 서브 메뉴 항목 */
 .sub-menu li {
   padding: 10px 16px;
   white-space: nowrap;
@@ -180,32 +162,27 @@ body {
    height: 50px;
 }
 
-/* 네비/아이콘 영역이 팝오버를 가리지 않게 */
 .top-nav, .icons {
   position: relative;
   overflow: visible !important;
   z-index: 1060;
 }
 
-/* 혹시 전역에서 nav/header에 overflow:hidden; 준 경우 방지 */
 header, nav {
   overflow: visible !important;
 }
 
-/* 팝오버 자체 z-index 강화 (보이는지 테스트용) */
 .popover {
   z-index: 2000 !important;
   max-width: 320px;
 }
 
-/* 편지 아이콘과 배지를 감싸는 링크 스타일 */
 .icon-link {
   position: relative;
   display: inline-block;
   margin-right: 15px;
 }
 
-/* 총 읽지 않은 메시지 수를 표시하는 배지 스타일 */
 .unread-count-badge {
   position: absolute;
   top: -5px;
@@ -237,7 +214,6 @@ header, nav {
   line-height: 1;
 }
 
-/* 로고 영역도 같은 높이에서 가운데 정렬 */
 .logo-section{
   height: 64px;
   display: flex;
@@ -251,11 +227,9 @@ header, nav {
   display: block;
 }
 
-/* (선택) 이미지 자체 여백 때문에 살짝 위/아래 치우쳐 보이면 미세 보정 */
 .logo-section .logo.tweak-up   { transform: translateY(-2px); }
 .logo-section .logo.tweak-down { transform: translateY( 2px); }
 
-/* 팝오버 전체 패널(전역 선택자; 부모 붙이지 마세요) */
 .popover.notify-panel{
   background:#fff !important;
   border:1px solid #e5e8eb !important;
@@ -266,11 +240,9 @@ header, nav {
   z-index:2000;
 }
 
-/* 화살표 색 */
 .popover.notify-panel .popover-arrow::before{ border-bottom-color:#e5e8eb; }
 .popover.notify-panel .popover-arrow::after { border-bottom-color:#fff; }
 
-/* 헤더 */
 .popover.notify-panel .popover-header{
   background:#f7f9fb;
   color:#111;
@@ -282,10 +254,8 @@ header, nav {
   padding:10px 14px;
 }
 
-/* 본문 */
 .popover.notify-panel .popover-body{ padding:8px 8px 10px; }
 
-/* 스크롤 컨테이너 */
 .popover.notify-panel .popover-body > div{
   max-height:420px;
   overflow-y:auto;
@@ -297,10 +267,8 @@ header, nav {
   background:rgba(0,0,0,.25); border-radius:3px;
 }
 
-/* 리스트 */
 .popover.notify-panel .popover-body ul.list-unstyled.mb-0{ margin:0; padding:0; }
 
-/* 아이템(부트스트랩/인라인 스타일을 이기기 위해 !important 사용) */
 .popover.notify-panel .popover-body ul li{
   list-style:none;
   background:#fff;
@@ -313,7 +281,6 @@ header, nav {
   gap:10px;
 }
 
-/* 링크 */
 .popover.notify-panel .popover-body ul li > a{
   flex:1;
   color:#555;
@@ -326,7 +293,6 @@ header, nav {
 }
 .popover.notify-panel .popover-body ul li > a:hover{ color:#222; }
 
-/* 삭제 버튼 */
 .popover.notify-panel .notify-delete{
   flex:0 0 auto;
   border:none;

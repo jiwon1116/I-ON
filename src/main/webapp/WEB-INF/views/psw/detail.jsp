@@ -9,14 +9,12 @@
   <meta charset="UTF-8">
   <title>글 상세보기</title>
   <meta name="ctx" content="${pageContext.request.contextPath}"/>
-<!-- (필요 시 head에 추가) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <script src="https://code.jquery.com/jquery-latest.min.js"></script>
   <script src="${pageContext.request.contextPath}/resources/js/badge.js"></script>
 
   <style>
-  /* ===== Info Detail (scoped with info-*) ===== */
   .info-page-wrap{
     display:flex; justify-content:center;
     padding:40px 16px 80px;
@@ -29,7 +27,6 @@
     padding:28px 28px 18px;
   }
 
-  /* 제목 + 우측 액션 */
   .info-head{
     display:flex; align-items:flex-start; justify-content:space-between;
     gap:16px; margin-bottom:12px;
@@ -45,20 +42,17 @@
   }
   .info-actions button:hover{ background:#f2f2f2; }
 
-  /* 메타 */
   .info-meta{
     display:flex; align-items:center; gap:18px;
     color:#8a8a8a; font-size:14px; margin-bottom:16px;
   }
   .info-meta .info-author{ font-weight:600; color:#444; }
 
-  /* 본문 이미지 */
   .info-image{ width:100%; border-radius:12px; overflow:hidden; margin:10px 0 16px; }
   .info-image img{
     display:block; width:50%; height:auto; object-fit:cover; margin:auto; border-radius:10px;
   }
 
-  /* 내용 박스 */
   .info-content{
     background:#f8f8f9; border:1px solid #eceff3; border-radius:12px;
     padding:18px 16px; color:#444; line-height:1.7;
@@ -69,14 +63,12 @@
     outline:none; white-space:pre-wrap;
   }
 
-  /* 스크롤바(전역) */
   ::-webkit-scrollbar{ width:6px; height:6px; }
   ::-webkit-scrollbar-track{ background:transparent; }
   ::-webkit-scrollbar-thumb{ background-color:rgba(0,0,0,.3); border-radius:3px; }
   ::-webkit-scrollbar-thumb:hover{ background-color:rgba(0,0,0,.5); }
   *{ scrollbar-width:thin; scrollbar-color:rgba(0,0,0,.3) transparent; }
 
-  /* 좋아요/카운트 */
   .info-stats{ display:flex; align-items:center; gap:16px; color:#666; margin:16px 4px 6px; font-size:14px; }
   .info-like-btn{
     display:inline-flex; align-items:center; gap:8px;
@@ -85,7 +77,6 @@
   .info-like-btn .heart{ font-size:18px; line-height:1; }
   .info-like-btn.liked .heart{ color:#f44336; }
 
-  /* 댓글 */
   .info-comment-wrap{ margin-top:18px; }
   .info-comment-list{ display:flex; flex-direction:column; gap:10px; margin:8px 0 18px; }
   .info-comment-item{
@@ -107,7 +98,6 @@
   }
   .info-btn-del:hover{ background:#f2f2f2; color:red; }
 
-  /* 댓글 입력 */
   .info-comment-editor{
     display:flex; gap:10px; align-items:flex-end;
     padding:12px; border:1px solid #eceff3; border-radius:12px; background:#fffdf7;
@@ -122,13 +112,11 @@
   }
   .info-comment-editor button:hover{ background:#e9971b; }
 
-  /* 하단 버튼 */
   .info-bottom-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:10px; }
   .info-btn-secondary{ background:#fff; border:1px solid #e2e5ea; border-radius:10px; padding:10px 16px; cursor:pointer; }
   .info-btn-primary{ background:#f5a623; color:#fff; border:none; border-radius:10px; padding:10px 16px; cursor:pointer; }
   .info-bottom-actions button:hover{ background:#f2f2f2; color:#666; }
 
-  /* 반응형 */
   @media (max-width:768px){
     .info-title{ font-size:22px; }
     .info-head{ flex-direction:column; align-items:flex-start; gap:8px; }
@@ -146,9 +134,7 @@
 <div class="container">
   <div class="info-page-wrap">
     <div class="info-card">
-      <!-- 폼/네임/액션 그대로 -->
       <form action="/info/detail" method="post" name="infoupdateForm">
-        <!-- 제목 + 관리자 액션 -->
         <div class="info-head">
           <h2 class="info-title">${findDto.title}</h2>
           <div class="info-actions">
@@ -159,7 +145,6 @@
           </div>
         </div>
 
-        <!-- 메타 -->
         <div class="info-meta">
           <c:if test="${not empty findDto.nickname}">
             <div class="info-author">
@@ -179,19 +164,16 @@
         </div>
 
 
-        <!-- 본문 이미지 -->
         <c:if test="${not empty findFileDto}">
           <div class="info-image">
             <img src="/info/preview?storedFileName=${findFileDto.storedFileName}" alt="post image" />
           </div>
         </c:if>
 
-        <!-- 본문 (textarea 그대로, 읽기전용) -->
         <div class="info-content">
           <textarea name="content" readonly>${findDto.content}</textarea>
         </div>
 
-        <!-- 좋아요/카운트 -->
         <div class="info-stats">
           <button type="button" class="info-like-btn ${findDto != null && findDto.liked ? 'liked' : ''}" id="likeBtn">
             <span class="heart">${findDto.liked ? '❤️' : '🤍'}</span>
@@ -203,20 +185,17 @@
         <input type="hidden" name="id" value="${findDto.id}" />
       </form>
 
-      <!-- 댓글 입력 -->
       <div class="info-comment-editor">
         <input type="text" id="commentContents" placeholder="댓글을 작성해주세요" />
         <button type="button" onclick="commentWrite()">작성</button>
       </div>
 
-      <!-- 댓글 목록 -->
       <section class="info-comment-wrap">
         <div class="info-comment-list" id="comment-list">
           <c:forEach items="${commentList}" var="comment">
             <div class="info-comment-item">
               <div class="info-comment-avatar"></div>
               <div class="info-comment-body">
-                <!-- 상단 행: 작성자 / (날짜 + 삭제버튼) -->
                 <div class="info-comment-row">
                   <div class="info-comment-writer">
                     <span class="js-user" data-nickname="${comment.nickname}">
@@ -244,7 +223,6 @@
         </div>
       </section>
 
-      <!-- 목록 버튼 -->
       <div class="info-bottom-actions">
         <button type="button" class="info-btn-secondary" onclick="infoForm()">목록</button>
       </div>
@@ -256,7 +234,6 @@
   const updatefn = () => { document.infoupdateForm.submit(); }
   const infoForm  = () => { location.href = "/info"; }
 
-  // 좋아요 버튼
   $('#likeBtn').click(function(e){
     e.preventDefault();
     const findId = '${findDto.id}';
@@ -279,7 +256,6 @@
     });
   });
 
-  // 삭제 버튼
   const deletefn = () => {
     const id = "${findDto.id}";
     const confirmed = confirm("정말 삭제하시겠습니까?");

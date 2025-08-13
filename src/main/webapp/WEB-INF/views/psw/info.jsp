@@ -68,14 +68,12 @@
             background-color: #ffaa00;
         }
 
-        /* 카드 레이아웃 래퍼 */
         .cards-wrap {
           max-width: 1200px;
           margin: 24px auto;
           padding: 0 16px;
         }
 
-       /* 3열 그리드 */
        .card-grid {
          display: grid;
          grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -83,11 +81,10 @@
          align-items: start;
        }
 
-       /* 카드 통일 높이 + 호버 */
        .card {
          display: flex;
          flex-direction: column;
-         height: 360px; /* ← 필요 시 340~380px로 조절 가능 */
+         height: 360px;
          background: #fff;
          border-radius: 12px;
          box-shadow: 0 6px 18px rgba(0,0,0,0.06);
@@ -97,10 +94,9 @@
        }
        .card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,0.10); }
 
-       /* 이미지: 정사각 유지 + 꽉 채우기 */
        .card-thumb {
          width: 100%;
-         aspect-ratio: 1 / 1;   /* 정사각형 */
+         aspect-ratio: 1 / 1;
          overflow: hidden;
          background: #f6f6f6;
        }
@@ -111,60 +107,50 @@
          display: block;
        }
 
-       /* 본문 */
        .card-body {
          padding: 12px 14px 16px;
          display: flex;
          align-items: flex-start;
        }
 
-       /* 제목: 2줄까지만 보이고 ... 처리 + 최소높이로 카드 높이 안정화 */
        .card-body .title {
          font-size: 16px;
          font-weight: 600;
          color: #222;
          line-height: 1.4;
          display: -webkit-box;
-         -webkit-line-clamp: 2;      /* 두 줄 말줄임 */
+         -webkit-line-clamp: 2;
          -webkit-box-orient: vertical;
          overflow: hidden;
-         min-height: calc(1.4em * 2); /* 두 줄 높이 확보 -> 카드 높이 통일에 도움 */
+         min-height: calc(1.4em * 2);
          margin: auto;
        }
 
-       /* 반응형 */
-      /* 반응형 카드 그리드 세분화 */
       @media (max-width: 1400px) {
-        /* 큰 모니터 → 일반 노트북 */
         .card-grid { grid-template-columns: repeat(3, 1fr); }
       }
 
       @media (max-width: 1200px) {
-        /* 중간 화면(작은 노트북, 가로폭 줄인 브라우저) */
         .card-grid { grid-template-columns: repeat(2, 1fr); }
       }
 
       @media (max-width: 900px) {
-        /* 태블릿 가로 */
         .card-grid { grid-template-columns: 2fr 2fr; }
-        .card { height: auto; } /* 높이 자동으로 → 세로 여백 최소화 */
+        .card { height: auto; }
       }
 
       @media (max-width: 768px) {
-        /* 태블릿 세로 */
         .card-grid { grid-template-columns: 1fr 1fr; }
         .card { height: auto; }
       }
       @media (max-width: 500px) {
-        /* 작은 스마트폰 */
         .card-grid { grid-template-columns: 1fr; }
         .card { height: auto; }
       }
 
-      /* 가로가 좁고 세로가 긴 경우 하단 여백 줄이기 */
       @media (max-width: 900px) and (min-height: 900px) {
         .container {
-          margin-bottom: 50px; /* 기존보다 훨씬 줄임 */
+          margin-bottom: 50px;
         }
         .cards-wrap {
           margin-bottom: 10px;
@@ -179,7 +165,6 @@
 
 
 
-        /* Pagination */
         nav[aria-label="Page navigation"] {
             margin-top: 50px;
             text-align: center;
@@ -235,7 +220,6 @@
          </security:authorize>
     </div>
 
-  <!-- 카드 목록 -->
   <div class="cards-wrap">
     <div class="card-grid">
       <c:forEach var="entry" items="${postMap}">
@@ -257,7 +241,6 @@
 
   <nav aria-label="Page navigation">
     <ul class="pagination">
-      <!-- Prev -->
       <c:choose>
         <c:when test="${paging.page <= 1}">
           <li class="page-item disabled"><a class="page-link">← Previous</a></li>
@@ -270,7 +253,6 @@
         </c:otherwise>
       </c:choose>
 
-      <!-- Page numbers -->
       <c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="i">
         <c:choose>
           <c:when test="${i eq paging.page}">
@@ -285,7 +267,6 @@
         </c:choose>
       </c:forEach>
 
-      <!-- Next -->
       <c:choose>
         <c:when test="${paging.page >= paging.maxPage}">
           <li class="page-item disabled"><a class="page-link">Next →</a></li>

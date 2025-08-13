@@ -31,13 +31,11 @@ window.loadEmergencyMarkersByBounds = function () {
 
         const position = new kakao.maps.LatLng(latitude, longitude);
 
-        // 전역에서 한 번만 정의
         const emergencyMarkerImage = new kakao.maps.MarkerImage(
           '/resources/img/emergencybell-marker.png',
           new kakao.maps.Size(32, 32)
         );
 
-        // 이후 마커 생성 시 재사용
         const mk = new kakao.maps.Marker({
           position,
           image: emergencyMarkerImage
@@ -49,13 +47,12 @@ window.loadEmergencyMarkersByBounds = function () {
       });
 
       if (window.clusterer && newMarkers.length > 0) {
-        window.clusterer.addMarkers(newMarkers);  // ✅ 수정됨
+        window.clusterer.addMarkers(newMarkers);
       }
     })
     .catch(err => console.error("❗ 비상벨 마커 로딩 실패:", err));
 };
 
-// 안전지킴이집
 let safehouseMarkers = [];
 
 window.clearSafehouseMarkers = function () {
@@ -80,7 +77,7 @@ window.loadSafehouseMarkersByBounds = function () {
     .then(data => {
       console.log("✅ 안전지킴이집 마커 로딩됨:", data);
 
-      window.clearSafehouseMarkers(); // ✅ 여기가 문제였음
+      window.clearSafehouseMarkers();
 
       const newMarkers = [];
 
@@ -112,7 +109,6 @@ window.loadSafehouseMarkersByBounds = function () {
     .catch(err => console.error("❗ 안전지킴이집 로딩 실패", err));
 };
 
-// 성범죄자 거주지
 window.offenderMarkers = [];
 
 window.clearOffenderMarkers = function () {
@@ -126,7 +122,6 @@ window.clearOffenderMarkers = function () {
 window.loadOffenderMarkersByBounds = function () {
   console.log("📌 offender 마커 로딩 시작");
 
-  // 전역 함수는 window로 호출
   window.clearOffenderMarkers();
 
   if (!window.map) return;
@@ -153,7 +148,6 @@ window.loadOffenderMarkersByBounds = function () {
 
       const newMarkers = [];
 
-      // 마커 이미지(아이콘) 1번만 생성
       const offenderMarkerImage = new kakao.maps.MarkerImage(
         '/resources/img/offender-marker.png',
         new kakao.maps.Size(32, 32)
@@ -167,7 +161,6 @@ window.loadOffenderMarkersByBounds = function () {
         const mk = new kakao.maps.Marker({
           position: new kakao.maps.LatLng(lat, lng),
           image: offenderMarkerImage
-          // ⚠️ map 옵션 넣지 않음: 클러스터러가 관리
         });
 
         attachPopup(item, mk, "offender");
@@ -179,7 +172,6 @@ window.loadOffenderMarkersByBounds = function () {
       if (window.clusterer && newMarkers.length > 0) {
         window.clusterer.addMarkers(newMarkers);
       } else {
-        // 클러스터러가 없을 때도 보이도록 폴백
         newMarkers.forEach(mk => mk.setMap(window.map));
       }
     })

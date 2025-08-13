@@ -8,7 +8,6 @@
   <title>재학증명서 목록</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- 탭 전환만 부트스트랩 JS를 사용합니다 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
@@ -24,12 +23,10 @@
     .wrap{min-height:100vh; padding:44px 16px; display:flex; justify-content:flex-start}
     .container-n{width:100%; max-width:1100px; margin:0 auto}
 
-    /* 헤더 */
     .page-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px}
     .page-title{margin:0; font-weight:800; font-size:22px}
     .sub{color:var(--muted); font-size:14px; margin:4px 0 0}
 
-    /* 탭 */
     .tabs{background:transparent; border:none; margin-bottom:14px}
     .tabs .nav-link{
       border:none; border-radius:999px; margin-right:8px; padding:10px 16px; color:#555; font-weight:700;
@@ -41,7 +38,6 @@
       border-color:var(--brand); box-shadow:0 8px 16px rgba(242,172,40,.25);
     }
 
-    /* 카드 & 테이블 */
     .card-n{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
     .table-wrap{overflow-x:auto}
     table{width:100%; border-collapse:separate; border-spacing:0; min-width:760px}
@@ -52,7 +48,6 @@
     tbody td{padding:14px; border-bottom:1px solid var(--line); vertical-align:middle; font-size:14px}
     tbody tr:hover{background:#fcfcfc}
 
-    /* 상태칩 */
     .chip{
       display:inline-flex; align-items:center; gap:6px;
       padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; border:1px solid;
@@ -61,23 +56,20 @@
     .chip.bad{color:var(--bad); border-color:#fecdd3; background:#fff1f2;}
     .chip.wait{color:var(--wait); border-color:#e5e7eb; background:#f9fafb;}
 
-/* 탭 한 줄 정렬 */
 .tabs {
-  display: flex; /* 가로 배치 */
-  gap: 8px;      /* 버튼 사이 간격 */
-  flex-wrap: nowrap; /* 줄바꿈 방지 */
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .tabs .nav-item {
-  flex: 1; /* 버튼이 같은 폭으로 나눠짐 */
+  flex: 1;
 }
 
 .tabs .nav-link {
-  width: 100%; /* nav-item 안에서 꽉 채움 */
+  width: 100%;
   text-align: center;
 }
-
-    /* 버튼 */
 
     .btn-brand{
       display:inline-flex; align-items:center; justify-content:center;
@@ -88,7 +80,6 @@
     .btn-brand:active{transform:translateY(1px)}
     .btn-outline{background:#fff; color:#111; border:1px solid var(--line); box-shadow:none}
 
-    /* empty */
     .empty{color:var(--muted); padding:32px 8px}
   </style>
 </head>
@@ -102,7 +93,6 @@
         <h3 class="page-title">재학증명서 접수 내역</h3>
         <p class="sub">관리자용 전체/상태별 접수 현황</p>
       </div>
-      <!-- 뒤로가기 버튼 -->
       <a href="javascript:void(0)"
          class="btn-brand btn-outline"
          onclick="if(document.referrer){history.back();}else{location.href='${CTX}/';}">
@@ -119,7 +109,6 @@
 
     <div class="tab-content">
 
-      <!-- 전체 -->
       <div class="tab-pane fade show active" id="tab-all" role="tabpanel">
         <div class="card-n table-wrap">
           <table>
@@ -152,7 +141,6 @@
         </div>
       </div>
 
-      <!-- 승인 대기 -->
       <div class="tab-pane fade" id="tab-pending" role="tabpanel">
         <div class="card-n table-wrap">
           <table>
@@ -176,7 +164,6 @@
         </div>
       </div>
 
-      <!-- 승인됨 -->
       <div class="tab-pane fade" id="tab-approved" role="tabpanel">
         <div class="card-n table-wrap">
           <table>
@@ -200,7 +187,6 @@
         </div>
       </div>
 
-      <!-- 반려됨 -->
       <div class="tab-pane fade" id="tab-rejected" role="tabpanel">
         <div class="card-n table-wrap">
           <table>

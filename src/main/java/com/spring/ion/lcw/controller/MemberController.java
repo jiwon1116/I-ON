@@ -1,13 +1,12 @@
 package com.spring.ion.lcw.controller;
 
+import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.repository.MemberRepository;
 import com.spring.ion.lcw.security.CustomUserDetails;
-import com.spring.ion.lcw.dto.MemberDTO;
 import com.spring.ion.lcw.security.InfoChangeRestrictionException;
 import com.spring.ion.lcw.service.MemberService;
 import com.spring.ion.lcw.service.ReCaptchaService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -23,8 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
 @Controller
@@ -43,7 +40,7 @@ public class MemberController {
             return "redirect:/";
         }
 
-        session.removeAttribute("dangerAlertShown"); // 로그인 시 지역 사건 알림 1회 띄우기 위함 
+        session.removeAttribute("dangerAlertShown");
         return "login";
     }
 
@@ -51,29 +48,6 @@ public class MemberController {
     public String showRegisterPage() {
         return "register";
     }
-
-//    @PostMapping("/register")
-//    public String register(MemberDTO memberDTO, RedirectAttributes redirectAttributes) {
-//
-//        String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
-//        memberDTO.setPassword(encodedPassword);
-//        memberDTO.setEnabled(true);
-//        memberDTO.setProvider("LOCAL");
-//
-//        try {
-//            memberService.save(memberDTO);
-//            redirectAttributes.addFlashAttribute("registerSuccess", "회원가입이 완료되었습니다!");
-//            return "redirect:/login";
-//
-//        } catch (DataIntegrityViolationException e) {
-//            redirectAttributes.addFlashAttribute("registerError", "이미 사용 중인 아이디 또는 닉네임입니다.");
-//            return "redirect:/register";
-//
-//        } catch (Exception e) {
-//            redirectAttributes.addFlashAttribute("registerError", "회원가입 중 알 수 없는 오류가 발생했습니다.");
-//            return "redirect:/register";
-//        }
-//    }
 
     @PostMapping("/register")
     public String register(@RequestParam("g-recaptcha-response") String reCaptchaResponse, MemberDTO memberDTO, Model model, RedirectAttributes redirectAttributes) {
@@ -152,7 +126,6 @@ public class MemberController {
         }
 
 
-
         if (memberDTO.getNickname() != null && !memberDTO.getNickname().isEmpty()) {
             currentMember.setNickname(memberDTO.getNickname());
         }
@@ -187,6 +160,7 @@ public class MemberController {
         }
 
     }
+
     @GetMapping("/naver-edit")
     public String showNaverEditForm(Model model) {
 
@@ -254,7 +228,7 @@ public class MemberController {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MemberDTO currentMember = userDetails.getMemberDTO();
         boolean isDuplicate = memberService.checkDuplicateNickname(nickname) > 0;
-        if(currentMember.getNickname().equals(nickname)){
+        if (currentMember.getNickname().equals(nickname)) {
             isDuplicate = false;
         }
         return ResponseEntity.ok(isDuplicate);

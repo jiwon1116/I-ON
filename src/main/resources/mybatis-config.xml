@@ -4,19 +4,15 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
-    <!-- 별명 짓는 설정자 -->
     <typeAliases>
-        <!-- 위탁 게시판 -->
         <typeAlias type="com.spring.ion.jjh.dto.entrust.EntrustDTO" alias="entrust"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.entrust.EntrustCommentDTO" alias="entrustComment"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.entrust.EntrustFileDTO" alias="entrustFile"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.entrust.EntrustLikeDTO" alias="entrustLike"></typeAlias>
-        <!-- 자유 게시판 -->
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeDTO" alias="free"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeCommentDTO" alias="freeComment"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeFileDTO" alias="freeFile"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.free.FreeLikeDTO" alias="freeLike"></typeAlias>
-        <!-- 실종 게시판 -->
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissDTO" alias="miss"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissCommentDTO" alias="missComment"></typeAlias>
         <typeAlias type="com.spring.ion.jjh.dto.miss.MissFileDTO" alias="missFile"></typeAlias>

@@ -1,131 +1,192 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>회원가입</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<meta charset="UTF-8">
+<title>회원가입</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
-  <style>
-    :root{
-      --brand: #F2AC28;   /* 포인트 노랑 */
-      --bg: #F7F7F7;      /* 페이지 배경 */
-      --text: #222;
-      --muted: #8A8A8A;
-      --card: #ffffff;
-      --line: #EAEAEA;
-      --radius: 16px;
-      --shadow: 0 10px 24px rgba(0,0,0,.06);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; background:var(--bg); color:var(--text);
-      font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Helvetica, Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-    }
-    .wrap{
-      min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-      padding:40px 16px;
-    }
-    .title{
-      text-align:center; margin-bottom:18px;
-    }
-    .title h1{
-      font-size:24px; margin:0 0 8px; font-weight:800;
-    }
-    .title p{margin:0; color:var(--muted); font-size:14px}
+<style>
+:root {
+	--brand: #F2AC28;
+	--bg: #F7F7F7;
+	--text: #222;
+	--muted: #8A8A8A;
+	--card: #ffffff;
+	--line: #EAEAEA;
+	--radius: 16px;
+	--shadow: 0 10px 24px rgba(0, 0, 0, .06);
+}
 
-    .card{
-      width:100%; max-width:580px; background:var(--card); border-radius:var(--radius);
-      padding:28px; box-shadow:var(--shadow);
-    }
+* {
+	box-sizing: border-box
+}
 
-    .field{margin-bottom:18px}
-    .field label{
-      display:block; font-size:15px; font-weight:600; margin-bottom:8px;
-    }
-    .input, select{
-      width:100%; height:50px; border:1px solid var(--line); background:#fff;
-      border-radius:12px; padding:0 14px; font-size:15px; outline:none;
-      transition:border .15s, box-shadow .15s;
-    }
-    .input::placeholder{color:#bdbdbd}
-    .input:focus, select:focus{
-      border-color:var(--brand);
-      box-shadow:0 0 0 4px rgba(242,172,40,.15);
-    }
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		"Noto Sans KR", Helvetica, Arial, "Apple SD Gothic Neo",
+		"Malgun Gothic", sans-serif;
+}
 
-    .row{display:flex; gap:12px}
-    .row > *{flex:1}
+.wrap {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 40px 16px;
+}
 
-    .btn{
-      width:100%; height:52px; border:none; border-radius:12px;
-      background:var(--brand); color:#111; font-size:16px; font-weight:700;
-      cursor:pointer; transition:transform .05s ease, filter .2s ease;
-      box-shadow:0 8px 16px rgba(242,172,40,.28);
-    }
-    .btn:active{transform:translateY(1px)}
-    .btn:hover{filter:brightness(0.98)}
+.title {
+	text-align: center;
+	margin-bottom: 18px;
+}
 
-    .message{margin:6px 2px 0; font-size:13px}
+.title h1 {
+	font-size: 24px;
+	margin: 0 0 8px;
+	font-weight: 800;
+}
 
-    @media (max-width:480px){
-      .card{padding:22px}
-    }
-  </style>
+.title p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 14px
+}
+
+.card {
+	width: 100%;
+	max-width: 580px;
+	background: var(--card);
+	border-radius: var(--radius);
+	padding: 28px;
+	box-shadow: var(--shadow);
+}
+
+.field {
+	margin-bottom: 18px
+}
+
+.field label {
+	display: block;
+	font-size: 15px;
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.input, select {
+	width: 100%;
+	height: 50px;
+	border: 1px solid var(--line);
+	background: #fff;
+	border-radius: 12px;
+	padding: 0 14px;
+	font-size: 15px;
+	outline: none;
+	transition: border .15s, box-shadow .15s;
+}
+
+.input::placeholder {
+	color: #bdbdbd
+}
+
+.input:focus, select:focus {
+	border-color: var(--brand);
+	box-shadow: 0 0 0 4px rgba(242, 172, 40, .15);
+}
+
+.row {
+	display: flex;
+	gap: 12px
+}
+
+.row>* {
+	flex: 1
+}
+
+.btn {
+	width: 100%;
+	height: 52px;
+	border: none;
+	border-radius: 12px;
+	background: var(--brand);
+	color: #111;
+	font-size: 16px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: transform .05s ease, filter .2s ease;
+	box-shadow: 0 8px 16px rgba(242, 172, 40, .28);
+}
+
+.btn:active {
+	transform: translateY(1px)
+}
+
+.btn:hover {
+	filter: brightness(0.98)
+}
+
+.message {
+	margin: 6px 2px 0;
+	font-size: 13px
+}
+
+@media ( max-width :480px) {
+	.card {
+		padding: 22px
+	}
+}
+</style>
 </head>
 <body>
-  <!-- 기존 동작 유지: 서버 오류는 alert -->
-  <c:if test="${not empty registerError}">
-    <script>alert('${registerError}');</script>
-  </c:if>
+	<c:if test="${not empty registerError}">
+		<script>alert('${registerError}');</script>
+	</c:if>
 
-  <div class="wrap">
-    <div class="title">
-      <h1>아이온 통합 회원가입</h1>
-      <p>회원정보를 정확히 입력해주세요</p>
-    </div>
+	<div class="wrap">
+		<div class="title">
+			<h1>아이온 통합 회원가입</h1>
+			<p>회원정보를 정확히 입력해주세요</p>
+		</div>
 
-    <div class="card">
-      <!-- 기능/경로/필드 id, name 그대로 유지 -->
-      <form action="/naver-register" method="post">
-        <div class="field">
-          <label for="reg-nickname">닉네임</label>
-          <input class="input" type="text" id="reg-nickname" name="nickname"
-                 placeholder="닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다." required/>
-          <p id="nickname-message" class="message"></p>
-        </div>
+		<div class="card">
+			<form action="/naver-register" method="post">
+				<div class="field">
+					<label for="reg-nickname">닉네임</label>
+					<input class="input" type="text" id="reg-nickname" name="nickname" placeholder="닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다." required />
+					<p id="nickname-message" class="message"></p>
+				</div>
 
-        <div class="field">
-          <label for="reg-gender">성별</label>
-          <select class="input" id="reg-gender" name="gender">
-            <option value="M">남자</option>
-            <option value="F">여자</option>
-          </select>
-        </div>
+				<div class="field">
+					<label for="reg-gender">성별</label> <select class="input" id="reg-gender" name="gender">
+						<option value="M">남자</option>
+						<option value="F">여자</option>
+					</select>
+				</div>
 
-        <div class="field">
-          <label for="reg-city">지역</label>
-          <div class="row">
-            <select class="input" name="city" id="reg-city" required>
-              <option value="">시/도 선택</option>
-            </select>
-            <select class="input" name="district" id="reg-district" required disabled>
-              <option value="">시/군/구 선택</option>
-            </select>
-          </div>
-        </div>
+				<div class="field">
+					<label for="reg-city">지역</label>
+					<div class="row">
+						<select class="input" name="city" id="reg-city" required>
+							<option value="">시/도 선택</option>
+						</select> <select class="input" name="district" id="reg-district" required disabled>
+							<option value="">시/군/구 선택</option>
+						</select>
+					</div>
+				</div>
 
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-        <input class="btn" type="submit" value="회원가입"/>
-      </form>
-    </div>
-  </div>
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> <input class="btn" type="submit" value="회원가입" />
+			</form>
+		</div>
+	</div>
 
-  <script>
+	<script>
     const districtMap = {
       "서울특별시":["강남구","강동구","강북구","강서구","관악구","광진구","구로구","금천구","노원구","도봉구","동대문구","동작구","마포구","서대문구","서초구","성동구","성북구","송파구","양천구","영등포구","용산구","은평구","종로구","중구","중랑구"],
       "부산광역시":["강서구","금정구","기장군","남구","동구","동래구","부산진구","북구","사상구","사하구","서구","수영구","연제구","영도구","중구","해운대구"],

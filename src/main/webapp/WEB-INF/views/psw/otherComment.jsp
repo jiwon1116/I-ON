@@ -79,14 +79,12 @@
             </li>
         </ul>
         <div class="tab-content" id="commentTabContent">
-            <!-- 자유 게시판 -->
             <div class="tab-pane fade show active" id="free" role="tabpanel">
                 <div class="scroll-area">
                     <c:forEach var="comment" items="${freeComments}">
                         <div class="card">
                             <div class="card-body">
                                 <div class="card-title">
-                                    <!-- 댓글이 달린 게시글로 이동 -->
                                     <a href="${pageContext.request.contextPath}/free/${comment.post_id}" style="color:inherit; text-decoration:none;">
                                         [게시글로 이동]
                                     </a>
@@ -105,7 +103,6 @@
                     </c:if>
                 </div>
             </div>
-            <!-- 실종 게시판 -->
             <div class="tab-pane fade" id="miss" role="tabpanel">
                 <div class="scroll-area">
                     <c:forEach var="comment" items="${missComments}">
@@ -130,7 +127,6 @@
                     </c:if>
                 </div>
             </div>
-            <!-- 위탁 게시판 -->
             <div class="tab-pane fade" id="entrust" role="tabpanel">
                 <div class="scroll-area">
                     <c:forEach var="comment" items="${entrustComments}">
@@ -155,7 +151,6 @@
                     </c:if>
                 </div>
             </div>
-            <!-- 신고 게시판 -->
             <div class="tab-pane fade" id="flag" role="tabpanel">
                 <div class="scroll-area">
                     <c:forEach var="comment" items="${flagComments}">
@@ -186,7 +181,6 @@
         </div>
     </div>
 </div>
-<!-- 부트스트랩 JS CDN -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

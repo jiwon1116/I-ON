@@ -27,7 +27,6 @@ public class MyPostController {
     private final MissCommentService missCommentService;
     private final EntrustCommentService entrustCommentService;
 
-    // 모든 서비스 의존성 한 번에 생성자 주입
     public MyPostController(
             FreeService freeService,
             FlagService flagService,

@@ -11,13 +11,12 @@ import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController // @Controller + @ResponseBody
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/flagLike")
 public class FlagLikeController {
     private final FlagLikeService flagLikeService;
 
-    // 좋아요 토글
     @PostMapping("/like/{postId}")
     @ResponseBody
     public Map<String, Object> likeAjax(@PathVariable("postId") Long postId) {
@@ -36,7 +35,6 @@ public class FlagLikeController {
         } else if (principal instanceof org.springframework.security.core.userdetails.User) {
             memberId = ((org.springframework.security.core.userdetails.User) principal).getUsername();
         } else if (principal instanceof String) {
-            // 로그인 안 한 상태는 대부분 "anonymousUser" 문자열임
             if ("anonymousUser".equals(principal)) {
                 memberId = null;
             } else {

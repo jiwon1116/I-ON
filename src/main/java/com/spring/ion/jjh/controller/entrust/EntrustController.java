@@ -60,7 +60,7 @@ public class EntrustController {
 
         model.addAttribute("entrustboardList", pagingList);
         model.addAttribute("paging", pageDTO);
-        model.addAttribute("searchContent", searchContent); // 검색 유지용
+        model.addAttribute("searchContent", searchContent);
 
         return "jjh/entrust/entrust";
     }
@@ -93,7 +93,7 @@ public class EntrustController {
         }
     }
 
-    @GetMapping("/{id}") // detail 페이지
+    @GetMapping("/{id}")
     public String detail(@PathVariable("id") Long id, EntrustDTO entrustDTO, Model model, HttpSession session) {
         Set<Long> viewCount = (Set<Long>) session.getAttribute("viewCount");
         if (viewCount == null) {
@@ -113,14 +113,12 @@ public class EntrustController {
         String loginUserId = user.getUsername();
         model.addAttribute("loginUserId", loginUserId);
 
-        // --- 관리자 권한 체크 추가! ---
         boolean isAdmin = false;
         List<String> authorities = user.getMemberDTO().getAuthorities();
         if (authorities != null && authorities.contains("ROLE_ADMIN")) {
             isAdmin = true;
         }
         model.addAttribute("isAdmin", isAdmin);
-        // 여기까지
 
         int likeCount = entrustLikeService.getLikeCount(id);
         entrust.setLike_count(likeCount);
@@ -162,18 +160,15 @@ public class EntrustController {
         long clickId = entrustDTO.getId();
         EntrustDTO entrust = entrustService.findById(clickId);
 
-        // 로그인 유저
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String loginUserId = user.getUsername();
 
-        // 관리자 체크
         boolean isAdmin = false;
         List<String> authorities = user.getMemberDTO().getAuthorities();
         if (authorities != null && authorities.contains("ROLE_ADMIN")) {
             isAdmin = true;
         }
 
-        // 권한 체크: 작성자이거나 관리자일 때만 삭제!
         if (entrust != null && (loginUserId.equals(entrust.getUserId()) || isAdmin)) {
             entrustService.delete(clickId);
             notifyService.deleteByPostId(clickId);

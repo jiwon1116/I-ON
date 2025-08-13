@@ -18,11 +18,9 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FlagService {
-    private final FlagRepository flagRepository;
-
-    // 페이징 상수 추가
     private static final int PAGE_LIMIT = 5;
     private static final int BLOCK_LIMIT = 5;
+    private final FlagRepository flagRepository;
 
     public int write(FlagPostDTO flagPostDTO, List<MultipartFile> fileList) throws IOException {
         flagRepository.write(flagPostDTO);
@@ -50,8 +48,13 @@ public class FlagService {
         return (int) postId;
     }
 
-    public List<FlagPostDTO> findAll() { return flagRepository.findAll(); }
-    public FlagPostDTO findById(long id) { return flagRepository.findById(id); }
+    public List<FlagPostDTO> findAll() {
+        return flagRepository.findAll();
+    }
+
+    public FlagPostDTO findById(long id) {
+        return flagRepository.findById(id);
+    }
 
     public boolean update(FlagPostDTO flagPostDTO, List<Long> deleteFileIds, MultipartFile newFile) throws IOException {
         FlagPostDTO origin = flagRepository.findById(flagPostDTO.getId());
@@ -107,8 +110,13 @@ public class FlagService {
         return dto;
     }
 
-    public List<FlagPostDTO> search(String keyword) { return flagRepository.search(keyword); }
-    public void increaseViewCount(int id) { flagRepository.increaseViewCount(id); }
+    public List<FlagPostDTO> search(String keyword) {
+        return flagRepository.search(keyword);
+    }
+
+    public void increaseViewCount(int id) {
+        flagRepository.increaseViewCount(id);
+    }
 
     public boolean like(Long postId, Long memberId) {
         if (flagRepository.hasLiked(postId, memberId)) return false;
@@ -117,20 +125,34 @@ public class FlagService {
         return true;
     }
 
-    public List<FlagFileDTO> findFilesByBoardId(int id) { return flagRepository.findFilesByBoardId(id); }
+    public List<FlagFileDTO> findFilesByBoardId(int id) {
+        return flagRepository.findFilesByBoardId(id);
+    }
 
-    public List<FlagPostDTO> findMyPosts(String userId) { return flagRepository.findAllByWriter(userId); }
-    public List<FlagPostDTO> findAllApproved() { return flagRepository.findAllApproved(); }
+    public List<FlagPostDTO> findMyPosts(String userId) {
+        return flagRepository.findAllByWriter(userId);
+    }
+
+    public List<FlagPostDTO> findAllApproved() {
+        return flagRepository.findAllApproved();
+    }
 
     public List<FlagPostDTO> findAllForUser(String userId, boolean isAdmin) {
         return isAdmin ? flagRepository.findAll() : flagRepository.findAllForUser(userId);
     }
 
-    public List<FlagPostDTO> findAllPending() { return flagRepository.findAllPending(); }
-    public void approvePost(long id) { flagRepository.updateStatus(id, "APPROVED"); }
-    public void rejectPost(long id) { flagRepository.updateStatus(id, "REJECTED"); }
+    public List<FlagPostDTO> findAllPending() {
+        return flagRepository.findAllPending();
+    }
 
-    // 공개글 + 내가 쓴 글만 검색
+    public void approvePost(long id) {
+        flagRepository.updateStatus(id, "APPROVED");
+    }
+
+    public void rejectPost(long id) {
+        flagRepository.updateStatus(id, "REJECTED");
+    }
+
     public List<FlagPostDTO> searchPublicOrMine(String keyword, String loginUserId) {
         Map<String, Object> params = new HashMap<>();
         params.put("keyword", keyword == null ? "" : keyword.trim());
@@ -138,9 +160,8 @@ public class FlagService {
         return flagRepository.searchPublicOrMine(params);
     }
 
-    // 공개글 + 내가 쓴 글만 페이징
     public List<FlagPostDTO> pagingListPublicOrMine(int page, String loginUserId) {
-        int start = (page - 1) * PAGE_LIMIT;         // ← 변수명/상수 해결
+        int start = (page - 1) * PAGE_LIMIT;
         Map<String, Object> params = new HashMap<>();
         params.put("start", start);
         params.put("limit", PAGE_LIMIT);
@@ -148,7 +169,6 @@ public class FlagService {
         return flagRepository.pagingListPublicOrMine(params);
     }
 
-    //  공개+내글 기준의 페이징 계산 편의 메서드
     public FlagPageDTO pagingParamPublicOrMine(int page, String loginUserId) {
         int total = flagRepository.flagCountPublicOrMine(loginUserId);
         int maxPage = (int) Math.ceil((double) total / PAGE_LIMIT);

@@ -63,13 +63,11 @@
     </update>
 
 
-     <!-- 검색 결과 개수 -->
     <select id="searchCount" resultType="int">
         SELECT COUNT(*) FROM info_content
         WHERE title LIKE CONCAT('%', #{keyword}, '%')
     </select>
 
-    <!-- 검색된 결과 페이징 -->
     <select id="searchPagingList" resultType="infoContent">
         SELECT * FROM info_content
         WHERE title LIKE CONCAT('%', #{keyword}, '%')
@@ -78,7 +76,6 @@
         LIMIT #{start}, #{limit}
     </select>
 
-    <!-- 게시글에 첨부된 전체 이미지 파일 조회 -->
     <select id="findFiles" resultType="infoFile">
         SELECT *
         FROM info_file

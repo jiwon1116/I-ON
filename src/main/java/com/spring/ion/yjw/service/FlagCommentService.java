@@ -1,9 +1,7 @@
 package com.spring.ion.yjw.service;
 
-import com.spring.ion.jjh.dto.free.FreeCommentDTO;
 import com.spring.ion.yjw.dto.FlagCommentDTO;
 import com.spring.ion.yjw.repository.FlagCommentRepository;
-import com.spring.ion.yjw.repository.FlagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +21,6 @@ public class FlagCommentService {
         flagCommentRepository.write(flagCommentDTO);
     }
 
-    // 댓글 삭제
     public int delete(long id) {
         return flagCommentRepository.delete(id);
     }

@@ -9,28 +9,23 @@
   <title>위탁 게시판</title>
   <c:set var="CTX" value="${pageContext.request.contextPath}" />
 
-  <!-- 페이지 전용 CSS (info-* 디자인) -->
   <link rel="stylesheet" href="${CTX}/resources/css/common.css"/>
   <link rel="stylesheet" href="${CTX}/resources/css/detail.css"/>
 
-  <!-- 라이브러리 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- 배지 스크립트(헤더에서 이미 넣었으면 생략 가능) -->
   <script src="${CTX}/resources/js/badge.js"></script>
 </head>
 <body>
 
-<!-- 헤더는 jsp:include 권장 (contentType 충돌 예방) -->
 <jsp:include page="/WEB-INF/views/header.jsp" />
 
 <div class="info-page-wrap">
   <div class="info-card">
 
-    <!-- 헤더: 제목 + 우측 액션 -->
     <div class="info-head">
       <h1 class="info-title"><c:out value="${entrust.title}" /></h1>
 
@@ -46,7 +41,6 @@
       </div>
     </div>
 
-    <!-- 메타 -->
         <div class="info-meta">
           <c:if test="${not empty entrust.nickname}">
             <div class="info-author">
@@ -71,7 +65,6 @@
           </div>
         </div>
 
-    <!-- 첨부 이미지 그리드 -->
     <c:if test="${not empty fileList}">
       <div class="info-image-grid">
         <c:forEach items="${fileList}" var="file">
@@ -81,7 +74,6 @@
         </c:forEach>
       </div>
 
-      <!-- 이미지 외 파일 링크 -->
       <ul style="list-style:none; padding:0; margin-top:8px;">
         <c:forEach items="${fileList}" var="file">
           <c:if test="${!(file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png') || file.originalFileName.endsWith('.jpeg') || file.originalFileName.endsWith('.gif'))}">
@@ -95,12 +87,10 @@
       </ul>
     </c:if>
 
-    <!-- 본문 -->
     <div class="info-content">
       <textarea readonly>${entrust.content}</textarea>
     </div>
 
-    <!-- 좋아요/카운트 -->
     <div class="info-stats">
       <button type="button" class="info-like-btn ${entrust != null && entrust.liked ? 'liked' : ''}" id="likeBtn">
         <span class="heart">${entrust != null && entrust.liked ? '❤️' : '🤍'}</span>
@@ -110,14 +100,12 @@
       <span>댓글: ${commentList != null ? commentList.size() : 0}</span>
     </div>
 
-    <!-- 댓글 입력 -->
     <div class="info-comment-editor">
       <input type="hidden" id="nickname" value="${member.nickname}" />
       <textarea id="content" placeholder="댓글을 작성해주세요"></textarea>
       <button type="button" onclick="commentWrite()">작성</button>
     </div>
 
-    <!-- 댓글 목록 -->
     <section class="info-comment-wrap">
       <div class="info-comment-list" id="commentList">
         <c:forEach items="${commentList}" var="comment">
@@ -152,7 +140,6 @@
       </div>
     </section>
 
-    <!-- 하단 버튼 -->
     <div class="info-bottom-actions">
       <button type="button" class="info-btn-secondary" onclick="location.href='${CTX}/entrust'">목록</button>
     </div>
@@ -160,7 +147,6 @@
   </div>
 </div>
 
-<!-- 신고 모달 -->
 <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <form id="reportForm">
@@ -193,7 +179,6 @@
 </div>
 
 <script>
-  // 수정/삭제
   const updateFn = () => { location.href = "${CTX}/entrust/update/${entrust.id}"; }
   const deleteFn = () => {
     if (confirm("정말 삭제하시겠습니까?")) {
@@ -206,7 +191,6 @@
     }
   }
 
-  // 댓글 등록
   const commentWrite = () => {
     const nickname = document.getElementById("nickname").value;
     const content  = document.getElementById("content").value.trim();
@@ -223,7 +207,6 @@
     });
   }
 
-  // 좋아요
   $('#likeBtn').on('click', function(){
     const entrustId = '${entrust.id}';
     $.ajax({
@@ -244,12 +227,10 @@
     });
   });
 
-  // 신고 모달
   $('#reportBtn').on('click', function(){
     new bootstrap.Modal(document.getElementById('reportModal')).show();
   });
 
-  // 신고 제출
   $('#reportForm').on('submit', function(e){
     e.preventDefault();
     const postId = $('input[name="postId"]').val();

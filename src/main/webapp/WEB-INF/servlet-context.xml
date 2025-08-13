@@ -4,39 +4,29 @@
              xmlns:context="http://www.springframework.org/schema/context"
              xmlns:mvc="http://www.springframework.org/schema/mvc"
              xmlns:beans="http://www.springframework.org/schema/beans"
-             xmlns:websocket="http://www.springframework.org/schema/websocket" xsi:schemaLocation="
-                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-                http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <!-- @Controller 어노테이션 활성화 + MessageConverter 등 자동 설정 -->
     <mvc:annotation-driven/>
 
-    <!-- 정적 자원(css/js/img 등)을 /resources/** 경로로 매핑 -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
-    <!-- @Component, @Service, @Repository, @Controller 스캔 -->
     <context:component-scan base-package="com.spring.ion"/>
 
-    <!-- servlet-context.xml 안에 추가 -->
-    <mvc:annotation-driven />
-    <mvc:default-servlet-handler />
+    <mvc:annotation-driven/>
+    <mvc:default-servlet-handler/>
 
     <beans:bean id="multipartResolver"
                 class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <!-- maxUploadSize 등 설정 가능 -->
         <beans:property name="defaultEncoding" value="UTF-8"/>
-        <beans:property name="maxUploadSize" value="52428800" /> <!-- 50MB -->
+        <beans:property name="maxUploadSize" value="52428800"/>
     </beans:bean>
 
 
-    <!-- 뷰 리졸버 설정: /WEB-INF/views/ 폴더에서 .jsp 파일을 찾아 렌더링 -->
     <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <beans:property name="prefix" value="/WEB-INF/views/"/>
         <beans:property name="suffix" value=".jsp"/>
     </beans:bean>
-
-
 
 </beans:beans>

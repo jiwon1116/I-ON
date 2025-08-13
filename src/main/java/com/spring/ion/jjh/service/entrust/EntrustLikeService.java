@@ -11,17 +11,16 @@ public class EntrustLikeService {
     private final EntrustLikeRepository entrustLikeRepository;
     private final EntrustRepository entrustRepository;
 
-    // 좋아요 토글
     public boolean toggleLike(Long postId, String memberId) {
         boolean exists = entrustLikeRepository.exists(postId, memberId);
         if (exists) {
-            entrustLikeRepository.delete(postId, memberId); // 이미 눌렀으면 취소
-            entrustRepository.decreaseLikeCount(postId); // 좋아요 수 감소
-            return false; // 이제 안 누른 상태
+            entrustLikeRepository.delete(postId, memberId);
+            entrustRepository.decreaseLikeCount(postId);
+            return false;
         } else {
-            entrustLikeRepository.insert(postId, memberId); // 안 눌렀으면 등록
-            entrustRepository.increaseLikeCount(postId); // 좋아요 수 증가
-            return true; // 이제 누른 상태
+            entrustLikeRepository.insert(postId, memberId);
+            entrustRepository.increaseLikeCount(postId);
+            return true;
         }
     }
 

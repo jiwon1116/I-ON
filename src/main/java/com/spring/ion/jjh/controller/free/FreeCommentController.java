@@ -35,14 +35,10 @@ public class FreeCommentController {
         model.addAttribute("member", memberDTO);
         freeCommentService.save(commentDTO);
 
-        //게시글 정보 조회
         FreeDTO post = freeService.findById(commentDTO.getPost_id());
 
-        // 알림 생성 (서비스에서 nickname null 여부 처리)
         notifyService.createCommentNotify(post.getNickname(),commentDTO.getNickname(),post.getId(),commentDTO.getId(),"free");
 
-        // 해당 게시글에 작성된 댓글 리스트 반환
-        // 원래 있던 댓글 리스트 반환
         List<FreeCommentDTO> commentDTOList = freeCommentService.findAll(commentDTO.getPost_id());
         return commentDTOList;
     }
@@ -50,20 +46,17 @@ public class FreeCommentController {
     @GetMapping("/delete")
     public String delete(@RequestParam("id") long id) {
         FreeCommentDTO comment = freeCommentService.findById(id);
-        long postId = comment.getPost_id(); // 게시글 ID 추출
+        long postId = comment.getPost_id();
 
-        // 로그인 유저 정보
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String loginUserId = user.getUsername();
 
-        // 관리자 체크
         boolean isAdmin = false;
         List<String> authorities = user.getMemberDTO().getAuthorities();
         if (authorities != null && authorities.contains("ROLE_ADMIN")) {
             isAdmin = true;
         }
 
-        // 댓글 작성자거나, 관리자면 삭제 가능
         if (comment != null && (loginUserId.equals(comment.getUserId()) || isAdmin)) {
             freeCommentService.delete(id);
         }

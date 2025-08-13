@@ -17,7 +17,6 @@
 
     body{ margin:0; font-family: 'Noto Sans KR',system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#fdfdfd; }
 
-    /* 페이지 래퍼 */
     .info-page-wrap{
       max-width: 1040px;
       margin: 0 auto;
@@ -25,7 +24,6 @@
       background: transparent;
     }
 
-    /* 카드 */
     .info-form-card{
       max-width: 860px;
       margin: 0 auto;
@@ -36,7 +34,6 @@
       padding: 28px;
     }
 
-    /* 폼 레이아웃 */
     .info-form-grid{ display:grid; gap:18px; }
     .info-group{ display:grid; gap:8px; }
 
@@ -63,7 +60,6 @@
     }
     .info-textarea{ min-height: 220px; resize: vertical; }
 
-    /* 파일 입력(기능 유지: id/name 변경 X, 클래스만 추가) */
     .info-input-file{
       width:100%;
       border:1px solid var(--info-border);
@@ -77,7 +73,6 @@
       box-shadow:0 0 0 3px rgba(255,199,39,.2);
       outline:none;
     }
-    /* 버튼 모양 커스텀 */
     .info-input-file::file-selector-button{
       margin-right: 12px;
       padding: 10px 16px;
@@ -90,7 +85,6 @@
     }
     .info-input-file::file-selector-button:hover{ filter:brightness(.95); }
 
-    /* 액션 버튼 */
     .info-actions{
       display:flex;
       justify-content:flex-end;
@@ -115,7 +109,6 @@
     }
     .info-btn-primary:hover{ filter:brightness(.95); }
 
-    /* 반응형 */
     @media (max-width: 1024px){
       .info-form-card{ padding:24px; }
     }

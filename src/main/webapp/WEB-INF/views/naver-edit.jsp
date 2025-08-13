@@ -1,131 +1,227 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>회원 정보 수정</title>
+<meta charset="UTF-8">
+<title>회원 정보 수정</title>
 
-    <!-- 디자인 전용 CSS: 기능 변경 없음 -->
-    <style>
-      :root{
-        --brand:#F2AC28;
-        --bg:#F7F7F7;
-        --text:#222;
-        --muted:#8A8A8A;
-        --card:#ffffff;
-        --line:#EAEAEA;
-        --radius:18px;
-        --shadow:0 12px 28px rgba(0,0,0,.08);
-      }
-      *{box-sizing:border-box}
-      body{
-        margin:0; background:var(--bg); color:var(--text);
-        font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Helvetica, Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-      }
-      .wrap{
-        min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-        padding:48px 18px;
-      }
-      .title{ text-align:center; margin-bottom:22px; }
-      .title h1{ font-size:28px; margin:0 0 10px; font-weight:800; }
-      .title p{ margin:0; color:var(--muted); font-size:15px; }
-      .card{
-        width:100%; max-width:720px;
-        background:var(--card); border-radius:var(--radius);
-        padding:36px; box-shadow:var(--shadow);
-      }
-      .field{ margin-bottom:30px; }
-      .field label{
-        display:block; font-size:16px; font-weight:700; margin-bottom:10px;
-      }
-      .input, select{
-        width:100%; height:56px;
-        border:1px solid var(--line); background:#fff;
-        border-radius:14px; padding:0 16px;
-        font-size:16px; outline:none;
-        transition:border .15s, box-shadow .15s;
-      }
-      .input::placeholder{ color:#bdbdbd; font-size:15px; }
-      .input:focus, select:focus{
-        border-color:var(--brand);
-        box-shadow:0 0 0 4px rgba(242,172,40,.16);
-      }
-      .row{ display:flex; gap:14px; }
-      .row > *{ flex:1; }
-      .message{ margin:8px 2px 0; font-size:14px; min-height:20px; }
-      .actions{ display:flex; gap:12px; align-items:center; }
-      .btn{
-        width:100%; height:56px;
-        border:none; border-radius:14px;
-        background:var(--brand); color:#111; font-size:17px; font-weight:800;
-        cursor:pointer; transition:transform .05s ease, filter .2s ease;
-        box-shadow:0 10px 18px rgba(242,172,40,.28);
-      }
-      .btn:active{ transform:translateY(1px) }
-      .btn:hover{ filter:brightness(0.98) }
-      .btn-secondary{
-        display:inline-flex; justify-content:center; align-items:center;
-        height:56px; padding:0 22px; border-radius:14px; text-decoration:none;
-        background:#fff; color:#333; border:1px solid var(--line); font-weight:800; font-size:16px;
-        transition:background .15s, box-shadow .15s; white-space: nowrap; min-width: 90px;
-      }
-      .btn-secondary:hover{ background:#fafafa; box-shadow:0 6px 12px rgba(0,0,0,.05); }
-      @media (max-width:480px){
-        .card{ padding:26px; max-width:100%; }
-        .input, select, .btn, .btn-secondary{ height:54px; font-size:16px; }
-        .title h1{ font-size:24px; }
-      }
-    </style>
+<style>
+:root {
+	--brand: #F2AC28;
+	--bg: #F7F7F7;
+	--text: #222;
+	--muted: #8A8A8A;
+	--card: #ffffff;
+	--line: #EAEAEA;
+	--radius: 18px;
+	--shadow: 0 12px 28px rgba(0, 0, 0, .08);
+}
+
+* {
+	box-sizing: border-box
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		"Noto Sans KR", Helvetica, Arial, "Apple SD Gothic Neo",
+		"Malgun Gothic", sans-serif;
+}
+
+.wrap {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 48px 18px;
+}
+
+.title {
+	text-align: center;
+	margin-bottom: 22px;
+}
+
+.title h1 {
+	font-size: 28px;
+	margin: 0 0 10px;
+	font-weight: 800;
+}
+
+.title p {
+	margin: 0;
+	color: var(--muted);
+	font-size: 15px;
+}
+
+.card {
+	width: 100%;
+	max-width: 720px;
+	background: var(--card);
+	border-radius: var(--radius);
+	padding: 36px;
+	box-shadow: var(--shadow);
+}
+
+.field {
+	margin-bottom: 30px;
+}
+
+.field label {
+	display: block;
+	font-size: 16px;
+	font-weight: 700;
+	margin-bottom: 10px;
+}
+
+.input, select {
+	width: 100%;
+	height: 56px;
+	border: 1px solid var(--line);
+	background: #fff;
+	border-radius: 14px;
+	padding: 0 16px;
+	font-size: 16px;
+	outline: none;
+	transition: border .15s, box-shadow .15s;
+}
+
+.input::placeholder {
+	color: #bdbdbd;
+	font-size: 15px;
+}
+
+.input:focus, select:focus {
+	border-color: var(--brand);
+	box-shadow: 0 0 0 4px rgba(242, 172, 40, .16);
+}
+
+.row {
+	display: flex;
+	gap: 14px;
+}
+
+.row>* {
+	flex: 1;
+}
+
+.message {
+	margin: 8px 2px 0;
+	font-size: 14px;
+	min-height: 20px;
+}
+
+.actions {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+}
+
+.btn {
+	width: 100%;
+	height: 56px;
+	border: none;
+	border-radius: 14px;
+	background: var(--brand);
+	color: #111;
+	font-size: 17px;
+	font-weight: 800;
+	cursor: pointer;
+	transition: transform .05s ease, filter .2s ease;
+	box-shadow: 0 10px 18px rgba(242, 172, 40, .28);
+}
+
+.btn:active {
+	transform: translateY(1px)
+}
+
+.btn:hover {
+	filter: brightness(0.98)
+}
+
+.btn-secondary {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	height: 56px;
+	padding: 0 22px;
+	border-radius: 14px;
+	text-decoration: none;
+	background: #fff;
+	color: #333;
+	border: 1px solid var(--line);
+	font-weight: 800;
+	font-size: 16px;
+	transition: background .15s, box-shadow .15s;
+	white-space: nowrap;
+	min-width: 90px;
+}
+
+.btn-secondary:hover {
+	background: #fafafa;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .05);
+}
+
+@media ( max-width :480px) {
+	.card {
+		padding: 26px;
+		max-width: 100%;
+	}
+	.input, select, .btn, .btn-secondary {
+		height: 54px;
+		font-size: 16px;
+	}
+	.title h1 {
+		font-size: 24px;
+	}
+}
+</style>
 </head>
 <body>
 
-    <!-- 기존 동작 유지: 서버 에러 alert -->
-    <c:if test="${not empty editError}">
-        <script>alert('${editError}');</script>
-    </c:if>
+	<c:if test="${not empty editError}">
+		<script>alert('${editError}');</script>
+	</c:if>
 
-    <div class="wrap">
-      <div class="title">
-        <h1>회원 정보 수정</h1>
-        <p>변경할 정보를 입력한 뒤 저장하세요</p>
-      </div>
+	<div class="wrap">
+		<div class="title">
+			<h1>회원 정보 수정</h1>
+			<p>변경할 정보를 입력한 뒤 저장하세요</p>
+		</div>
 
-      <div class="card">
-        <!-- ✅ 기능 그대로: action, method, id/name 전부 동일 -->
-        <form action="/naver-edit" method="post">
-            <div class="field">
-                <label for="edit-nickname">닉네임</label>
-                <input class="input" type="text" id="edit-nickname" name="nickname"
-                       value="${member.nickname}" placeholder="닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다." required/>
-                <p id="nickname-message" class="message"></p>
-            </div>
+		<div class="card">
+			<form action="/naver-edit" method="post">
+				<div class="field">
+					<label for="edit-nickname">닉네임</label> <input class="input" type="text" id="edit-nickname" name="nickname" value="${member.nickname}" placeholder="닉네임은 2~12 자리의 한글, 영어, 숫자만 가능합니다." required />
+					<p id="nickname-message" class="message"></p>
+				</div>
 
-            <div class="field">
-                <label for="reg-city">지역</label>
-                <div class="row">
-                  <select class="input" name="city" id="reg-city" required>
-                      <option value="">시/도 선택</option>
-                  </select>
-                  <select class="input" name="district" id="reg-district" required disabled>
-                      <option value="">시/군/구 선택</option>
-                  </select>
-                </div>
-            </div>
+				<div class="field">
+					<label for="reg-city">지역</label>
+					<div class="row">
+						<select class="input" name="city" id="reg-city" required>
+							<option value="">시/도 선택</option>
+						</select> <select class="input" name="district" id="reg-district" required disabled>
+							<option value="">시/군/구 선택</option>
+						</select>
+					</div>
+				</div>
 
-            <input type="hidden" name="_method" value="patch" />
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<input type="hidden" name="_method" value="patch" /> <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 
-            <div class="actions">
-              <button class="btn" type="submit">수정하기</button>
-              <a class="btn-secondary" href="/mypage/">취소</a>
-            </div>
-        </form>
-      </div>
-    </div>
+				<div class="actions">
+					<button class="btn" type="submit">수정하기</button>
+					<a class="btn-secondary" href="/mypage/">취소</a>
+				</div>
+			</form>
+		</div>
+	</div>
 
-    <script>
+	<script>
         const districtMap = {
             "서울특별시": ["강남구","강동구","강북구","강서구","관악구","광진구","구로구","금천구","노원구","도봉구","동대문구","동작구","마포구","서대문구","서초구","성동구","성북구","송파구","양천구","영등포구","용산구","은평구","종로구","중구","중랑구"],
             "부산광역시": ["강서구","금정구","기장군","남구","동구","동래구","부산진구","북구","사상구","사하구","서구","수영구","연제구","영도구","중구","해운대구"],

@@ -7,27 +7,22 @@
     <meta charset="UTF-8">
     <title>글쓰기 - 커뮤니티</title>
     <c:set var="CTX" value="${pageContext.request.contextPath}" />
-    <!-- 외부 CSS: info-* 스타일 -->
     <link rel="stylesheet" href="${CTX}/resources/css/write.css">
 </head>
 <body>
 
-  <!-- 헤더는 body 안에서 include (contentType 충돌 방지) -->
   <jsp:include page="/WEB-INF/views/header.jsp" />
 
-  <!-- 페이지 래퍼 -->
   <div class="info-page-wrap">
     <div class="info-form-card">
       <form action="${CTX}/flag/write" method="post" enctype="multipart/form-data" id="writeForm">
         <div class="info-form-grid">
 
-          <!-- 닉네임 -->
           <div class="info-group">
             <label for="nickname" class="info-label">닉네임</label>
             <input type="text" class="info-input" id="nickname" name="nickname" value="${nickname}" readonly>
           </div>
 
-          <!-- 시(도) -->
           <div class="info-group">
             <label for="city" class="info-label">시(도)</label>
             <select class="info-input" name="city" id="city" required>
@@ -52,7 +47,6 @@
             </select>
           </div>
 
-          <!-- 구(군) -->
           <div class="info-group">
             <label for="district" class="info-label">구(군)</label>
             <select class="info-input" name="district" id="district" required>
@@ -60,25 +54,21 @@
             </select>
           </div>
 
-          <!-- 제목 -->
           <div class="info-group">
             <label for="title" class="info-label">제목</label>
             <input type="text" class="info-input" id="title" name="title" required>
           </div>
 
-          <!-- 내용 -->
           <div class="info-group">
             <label for="content" class="info-label">내용</label>
             <textarea class="info-textarea" id="content" name="content" rows="6" required></textarea>
           </div>
 
-          <!-- 파일 첨부 -->
           <div class="info-group">
             <label for="boardFile" class="info-label">파일 첨부 (선택)</label>
             <input type="file" class="info-input-file" id="boardFile" name="boardFile">
           </div>
 
-          <!-- 액션 버튼 -->
           <div class="info-actions">
             <a href="${CTX}/flag" class="info-btn info-btn-secondary">← 목록</a>
             <button type="submit" class="info-btn info-btn-primary">접수하기</button>
@@ -90,7 +80,6 @@
   </div>
 
   <script>
-    // 시/도별 구/군 목록
     const districtMap = {
       "서울특별시": ["강남구","강동구","강북구","강서구","관악구","광진구","구로구","금천구","노원구","도봉구","동대문구","동작구","마포구","서대문구","서초구","성동구","성북구","송파구","양천구","영등포구","용산구","은평구","종로구","중구","중랑구"],
       "부산광역시": ["강서구","금정구","기장군","남구","동구","동래구","부산진구","북구","사상구","사하구","서구","수영구","연제구","영도구","중구","해운대구"],

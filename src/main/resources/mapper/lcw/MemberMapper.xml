@@ -145,14 +145,12 @@
     </select>
 
 
-    <!-- 재학 증명서 관련 yjw-->
     <update id="markVerified" parameterType="map">
         UPDATE member
         SET enrollment_verified = 1
         WHERE userId = #{userId}
     </update>
 
-    <!-- 닉네임 뱃지 yjw -->
     <select id="isAdminByNickname" parameterType="string" resultType="boolean">
         SELECT CASE WHEN EXISTS (
         SELECT 1
@@ -163,7 +161,6 @@
         ) THEN TRUE ELSE FALSE END
     </select>
 
-    <!-- 리스트 닉네임 trust_level -->
     <select id="findBadgeMetaByNicknames" parameterType="list" resultType="map">
         SELECT
         m.nickname                       AS nickname,
@@ -181,14 +178,12 @@
         </foreach>
     </select>
 
-    <!-- 단건 닉네임 → trust_level -->
     <select id="findLevelByNickname" parameterType="string" resultType="int">
         SELECT COALESCE(m.trust_level, 0)
         FROM member
         WHERE nickname = #{value}
     </select>
 
-    <!-- 리스트: 닉네임 → 레벨 맵 -->
     <select id="findLevelsByNicknames" parameterType="list" resultType="map">
         SELECT
         m.nickname                  AS 'KEY',

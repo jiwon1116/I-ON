@@ -1,4 +1,3 @@
-// src/main/java/com/spring/ion/yjw/controller/StudentCertAdminPageController.java
 package com.spring.ion.yjw.controller;
 
 import com.spring.ion.yjw.service.StudentCertService;

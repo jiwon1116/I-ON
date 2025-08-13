@@ -60,7 +60,7 @@ public class FreeController {
 
         model.addAttribute("freeboardList", pagingList);
         model.addAttribute("paging", pageDTO);
-        model.addAttribute("searchContent", searchContent); // 검색 유지용
+        model.addAttribute("searchContent", searchContent);
 
         return "jjh/free/free";
     }
@@ -93,7 +93,7 @@ public class FreeController {
         }
     }
 
-    @GetMapping("/{id}") // detail 페이지
+    @GetMapping("/{id}")
     public String detail(@PathVariable("id") Long id, FreeDTO freeDTO, Model model, HttpSession session) {
         Set<Long> viewCount = (Set<Long>) session.getAttribute("viewCount");
         if (viewCount == null) {
@@ -113,14 +113,12 @@ public class FreeController {
         String loginUserId = user.getUsername();
         model.addAttribute("loginUserId", loginUserId);
 
-        // --- 관리자 권한 체크 추가! ---
         boolean isAdmin = false;
         List<String> authorities = user.getMemberDTO().getAuthorities();
         if (authorities != null && authorities.contains("ROLE_ADMIN")) {
             isAdmin = true;
         }
         model.addAttribute("isAdmin", isAdmin);
-        // 여기까지
 
         int likeCount = freeLikeService.getLikeCount(id);
         free.setLike_count(likeCount);
@@ -162,11 +160,9 @@ public class FreeController {
         long clickId = freeDTO.getId();
         FreeDTO free = freeService.findById(clickId);
 
-        // 로그인 유저
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String loginUserId = user.getUsername();
 
-        // 관리자 체크
         boolean isAdmin = false;
         List<String> authorities = user.getMemberDTO().getAuthorities();
         if (authorities != null && authorities.contains("ROLE_ADMIN")) {

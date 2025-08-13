@@ -7,14 +7,12 @@
   --info-radius:12px;
 }
 
-/* 페이지 베이스 */
 body{
   margin:0;
   font-family:'Noto Sans KR',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   background:#fdfdfd;
 }
 
-/* 페이지 래퍼 */
 .info-page-wrap{
   max-width:1040px;
   margin:0 auto;
@@ -22,7 +20,6 @@ body{
   background:transparent;
 }
 
-/* 카드 */
 .info-form-card{
   max-width:860px;
   margin:0 auto;
@@ -33,7 +30,6 @@ body{
   padding:28px;
 }
 
-/* 폼 레이아웃 */
 .info-form-grid{ display:grid; gap:18px; }
 .info-group{ display:grid; gap:8px; }
 
@@ -60,7 +56,6 @@ body{
 }
 .info-textarea{ min-height:220px; resize:vertical; }
 
-/* 파일 입력 */
 .info-input-file{
   width:100%;
   border:1px solid var(--info-border);
@@ -86,7 +81,6 @@ body{
 }
 .info-input-file::file-selector-button:hover{ filter:brightness(.95); }
 
-/* 기존 첨부 리스트 */
 .info-file-list{ list-style:none; padding:0; margin:8px 0 0; }
 .info-file-list li{
   display:flex; align-items:center; gap:10px;
@@ -97,7 +91,6 @@ body{
   max-width:200px; border:1px solid var(--info-border); border-radius:8px;
 }
 
-/* 액션 버튼 */
 .info-actions{
   display:flex; justify-content:flex-end; gap:10px; margin-top:6px;
 }
@@ -112,7 +105,6 @@ body{
 .info-btn-primary{ background:var(--info-primary); color:#222; font-weight:700; }
 .info-btn-primary:hover{ filter:brightness(.95); }
 
-/* 반응형 */
 @media (max-width:1024px){ .info-form-card{ padding:24px; } }
 @media (max-width:768px){
   .info-page-wrap{ padding:28px 14px 56px; }

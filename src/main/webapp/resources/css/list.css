@@ -1,13 +1,12 @@
 :root{
-  --brand:#FFC112;      /* 포인트 */
-  --ink:#111827;        /* 본문 텍스트 */
-  --muted:#6b7280;      /* 보조 텍스트 */
-  --line:#e5e7eb;       /* 경계선 */
-  --card:#ffffff;       /* 카드 */
-  --bg:#fbfbfb;         /* 배경 */
+  --brand:#FFC112;
+  --ink:#111827;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --card:#ffffff;
+  --bg:#fbfbfb;
 }
 
-/* 레이아웃 */
 body{
   background:var(--bg);
   color:var(--ink);
@@ -20,7 +19,6 @@ body{
   padding: 0 16px;
 }
 
-/* 검색바 (좌측 둥근 입력 + 오른쪽 아이콘 버튼) */
 .search-bar{
   position: relative;
   width: 100%;
@@ -53,7 +51,6 @@ body{
 }
 .search-btn:hover{ color: var(--brand); }
 
-/* 글쓰기 버튼 포인트 */
 a.btn.btn-dark{
   background: var(--brand);
   border-color: var(--brand);
@@ -62,10 +59,8 @@ a.btn.btn-dark{
 }
 a.btn.btn-dark:hover{ filter: brightness(.98); }
 
-/* 카드 링크 전체 클릭 가능 */
 .card-link{ text-decoration: none; color: inherit; display:block; }
 
-/* 리스트 카드 (네이버 카페 느낌 – 라인형 + 은은한 그림자) */
 .card{
   background: var(--card);
   border: 1px solid var(--line);
@@ -81,7 +76,6 @@ a.btn.btn-dark:hover{ filter: brightness(.98); }
   transform: translateY(-1px);
 }
 
-/* 제목(카페식 한 줄 타이틀) */
 .card .quote{
   margin: 0 0 6px 0;
   font-size: 16px;
@@ -90,7 +84,6 @@ a.btn.btn-dark:hover{ filter: brightness(.98); }
   letter-spacing: -.2px;
 }
 
-/* 내용 요약: 제목 다음 노드(서버에서 plain text 바로 출력됨) 2줄 말줄임 */
 .card .quote + *{
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -101,12 +94,10 @@ a.btn.btn-dark:hover{ filter: brightness(.98); }
   line-height: 1.5;
 }
 
-/* 하단 메타 영역 */
 .card .d-flex.align-items-center.mt-2{
   margin-top: 10px !important;
 }
 
-/* 아바타 작고 동그랗게 */
 .card img{
   width: 28px;
   height: 28px;
@@ -115,7 +106,6 @@ a.btn.btn-dark:hover{ filter: brightness(.98); }
   border: 1px solid var(--line);
 }
 
-/* 닉네임 라인 */
 .card .fw-semibold a{
   color: #1f2937;
   text-decoration: none;
@@ -124,7 +114,6 @@ a.btn.btn-dark:hover{ filter: brightness(.98); }
   text-decoration: underline;
 }
 
-/* 상태 배지 – 기본 배지 다듬기(서버에서 클래스 주는 건 그대로) */
 .card .badge{
   border-radius: 8px;
   padding: 3px 8px;
@@ -135,13 +124,11 @@ a.btn.btn-dark:hover{ filter: brightness(.98); }
   color:#1f2937 !important;
 }
 
-/* 조회/좋아요 라인 */
 .card .text-muted{
   color: var(--muted) !important;
   font-size: 12.5px !important;
 }
 
-/* 우측 화살표 */
 .card > .d-flex > span.text-muted{
   !important;
   transition: color .15s, transform .15s;
@@ -151,7 +138,6 @@ a.btn.btn-dark:hover{ filter: brightness(.98); }
   transform: translateX(2px);
 }
 
-/* 페이지네이션 – 사용자가 준 스타일 유지(여기선 살짝 미세 보정만) */
  .pagination {
             display: flex;
             justify-content: center;
@@ -190,7 +176,6 @@ a.btn.btn-dark:hover{ filter: brightness(.98); }
             padding: 6px 12px;
             color: #999;
         }
-/* 반응형 */
 @media (max-width: 540px){
   .main-content{ margin: 20px auto 60px; }
   .card{ padding: 14px; }

@@ -50,17 +50,14 @@
         DELETE FROM miss_file WHERE board_id = #{id}
     </delete>
 
-    <!-- 좋아요 수 증가 -->
     <update id="increaseLikeCount" parameterType="long">
         UPDATE miss_post SET like_count = like_count + 1 WHERE id = #{postId}
     </update>
 
-    <!-- 좋아요 수 감소 -->
     <update id="decreaseLikeCount" parameterType="long">
         UPDATE miss_post SET like_count = like_count - 1 WHERE id = #{postId} AND like_count > 0
     </update>
 
-    <!-- 검색 + 페이징된 게시글 리스트 -->
     <select id="searchPagingList" parameterType="map" resultType="miss">
         SELECT *
         FROM miss_post
@@ -70,7 +67,6 @@
         LIMIT #{start}, #{limit}
     </select>
 
-    <!-- 검색된 게시글 수 -->
     <select id="searchCount" parameterType="string" resultType="int">
         SELECT COUNT(*)
         FROM miss_post

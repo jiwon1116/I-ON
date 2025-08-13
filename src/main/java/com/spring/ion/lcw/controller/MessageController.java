@@ -3,27 +3,26 @@ package com.spring.ion.lcw.controller;
 import com.spring.ion.lcw.dto.ChatRoomDTO;
 import com.spring.ion.lcw.dto.MessageDTO;
 import com.spring.ion.lcw.service.ChatRoomService;
-import com.spring.ion.lcw.service.MessageService;
 import com.spring.ion.lcw.service.MemberService;
+import com.spring.ion.lcw.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.security.Principal;
-import java.time.format.DateTimeFormatter; // ❗ 추가
-import java.time.LocalDateTime; // ❗ 추가
 
 @RequiredArgsConstructor
 @Controller
 public class MessageController {
+    public static Map<Long, Long> activeUsers = new ConcurrentHashMap<>();
     private final SimpMessagingTemplate messagingTemplate;
     private final MessageService messageService;
     private final ChatRoomService chatRoomService;
     private final MemberService memberService;
-
-    public static Map<Long, Long> activeUsers = new ConcurrentHashMap<>();
 
     @MessageMapping("/chat/send")
     public void sendMessage(MessageDTO message) {

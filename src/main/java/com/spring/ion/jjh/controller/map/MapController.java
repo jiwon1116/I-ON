@@ -33,13 +33,11 @@ public class MapController {
     private final List<OffenderDTO> offenderList;
 
     public MapController() throws IOException {
-        // emergencybell.json 로딩
         ClassPathResource emergencyResource = new ClassPathResource("data/emergencybell.json");
         byte[] emergencyData = StreamUtils.copyToByteArray(emergencyResource.getInputStream());
         ObjectMapper mapper = new ObjectMapper();
         cachedList = Arrays.asList(mapper.readValue(emergencyData, EmergencyBellDTO[].class));
 
-        // offender.json 로딩
         ClassPathResource offenderResource = new ClassPathResource("data/offender.json");
         byte[] offenderData = StreamUtils.copyToByteArray(offenderResource.getInputStream());
         offenderList = Arrays.asList(mapper.readValue(offenderData, OffenderDTO[].class));

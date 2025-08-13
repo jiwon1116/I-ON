@@ -9,28 +9,23 @@
   <title>실종 게시판</title>
   <c:set var="CTX" value="${pageContext.request.contextPath}"/>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="${CTX}/resources/css/common.css"/>
   <link rel="stylesheet" href="${CTX}/resources/css/detail.css"/>
 
-  <!-- libs -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 
-  <!-- scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="${CTX}/resources/js/badge.js"></script>
 </head>
 <body>
 
-<!-- 헤더는 jsp:include로 -->
 <jsp:include page="/WEB-INF/views/header.jsp" />
 
 <div class="info-page-wrap">
   <div class="info-card">
 
-    <!-- 상단: 제목 + 액션 -->
     <div class="info-head">
       <h1 class="info-title"><c:out value="${miss.title}" /></h1>
 
@@ -46,34 +41,31 @@
       </div>
     </div>
 
-    <!-- 메타 -->
-            <div class="info-meta">
-              <c:if test="${not empty miss.nickname}">
-                <div class="info-author">
-                  <span class="js-user" data-nickname="${miss.nickname}">
-                    <a href="${CTX}/othermemberprofile/checkprofile?nickname=${miss.nickname}">
-                      <c:out value="${miss.nickname}" />
-                    </a>
-                  </span>
-                </div>
-              </c:if>
+    <div class="info-meta">
+      <c:if test="${not empty miss.nickname}">
+        <div class="info-author">
+          <span class="js-user" data-nickname="${miss.nickname}">
+            <a href="${CTX}/othermemberprofile/checkprofile?nickname=${miss.nickname}">
+              <c:out value="${miss.nickname}" />
+            </a>
+          </span>
+        </div>
+      </c:if>
 
-              <div>
-                <i class="bi bi-clock me-1"></i>
-                <c:if test="${miss.created_at != null}">
-                  <fmt:formatDate value="${miss.created_at}" pattern="yyyy.MM.dd HH:mm"/>
-                </c:if>
-              </div>
+      <div>
+        <i class="bi bi-clock me-1"></i>
+        <c:if test="${miss.created_at != null}">
+          <fmt:formatDate value="${miss.created_at}" pattern="yyyy.MM.dd HH:mm"/>
+        </c:if>
+      </div>
 
-              <div>
-                <i class="bi bi-eye me-1"></i>
-                <span id="viewCount">${miss.view_count}</span>
-              </div>
-            </div>
+      <div>
+        <i class="bi bi-eye me-1"></i>
+        <span id="viewCount">${miss.view_count}</span>
+      </div>
+    </div>
 
-    <!-- 첨부 이미지/파일 -->
     <c:if test="${not empty fileList}">
-      <!-- 이미지 그리드 -->
       <div class="info-image-grid">
         <c:forEach items="${fileList}" var="file">
           <c:choose>
@@ -86,7 +78,6 @@
         </c:forEach>
       </div>
 
-      <!-- 이미지 외 파일 링크 -->
       <ul class="mt-2" style="list-style:none; padding:0;">
         <c:forEach items="${fileList}" var="file">
           <c:if test="${!(file.originalFileName.endsWith('.jpg') || file.originalFileName.endsWith('.png') || file.originalFileName.endsWith('.jpeg') || file.originalFileName.endsWith('.gif'))}">
@@ -100,12 +91,10 @@
       </ul>
     </c:if>
 
-    <!-- 본문 -->
     <div class="info-content">
       <textarea readonly>${miss.content}</textarea>
     </div>
 
-    <!-- 좋아요/카운트 -->
     <div class="info-stats">
       <button type="button" class="info-like-btn ${miss != null && miss.liked ? 'liked' : ''}" id="likeBtn">
         <span class="heart">${miss != null && miss.liked ? '❤️' : '🤍'}</span>
@@ -115,14 +104,12 @@
       <span>댓글: ${commentList != null ? commentList.size() : 0}</span>
     </div>
 
-    <!-- 댓글 입력 -->
     <div class="info-comment-editor">
       <input type="hidden" id="nickname" value="${member.nickname}" />
       <textarea id="content" placeholder="댓글을 작성해주세요"></textarea>
       <button type="button" onclick="commentWrite()">작성</button>
     </div>
 
-    <!-- 댓글 목록 -->
     <section class="info-comment-wrap">
       <div class="info-comment-list" id="commentList">
         <c:forEach items="${commentList}" var="comment">
@@ -159,7 +146,6 @@
       </div>
     </section>
 
-    <!-- 하단 버튼 -->
     <div class="info-bottom-actions">
       <button type="button" class="info-btn-secondary" onclick="location.href='${CTX}/miss'">목록</button>
     </div>
@@ -167,7 +153,6 @@
   </div>
 </div>
 
-<!-- 신고 모달 -->
 <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <form id="reportForm">
@@ -200,7 +185,6 @@
 </div>
 
 <script>
-  // 이동/삭제
   const updateFn = () => { location.href = "${CTX}/miss/update/${miss.id}"; }
   const deleteFn = () => {
     if (confirm("정말 삭제하시겠습니까?")) {
@@ -213,7 +197,6 @@
     }
   }
 
-  // 댓글 등록
   const commentWrite = () => {
     const nickname = document.getElementById("nickname").value;
     const content  = document.getElementById("content").value.trim();
@@ -230,7 +213,6 @@
     });
   }
 
-  // 좋아요
   $('#likeBtn').on('click', function(){
     const missId = '${miss.id}';
     $.ajax({
@@ -248,12 +230,10 @@
     });
   });
 
-  // 신고 모달
   $('#reportBtn').on('click', function(){
     new bootstrap.Modal(document.getElementById('reportModal')).show();
   });
 
-  // 신고 제출
   $('#reportForm').on('submit', function(e){
     e.preventDefault();
     const postId = $('input[name="postId"]').val();

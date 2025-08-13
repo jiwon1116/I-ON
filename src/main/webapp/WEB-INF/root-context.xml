@@ -2,51 +2,28 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
-		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-		http://mybatis.org/schema/mybatis-spring https://mybatis.org/schema/mybatis-spring.xsd">
 
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
-
-    <!-- 데이터베이스 이름 및 계정 설정 -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <!-- mySQL 드라이버 클래스명 -->
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
-        <!-- 접속할 DB url (포트, DB명, 지역과 시간대)-->
         <property name="url" value="jdbc:mysql://localhost:3306/ion_db?useSSL=false&amp;serverTimezone=Asia/Seoul"/>
-        <!-- DB 접속 계정 정보 -->
         <property name="username" value="root"/>
         <property name="password" value="0000"/>
     </bean>
 
-    <!-- jdbcTemplate -->
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <!-- MyBatis 설정 : sqlSessionFactory -->
-    <!-- 파일이 모두 생성되었는지 확인 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <!-- 위에서 작성한 dataSourcer 객체를 sqlSessionFactory에 주입-->
         <property name="dataSource" ref="dataSource"/>
-        <!-- mybatis 설정 파일 위치 -->
-        <property name="configLocation" value ="classpath:/mybatis-config.xml" />
-        <!-- Mapper xml 파일 경로 지정 -->
-        <property name="mapperLocations" value="classpath:/mapper/*.xml" />
+        <property name="configLocation" value="classpath:/mybatis-config.xml"/>
+        <property name="mapperLocations" value="classpath:/mapper/*.xml"/>
     </bean>
 
-    <!-- sqlSessionFactory에서 연결 객체 생성 -->
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
-        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory" />
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 </beans>

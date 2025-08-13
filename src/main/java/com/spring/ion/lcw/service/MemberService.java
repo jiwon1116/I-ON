@@ -78,9 +78,9 @@ public class MemberService {
         if (member == null) {
             throw new IllegalArgumentException("해당 회원을 찾을 수 없습니다.");
         }
-        member.setEnabled(false);  // enabled를 false로 설정하여 회원 정지
-        member.setBanUntil(banUntil);  // 정지 기간 설정
-        memberRepository.updateMemberBan(member);  // DB에 반영
+        member.setEnabled(false);
+        member.setBanUntil(banUntil);
+        memberRepository.updateMemberBan(member);
     }
 
     public int checkDuplicateUserId(String userId) {

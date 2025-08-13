@@ -1,4 +1,3 @@
-/* ===== Flag Detail (info-* 스코프) ===== */
 :root{
   --brand: rgb(255,199,39);
   --ink:#222;
@@ -18,7 +17,6 @@
   padding:28px 28px 18px;
 }
 
-/* 제목 + 우측 액션 */
 .info-head{
   display:flex; align-items:flex-start; justify-content:space-between;
   gap:16px; margin-bottom:12px;
@@ -36,7 +34,6 @@
 .info-actions .link:hover,
 .info-actions button:hover{ background:#f2f2f2; }
 
-/* 메타 */
 .info-meta{
   display:flex; align-items:center; flex-wrap:wrap; gap:12px 18px;
   color:#8a8a8a; font-size:14px; margin-bottom:16px;
@@ -45,12 +42,10 @@
 .info-meta a{ color:#444; text-decoration:none; }
 .info-meta a:hover{ color:var(--brand); text-decoration:underline; }
 
-/* 본문 이미지 */
 .info-image{ width:100%; border-radius:12px; overflow:hidden; margin:10px 0 16px; }
 .info-image img{
   display:block; width:50%; height:auto; object-fit:cover; margin:auto; border-radius:10px;
 }
-/* 여러 장일 경우 그리드 */
 .info-image-grid{
   display:grid; gap:12px;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -60,7 +55,6 @@
   width:100%; height:180px; object-fit:cover; border-radius:10px; border:1px solid var(--line);
 }
 
-/* 본문 */
 .info-content{
   background:#f8f8f9; border:1px solid var(--line); border-radius:12px;
   padding:18px 16px; color:#444; line-height:1.7;
@@ -71,7 +65,6 @@
   outline:none; white-space:pre-wrap;
 }
 
-/* 카운트/좋아요 */
 .info-stats{
   display:flex; align-items:center; gap:16px; color:#666;
   margin:16px 4px 6px; font-size:14px;
@@ -83,7 +76,6 @@
 .info-like-btn .heart{ font-size:18px; line-height:1; }
 .info-like-btn.liked .heart{ color:#f44336; }
 
-/* 댓글 */
 .info-comment-wrap{ margin-top:18px; }
 .info-comment-list{ display:flex; flex-direction:column; gap:10px; margin:8px 0 18px; }
 .info-comment-item{
@@ -106,7 +98,6 @@
 }
 .info-btn-del:hover{ background:#f2f2f2; color:red; }
 
-/* 댓글 입력 */
 .info-comment-editor{
   display:flex; gap:10px; align-items:flex-end;
   padding:12px; border:1px solid var(--line); border-radius:12px; background:#fffdf7;
@@ -121,25 +112,21 @@
 }
 .info-comment-editor button:hover{ filter:brightness(.97); }
 
-/* 하단 버튼 */
 .info-bottom-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:10px; }
 .info-btn-secondary{ background:#fff; border:1px solid #e2e5ea; border-radius:10px; padding:10px 16px; cursor:pointer; color:#333; }
 .info-btn-secondary:hover{ background:#f2f2f2; }
 .info-btn-primary{ background:var(--brand); color:#222; border:1px solid var(--brand); border-radius:10px; padding:10px 16px; cursor:pointer; font-weight:700; }
 .info-btn-primary:hover{ filter:brightness(.97); }
 
-/* 신고 버튼 배경 */
 .btn-brand{ background:var(--brand); border-color:var(--brand); }
 .btn-brand:hover{ filter:brightness(.97); }
 
-/* 스크롤바(전역) */
 ::-webkit-scrollbar{ width:6px; height:6px; }
 ::-webkit-scrollbar-track{ background:transparent; }
 ::-webkit-scrollbar-thumb{ background-color:rgba(0,0,0,.3); border-radius:3px; }
 ::-webkit-scrollbar-thumb:hover{ background-color:rgba(0,0,0,.5); }
 *{ scrollbar-width:thin; scrollbar-color:rgba(0,0,0,.3) transparent; }
 
-/* 반응형 */
 @media (max-width:768px){
   .info-title{ font-size:22px; }
   .info-head{ flex-direction:column; align-items:flex-start; gap:8px; }
@@ -151,12 +138,10 @@
 @media (max-width:480px){
   .info-card{ padding:22px 18px; }
 }
-/* 신고 모달을 화면에서 조금 아래에 띄우기 */
 #reportModal .modal-dialog{
-  margin: 18vh auto 1rem !important; /* 위 18vh 만큼 내려서 표시 */
+  margin: 18vh auto 1rem !important;
 }
 
-/* 화면 높이가 낮을 때는 덜 내려가게 */
 @media (max-height: 700px){
   #reportModal .modal-dialog{
     margin-top: 8vh !important;

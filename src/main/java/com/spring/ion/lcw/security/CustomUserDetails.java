@@ -40,7 +40,6 @@ public class CustomUserDetails implements UserDetails, Serializable {
         return memberDTO.getPassword();
     }
 
-    // getUsername이 이름이지만 userId(닉네임X) 반환 주의
     @Override
     public String getUsername() {
         return memberDTO.getUserId();

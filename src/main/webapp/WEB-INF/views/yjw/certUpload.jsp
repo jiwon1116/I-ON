@@ -20,7 +20,6 @@
     .title h1{margin:0 0 8px; font-weight:800; font-size:24px}
     .title p{margin:0; color:var(--muted); font-size:14px}
 
-    /* stepper */
     .stepper{display:flex; align-items:center; gap:18px; justify-content:center; margin:12px 0 28px}
     .s-dot{width:32px; height:32px; border-radius:16px; display:flex; align-items:center; justify-content:center;
       border:2px solid var(--line); color:#777; background:#fff; font-weight:700}
@@ -41,7 +40,6 @@
     .input::placeholder{color:#bdbdbd}
     .input:focus{border-color:var(--brand); box-shadow:0 0 0 4px rgba(242,172,40,.15)}
 
-    /* 파일 업로드 */
     .drop{border:1.5px dashed #d9d9d9; border-radius:12px; padding:14px;
       display:flex; align-items:center; justify-content:space-between; gap:12px; background:#fff; cursor:pointer;}
     .drop:hover{border-color:var(--brand)}
@@ -62,11 +60,9 @@
     }
 
 
-    /* 버튼 그룹 & 공통 */
     .btn-group{ display:flex; gap:12px; margin-top:16px; align-items:stretch; }
-    .btn-group .btn{ flex:1; width:auto; } /* 기존 width:100% 덮어쓰기 */
+    .btn-group .btn{ flex:1; width:auto; }
 
-    /* 목록으로 돌아가기: 아웃라인 */
     .btn.outline{
       background:#fff; color:#444;
       border:1px solid var(--line);
@@ -82,7 +78,6 @@
       outline:none;
       box-shadow:0 0 0 4px rgba(242,172,40,.18);
     }
-    /* 왼쪽 화살표 아이콘 */
     .btn.outline::before{
       content:"←";
       display:inline-block;
@@ -90,13 +85,11 @@
       line-height:1;
     }
 
-    /* (선택) 제출 버튼 강조 */
     .btn.submit{
       background:var(--brand);
       box-shadow:0 8px 16px rgba(242,172,40,.25);
     }
 
-    /* 모바일에선 세로로 쌓기 */
     @media (max-width:480px){
       .btn-group{ flex-direction:column; }
     }
@@ -120,11 +113,9 @@
 
   </div>
 
-  <!-- 서버 메시지 -->
   <c:if test="${not empty msg}">
     <div class="alert alert-success">${msg}</div>
   </c:if>
-  <!-- AJAX 메시지 -->
   <div id="ajaxMsg" class="alert d-none" role="alert"></div>
 
   <form id="certForm" class="card" method="post" action="<c:url value='/cert/upload'/>" enctype="multipart/form-data">
@@ -169,7 +160,6 @@
     </div>
 
     <div class="btn-group">
-      <!-- 절대 URL 원하시면 href="http://localhost:8080/cert/my" 로 바꾸셔도 됩니다 -->
       <a href="<c:url value='/cert/my'/>" class="btn outline" role="button">목록으로 돌아가기</a>
       <button type="submit" class="btn">제출하기</button>
     </div>
@@ -202,7 +192,6 @@
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
 
-    // 중복 제출 방지(선택)
     const submitBtn = form.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
 
@@ -215,10 +204,9 @@
       const data = await res.json().catch(()=>({}));
 
       if(res.ok && (data.ok || data.message)){
-        // 알림 후 내 목록으로 이동
         alert(data.message || '제출되었습니다.');
         window.location.href = '<c:url value="/cert/my"/>';
-        return; // 여기서 종료
+        return;
       }else{
         msgBox.className = 'alert alert-danger';
         msgBox.textContent = data.error || data.message || `업로드 실패 (HTTP ${res.status})`;

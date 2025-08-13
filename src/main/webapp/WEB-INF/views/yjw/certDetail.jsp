@@ -20,19 +20,16 @@
     .wrap{min-height:100vh; padding:44px 16px; display:flex; justify-content:flex-start}
     .container-n{width:100%; max-width:1100px; margin:0 auto}
 
-    /* 헤더 */
     .page-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px}
     .page-title{margin:0; font-weight:800; font-size:22px}
     .sub{color:var(--muted); font-size:14px; margin-top:6px}
 
-    /* 카드 */
     .card-n{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px}
     .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 22px}
     .row-lbl{color:#666; font-size:13px}
     .row-val{font-weight:600}
     @media (max-width: 800px){ .grid{grid-template-columns:1fr} }
 
-    /* 상태칩 */
     .chip{
       display:inline-flex; align-items:center; gap:6px;
       padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; border:1px solid;
@@ -41,12 +38,10 @@
     .chip.bad{color:var(--bad); border-color:#fecdd3; background:#fff1f2;}
     .chip.wait{color:var(--wait); border-color:#e5e7eb; background:#f9fafb;}
 
-    /* 미리보기 */
     .preview{background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px;
       display:flex; align-items:center; justify-content:center}
     .preview img{max-width:100%; max-height:70vh; border-radius:8px}
 
-    /* 액션바 */
     .actions{display:flex; gap:10px; flex-wrap:wrap}
     .btn-brand{
       display:inline-flex; align-items:center; justify-content:center;
@@ -59,7 +54,6 @@
     .reason{height:40px; border:1px solid var(--line); border-radius:10px; padding:0 12px; outline:none}
     .reason:focus{border-color:var(--brand); box-shadow:0 0 0 4px rgba(242,172,40,.15)}
 
-    /* 메시지 */
     .alert-n{border-radius:12px; padding:12px 14px; margin-top:14px}
     .alert-success-n{background:#ecfdf3; color:#166534; border:1px solid #bbf7d0}
     .alert-danger-n{background:#fff1f2; color:#991b1b; border:1px solid #fecdd3}
@@ -76,29 +70,24 @@
         <p class="sub">접수 내역을 확인하고 승인/반려를 진행하세요.</p>
       </div>
 
-      <!-- 우측 액션 -->
       <div class="actions">
-        <!-- 승인 -->
         <form id="approveForm" class="d-flex gap-2 align-items-center">
           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
           <input type="hidden" name="reviewer" value="${pageContext.request.userPrincipal.name}"/>
           <button type="submit" class="btn-brand">승인</button>
         </form>
-        <!-- 반려 -->
         <form id="rejectForm" class="d-flex gap-2 align-items-center">
           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
           <input type="hidden" name="reviewer" value="${pageContext.request.userPrincipal.name}"/>
           <input type="text" name="reason" class="reason" placeholder="반려 사유" required>
           <button type="submit" class="btn-danger-n btn-brand" style="height:40px;">반려</button>
         </form>
-        <!-- 목록 -->
         <a class="btn-brand btn-outline" href="<c:url value='/cert/admin/list'/>">← 목록</a>
       </div>
     </div>
 
     <c:set var="d" value="${detail}"/>
 
-    <!-- 상단 정보 카드 -->
     <div class="card-n mb-3">
       <div class="grid">
         <div>
@@ -152,7 +141,6 @@
       </div>
     </div>
 
-    <!-- 미리보기 -->
     <div class="card-n">
       <div class="row-lbl mb-2">증빙 이미지</div>
       <div class="preview">
@@ -161,7 +149,6 @@
           alt="재학증명서 미리보기">
       </div>
 
-      <!-- 결과 메시지 -->
       <div id="msg" class="alert-n d-none"></div>
     </div>
 
@@ -174,7 +161,6 @@
   const approveBtn = document.querySelector('#approveForm button');
   const rejectBtn  = document.querySelector('#rejectForm button');
 
-  // 페이지 들어왔을 때 상태가 PENDING 아니면 버튼 잠금
   (function initLock(){
     const status = '${d.status}';
     if (status !== 'PENDING') {
@@ -195,7 +181,6 @@
     return { ok: res.ok, data };
   }
 
-  // 승인
   document.getElementById('approveForm').addEventListener('submit', async (e)=>{
     e.preventDefault();
     lockActions(true);
@@ -214,7 +199,6 @@
     }
   });
 
-  // 반려
   document.getElementById('rejectForm').addEventListener('submit', async (e)=>{
     e.preventDefault();
     const reason = e.target.reason?.value?.trim();

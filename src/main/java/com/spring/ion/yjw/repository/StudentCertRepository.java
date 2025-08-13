@@ -20,7 +20,6 @@ public class StudentCertRepository {
     }
 
     public List<StudentCertDTO> findPending() {
-        // 기존 유지 (원하면 내부에서 findByStatus("PENDING") 호출하도록 바꿔도 OK)
         return sql.selectList("StudentCert.findPending");
     }
 

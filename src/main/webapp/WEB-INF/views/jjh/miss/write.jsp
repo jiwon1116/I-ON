@@ -6,12 +6,10 @@
   <meta charset="UTF-8">
   <title>실종 게시판 - 글쓰기</title>
   <c:set var="CTX" value="${pageContext.request.contextPath}" />
-  <!-- info-* 스타일 -->
   <link rel="stylesheet" href="${CTX}/resources/css/write.css">
 </head>
 <body>
 
-  <!-- 헤더는 body 안에서 include -->
   <jsp:include page="/WEB-INF/views/header.jsp" />
 
   <div class="info-page-wrap">

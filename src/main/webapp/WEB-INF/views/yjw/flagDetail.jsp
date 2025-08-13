@@ -10,10 +10,8 @@
   <title>게시글 상세보기</title>
   <c:set var="CTX" value="${pageContext.request.contextPath}" />
 
-  <!-- libs -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-  <!-- 페이지 전용 CSS (위 detail.css 내용으로 교체) -->
   <link href="${CTX}/resources/css/detail.css" rel="stylesheet" />
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -26,12 +24,10 @@
   align-items: center;
   min-height: calc(100% - var(--bs-modal-margin) * 2);
 }
-/* 내용 길 때 뷰포트 넘치지 않게 */
 #reportModal .modal-content{
   max-height: calc(100dvh - 2rem);
   overflow: auto;
 }
-/* 신고 모달을 화면에서 살짝 아래로 내림 (예: 40px) */
 #reportModal.show .modal-dialog {
   transform: translateY(200px);
 }
@@ -41,13 +37,11 @@
 </style>
 <body>
 
-<!-- 헤더는 jsp:include 로 (contentType 충돌 방지) -->
 <jsp:include page="/WEB-INF/views/header.jsp" />
 
 <div class="info-page-wrap">
   <div class="info-card">
 
-    <!-- 상단: 제목 + 액션 -->
     <div class="info-head">
       <h1 class="info-title"><c:out value="${flag.title}" /></h1>
 
@@ -64,7 +58,6 @@
       </div>
     </div>
 
-     <!-- 메타 -->
                 <div class="info-meta">
                   <c:if test="${not empty flag.nickname}">
                     <div class="info-author">
@@ -89,7 +82,6 @@
                   </div>
                 </div>
 
-    <!-- 첨부 이미지(있으면) -->
     <c:if test="${not empty fileList}">
       <c:set var="imgCount" value="0"/>
       <div class="info-image-grid">
@@ -101,7 +93,6 @@
           </c:if>
         </c:forEach>
       </div>
-      <!-- 이미지 외 파일(문서 등) 링크 표시 -->
       <ul class="mt-2" style="list-style:none; padding:0;">
         <c:forEach var="file" items="${fileList}">
           <c:set var="lower" value="${fn:toLowerCase(file.storedFileName)}"/>
@@ -116,12 +107,10 @@
       </ul>
     </c:if>
 
-    <!-- 본문 -->
     <div class="info-content">
       <textarea readonly>${flag.content}</textarea>
     </div>
 
-    <!-- 좋아요/카운트 -->
     <div class="info-stats">
       <button type="button" class="info-like-btn ${flag.liked ? 'liked' : ''}" id="likeBtn">
         <span class="heart">${flag.liked ? '❤️' : '🤍'}</span>
@@ -131,7 +120,6 @@
       <span>댓글: ${fn:length(flagCommentDTOList)}</span>
     </div>
 
-    <!-- 댓글 입력 -->
     <div class="info-comment-editor">
       <form id="commentForm" style="display:contents">
         <input type="hidden" name="post_id" id="post_id" value="${flag.id}"/>
@@ -140,7 +128,6 @@
       </form>
     </div>
 
-    <!-- 댓글 목록 -->
     <section class="info-comment-wrap">
       <div class="info-comment-list" id="commentList">
         <c:if test="${not empty flagCommentDTOList}">
@@ -180,7 +167,6 @@
       </div>
     </section>
 
-    <!-- 하단 버튼 -->
     <div class="info-bottom-actions">
       <button type="button" class="info-btn-secondary" onclick="location.href='${CTX}/flag'">목록</button>
     </div>
@@ -188,7 +174,6 @@
   </div>
 </div>
 
-<!-- 신고 모달 -->
 <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <form id="reportForm">
@@ -223,7 +208,6 @@
 <script>
   const CTX = '${CTX}';
 
-  // 댓글 등록
   $('#commentForm').on('submit', function (e) {
     e.preventDefault();
     const content = $('#content').val().trim();
@@ -240,7 +224,6 @@
     });
   });
 
-  // 좋아요 토글 (이모지 하트 스타일)
   $('#likeBtn').on('click', function(){
     const flagId = '${flag.id}';
     $.ajax({
@@ -258,12 +241,10 @@
     });
   });
 
-  // 신고 모달
   $('#reportBtn').on('click', function(){
     new bootstrap.Modal(document.getElementById('reportModal')).show();
   });
 
-  // 신고 제출
   $('#reportForm').on('submit', function(e){
     e.preventDefault();
     const postId = $('input[name="postId"]').val();
@@ -286,7 +267,6 @@
     });
   });
 
-  // 댓글 삭제
   function deleteComment(id, post_id){
     if(!confirm("정말 삭제하시겠습니까?")) return;
     $.ajax({

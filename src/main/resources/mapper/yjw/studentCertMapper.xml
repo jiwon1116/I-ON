@@ -3,7 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="StudentCert">
 
-    <!-- INSERT -->
     <insert id="insert" parameterType="com.spring.ion.yjw.dto.StudentCertDTO"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO student_cert
@@ -12,7 +11,6 @@
         (#{userId}, #{childName}, #{childBirth}, #{childAge}, #{childSchool}, #{childGrade}, #{filePath}, #{status}, #{reviewer}, #{rejectReason})
     </insert>
 
-    <!-- 대기 목록 -->
     <select id="findPending" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
         SELECT
         sc.id,
@@ -34,7 +32,6 @@
         ORDER BY sc.created_at DESC
     </select>
 
-    <!-- 상세 -->
     <select id="findDetail" parameterType="long" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
         SELECT
         sc.id,
@@ -55,21 +52,18 @@
         WHERE sc.id = #{id}
     </select>
 
-    <!-- 승인 -->
     <update id="approve" parameterType="map">
         UPDATE student_cert
         SET status='APPROVED', reviewer=#{reviewer}
         WHERE id=#{id} AND status='PENDING'
     </update>
 
-    <!-- 반려 -->
     <update id="reject" parameterType="map">
         UPDATE student_cert
         SET status='REJECTED', reject_reason=#{reason}, reviewer=#{reviewer}
         WHERE id=#{id} AND status='PENDING'
     </update>
 
-    <!-- 회원 재제출 -->
     <update id="resubmit" parameterType="com.spring.ion.yjw.dto.StudentCertDTO">
         UPDATE student_cert
         SET child_name=#{childName},
@@ -84,7 +78,6 @@
         WHERE id=#{id} AND user_id=#{userId} AND status='REJECTED'
     </update>
 
-    <!-- 사용자별 목록 -->
     <select id="findByUser" parameterType="string" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
         SELECT
         sc.id,
@@ -104,7 +97,6 @@
         ORDER BY sc.created_at DESC
     </select>
 
-    <!-- 전체 목록 -->
     <select id="findAll" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
         SELECT
         sc.id,
@@ -125,7 +117,6 @@
         ORDER BY sc.created_at DESC
     </select>
 
-    <!-- 상태별 목록 -->
     <select id="findAllByStatus" parameterType="string" resultType="com.spring.ion.yjw.dto.StudentCertDTO">
         SELECT
         sc.id,

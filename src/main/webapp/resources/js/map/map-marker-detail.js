@@ -12,12 +12,11 @@
       line-height: 1.45;
       color: #222;
     }
-    /* 꼬리를 중앙으로 */
     .bubble::after {
       content: "";
       position: absolute;
       left: 50%;
-      transform: translateX(-50%); /* 중앙 정렬 */
+      transform: translateX(-50%);
       bottom: -8px;
       width: 0; height: 0;
       border-width: 8px 7px 0 7px;

@@ -79,7 +79,6 @@
             </li>
         </ul>
         <div class="tab-content" id="postTabContent">
-            <!-- 자유 게시판 -->
             <div class="tab-pane fade show active" id="free" role="tabpanel">
                 <div class="scroll-area">
                     <c:forEach var="post" items="${freePosts}">
@@ -104,7 +103,6 @@
                     </c:if>
                 </div>
             </div>
-            <!-- 실종 게시판 -->
             <div class="tab-pane fade" id="miss" role="tabpanel">
                 <div class="scroll-area">
                     <c:forEach var="post" items="${missPosts}">
@@ -129,7 +127,6 @@
                     </c:if>
                 </div>
             </div>
-            <!-- 위탁 게시판 -->
             <div class="tab-pane fade" id="entrust" role="tabpanel">
                 <div class="scroll-area">
                     <c:forEach var="post" items="${entrustPosts}">
@@ -154,7 +151,6 @@
                     </c:if>
                 </div>
             </div>
-            <!-- 신고 게시판 -->
             <div class="tab-pane fade" id="flag" role="tabpanel">
                 <div class="scroll-area">
                     <c:forEach var="post" items="${flagPosts}">
@@ -186,7 +182,6 @@
         </div>
     </div>
 </div>
-<!-- 부트스트랩 JS CDN -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -28,7 +28,7 @@ public class ReportRepository {
     }
 
     public List<ReportDTO> findByBoard(String board) {
-        return sql.selectList("Report.findByBoard", board); // FLAG/FREE/ENTRUST/MISS
+        return sql.selectList("Report.findByBoard", board);
     }
 
     public List<ReportDTO> findPending() {

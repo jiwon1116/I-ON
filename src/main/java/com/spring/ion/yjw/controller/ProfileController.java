@@ -40,15 +40,12 @@ public class ProfileController {
         File dest = new File(uploadDir, savedName);
         file.transferTo(dest);
 
-        // DB에 저장
         memberService.updateProfileImg(userId, savedName);
 
-        // 응답 (이미지 뷰 경로 반환)
         result.put("profileImgUrl", "/profile/img/" + savedName);
         return result;
     }
 
-    // 프로필 이미지 서빙
     @GetMapping("/profile/img/{filename}")
     public void serveProfileImg(@PathVariable String filename, HttpServletResponse response) throws IOException {
         String path = "C:/upload/profile/" + filename;

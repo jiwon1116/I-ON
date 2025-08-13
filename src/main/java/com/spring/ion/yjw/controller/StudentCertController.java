@@ -1,4 +1,3 @@
-// src/main/java/com/spring/ion/yjw/controller/StudentCertController.java
 package com.spring.ion.yjw.controller;
 
 import com.spring.ion.lcw.security.CustomUserDetails;
@@ -8,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller; // ★ RestController 아님
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,24 +28,21 @@ public class StudentCertController {
 
     private final StudentCertService service;
 
-    /** 관리자 목록 뷰 */
     @GetMapping
     public String list(Model model) {
         model.addAttribute("all",      service.findAll());
         model.addAttribute("pending",  service.findAllByStatus("PENDING"));
         model.addAttribute("approved", service.findAllByStatus("APPROVED"));
         model.addAttribute("rejected", service.findAllByStatus("REJECTED"));
-        return "yjw/certList";   // 목록 JSP
+        return "yjw/certList";
     }
 
-    /** 관리자 상세 뷰 */
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
         model.addAttribute("detail", service.detail(id));
-        return "yjw/certDetail"; // 상세 JSP
+        return "yjw/certDetail";
     }
 
-    /** 업로드 폼 (사용자) */
     @GetMapping("/upload")
     public String uploadForm(Model model) {
         String userId = resolveUserId();
@@ -54,7 +50,6 @@ public class StudentCertController {
         return "yjw/certUpload";
     }
 
-    /** 내 신청 내역 (사용자) */
     @GetMapping("/my")
     public String myList(Model model) {
         String userId = resolveUserId();
@@ -63,7 +58,6 @@ public class StudentCertController {
         return "yjw/certMyList";
     }
 
-    /** 업로드(사용자) - AJAX */
     @PostMapping("/upload")
     @ResponseBody
     public Map<String, Object> upload(@RequestParam("file") MultipartFile file,
@@ -97,21 +91,17 @@ public class StudentCertController {
         return res;
     }
 
-    /* -------------------- 레거시 호환 엔드포인트(무한루프 방지) -------------------- */
 
-    /** 예전 링크: /cert/admin/list  -> 새 목록 주소로 리다이렉트 */
     @GetMapping("/admin/list")
     public String legacyListRedirect() {
-        return "redirect:/cert";   // ★ 자기 자신(/cert/admin/list)로 가지 않도록!
+        return "redirect:/cert";
     }
 
-    /** 예전 링크: /cert/admin/{id}/page -> 새 상세 주소로 리다이렉트 */
     @GetMapping("/admin/{id}/page")
     public String legacyDetailRedirect(@PathVariable Long id) {
-        return "redirect:/cert/" + id;   // ★ forward 금지 (루프 원인)
+        return "redirect:/cert/" + id;
     }
 
-    /** (필요 시) 관리자 상세 JSON */
     @GetMapping("/admin/{id}")
     @ResponseBody
     public Map<String, Object> detailJson(@PathVariable Long id) {
@@ -120,7 +110,6 @@ public class StudentCertController {
         return res;
     }
 
-    /** 관리자 승인 */
     @PostMapping("/admin/{id}/approve")
     @ResponseBody
     public Map<String,Object> approve(@PathVariable Long id,
@@ -136,7 +125,6 @@ public class StudentCertController {
         return res;
     }
 
-    /** 관리자 반려 */
     @PostMapping("/admin/{id}/reject")
     @ResponseBody
     public Map<String, Object> reject(@PathVariable Long id,
@@ -149,7 +137,6 @@ public class StudentCertController {
     }
 
 
-    // StudentCertController.java
     @PostMapping("/{id}/resubmit")
     @ResponseBody
     public Map<String,Object> resubmit(@PathVariable Long id,
@@ -175,8 +162,8 @@ public class StudentCertController {
         dto.setChildGrade(childGrade);
 
         try {
-            service.resubmit(file, dto);             // DB 갱신
-            StudentCertDTO updated = service.detail(id); // 갱신된 값 조회
+            service.resubmit(file, dto);
+            StudentCertDTO updated = service.detail(id);
             res.put("ok", true);
             res.put("message", "재제출되었습니다. 승인 대기(PENDING)로 변경되었습니다.");
             res.put("item", updated);
@@ -189,7 +176,6 @@ public class StudentCertController {
 
 
 
-    /** 파일 미리보기(이미지 스트리밍) */
     @GetMapping("/preview/{id}")
     public void preview(@PathVariable long id, HttpServletResponse response) throws IOException {
         StudentCertDTO detail = service.detail(id);
@@ -212,7 +198,6 @@ public class StudentCertController {
         }
     }
 
-    /** 로그인 사용자 ID 해석 */
     private String resolveUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = (authentication != null) ? authentication.getPrincipal() : null;

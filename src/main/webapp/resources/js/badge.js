@@ -1,4 +1,3 @@
-// /resources/js/badge.js
 (() => {
   if (window.__TRUST_BADGE_JS_LOADED__) return;
   window.__TRUST_BADGE_JS_LOADED__ = true;
@@ -14,7 +13,6 @@
 .badge-l2{background:#f9efe2}
 .badge-l3{background:#fff3cd}
 
-/* 관리자 강조: 링크까지 확실히 파랗게 */
 .is-admin, .is-admin a{font-weight:700;color:#2563eb !important}
 
 .admin-chip{
@@ -60,13 +58,12 @@
     const qs = encodeURIComponent(names.join(','));
     try {
       const r = await fetch(`${ctx}/api/member/badges?nicknames=${qs}`, { credentials: 'same-origin' });
-      if (r.ok) return await r.json(); // { nick: {level, admin} }
+      if (r.ok) return await r.json();
     } catch {}
-    // 백업: level만 (관리자 미표시)
     try {
       const r2 = await fetch(`${ctx}/api/member/levels?nicknames=${qs}`, { credentials: 'same-origin' });
       if (!r2.ok) return {};
-      const levels = await r2.json(); // { nick: level }
+      const levels = await r2.json();
       const out = {};
       names.forEach(n => out[n] = { level: levels[n] ?? 1, admin: false });
       return out;
@@ -100,7 +97,6 @@
         const nick = pickNickname(n);
         const meta = metaMap[nick] || { level: 1, admin: false };
 
-        // 관리자면 칩 + 파란색, 이모지 배지는 제거
         if (meta.admin === true || meta.admin === 1 || meta.admin === '1' || meta.admin === 'Y') {
           if (isBadge(n.nextElementSibling)) n.nextElementSibling.remove();
           n.classList.add('is-admin');
@@ -115,7 +111,6 @@
           return;
         }
 
-        // 일반 회원: 이모지 배지
         if (isAdminChip(n.nextElementSibling)) n.nextElementSibling.remove();
         const lv = Number(meta.level ?? 1);
         const emoji = lv === 3 ? '🏆' : (lv === 2 ? '🏠' : '🌱');

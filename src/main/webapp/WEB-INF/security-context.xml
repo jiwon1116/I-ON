@@ -17,10 +17,10 @@
     <bean id="customUserDetailsService" class="com.spring.ion.lcw.security.CustomUserDetailsService"/>
     <bean id="customAccessDeniedHandler" class="com.spring.ion.lcw.security.CustomAccessDeniedHandler"/>
     <bean id="customLoginFailHandler" class="com.spring.ion.lcw.security.CustomLoginFailHandler"/>
-    <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+    <bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/>
 
     <security:http use-expressions="true">
-        <security:intercept-url pattern="/chat/**" access="permitAll" />
+        <security:intercept-url pattern="/chat/**" access="permitAll"/>
         <security:intercept-url pattern="/accessDenied" access="permitAll"/>
         <security:intercept-url pattern="/" access="isAuthenticated()"/>
         <security:intercept-url pattern="/free/**" access="isAuthenticated()"/>
@@ -34,19 +34,22 @@
         <security:intercept-url pattern="/register" access="isAnonymous()"/>
         <security:intercept-url pattern="/login" access="permitAll"/>
 
-        <security:form-login login-page="/login" default-target-url="/" authentication-failure-handler-ref="customLoginFailHandler"/>
+        <security:form-login login-page="/login" default-target-url="/"
+                             authentication-failure-handler-ref="customLoginFailHandler"/>
 
-        <security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true" delete-cookies="JSESSIONID, remember-me"/>
+        <security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true"
+                         delete-cookies="JSESSIONID, remember-me"/>
 
         <security:remember-me token-validity-seconds="3600"/>
 
         <security:access-denied-handler ref="customAccessDeniedHandler"/>
 
         <security:session-management invalid-session-url="/login">
-            <security:concurrency-control max-sessions="1" expired-url="/login" session-registry-ref="sessionRegistry" error-if-maximum-exceeded="false"/>
+            <security:concurrency-control max-sessions="1" expired-url="/login" session-registry-ref="sessionRegistry"
+                                          error-if-maximum-exceeded="false"/>
         </security:session-management>
 
-        <security:csrf disabled="true" />
+        <security:csrf disabled="true"/>
 
         <security:headers>
             <security:cache-control/>

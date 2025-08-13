@@ -23,12 +23,10 @@
     .wrap{min-height:100vh; padding:44px 16px; display:flex; justify-content:flex-start}
     .container{width:100%; max-width:1000px; margin:0 auto}
 
-    /* 헤더 */
     .page-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
     .page-title{margin:0; font-weight:800; font-size:22px}
     .sub{color:var(--muted); font-size:14px; margin:4px 0 0}
 
-    /* 버튼 */
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:8px;
       height:44px; padding:0 16px; border:none; border-radius:12px; cursor:pointer;
@@ -41,7 +39,6 @@
     .btn.outline{ background:#fff; color:#111; border:1px solid var(--line); box-shadow:none; }
     .btn.sm{ height:36px; padding:0 12px; font-size:13px; box-shadow:none; }
 
-    /* 브랜드 버튼(부트스트랩 .btn 덮어쓰기) */
     .btn-brand{
       background: var(--brand) !important;
       color: #111 !important;
@@ -51,7 +48,6 @@
     .btn-brand:active{ transform: translateY(1px); }
     .btn-brand:hover{ filter: brightness(.98); }
 
-    /* 카드 & 테이블 */
     .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; overflow:hidden; }
     .table-wrap{overflow-x:auto}
     table{ width:100%; border-collapse:separate; border-spacing:0; min-width:720px; }
@@ -62,16 +58,13 @@
     tbody td{ padding:14px; border-bottom:1px solid var(--line); vertical-align:middle; font-size:14px; }
     tbody tr:hover{background:#fcfcfc}
 
-    /* 상태칩 */
     .chip{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; border:1px solid; }
     .chip.ok{ color:var(--ok);  border-color:#bbf7d0; background:#ecfdf5;}
     .chip.bad{color:var(--bad); border-color:#fecdd3; background:#fff1f2;}
     .chip.wait{color:var(--wait); border-color:#e5e7eb; background:#f9fafb;}
 
-    /* Empty */
     .empty{ display:flex; align-items:center; justify-content:center; text-align:center; color:var(--muted); padding:40px 10px; }
 
-    /* ---------- 재제출 모달 (Bootstrap과 클래스 충돌 방지) ---------- */
     .res-backdrop{
       position:fixed; inset:0; background:rgba(0,0,0,.35);
       display:none; align-items:center; justify-content:center; z-index:5000;
@@ -102,7 +95,6 @@
     .alert{ border-radius:10px; padding:10px 12px; margin-top:8px; display:none; }
     .alert.err{ background:#fff1f2; color:#991b1b; border:1px solid #fecdd3; }
 
-    /* ---------- 반응형 ---------- */
     @media (max-width: 1024px){
       .wrap{ padding:36px 14px; }
       .page-title{ font-size:20px; }
@@ -113,7 +105,6 @@
       .container{ max-width:100%; }
     }
     @media (max-width: 640px){
-      /* 테이블 → 카드 */
       table{ border:0; min-width:0; }
       thead{ display:none; }
       tbody, tr, td { display:block; width:100%; }
@@ -131,7 +122,6 @@
       }
       .chip{ font-size:11px; padding:5px 8px; }
 
-      /* 모달 크기 & 폼 스택 */
       .res-modal{ width:94vw; max-height:85vh; padding:16px; }
       .row{ flex-direction:column; gap:8px; }
     }
@@ -215,7 +205,6 @@
   </div>
 </div>
 
-<!-- 재제출 모달 -->
 <div id="resubmitBackdrop" class="res-backdrop">
   <div class="res-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-head">
@@ -270,7 +259,7 @@
 
 <script>
   let currentId = null;
-  let currentRow = null; // 재제출 대상 행 보관
+  let currentRow = null;
 
   function handleOpenResubmit(btn){
     currentRow = btn.closest('tr');
@@ -287,25 +276,20 @@
     currentId = data.id;
     const form = document.getElementById('resubmitForm');
 
-    // 액션 URL 세팅
     form.action = '<c:url value="/cert/"/>' + currentId + '/resubmit';
 
-    // 값 채우기
     document.getElementById('rsName').value   = data.name;
     document.getElementById('rsBirth').value  = data.birth;
     document.getElementById('rsSchool').value = data.school;
     document.getElementById('rsGrade').value  = data.grade;
 
-    // 파일/미리보기 초기화
     document.getElementById('rsFile').value = '';
     const th = document.getElementById('rsThumb');
     th.src = ''; th.style.display='none';
 
-    // 메시지 초기화
     const msg = document.getElementById('rsMsg');
     msg.style.display='none'; msg.textContent='';
 
-    // 모달 오픈 + 바디 스크롤 잠금
     document.getElementById('resubmitBackdrop').classList.add('is-open');
     document.body.style.overflow = 'hidden';
   }
@@ -323,17 +307,13 @@
     img.style.display = 'block';
   }
 
-  // ESC로 닫기
   document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeResubmit(); });
-  // 배경 클릭 닫기
   document.getElementById('resubmitBackdrop').addEventListener('click', (e)=>{
     if(e.target.id === 'resubmitBackdrop') closeResubmit();
   });
 
-  // 행을 '승인 대기'로 갱신하는 헬퍼
   function setRowToPending(row, updated){
     if(!row) return;
-    // thead: [자녀, 생년월일, 학교/학년, 상태, 등록일, 비고]
     const statusTd = row.children[3];
     const etcTd    = row.children[5];
 
@@ -348,7 +328,6 @@
     }
   }
 
-  // 재제출 전송(AJAX)
   document.getElementById('resubmitForm').addEventListener('submit', async (e)=>{
     e.preventDefault();
     const submitBtn = document.getElementById('rsSubmit');

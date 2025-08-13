@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 public class TrustScoreRepository {
     private final SqlSessionTemplate sql;
 
-    // 전체 댓글(모든 댓글 테이블 합)
     public int countAllCommentsByNickname(String nickname) {
         int free = sql.selectOne("trust.countFreeComments", nickname);
         int flag = sql.selectOne("trust.countFlagComments", nickname);
@@ -27,7 +26,7 @@ public class TrustScoreRepository {
     }
 
     public void updateMemberTrust(String nickname, int total) {
-        var param = new java.util.HashMap<String,Object>();
+        var param = new java.util.HashMap<String, Object>();
         param.put("nickname", nickname);
         param.put("total", total);
 

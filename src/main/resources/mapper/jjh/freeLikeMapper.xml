@@ -5,22 +5,18 @@
 
 <mapper namespace="FreeLike">
 
-    <!-- 좋아요 유무 체크 -->
     <select id="exists" resultType="int">
         SELECT COUNT(*) FROM free_like WHERE post_id = #{postId} AND member_id = #{memberId}
     </select>
 
-    <!-- 좋아요 추가 -->
     <insert id="insert">
         INSERT INTO free_like (post_id, member_id) VALUES (#{postId}, #{memberId})
     </insert>
 
-    <!-- 좋아요 취소 -->
     <delete id="delete">
         DELETE FROM free_like WHERE post_id = #{postId} AND member_id = #{memberId}
     </delete>
 
-    <!-- 좋아요 개수 카운트 -->
     <select id="count" resultType="int">
         SELECT COUNT(*) FROM free_like WHERE post_id = #{postId}
     </select>

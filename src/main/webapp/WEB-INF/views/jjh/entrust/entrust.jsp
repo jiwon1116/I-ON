@@ -9,21 +9,17 @@
   <title>위탁 게시판</title>
   <c:set var="CTX" value="${pageContext.request.contextPath}" />
 
-  <!-- libs -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- 페이지 전용 CSS -->
   <link href="${CTX}/resources/css/list.css" rel="stylesheet">
 </head>
 <body>
 
 <%@ include file="/WEB-INF/views/header.jsp" %>
 
-<!-- 메인 콘텐츠 -->
 <div class="main-content">
 
-  <!-- 상단 검색 & 글쓰기 -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <form class="d-flex search-bar" role="search" method="get" action="${CTX}/entrust">
       <input class="form-control me-2" type="search" name="searchContent"
@@ -35,7 +31,6 @@
     <a class="btn btn-dark" href="${CTX}/entrust/write">글쓰기</a>
   </div>
 
-  <!-- 목록 -->
   <c:if test="${empty entrustboardList}">
     <div class="text-center mt-5 text-muted">게시글이 없습니다.</div>
   </c:if>
@@ -66,11 +61,9 @@
     </a>
   </c:forEach>
 
-  <!-- 페이지네이션 (요청한 스타일 유지) -->
   <nav aria-label="Page navigation">
     <ul class="pagination mt-4 justify-content-center">
 
-      <!-- 이전 -->
       <c:choose>
         <c:when test="${paging.page <= 1}">
           <li class="page-item disabled"><a class="page-link">← Previous</a></li>
@@ -84,7 +77,6 @@
         </c:otherwise>
       </c:choose>
 
-      <!-- 번호 -->
       <c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="i">
         <c:choose>
           <c:when test="${i eq paging.page}">
@@ -98,7 +90,6 @@
         </c:choose>
       </c:forEach>
 
-      <!-- 다음 -->
       <c:choose>
         <c:when test="${paging.page >= paging.maxPage}">
           <li class="page-item disabled"><a class="page-link">Next →</a></li>

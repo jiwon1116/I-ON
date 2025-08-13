@@ -10,10 +10,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FlagLikeService {
     private final FlagLikeRepository flagLikeRepository;
-    private final FlagRepository flagRepository; // 추가
+    private final FlagRepository flagRepository;
 
 
-    // 좋아요 토글
     public boolean toggleLike(Long post_id, String memberId) {
         boolean exists = flagLikeRepository.exists(post_id, memberId);
         if (exists) {
@@ -21,10 +20,9 @@ public class FlagLikeService {
         } else {
             flagLikeRepository.insert(post_id, memberId);
         }
-        flagLikeRepository.updateLikeCount(post_id); // ← 여기로!
+        flagLikeRepository.updateLikeCount(post_id);
         return !exists;
     }
-
 
 
     public int getLikeCount(Long post_id) {

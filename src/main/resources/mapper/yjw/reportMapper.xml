@@ -14,7 +14,6 @@
         <result column="description"      property="description"/>
     </resultMap>
 
-    <!-- mapper/yjw/reportMapper.xml -->
     <insert id="insertReport" parameterType="Report" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO report (
         reporterId, targetBoard, targetContentId, type, status, description
@@ -28,7 +27,6 @@
         )
     </insert>
 
-    <!-- 단건 조회 -->
     <select id="findById" parameterType="long" resultMap="ReportMap">
         SELECT
         id, reporterId, targetBoard, targetContentId, `type`, `status`, `description`
@@ -36,14 +34,12 @@
         WHERE id = #{id}
     </select>
 
-    <!-- 전체(최신순) -->
     <select id="findAllOrderByNewest" resultMap="ReportMap">
         SELECT id, reporterId, targetBoard, targetContentId, `type`, `status`, `description`
         FROM report
         ORDER BY id DESC
     </select>
 
-    <!-- 게시판별 -->
     <select id="findByBoard" parameterType="string" resultMap="ReportMap">
         SELECT id, reporterId, targetBoard, targetContentId, `type`, `status`, `description`
         FROM report
@@ -51,7 +47,6 @@
         ORDER BY id DESC
     </select>
 
-    <!-- 미처리 목록 -->
     <select id="findPending" resultMap="ReportMap">
         SELECT id, reporterId, targetBoard, targetContentId, `type`, `status`, `description`
         FROM report
@@ -59,14 +54,12 @@
         ORDER BY id DESC
     </select>
 
-    <!-- 상태 변경 -->
     <update id="updateStatus" parameterType="map">
         UPDATE report
         SET `status` = #{status}
         WHERE id = #{id}
     </update>
 
-    <!-- 삭제 -->
     <delete id="delete" parameterType="long">
         DELETE FROM report
         WHERE id = #{id}

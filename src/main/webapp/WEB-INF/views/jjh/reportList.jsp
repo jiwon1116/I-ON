@@ -50,7 +50,6 @@
 <div class="wrap">
   <div class="container-n">
 
-    <!-- 헤더 + 뒤로가기 버튼 -->
     <div class="page-head">
       <div>
         <h3 class="page-title">신고 접수된 목록</h3>

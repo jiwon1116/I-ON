@@ -3,8 +3,6 @@ package com.spring.ion.yjw.repository;
 import com.spring.ion.yjw.dto.FlagFileDTO;
 import com.spring.ion.yjw.dto.FlagPostDTO;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -89,10 +87,9 @@ public class FlagRepository {
     }
 
     public void updateLikeCount(Long postId) {
-        sql.update("Flag.updateLikeCount", postId); // 네임스페이스를 'Flag'로!
+        sql.update("Flag.updateLikeCount", postId);
     }
 
-    // 내가 쓴 글 찾아보기 (마이페이지 연동)
     public List<FlagPostDTO> findAllByWriter(String userId) {
         return sql.selectList("Flag.findAllByWriter", userId);
     }
@@ -102,7 +99,6 @@ public class FlagRepository {
     }
 
     public List<FlagPostDTO> findAllForUser(String userId) {
-        // status가 APPROVED거나 본인이 쓴 글만 조회
         Map<String, Object> param = new HashMap<>();
         param.put("userId", userId);
         return sql.selectList("Flag.findAllForUser", param);
@@ -121,17 +117,14 @@ public class FlagRepository {
     }
 
 
-    // 공개 + 내글 페이징 목록
     public List<FlagPostDTO> pagingListPublicOrMine(Map<String, Object> params) {
         return sql.selectList("Flag.pagingListPublicOrMine", params);
     }
 
-    // 공개 + 내글 총 개수
     public int flagCountPublicOrMine(String loginUserId) {
         return sql.selectOne("Flag.flagCountPublicOrMine", loginUserId);
     }
 
-    // 공개 + 내글 검색 (서비스에서 호출 중이니 함께 추가)
     public List<FlagPostDTO> searchPublicOrMine(Map<String, Object> params) {
         return sql.selectList("Flag.searchPublicOrMine", params);
     }
