@@ -23,7 +23,7 @@ public class HomeController {
             System.out.println("로그인 멤버 정보: " + memberDTO);
 
             if(memberDTO != null && memberDTO.getAuthorities() != null && memberDTO.getAuthorities().contains("ROLE_ADMIN")){
-                return "admin";
+                return "redirect:/admin";
             }
         }
         return "redirect:/mypage/";

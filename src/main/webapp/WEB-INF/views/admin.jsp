@@ -212,7 +212,7 @@
       .mypage-layout{ grid-template-columns:1fr; }
 
       .sidebar{
-        position:static; height:auto;
+        position:static; height:100px;
         border-right:none; border-bottom:1px solid var(--line);
         display:flex; flex-direction:row; align-items:center;
         justify-content:flex-start; gap:14px;
