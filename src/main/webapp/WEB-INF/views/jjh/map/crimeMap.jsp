@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <title>범죄지역 지도</title>
 
-  <!-- ✅ OpenLayers CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol/ol.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 
@@ -36,7 +35,7 @@
 <header>
   <nav class="top-nav">
     <div class="logo-section">
-      <a href="/"><img src="${pageContext.request.contextPath}/logo.png" alt="logo"></a>
+      <a href="/"><img src="${pageContext.request.contextPath}/resources/img/logo.png" alt="logo"></a>
     </div>
     <ul class="nav-tabs">
           <li class="main-menu active">범죄 발생 지역</li>
@@ -53,10 +52,8 @@
 <!-- 지도 컨테이너 -->
 <div id="map"></div>
 
-<!-- ✅ OpenLayers JS: 반드시 먼저 로드되어야 함 -->
 <script src="https://cdn.jsdelivr.net/npm/ol/dist/ol.js"></script>
 
-<!-- ✅ 지도 생성 스크립트 -->
 <script>
   const apiKey = "9JDIMRL5-9JDI-9JDI-9JDI-9JDIMRL5G2";
 
@@ -94,20 +91,18 @@
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const offsetLat = 0.0033;
-        const offsetLon = 0.01285;
-        const lat = pos.coords.latitude + offsetLat;
-        const lon = pos.coords.longitude - offsetLon;
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
         createMap([lon, lat]);  // [경도, 위도] 순서로 전달
       },
       () => {
         console.warn("❗ 위치 실패, 기본 좌표로 지도 표시");
-        createMap([126.8865, 37.4946]);
+        createMap([126.926972, 37.489999]);
       }
     );
   } else {
     alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
-    createMap([126.8865, 37.4946]);
+    createMap([126.926972, 37.489999]);
   }
 </script>
 

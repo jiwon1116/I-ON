@@ -26,7 +26,7 @@
     }
     .wrap{
       min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-      padding:40px 16px;
+      padding:20px 16px;
     }
     .title{
       text-align:center; margin-bottom:18px;
@@ -39,7 +39,7 @@
     /* 스텝퍼 */
     .stepper{
       display:flex; align-items:center; gap:14px;
-      justify-content:center; margin:14px 0 26px;
+      justify-content:center; margin:6px 26px;
     }
     .step{display:flex; flex-direction:column; align-items:center; gap:6px; min-width:74px}
     .dot{
@@ -139,11 +139,6 @@
     <div class="line"></div>
     <div class="step">
       <div class="dot">2</div>
-      <div class="label">자녀 정보 설정</div>
-    </div>
-    <div class="line"></div>
-    <div class="step">
-      <div class="dot">3</div>
       <div class="label">사용 준비 완료</div>
     </div>
   </div>

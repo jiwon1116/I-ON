@@ -23,7 +23,7 @@
       margin:0; background:var(--bg); color:var(--text);
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",Helvetica,Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
     }
-    .wrap{min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:44px 16px}
+    .wrap{min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:150px 16px}
     .title{text-align:center; margin-bottom:20px}
     .title h1{margin:0 0 8px; font-size:22px; font-weight:800}
     .title p{margin:0; color:var(--muted); font-size:14px}
