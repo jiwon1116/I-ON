@@ -1,3 +1,5 @@
+<img width="1375" height="403" alt="image" src="https://github.com/user-attachments/assets/8e70bf36-9d9d-47e6-90ed-b5991da0fcef" />
+
 # I:ON
 > **아동 범죄 예방을 위한 지역 기반 커뮤니티 & 실시간 위험 알림 플랫폼**  
 > 학부모의 불안감을 낮추고, **지도+커뮤니티+알림**으로 빠르게 대응합니다.
