@@ -1,4 +1,5 @@
-<img width="1371" height="349" alt="image" src="https://github.com/user-attachments/assets/85d91035-df75-467f-9258-c198849bc480" />
+<img width="1361" height="379" alt="image" src="https://github.com/user-attachments/assets/ebdd8097-e0f2-43df-841f-93aae2fbcdf0" />
+
 
 ### **아동 범죄 예방을 위한 지역 기반 커뮤니티 & 실시간 위험 알림 플랫폼**  
 > 학부모의 불안감을 낮추고, **지도+커뮤니티+알림**으로 빠르게 대응합니다.
