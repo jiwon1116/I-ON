@@ -1,4 +1,5 @@
-<img width="1375" height="403" alt="image" src="https://github.com/user-attachments/assets/8e70bf36-9d9d-47e6-90ed-b5991da0fcef" />
+<img width="1371" height="349" alt="image" src="https://github.com/user-attachments/assets/85d91035-df75-467f-9258-c198849bc480" />
+
 
 # I:ON
 > **아동 범죄 예방을 위한 지역 기반 커뮤니티 & 실시간 위험 알림 플랫폼**  
