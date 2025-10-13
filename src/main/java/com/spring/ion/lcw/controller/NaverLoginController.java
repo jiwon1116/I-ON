@@ -35,7 +35,7 @@ public class NaverLoginController {
     @GetMapping("/naverLogin")
     public void naverLogin(HttpServletResponse response, HttpSession session) throws IOException {
         String clientId = "tDu0Knn2MBz39f7vATkw";
-        String redirectUri = "http://localhost:8080/auth/naver/callback";
+        String redirectUri = "http://13.125.88.116:8080/auth/naver/callback";
 
         String state = new java.math.BigInteger(130, new java.security.SecureRandom()).toString(32);
         session.setAttribute("naverState", state);

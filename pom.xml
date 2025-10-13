@@ -260,7 +260,7 @@
 
     <!-- 빌드 관련 설정  -->
     <build>
-        <finalName>mvc_test</finalName>   <!-- 최종 war 파일 이름  -->
+        <finalName>프로젝트팀_2차2조프로젝트 코드파일</finalName>   <!-- 최종 war 파일 이름  -->
         <pluginManagement>
             <plugins>
                 <plugin>

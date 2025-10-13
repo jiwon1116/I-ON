@@ -13,7 +13,11 @@
 
 	<nav class="top-nav">
 		<div class="logo-section">
-			<a href="/"><img class="header-logo" src="${pageContext.request.contextPath}/resources/img/logo.png" alt="logo"></a>
+			<a href="${pageContext.request.contextPath}/">
+              <img class="header-logo"
+                   src="${pageContext.request.contextPath}/resources/img/logo.png"
+                   alt="logo">
+            </a>
 		</div>
 
 		<ul id="primaryNav" class="nav-tabs">
