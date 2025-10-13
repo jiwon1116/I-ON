@@ -89,7 +89,7 @@ function attachPopup(marker, mk, type) {
         position: mk.getPosition(),
         content: content,
         xAnchor: 0.5,
-        yAnchor: 1.75,
+        yAnchor: 1.45,
         zIndex: 3
       });
       currentOverlay.setMap(window.map);
