@@ -102,7 +102,8 @@
       <div class="hero-logo">
         <span class="hero-tag">아동 범죄 예방을 위한 커뮤니티 및 실시간 위험 정보 제공 플랫폼</span>
         <div class="logoImg">
-          <img src="/resources/img/logo22.jpg" alt="아이온 로고">
+          <img src="${pageContext.request.contextPath}/resources/img/logo22.jpg" alt="아이온 로고">
+
         </div>
       </div>
     </div>

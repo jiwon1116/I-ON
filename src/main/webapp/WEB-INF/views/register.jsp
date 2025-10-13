@@ -313,7 +313,7 @@ body {
 
 				<div class="field">
 					<div class="g-recaptcha"
-						data-sitekey="6LfdKZgrAAAAAHP9TN8ZYOJDbKMmdx7Chl1CyUWP"
+						data-sitekey="6Ld9TOgrAAAAAMHbcAo-OemlBmOng7ldqn7g4obG"
 					></div>
 				</div>
 
@@ -483,7 +483,7 @@ body {
         }
 
         $.ajax({
-            url: '/checkDuplicateUserId',
+            url: '${pageContext.request.contextPath}/checkDuplicateUserId'',
             type: 'GET',
             data: { userId: userId },
             success: function(isDuplicate) {
@@ -506,7 +506,7 @@ body {
         }
 
         $.ajax({
-            url: '/checkDuplicateNickname',
+            url: '${pageContext.request.contextPath}/checkDuplicateNickname',
             type: 'GET',
             data: { nickname: nickname },
             success: function(isDuplicate) {

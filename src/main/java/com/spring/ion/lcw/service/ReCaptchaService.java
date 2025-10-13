@@ -6,7 +6,7 @@ import java.util.Map;
 
 @Service
 public class ReCaptchaService {
-    private final String SECRET_KEY = "6LfdKZgrAAAAAL5CoSNv01MelOYG_Hm5awPR1xCE";
+    private final String SECRET_KEY = "6Ld9TOgrAAAAAPGgDi_dxaU6UemVpHwlmceU3Euk";
     private final String VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 
     public boolean verify(String reCaptchaResponse) {
